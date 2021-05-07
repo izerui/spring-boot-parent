@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
+import java.util.UUID;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
@@ -33,7 +34,16 @@ public class SampleTest {
         Page<User> page = new Page<>(1,2);
         Page<User> pageResult = userMapper.selectPage(page, null);
         System.out.println(pageResult.getTotal());
+    }
 
+    @Test
+    public void insertSample() {
+        User user = new User();
+        user.setName(UUID.randomUUID().toString());
+        user.setEntCode("878");
+        user.setAge(11);
+        user.setEmail(UUID.randomUUID().toString());
+        userMapper.insert(user);
     }
 
 }
