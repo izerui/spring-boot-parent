@@ -7,6 +7,9 @@
         <module>mybatis/mybatis-spring-boot-autoconfigure</module>
         <module>mybatis/mybatis-spring-boot-starter</module>
         <module>mybatis/mybatis-spring-boot-sample</module>
+        <module>job/job-spring-boot-starter</module>
+        <module>job/job-spring-boot-autoconfigure</module>
+        <module>job/job-spring-boot-sample</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
