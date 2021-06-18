@@ -10,6 +10,8 @@
         <module>job/job-spring-boot-starter</module>
         <module>job/job-spring-boot-autoconfigure</module>
         <module>job/job-spring-boot-sample</module>
+        <module>sentinel/sentinel-gateway-spring-boot-starter</module>
+        <module>sentinel/sentinel-gateway-spring-boot-autoconfigure</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
