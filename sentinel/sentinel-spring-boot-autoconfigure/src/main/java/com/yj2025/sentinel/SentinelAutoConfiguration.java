@@ -13,9 +13,4 @@ public class SentinelAutoConfiguration {
         return new SentinelMqAspect();
     }
 
-    @ConditionalOnClass(name = "org.springframework.cloud.openfeign.FeignClient")
-    @Bean
-    public SentinelFeignAspect sentinelFeignAspect() {
-        return new SentinelFeignAspect();
-    }
 }

@@ -23,7 +23,7 @@ public class SentinelMqAspect {
     @Around("sentinelListenerAnnotationPointcut()")
     public Object invokeResourceWithSentinel(ProceedingJoinPoint pjp) throws Throwable {
         Method originMethod = resolveMethod(pjp);
-        String resourceName = originMethod.getClass().getName() + "#" + originMethod.getName();
+        String resourceName = pjp.getTarget().getClass() + "#" + originMethod.getName();
         EntryType entryType = EntryType.IN;
         Entry entry = null;
 
