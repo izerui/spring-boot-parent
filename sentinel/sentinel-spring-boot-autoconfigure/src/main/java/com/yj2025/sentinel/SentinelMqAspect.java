@@ -4,35 +4,26 @@ import com.alibaba.csp.sentinel.Entry;
 import com.alibaba.csp.sentinel.EntryType;
 import com.alibaba.csp.sentinel.SphU;
 import com.alibaba.csp.sentinel.slots.block.BlockException;
-import com.alibaba.csp.sentinel.util.MethodUtil;
-import com.alibaba.csp.sentinel.util.StringUtil;
-import io.swagger.annotations.ApiOperation;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 
 @Aspect
-public class SentinelResAspect {
+public class SentinelMqAspect {
 
 
-    @Pointcut("@annotation(io.swagger.annotations.ApiOperation)")
-    public void sentinelResourceAnnotationPointcut() {
+    @Pointcut("@annotation(org.springframework.amqp.rabbit.annotation.RabbitListener)")
+    public void sentinelListenerAnnotationPointcut() {
     }
 
-    @Around("sentinelResourceAnnotationPointcut()")
+    @Around("sentinelListenerAnnotationPointcut()")
     public Object invokeResourceWithSentinel(ProceedingJoinPoint pjp) throws Throwable {
         Method originMethod = resolveMethod(pjp);
-
-        ApiOperation annotation = originMethod.getAnnotation(ApiOperation.class);
-        String resourceName = getResourceName(annotation, originMethod);
+        String resourceName = originMethod.getClass().getName() + "#" + originMethod.getName();
         EntryType entryType = EntryType.IN;
         Entry entry = null;
 
@@ -84,22 +75,5 @@ public class SentinelResAspect {
         return null;
     }
 
-    protected String getResourceName(ApiOperation apiOperation, /*@NonNull*/ Method method) {
-        // If resource name is present in annotation, use this value.
-        if (apiOperation != null && StringUtil.isNotBlank(apiOperation.value())) {
-            return apiOperation.value();
-        }
-        // Parse name of target method.
-        return MethodUtil.resolveMethodName(method);
-    }
-
-
-    public static HttpServletRequest getRequest() {
-        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
-        if (requestAttributes != null) {
-            return ((ServletRequestAttributes) requestAttributes).getRequest();
-        }
-        return null;
-    }
 
 }
