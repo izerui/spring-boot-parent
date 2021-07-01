@@ -10,12 +10,17 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>sentinel-gateway-spring-boot-starter</artifactId>
+    <artifactId>sentinel-zuul-spring-boot-starter</artifactId>
+
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+    </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.yj2025</groupId>
-            <artifactId>sentinel-gateway-spring-boot-autoconfigure</artifactId>
+            <artifactId>sentinel-zuul-spring-boot-autoconfigure</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
