@@ -16,6 +16,11 @@
         <module>sentinel/sentinel-spring-boot-starter</module>
         <module>sentinel/sentinel-gateway-spring-boot-autoconfigure</module>
         <module>sentinel/sentinel-gateway-spring-boot-starter</module>
+        <module>nacos/nacos-config-spring-boot-starter</module>
+        <module>nacos/nacos-config-spring-boot-autoconfigure</module>
+        <module>nacos/nacos-discovery-spring-boot-autoconfigure</module>
+        <module>nacos/nacos-discovery-spring-boot-starter</module>
+        <module>nacos/nacos-config-discovery-spring-boot-simple</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
