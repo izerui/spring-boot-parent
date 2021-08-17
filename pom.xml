@@ -4,28 +4,28 @@
     <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
     <modules>
-        <module>mybatis/mybatis-spring-boot-autoconfigure</module>
-        <module>mybatis/mybatis-spring-boot-starter</module>
-        <module>mybatis/mybatis-spring-boot-sample</module>
-        <module>job/job-spring-boot-starter</module>
-        <module>job/job-spring-boot-autoconfigure</module>
-        <module>job/job-spring-boot-sample</module>
-        <module>sentinel/sentinel-zuul-spring-boot-starter</module>
-        <module>sentinel/sentinel-zuul-spring-boot-autoconfigure</module>
-        <module>sentinel/sentinel-spring-boot-autoconfigure</module>
-        <module>sentinel/sentinel-spring-boot-starter</module>
-        <module>sentinel/sentinel-gateway-spring-boot-autoconfigure</module>
-        <module>sentinel/sentinel-gateway-spring-boot-starter</module>
-        <module>nacos/nacos-config-spring-boot-starter</module>
-        <module>nacos/nacos-config-spring-boot-autoconfigure</module>
-        <module>nacos/nacos-discovery-spring-boot-autoconfigure</module>
-        <module>nacos/nacos-discovery-spring-boot-starter</module>
-        <module>nacos/nacos-config-discovery-spring-boot-simple</module>
-        <module>jpa/jpa-spring-boot-autoconfigure</module>
-        <module>jpa/jpa-spring-boot-starter</module>
-        <module>jpa/jpa-spring-boot-sample</module>
-        <module>druid/druid-spring-boot-autoconfigure</module>
-        <module>druid/druid-spring-boot-starter</module>
+        <module>mybatis-spring-boot-autoconfigure</module>
+        <module>mybatis-spring-boot-starter</module>
+        <module>mybatis-spring-boot-sample</module>
+        <module>job-spring-boot-starter</module>
+        <module>job-spring-boot-autoconfigure</module>
+        <module>job-spring-boot-sample</module>
+        <module>sentinel-zuul-spring-boot-starter</module>
+        <module>sentinel-zuul-spring-boot-autoconfigure</module>
+        <module>sentinel-spring-boot-autoconfigure</module>
+        <module>sentinel-spring-boot-starter</module>
+        <module>sentinel-gateway-spring-boot-autoconfigure</module>
+        <module>sentinel-gateway-spring-boot-starter</module>
+        <module>nacos-config-spring-boot-starter</module>
+        <module>nacos-config-spring-boot-autoconfigure</module>
+        <module>nacos-discovery-spring-boot-autoconfigure</module>
+        <module>nacos-discovery-spring-boot-starter</module>
+        <module>nacos-config-discovery-spring-boot-simple</module>
+        <module>jpa-spring-boot-autoconfigure</module>
+        <module>jpa-spring-boot-starter</module>
+        <module>jpa-spring-boot-sample</module>
+        <module>druid-spring-boot-autoconfigure</module>
+        <module>druid-spring-boot-starter</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
