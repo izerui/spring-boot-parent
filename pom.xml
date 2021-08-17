@@ -24,6 +24,8 @@
         <module>jpa/jpa-spring-boot-autoconfigure</module>
         <module>jpa/jpa-spring-boot-starter</module>
         <module>jpa/jpa-spring-boot-sample</module>
+        <module>druid/druid-spring-boot-autoconfigure</module>
+        <module>druid/druid-spring-boot-starter</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
