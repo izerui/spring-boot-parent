@@ -21,6 +21,9 @@
         <module>nacos/nacos-discovery-spring-boot-autoconfigure</module>
         <module>nacos/nacos-discovery-spring-boot-starter</module>
         <module>nacos/nacos-config-discovery-spring-boot-simple</module>
+        <module>jpa/jpa-spring-boot-autoconfigure</module>
+        <module>jpa/jpa-spring-boot-starter</module>
+        <module>jpa/jpa-spring-boot-sample</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
