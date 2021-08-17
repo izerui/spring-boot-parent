@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-@ConfigurationProperties(prefix = "druid.data-source")
+@ConfigurationProperties(prefix = "mybatis.tenant")
 public class TenantConfig implements Serializable {
 
     //默认开启租户模式
