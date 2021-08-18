@@ -22,10 +22,11 @@
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
         </dependency>
+        <!-- TODO 升级plus,再修改分页,暂时先用着老版本 -->
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-boot-starter</artifactId>
-            <version>3.4.3.1</version>
+            <version>3.4.2-yj-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
