@@ -24,6 +24,7 @@
         <module>jpa-spring-boot-autoconfigure</module>
         <module>jpa-spring-boot-starter</module>
         <module>jpa-spring-boot-sample</module>
+        <module>business-dependencies</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
