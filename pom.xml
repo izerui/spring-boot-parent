@@ -24,7 +24,6 @@
         <module>jpa-spring-boot-autoconfigure</module>
         <module>jpa-spring-boot-starter</module>
         <module>jpa-spring-boot-sample</module>
-        <module>business-dependencies</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -51,11 +50,6 @@
                 <version>${spring-cloud.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.poi</groupId>
-                <artifactId>poi-ooxml</artifactId>
-                <version>3.17</version>
             </dependency>
 
             <!-- starter 基础依赖 -->
