@@ -41,12 +41,23 @@
     </parent>
     <groupId>com.yj2025</groupId>
     <artifactId>yj2025-spring-boot-parent</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.1.0-SNAPSHOT</version>
     <properties>
         <java.version>1.8</java.version>
         <spring-cloud.version>Hoxton.SR11</spring-cloud.version>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
+        <job.version>1.1.0-SNAPSHOT</job.version>
+        <jpa.version>1.1.0-SNAPSHOT</jpa.version>
+        <mybatis.version>1.1.0-SNAPSHOT</mybatis.version>
+        <nacos-config.version>1.1.0-SNAPSHOT</nacos-config.version>
+        <nacos-discovery.version>1.1.0-SNAPSHOT</nacos-discovery.version>
+        <sentinel-gateway.version>1.1.0-SNAPSHOT</sentinel-gateway.version>
+        <sentinel-micro.version>1.1.0-SNAPSHOT</sentinel-micro.version>
+        <sentinel-zuul.version>1.1.0-SNAPSHOT</sentinel-zuul.version>
+        <rabbit.version>1.1.0-SNAPSHOT</rabbit.version>
+        <websocket.version>1.1.0-SNAPSHOT</websocket.version>
+        <audit.version>1.1.0-SNAPSHOT</audit.version>
     </properties>
 
 
@@ -60,61 +71,143 @@
                 <scope>import</scope>
             </dependency>
 
+            <dependency>
+                <groupId>com.zaxxer</groupId>
+                <artifactId>HikariCP</artifactId>
+                <version>4.0.3</version>
+            </dependency>
+
             <!-- starter 基础依赖 -->
+            <!-- job -->
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>job-spring-boot-autoconfigure</artifactId>
+                <version>${job.version}</version>
+            </dependency>
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>job-spring-boot-starter</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
+                <version>${job.version}</version>
+            </dependency>
+
+            <!-- jpa -->
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>jpa-spring-boot-autoconfigure</artifactId>
+                <version>${jpa.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>jpa-spring-boot-starter</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
+                <version>${jpa.version}</version>
+            </dependency>
+
+            <!-- mybatis -->
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>mybatis-spring-boot-autoconfigure</artifactId>
+                <version>${mybatis.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>mybatis-spring-boot-starter</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
+                <version>${mybatis.version}</version>
+            </dependency>
+
+            <!-- nacos config -->
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>nacos-config-spring-boot-autoconfigure</artifactId>
+                <version>${nacos-config.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>nacos-config-spring-boot-starter</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
+                <version>${nacos-config.version}</version>
+            </dependency>
+
+            <!-- nacos discovery -->
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>nacos-discovery-spring-boot-autoconfigure</artifactId>
+                <version>${nacos-discovery.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>nacos-discovery-spring-boot-starter</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
+                <version>${nacos-discovery.version}</version>
+            </dependency>
+
+            <!-- sentinel gateway -->
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>sentinel-gateway-spring-boot-autoconfigure</artifactId>
+                <version>${sentinel-gateway.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>sentinel-gateway-spring-boot-starter</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
+                <version>${sentinel-gateway.version}</version>
+            </dependency>
+
+            <!-- sentinel micro service -->
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>sentinel-spring-boot-autoconfigure</artifactId>
+                <version>${sentinel-micro.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>sentinel-spring-boot-starter</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
+                <version>${sentinel-micro.version}</version>
+            </dependency>
+
+            <!-- sentinel zuul -->
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>sentinel-zuul-spring-boot-autoconfigure</artifactId>
+                <version>${sentinel-zuul.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>sentinel-zuul-spring-boot-starter</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
+                <version>${sentinel-zuul.version}</version>
+            </dependency>
+
+            <!-- rabbit -->
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>rabbit-spring-boot-autoconfigure</artifactId>
+                <version>${rabbit.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>rabbit-spring-boot-starter</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
+                <version>${rabbit.version}</version>
+            </dependency>
+
+            <!-- websocket -->
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>websocket-spring-boot-autoconfigure</artifactId>
+                <version>${websocket.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>websocket-spring-boot-starter</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
+                <version>${websocket.version}</version>
+            </dependency>
+
+            <!-- audit -->
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>audit-spring-boot-autoconfigure</artifactId>
+                <version>${audit.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>audit-spring-boot-starter</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
+                <version>${audit.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
