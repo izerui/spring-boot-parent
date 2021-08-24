@@ -1,0 +1,41 @@
+package com.ecworking.audit;
+
+import io.swagger.annotations.ApiOperation;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
+import org.springframework.scheduling.annotation.EnableAsync;
+
+/**
+ * Created by serv on 2016/12/8.
+ */
+@Order(Ordered.HIGHEST_PRECEDENCE)
+@Configuration
+@EnableAspectJAutoProxy(proxyTargetClass = true)
+@EnableAsync
+@EnableConfigurationProperties(AuditProperties.class)
+public class AuditAutoConfiguration {
+
+    @Bean
+    @ConditionalOnProperty(name = "audit.type", matchIfMissing = true, havingValue = "rabbit")
+    public AuditContext auditContext(RabbitTemplate rabbitTemplate, AuditProperties auditProperties) {
+        return new RabbitAuditContextImpl(rabbitTemplate, auditProperties.getRabbit());
+    }
+
+    @Bean
+    @ConditionalOnWebApplication
+    @ConditionalOnClass(ApiOperation.class)
+    public AuditWebMethodAspect auditWebMethodAspect(AuditContext auditContext,
+                                                     @Value("${spring.application.name:null}") String application) {
+        return new AuditWebMethodAspect(auditContext, application);
+    }
+
+}
