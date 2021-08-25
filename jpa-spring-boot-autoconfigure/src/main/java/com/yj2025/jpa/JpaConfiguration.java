@@ -1,6 +1,6 @@
-package com.ecworking.jpa;
+package com.yj2025.jpa;
 
-import com.ecworking.jpa.impl.PlatformRepositoryImpl;
+import com.yj2025.jpa.impl.PlatformRepositoryImpl;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;

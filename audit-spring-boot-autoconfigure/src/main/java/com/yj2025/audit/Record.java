@@ -1,4 +1,4 @@
-package com.ecworking.audit;
+package com.yj2025.audit;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 

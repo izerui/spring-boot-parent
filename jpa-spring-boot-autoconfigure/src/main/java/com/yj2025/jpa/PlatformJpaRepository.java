@@ -1,6 +1,6 @@
-package com.ecworking.jpa;
+package com.yj2025.jpa;
 
-import com.ecworking.jpa.impl.Conditions;
+import com.yj2025.jpa.impl.Conditions;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;

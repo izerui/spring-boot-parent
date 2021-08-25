@@ -1,4 +1,4 @@
-package com.ecworking.audit;
+package com.yj2025.audit;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

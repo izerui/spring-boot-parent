@@ -1,10 +1,10 @@
 package junit;
 
-import com.ecworking.jpa.Application;
-import com.ecworking.jpa.entity.User;
-import com.ecworking.jpa.entity.UserDistinct;
-import com.ecworking.jpa.impl.Conditions;
-import com.ecworking.jpa.repository.UserRepository;
+import com.yj2025.jpa.Application;
+import com.yj2025.jpa.entity.User;
+import com.yj2025.jpa.entity.UserDistinct;
+import com.yj2025.jpa.impl.Conditions;
+import com.yj2025.jpa.repository.UserRepository;
 import org.assertj.core.util.Lists;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,7 +16,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)

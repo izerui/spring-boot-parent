@@ -13,9 +13,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.ecworking.jpa.impl;
+package com.yj2025.jpa.impl;
 
-import com.ecworking.jpa.PlatformJpaRepository;
+import com.yj2025.jpa.PlatformJpaRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;

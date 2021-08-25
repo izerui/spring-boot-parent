@@ -1,9 +1,7 @@
-package com.ecworking.jpa;
+package com.yj2025.jpa;
 
-import com.ecworking.jpa.impl.PlatformRepositoryImpl;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
 public class Application {

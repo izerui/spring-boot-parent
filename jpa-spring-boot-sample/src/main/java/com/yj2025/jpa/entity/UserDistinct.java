@@ -1,4 +1,4 @@
-package com.ecworking.jpa.entity;
+package com.yj2025.jpa.entity;
 
 import lombok.Data;
 
