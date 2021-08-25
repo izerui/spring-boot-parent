@@ -32,6 +32,12 @@
         <module>rabbit-spring-boot-sample</module>
         <module>audit-spring-boot-starter</module>
         <module>audit-spring-boot-sample</module>
+        <module>doc-spring-boot-autoconfigure</module>
+        <module>doc-spring-boot-sample</module>
+        <module>doc-spring-boot-starter</module>
+        <module>mvc-exception-spring-boot-autoconfigure</module>
+        <module>mvc-exception-spring-boot-starter</module>
+        <module>mvc-exception-spring-boot-sample</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -58,6 +64,8 @@
         <rabbit.version>1.1.0-SNAPSHOT</rabbit.version>
         <websocket.version>1.1.0-SNAPSHOT</websocket.version>
         <audit.version>1.1.0-SNAPSHOT</audit.version>
+        <doc.version>1.1.0-SNAPSHOT</doc.version>
+        <mvc-exception.version>1.1.0-SNAPSHOT</mvc-exception.version>
     </properties>
 
 
@@ -208,6 +216,30 @@
                 <groupId>com.yj2025</groupId>
                 <artifactId>audit-spring-boot-starter</artifactId>
                 <version>${audit.version}</version>
+            </dependency>
+
+            <!-- doc -->
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>doc-spring-boot-autoconfigure</artifactId>
+                <version>${doc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>doc-spring-boot-starter</artifactId>
+                <version>${doc.version}</version>
+            </dependency>
+
+            <!-- mvc exception -->
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>mvc-exception-spring-boot-autoconfigure</artifactId>
+                <version>${mvc-exception.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>mvc-exception-spring-boot-starter</artifactId>
+                <version>${mvc-exception.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
