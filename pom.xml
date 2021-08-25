@@ -35,9 +35,9 @@
         <module>doc-spring-boot-autoconfigure</module>
         <module>doc-spring-boot-sample</module>
         <module>doc-spring-boot-starter</module>
-        <module>mvc-exception-spring-boot-autoconfigure</module>
-        <module>mvc-exception-spring-boot-starter</module>
-        <module>mvc-exception-spring-boot-sample</module>
+        <module>mvc-rest-spring-boot-autoconfigure</module>
+        <module>mvc-rest-spring-boot-starter</module>
+        <module>mvc-rest-spring-boot-sample</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -65,7 +65,7 @@
         <websocket.version>1.1.0-SNAPSHOT</websocket.version>
         <audit.version>1.1.0-SNAPSHOT</audit.version>
         <doc.version>1.1.0-SNAPSHOT</doc.version>
-        <mvc-exception.version>1.1.0-SNAPSHOT</mvc-exception.version>
+        <mvc-rest.version>1.1.0-SNAPSHOT</mvc-rest.version>
     </properties>
 
 
@@ -233,13 +233,13 @@
             <!-- mvc exception -->
             <dependency>
                 <groupId>com.yj2025</groupId>
-                <artifactId>mvc-exception-spring-boot-autoconfigure</artifactId>
-                <version>${mvc-exception.version}</version>
+                <artifactId>mvc-rest-spring-boot-autoconfigure</artifactId>
+                <version>${mvc-rest.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.yj2025</groupId>
-                <artifactId>mvc-exception-spring-boot-starter</artifactId>
-                <version>${mvc-exception.version}</version>
+                <artifactId>mvc-rest-spring-boot-starter</artifactId>
+                <version>${mvc-rest.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
