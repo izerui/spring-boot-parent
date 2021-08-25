@@ -38,6 +38,9 @@
         <module>mvc-rest-spring-boot-autoconfigure</module>
         <module>mvc-rest-spring-boot-starter</module>
         <module>mvc-rest-spring-boot-sample</module>
+        <module>lock-spring-boot-autoconfigure</module>
+        <module>lock-spring-boot-starter</module>
+        <module>lock-spring-boot-sample</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -66,6 +69,7 @@
         <audit.version>1.1.0-SNAPSHOT</audit.version>
         <doc.version>1.1.0-SNAPSHOT</doc.version>
         <mvc-rest.version>1.1.0-SNAPSHOT</mvc-rest.version>
+        <lock.version>1.1.0-SNAPSHOT</lock.version>
     </properties>
 
 
@@ -240,6 +244,18 @@
                 <groupId>com.yj2025</groupId>
                 <artifactId>mvc-rest-spring-boot-starter</artifactId>
                 <version>${mvc-rest.version}</version>
+            </dependency>
+
+            <!-- lock -->
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>lock-spring-boot-autoconfigure</artifactId>
+                <version>${lock.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>lock-spring-boot-starter</artifactId>
+                <version>${lock.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
