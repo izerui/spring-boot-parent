@@ -4,11 +4,11 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class WebMsg implements Serializable{
+public class WebMsg implements Serializable {
 
     private String entCode;
     private String userCode;
-    private Map<String,String> message = new HashMap<>();
+    private Map<String, String> message = new HashMap<>();
 
     public WebMsg() {
     }
@@ -16,6 +16,12 @@ public class WebMsg implements Serializable{
     public WebMsg(String entCode, String userCode) {
         this.entCode = entCode;
         this.userCode = userCode;
+    }
+
+    public WebMsg(String entCode, String userCode, String type) {
+        this.entCode = entCode;
+        this.userCode = userCode;
+        message.put("type", type);
     }
 
     public String getEntCode() {
@@ -38,8 +44,8 @@ public class WebMsg implements Serializable{
         return message;
     }
 
-    public WebMsg set(String key,String value){
-        message.put(key,value);
+    public WebMsg set(String key, String value) {
+        message.put(key, value);
         return this;
     }
 
