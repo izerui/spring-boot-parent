@@ -20,7 +20,7 @@
         <module>nacos-config-spring-boot-autoconfigure</module>
         <module>nacos-discovery-spring-boot-autoconfigure</module>
         <module>nacos-discovery-spring-boot-starter</module>
-        <module>nacos-config-discovery-spring-boot-simple</module>
+        <module>nacos-config-discovery-spring-boot-sample</module>
         <module>jpa-spring-boot-autoconfigure</module>
         <module>jpa-spring-boot-starter</module>
         <module>jpa-spring-boot-sample</module>
