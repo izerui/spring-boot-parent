@@ -13,7 +13,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.yj2025</groupId>
+            <groupId>com.ecworking</groupId>
             <artifactId>business-commons</artifactId>
         </dependency>
         <dependency>
