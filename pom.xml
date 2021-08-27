@@ -82,11 +82,12 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-
             <dependency>
-                <groupId>com.zaxxer</groupId>
-                <artifactId>HikariCP</artifactId>
-                <version>4.0.3</version>
+                <groupId>com.yj2025</groupId>
+                <artifactId>business-dependencies</artifactId>
+                <version>1.1.1</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
 
             <!-- starter 基础依赖 -->

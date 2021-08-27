@@ -13,6 +13,10 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.yj2025</groupId>
+            <artifactId>business-commons</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
         </dependency>

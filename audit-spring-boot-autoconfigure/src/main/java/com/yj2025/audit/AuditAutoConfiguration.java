@@ -27,7 +27,11 @@ public class AuditAutoConfiguration {
     @Bean
     @ConditionalOnProperty(name = "audit.type", matchIfMissing = true, havingValue = "rabbit")
     public AuditContext auditContext(RabbitTemplate rabbitTemplate, AuditProperties auditProperties) {
-        return new RabbitAuditContextImpl(rabbitTemplate, auditProperties.getRabbit());
+        RabbitAuditProperties rabbitAuditProperties = auditProperties.getRabbit();
+        if (rabbitAuditProperties == null) {
+            rabbitAuditProperties = new RabbitAuditProperties();
+        }
+        return new RabbitAuditContextImpl(rabbitTemplate, rabbitAuditProperties);
     }
 
     @Bean
