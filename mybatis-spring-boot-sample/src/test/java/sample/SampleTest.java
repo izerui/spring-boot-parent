@@ -1,17 +1,20 @@
 package sample;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.javafaker.Faker;
 import com.yj2025.sample.Application;
 import com.yj2025.sample.entity.User;
 import com.yj2025.sample.mapper.UserMapper;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 @RunWith(SpringRunner.class)
@@ -31,19 +34,23 @@ public class SampleTest {
 
     @Test
     public void testPage() {
-        Page<User> page = new Page<>(1,2);
+        Page<User> page = new Page<>(1,50);
         Page<User> pageResult = userMapper.selectPage(page, null);
         System.out.println(pageResult.getTotal());
     }
 
     @Test
     public void insertSample() {
-        User user = new User();
-        user.setName(UUID.randomUUID().toString());
-        user.setEntCode("878");
-        user.setAge(11);
-        user.setEmail(UUID.randomUUID().toString());
-        userMapper.insert(user);
+        Faker faker = new Faker(Locale.CHINA);
+        int size = 100;
+        for (int i = 0; i < size; i++) {
+            User user = new User();
+            user.setName(faker.name().name());
+            user.setEntCode(faker.code().ean8());
+            user.setAge(faker.number().numberBetween(10,100));
+            user.setEmail(faker.address().city());
+            userMapper.insert(user);
+        }
     }
 
 }
