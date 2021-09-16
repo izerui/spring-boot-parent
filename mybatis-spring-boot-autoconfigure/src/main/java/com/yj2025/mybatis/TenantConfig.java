@@ -12,6 +12,9 @@ public class TenantConfig implements Serializable {
     //默认开启租户模式
     private boolean enable = true;
 
+    // 是否拦截掉垃圾SQL语句
+    private boolean checkSql = false;
+
     //租户模式下统一的字段名
     private String field = "ent_code";
 
@@ -43,5 +46,13 @@ public class TenantConfig implements Serializable {
 
     public void setIgnores(List<String> ignores) {
         this.ignores = ignores;
+    }
+
+    public boolean isCheckSql() {
+        return checkSql;
+    }
+
+    public void setCheckSql(boolean checkSql) {
+        this.checkSql = checkSql;
     }
 }

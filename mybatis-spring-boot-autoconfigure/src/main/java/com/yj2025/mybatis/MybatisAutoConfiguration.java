@@ -1,14 +1,11 @@
 package com.yj2025.mybatis;
 
 import com.baomidou.mybatisplus.annotation.DbType;
-import com.baomidou.mybatisplus.autoconfigure.ConfigurationCustomizer;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.handler.TenantLineHandler;
-import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.inner.TenantLineInnerInterceptor;
-import net.sf.jsqlparser.expression.Expression;
+import com.baomidou.mybatisplus.extension.plugins.inner.*;
 import net.sf.jsqlparser.expression.LongValue;
+import org.slf4j.Logger;
+import org.springframework.aop.interceptor.PerformanceMonitorInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -19,32 +16,20 @@ import org.springframework.context.annotation.Configuration;
 public class MybatisAutoConfiguration {
 
     @Autowired
-    private TenantConfig tenantConfig;
+    private TenantConfig config;
 
     @Bean
     public MybatisPlusInterceptor mybatisPlusInterceptor() {
-        TenantLineHandler tenantLineHandler = new TenantLineHandler() {
-            @Override
-            public Expression getTenantId() {
-                return new LongValue(1);
-            }
-
-            @Override
-            public String getTenantIdColumn() {
-                return tenantConfig.getField();
-            }
-
-            @Override
-            public boolean ignoreTable(String tableName) {
-                return tenantConfig.getIgnores().contains(tableName);
-            }
-        };
-
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
-        if (tenantConfig.isEnable()) {
-            interceptor.addInnerInterceptor(new TenantLineInnerInterceptor(tenantLineHandler));
+//        interceptor.addInnerInterceptor(new TenantLineInnerInterceptor(() -> new LongValue(1L)));
+        if (config.isEnable()) {
+            interceptor.addInnerInterceptor(new TenantInterceptor(config.getField()));
+        }
+        if(config.isCheckSql()) {
+            interceptor.addInnerInterceptor(new IllegalSQLInnerInterceptor());
         }
         // https://baomidou.com/guide/interceptor-optimistic-locker.html#optimisticlockerinnerinterceptor
+        interceptor.addInnerInterceptor(new BlockAttackInnerInterceptor());
         interceptor.addInnerInterceptor(new OptimisticLockerInnerInterceptor());
         interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
         return interceptor;
