@@ -28,8 +28,9 @@ public class MybatisAutoConfiguration {
         if(config.isCheckSql()) {
             interceptor.addInnerInterceptor(new IllegalSQLInnerInterceptor());
         }
-        // https://baomidou.com/guide/interceptor-optimistic-locker.html#optimisticlockerinnerinterceptor
+        // 攻击 SQL 阻断解析器,防止全表更新与删除
         interceptor.addInnerInterceptor(new BlockAttackInnerInterceptor());
+        // https://baomidou.com/guide/interceptor-optimistic-locker.html#optimisticlockerinnerinterceptor
         interceptor.addInnerInterceptor(new OptimisticLockerInnerInterceptor());
         interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
         return interceptor;
