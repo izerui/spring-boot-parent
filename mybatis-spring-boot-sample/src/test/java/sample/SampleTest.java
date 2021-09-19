@@ -1,21 +1,26 @@
 package sample;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.javafaker.Faker;
 import com.yj2025.sample.Application;
 import com.yj2025.sample.entity.User;
 import com.yj2025.sample.mapper.UserMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 import java.util.Locale;
 
+@Slf4j
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
 public class SampleTest {
@@ -39,6 +44,20 @@ public class SampleTest {
     }
 
     @Test
+    public void testPage2() {
+        PageRequest pageRequest = PageRequest.of(0, 35, Sort.Direction.DESC,"name");
+        LambdaQueryWrapper<User> wrapper = Wrappers.lambdaQuery(User.class);
+        wrapper.orderByDesc(User::getEmail);
+        org.springframework.data.domain.Page<User> page = userMapper.selectPage(pageRequest, wrapper);
+        System.out.println(page.getTotalElements());
+    }
+
+    @Test
+    public void test002() {
+        System.out.println("");
+    }
+
+    @Test
     public void insertDemoData() {
         Faker faker = new Faker(Locale.CHINA);
         int size = 333;
@@ -55,7 +74,8 @@ public class SampleTest {
 
     @Test
     public void testSearch() {
-        System.out.println(userMapper.selectCount(Wrappers.lambdaQuery(User.class).gt(User::getAge, 10).eq(User::getEntCode, "213")));
+        Long aLong = userMapper.selectCount(Wrappers.lambdaQuery(User.class).gt(User::getAge, 10).eq(User::getEntCode, "213"));
+        log.info("{}", aLong);
     }
 
 }

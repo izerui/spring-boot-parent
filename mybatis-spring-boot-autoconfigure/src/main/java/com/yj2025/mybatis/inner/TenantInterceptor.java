@@ -1,4 +1,4 @@
-package com.yj2025.mybatis;
+package com.yj2025.mybatis.inner;
 
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
@@ -90,19 +90,21 @@ public class TenantInterceptor extends JsqlParserSupport implements InnerInterce
      */
     private void checkTenantId(Expression where) {
         AtomicBoolean tenantFieldExist = new AtomicBoolean(false);
-        where.accept(new ExpressionVisitorAdapter() {
-            @Override
-            public void visit(EqualsTo expr) {
-                Expression leftExpression = expr.getLeftExpression();
-                if (leftExpression == null || tenantFieldExist.get()) {
-                    return;
+        if (where != null) {
+            where.accept(new ExpressionVisitorAdapter() {
+                @Override
+                public void visit(EqualsTo expr) {
+                    Expression leftExpression = expr.getLeftExpression();
+                    if (leftExpression == null || tenantFieldExist.get()) {
+                        return;
+                    }
+                    if (leftExpression instanceof Column) {
+                        String columnName = ((Column) leftExpression).getColumnName();
+                        tenantFieldExist.set(tenantField.equals(columnName));
+                    }
                 }
-                if (leftExpression instanceof Column) {
-                    String columnName = ((Column) leftExpression).getColumnName();
-                    tenantFieldExist.set(tenantField.equals(columnName));
-                }
-            }
-        });
+            });
+        }
         Assert.isTrue(tenantFieldExist.get(), "非法SQL，必须要有租户字段: [" + tenantField + "]");
     }
 
