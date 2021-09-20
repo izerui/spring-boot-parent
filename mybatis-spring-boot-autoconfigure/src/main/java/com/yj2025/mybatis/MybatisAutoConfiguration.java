@@ -2,6 +2,10 @@ package com.yj2025.mybatis;
 
 import com.baomidou.mybatisplus.autoconfigure.ConfigurationCustomizer;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
+import com.baomidou.mybatisplus.core.injector.AbstractMethod;
+import com.baomidou.mybatisplus.core.injector.DefaultSqlInjector;
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.extension.injector.methods.Upsert;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.BlockAttackInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;
@@ -14,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.List;
 
 @Configuration
 @EnableConfigurationProperties(TenantConfig.class)
@@ -49,6 +55,25 @@ public class MybatisAutoConfiguration {
                     "mybatisMapperRegistry",
                     new OverrideMybatisMapperRegistry(configuration));
         };
+    }
+
+    /**
+     * 这里备注下,如果需要扩展basemapper新的方法注入器,修改 {@link DefaultSqlInjector#getMethodList(Class, TableInfo)} 返回值添加新的注入器
+     * <code>
+     *     return new DefaultSqlInjector() {
+     *          @Override
+     *          public List<AbstractMethod> getMethodList(Class<?> mapperClass, TableInfo tableInfo) {
+     *            List<AbstractMethod> methodList = super.getMethodList(mapperClass, tableInfo);
+     *            methodList.add(new Upsert());
+     *            return methodList;
+     *            }
+     *      };
+     * </code>
+     * @return
+     */
+    @Bean
+    public DefaultSqlInjector defaultSqlInjector() {
+        return new DefaultSqlInjector();
     }
 
 }

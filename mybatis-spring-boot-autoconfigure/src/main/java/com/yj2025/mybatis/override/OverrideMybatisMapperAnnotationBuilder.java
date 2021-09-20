@@ -1,18 +1,19 @@
 package com.yj2025.mybatis.override;
 
 import com.baomidou.mybatisplus.core.MybatisMapperAnnotationBuilder;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.apache.ibatis.cursor.Cursor;
 import org.apache.ibatis.reflection.TypeParameterResolver;
 import org.apache.ibatis.session.Configuration;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
 
+/**
+ * 修改mapper指定返回类型的方法,执行{@link org.apache.ibatis.session.SqlSession} 原生mybatis方法的时候,返回值类型
+ */
 public class OverrideMybatisMapperAnnotationBuilder extends MybatisMapperAnnotationBuilder {
 
     private Class<?> type;

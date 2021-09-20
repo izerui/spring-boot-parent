@@ -1,6 +1,5 @@
 package com.yj2025.mybatis.override;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.override.MybatisMapperMethod;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.yj2025.mybatis.toolkit.ReflectionUtil;
@@ -12,10 +11,11 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
+/**
+ * 自定义mapper方法的执行器 see: {@link com.baomidou.mybatisplus.core.override.MybatisMapperProxy#invoke(Object, Method, Object[])}
+ */
 public class OverrideMybatisMapperMethod extends MybatisMapperMethod {
 
     private final static ThreadLocal<Long> COUNT_THREAD_LOCAL = new ThreadLocal<>();

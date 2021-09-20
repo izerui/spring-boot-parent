@@ -14,6 +14,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Map;
+
 @Slf4j
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
@@ -45,7 +47,16 @@ public class SimpleTest {
         LambdaQueryWrapper<Simple> wrapper = Wrappers.lambdaQuery(Simple.class);
         wrapper.eq(Simple::getType,"n.");
         wrapper.orderByAsc(Simple::getWord);
-        Page<Simple> simples = simpleMapper.selectPage(PageRequest.of(1, 15), wrapper);
+        Page<Simple> simples = simpleMapper.selectPage(PageRequest.of(0, 15), wrapper);
+        System.out.println(simples.getTotalElements());
+    }
+
+    @Test
+    public void testPageMap() {
+        LambdaQueryWrapper<Simple> wrapper = Wrappers.lambdaQuery(Simple.class);
+        wrapper.eq(Simple::getType,"n.");
+        wrapper.orderByAsc(Simple::getWord);
+        Page<Map<String, Object>> simples = simpleMapper.selectMapsPage(PageRequest.of(0, 15), wrapper);
         System.out.println(simples.getTotalElements());
     }
 }
