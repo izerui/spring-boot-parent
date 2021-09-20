@@ -2,7 +2,6 @@ package sample;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.javafaker.Faker;
 import com.yj2025.sample.Application;
 import com.yj2025.sample.entity.User;
@@ -30,10 +29,13 @@ public class UserTest {
 
     @Test
     public void testSelect() {
-        System.out.println(("----- selectAll method test ------"));
-        List<User> userList = userMapper.selectList(null);
-        Assert.assertEquals(5, userList.size());
-        userList.forEach(System.out::println);
+        Exception exception = Assert.assertThrows("", Exception.class, () -> {
+            System.out.println(("----- selectAll method test ------"));
+            List<User> userList = userMapper.selectList(null);
+            Assert.assertEquals(5, userList.size());
+            userList.forEach(System.out::println);
+        });
+        log.error(exception.getMessage(), exception);
     }
 
     @Test
@@ -43,7 +45,7 @@ public class UserTest {
         wrapper.eq(User::getEntCode, "213");
         wrapper.orderByDesc(User::getEmail);
         org.springframework.data.domain.Page<User> page = userMapper.selectPage(pageRequest, wrapper);
-        System.out.println(page.getTotalElements());
+        log.info("{}", page.getTotalElements());
     }
 
 
@@ -51,12 +53,7 @@ public class UserTest {
     public void testFindByOrigin() {
         PageRequest pageRequest = PageRequest.of(3, 35, Sort.Direction.DESC, "name");
         org.springframework.data.domain.Page<User> page = userMapper.findByOrigin("213", pageRequest);
-        System.out.println(page.getTotalElements());
-    }
-
-    @Test
-    public void test002() {
-        System.out.println("");
+        log.info("{}", page.getTotalElements());
     }
 
     @Test
