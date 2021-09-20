@@ -8,6 +8,9 @@ import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * mapperProxy 工厂类
+ */
 public class OverrideMybatisMapperProxyFactory<T> extends MybatisMapperProxyFactory<T> {
 
     private final Map<Method, OverrideMybatisMapperProxy.MapperMethodInvoker> cacheMethods = new ConcurrentHashMap<>();

@@ -1,4 +1,4 @@
-package com.yj2025.mybatis.inner;
+package com.yj2025.mybatis.interceptor;
 
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
@@ -28,6 +28,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * spring data 分页拦截器
+ */
 public class DataPaginationInnerInterceptor extends PaginationInnerInterceptor {
 
 

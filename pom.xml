@@ -265,7 +265,7 @@
     <repositories>
         <repository>
             <id>nexus</id>
-            <url>http://192.168.1.235:8081/nexus/content/groups/public/</url>
+            <url>http://nexus.yj2025.com/nexus/content/groups/public/</url>
         </repository>
     </repositories>
 
@@ -284,12 +284,12 @@
         <repository>
             <id>releases</id>
             <name>Nexus Release Repository</name>
-            <url>http://192.168.1.235:8081/nexus/content/repositories/releases/</url>
+            <url>http://nexus.yj2025.com/nexus/content/repositories/releases/</url>
         </repository>
         <snapshotRepository>
             <id>snapshots</id>
             <name>Nexus Snapshot Repository</name>
-            <url>http://192.168.1.235:8081/nexus/content/repositories/snapshots/</url>
+            <url>http://nexus.yj2025.com/nexus/content/repositories/snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
 

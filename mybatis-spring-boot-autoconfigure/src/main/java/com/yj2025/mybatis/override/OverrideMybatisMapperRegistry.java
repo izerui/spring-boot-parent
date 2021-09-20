@@ -5,7 +5,9 @@ import com.baomidou.mybatisplus.core.MybatisMapperRegistry;
 import com.baomidou.mybatisplus.core.override.MybatisMapperProxyFactory;
 import com.yj2025.mybatis.toolkit.ReflectionUtil;
 import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.session.SqlSession;
 
+import java.lang.reflect.Method;
 import java.util.Map;
 
 public class OverrideMybatisMapperRegistry extends MybatisMapperRegistry {
@@ -20,6 +22,10 @@ public class OverrideMybatisMapperRegistry extends MybatisMapperRegistry {
     }
 
 
+    /**
+     * 这里替换自定义的 {@link OverrideMybatisMapperProxyFactory#newInstance(SqlSession) }
+     * 目的: 使用 {@link OverrideMybatisMapperProxy} 并替换mapper方法执行器 {@link OverrideMybatisMapperMethod}
+     */
     @Override
     public <T> void addMapper(Class<T> type) {
         if (type.isInterface()) {
@@ -37,7 +43,7 @@ public class OverrideMybatisMapperRegistry extends MybatisMapperRegistry {
                 // otherwise the binding may automatically be attempted by the
                 // mapper parser. If the type is already known, it won't try.
                 // TODO 这里也换成 MybatisMapperAnnotationBuilder 而不是 MapperAnnotationBuilder
-                MybatisMapperAnnotationBuilder parser = new MybatisMapperAnnotationBuilder(config, type);
+                MybatisMapperAnnotationBuilder parser = new OverrideMybatisMapperAnnotationBuilder(config, type);
                 parser.parse();
                 loadCompleted = true;
             } finally {

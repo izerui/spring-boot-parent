@@ -5,6 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @ConfigurationProperties(prefix = "mybatis.tenant")
 public class TenantConfig implements Serializable {
@@ -38,7 +39,7 @@ public class TenantConfig implements Serializable {
         if (ignores == null) {
             ignores = new ArrayList<>();
         }
-        return ignores;
+        return ignores.stream().map(String::toLowerCase).collect(Collectors.toList());
     }
 
     public void setIgnores(List<String> ignores) {

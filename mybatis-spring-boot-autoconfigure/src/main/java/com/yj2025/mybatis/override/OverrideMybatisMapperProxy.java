@@ -13,6 +13,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 
+/**
+ * 重写 {@link MybatisMapperProxy} 目的是为了替换 {@link OverrideMybatisMapperMethod} mapper方法执行器
+ * @param <T>
+ */
 public class OverrideMybatisMapperProxy<T> extends MybatisMapperProxy<T> {
 
     private SqlSession sqlSession;

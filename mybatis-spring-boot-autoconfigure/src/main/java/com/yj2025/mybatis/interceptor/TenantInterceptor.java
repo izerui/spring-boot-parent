@@ -1,15 +1,18 @@
-package com.yj2025.mybatis.inner;
+package com.yj2025.mybatis.interceptor;
 
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.extension.parser.JsqlParserSupport;
 import com.baomidou.mybatisplus.extension.plugins.inner.InnerInterceptor;
+import com.yj2025.mybatis.TenantConfig;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.ExpressionVisitorAdapter;
 import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.schema.Column;
+import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.delete.Delete;
 import net.sf.jsqlparser.statement.insert.Insert;
+import net.sf.jsqlparser.statement.select.FromItemVisitorAdapter;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.update.Update;
@@ -26,13 +29,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class TenantInterceptor extends JsqlParserSupport implements InnerInterceptor {
 
-    private String tenantField;
+    private TenantConfig tenantConfig;
 
     private static final Map<String, Boolean> INTERCEPTOR_IGNORE_CACHE = new ConcurrentHashMap<>();
 
-    public TenantInterceptor(String tenantField) {
-        Assert.notNull(tenantField, "既然设置了租户校验,字段怎么能为空呢?");
-        this.tenantField = tenantField;
+    public TenantInterceptor(TenantConfig tenantConfig) {
+        Assert.notNull(tenantConfig.getField(), "既然设置了租户校验,字段怎么能为空呢?");
+        this.tenantConfig = tenantConfig;
     }
 
     @Override
@@ -55,24 +58,33 @@ public class TenantInterceptor extends JsqlParserSupport implements InnerInterce
 
     @Override
     protected void processDelete(Delete delete, int index, String sql, Object obj) {
-        this.checkTenantId(delete.getWhere());
+        this.checkTenantId(delete.getTable(), delete.getWhere());
     }
 
     @Override
     protected void processUpdate(Update update, int index, String sql, Object obj) {
-        this.checkTenantId(update.getWhere());
+        this.checkTenantId(update.getTable(), update.getWhere());
     }
 
     @Override
     protected void processSelect(Select select, int index, String sql, Object obj) {
-        this.checkTenantId(((PlainSelect) select.getSelectBody()).getWhere());
+        PlainSelect selectBody = (PlainSelect) select.getSelectBody();
+        selectBody.getFromItem().accept(new FromItemVisitorAdapter() {
+            @Override
+            public void visit(Table table) {
+                checkTenantId(table, selectBody.getWhere());
+            }
+        });
     }
 
     @Override
     protected void processInsert(Insert insert, int index, String sql, Object obj) {
+        if (tenantConfig.getIgnores().contains(insert.getTable().getName().toLowerCase())) {
+            return;
+        }
         Assert.notEmpty(insert.getColumns(), "insert 语句怎么能少要插入的字段呢?");
-        Optional<String> optional = insert.getColumns().stream().map(Column::getColumnName).filter(s -> tenantField.equals(s)).findAny();
-        Assert.isTrue(optional.isPresent(), "非法SQL，必须要有租户字段: [" + tenantField + "]");
+        Optional<String> optional = insert.getColumns().stream().map(Column::getColumnName).filter(s -> tenantConfig.getField().equals(s)).findAny();
+        Assert.isTrue(optional.isPresent(), "非法SQL，必须要有租户字段: [" + tenantConfig.getField() + "]");
     }
 
     private boolean willIgnore(String id) {
@@ -86,9 +98,13 @@ public class TenantInterceptor extends JsqlParserSupport implements InnerInterce
     /**
      * 校验必须有租户ID
      *
+     * @param table
      * @param where
      */
-    private void checkTenantId(Expression where) {
+    private void checkTenantId(Table table, Expression where) {
+        if (tenantConfig.getIgnores().contains(table.getName().toLowerCase())) {
+            return;
+        }
         AtomicBoolean tenantFieldExist = new AtomicBoolean(false);
         if (where != null) {
             where.accept(new ExpressionVisitorAdapter() {
@@ -100,12 +116,12 @@ public class TenantInterceptor extends JsqlParserSupport implements InnerInterce
                     }
                     if (leftExpression instanceof Column) {
                         String columnName = ((Column) leftExpression).getColumnName();
-                        tenantFieldExist.set(tenantField.equals(columnName));
+                        tenantFieldExist.set(tenantConfig.getField().equals(columnName));
                     }
                 }
             });
         }
-        Assert.isTrue(tenantFieldExist.get(), "非法SQL，必须要有租户字段: [" + tenantField + "]");
+        Assert.isTrue(tenantFieldExist.get(), "非法SQL，必须要有租户字段: [" + tenantConfig.getField() + "]");
     }
 
 }

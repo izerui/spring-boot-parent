@@ -23,7 +23,7 @@ import java.util.Locale;
 @Slf4j
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
-public class SampleTest {
+public class UserTest {
 
     @Autowired
     private UserMapper userMapper;
@@ -37,18 +37,20 @@ public class SampleTest {
     }
 
     @Test
-    public void testPage() {
-        Page<User> page = new Page<>(1, 50);
-        Page<User> pageResult = userMapper.selectPage(page, null);
-        System.out.println(pageResult.getTotal());
-    }
-
-    @Test
-    public void testPage2() {
-        PageRequest pageRequest = PageRequest.of(0, 35, Sort.Direction.DESC,"name");
+    public void testFindByPage() {
+        PageRequest pageRequest = PageRequest.of(3, 35, Sort.Direction.DESC, "name");
         LambdaQueryWrapper<User> wrapper = Wrappers.lambdaQuery(User.class);
+        wrapper.eq(User::getEntCode, "213");
         wrapper.orderByDesc(User::getEmail);
         org.springframework.data.domain.Page<User> page = userMapper.selectPage(pageRequest, wrapper);
+        System.out.println(page.getTotalElements());
+    }
+
+
+    @Test
+    public void testFindByOrigin() {
+        PageRequest pageRequest = PageRequest.of(3, 35, Sort.Direction.DESC, "name");
+        org.springframework.data.domain.Page<User> page = userMapper.findByOrigin("213", pageRequest);
         System.out.println(page.getTotalElements());
     }
 

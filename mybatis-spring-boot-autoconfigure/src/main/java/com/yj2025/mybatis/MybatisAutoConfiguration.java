@@ -1,14 +1,13 @@
 package com.yj2025.mybatis;
 
-import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.autoconfigure.ConfigurationCustomizer;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.BlockAttackInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
-import com.yj2025.mybatis.inner.DataPaginationInnerInterceptor;
-import com.yj2025.mybatis.inner.TenantInterceptor;
+import com.yj2025.mybatis.interceptor.DataPaginationInnerInterceptor;
+import com.yj2025.mybatis.interceptor.TenantInterceptor;
 import com.yj2025.mybatis.override.OverrideMybatisMapperRegistry;
 import com.yj2025.mybatis.toolkit.ReflectionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +27,7 @@ public class MybatisAutoConfiguration {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
         if (tenantConfig.isEnable()) {
             // 租户字段校验
-            interceptor.addInnerInterceptor(new TenantInterceptor(tenantConfig.getField()));
+            interceptor.addInnerInterceptor(new TenantInterceptor(tenantConfig));
         }
         // 攻击 SQL 阻断解析器,防止全表更新与删除
         interceptor.addInnerInterceptor(new BlockAttackInnerInterceptor());

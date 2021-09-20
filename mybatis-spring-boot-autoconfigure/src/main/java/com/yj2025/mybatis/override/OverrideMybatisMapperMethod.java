@@ -1,5 +1,6 @@
 package com.yj2025.mybatis.override;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.override.MybatisMapperMethod;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.yj2025.mybatis.toolkit.ReflectionUtil;
@@ -11,7 +12,9 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 public class OverrideMybatisMapperMethod extends MybatisMapperMethod {
 
@@ -26,6 +29,9 @@ public class OverrideMybatisMapperMethod extends MybatisMapperMethod {
         this.method = ReflectionUtil.getPropertyValue(MybatisMapperMethod.class, this, "method");
     }
 
+    /**
+     * 增加自定义方法执行,如果返回值是{@link PageImpl} 则执行自定义分页逻辑
+     */
     @Override
     public Object execute(SqlSession sqlSession, Object[] args) {
         if (method.getReturnType().isAssignableFrom(PageImpl.class)) {
@@ -47,6 +53,7 @@ public class OverrideMybatisMapperMethod extends MybatisMapperMethod {
         }
         Assert.notNull(request, "can't found PageRequest for args!");
         Object param = method.convertArgsToSqlCommandParam(args);
+        // 这里会通过代理执行mybatis拦截器
         List<E> list = sqlSession.selectList(command.getName(), param);
         return new PageImpl<>(list, request, getCountFromLocalThread());
     }
