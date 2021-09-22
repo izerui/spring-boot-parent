@@ -15,6 +15,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import java.net.URLDecoder;
 import java.util.*;
@@ -71,15 +72,18 @@ public class AuditWebMethodAspect {
             record.setUrl(request.getRequestURL().toString());
 
             Map<String, Object> map = new HashMap();
-            List<Object> params = Lists.newArrayList();
+            Object[] params = new Object[0];
             if (point.getArgs() != null && point.getArgs().length > 0) {
-                for (Object arg : point.getArgs()) {
-                    if (!(arg instanceof MultipartFile)) {
-                        params.add(arg);
+                params = Arrays.stream(point.getArgs()).map(o -> {
+                    if (o instanceof MultipartFile
+                            || o instanceof HttpServletRequest
+                            || o instanceof HttpServletResponse) {
+                        return o.toString();
                     }
-                }
+                    return o;
+                }).toArray();
             }
-            map.put("params", params.toArray());
+            map.put("params", params);
             Map<String, String> headerMap = new HashMap<>();
             Enumeration<String> headerNames = request.getHeaderNames();
             while (headerNames.hasMoreElements()) {
