@@ -89,9 +89,6 @@ public class AuditWebMethodAspect {
             }
             map.put("heads", headerMap);
             map.put("query", request.getQueryString());
-            if ("POST".equalsIgnoreCase(request.getMethod())) {
-                map.put("body", CharStreams.toString(request.getReader()));
-            }
             record.setInfo(map);
 
             record.setAccountCode(request.getHeader("accountCode"));
