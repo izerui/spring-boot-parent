@@ -1,7 +1,8 @@
 package com.yj2025.audit;
 
-import com.google.common.collect.Lists;
-import com.google.common.io.CharStreams;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +32,14 @@ public class AuditWebMethodAspect {
 
     private String application;
 
+    private final static ObjectMapper OBJECT_MAPPER;
+
+    static {
+        OBJECT_MAPPER = new ObjectMapper();
+        OBJECT_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        OBJECT_MAPPER.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+    }
+
     public AuditWebMethodAspect(AuditContext auditContext, String application) {
         this.auditContext = auditContext;
         this.application = application;
@@ -54,14 +63,14 @@ public class AuditWebMethodAspect {
             Api api = point.getTarget().getClass().getDeclaredAnnotation(Api.class);
 
             Record record = new Record();
-            record.setType("WEB请求审计日志");
+            record.setGroupType("WEB请求审计日志");
             if (api != null) {
                 if (api.description() != null && !"".equals(api.description())) {
-                    record.setType(api.description());
+                    record.setGroupType(api.description());
                 } else if (api.value() != null && !"".equals(api.value())) {
-                    record.setType(api.value());
+                    record.setGroupType(api.value());
                 } else if (api.tags() != null && api.tags().length > 0) {
-                    record.setType(api.tags().toString());
+                    record.setGroupType(api.tags().toString());
                 }
             }
             record.setApplication(application);
@@ -75,12 +84,20 @@ public class AuditWebMethodAspect {
             Object[] params = new Object[0];
             if (point.getArgs() != null && point.getArgs().length > 0) {
                 params = Arrays.stream(point.getArgs()).map(o -> {
-                    if (o instanceof MultipartFile
-                            || o instanceof HttpServletRequest
-                            || o instanceof HttpServletResponse) {
-                        return o.toString();
+                    try {
+                        if (o == null) {
+                            return "null";
+                        }
+                        if (o instanceof MultipartFile
+                                || o instanceof HttpServletRequest
+                                || o instanceof HttpServletResponse) {
+                            return o.toString();
+                        }
+                        return OBJECT_MAPPER.writeValueAsString(o);
+                    } catch (Exception e) {
+                        log.warn(o.getClass() + " to json error!");
                     }
-                    return o;
+                    return o.getClass() + " to json error! value is:" + o.toString();
                 }).toArray();
             }
             map.put("params", params);
@@ -131,7 +148,11 @@ public class AuditWebMethodAspect {
             } finally {
                 //操作结束时间
                 record.setEnd(new Date());
-                auditContext.record(record);
+                try {
+                    auditContext.record(record);
+                } catch (Exception ex) {
+                    log.warn(ex.getMessage());
+                }
             }
             return reaultValue;
 

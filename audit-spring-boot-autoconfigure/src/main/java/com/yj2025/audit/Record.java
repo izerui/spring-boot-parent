@@ -15,9 +15,9 @@ public class Record {
      */
     private String application;
     /**
-     * 类型
+     * 分组类型
      */
-    private String type;
+    private String groupType;
     /**
      * aop的类的信息
      */
@@ -99,12 +99,12 @@ public class Record {
         this.application = application;
     }
 
-    public String getType() {
-        return type;
+    public String getGroupType() {
+        return groupType;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setGroupType(String groupType) {
+        this.groupType = groupType;
     }
 
     public String getSignature() {
