@@ -67,6 +67,10 @@ public class Record {
      */
     private String exception;
     /**
+     * 异常类型
+     */
+    private String exceptionClassType;
+    /**
      * 开始时间
      */
     private Date begin;
@@ -250,5 +254,13 @@ public class Record {
 
     public void setInfo(Map<String, Object> info) {
         this.info = info;
+    }
+
+    public String getExceptionClassType() {
+        return exceptionClassType;
+    }
+
+    public void setExceptionClassType(String exceptionClassType) {
+        this.exceptionClassType = exceptionClassType;
     }
 }

@@ -10,7 +10,6 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -141,6 +140,7 @@ public class AuditWebMethodAspect {
                 try {
                     if (e != null) {
                         record.setException(e.getMessage());
+                        record.setExceptionClassType(e.getClass().getName());
                     }
                 } catch (Exception ex) {
                     ;
