@@ -10,6 +10,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -70,7 +71,7 @@ public class AuditWebMethodAspect {
                 } else if (api.value() != null && !"".equals(api.value())) {
                     record.setGroupType(api.value());
                 } else if (api.tags() != null && api.tags().length > 0) {
-                    record.setGroupType(api.tags().toString());
+                    record.setGroupType(String.join(",", api.tags()));
                 }
             }
             record.setApplication(application);
