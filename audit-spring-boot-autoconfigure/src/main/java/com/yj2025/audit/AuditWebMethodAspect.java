@@ -45,6 +45,9 @@ public class AuditWebMethodAspect {
         try {
             Method method = ((MethodSignature) point.getSignature()).getMethod();
             ApiOperation recordAudit = method.getAnnotation(ApiOperation.class);
+            if (recordAudit == null || method.getAnnotation(IgnoreAudited.class) != null) {
+                return point.proceed();
+            }
             Api api = point.getTarget().getClass().getDeclaredAnnotation(Api.class);
 
             Record record = new Record();
