@@ -1,5 +1,7 @@
 package com.yj2025.audit;
 
+import com.google.common.collect.Lists;
+import com.google.common.io.CharStreams;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -69,7 +71,7 @@ public class AuditWebMethodAspect {
             record.setUrl(request.getRequestURL().toString());
 
             Map<String, Object> map = new HashMap();
-            List<Object> params = new ArrayList<>();
+            List<Object> params = Lists.newArrayList();
             if (point.getArgs() != null && point.getArgs().length > 0) {
                 for (Object arg : point.getArgs()) {
                     if (!(arg instanceof MultipartFile)) {
@@ -78,6 +80,18 @@ public class AuditWebMethodAspect {
                 }
             }
             map.put("params", params.toArray());
+            Map<String, String> headerMap = new HashMap<>();
+            Enumeration<String> headerNames = request.getHeaderNames();
+            while (headerNames.hasMoreElements()) {
+                String headerName = headerNames.nextElement();
+                String headerValue = request.getHeader(headerName);
+                headerMap.put(headerName, headerValue);
+            }
+            map.put("heads", headerMap);
+            map.put("query", request.getQueryString());
+            if ("POST".equalsIgnoreCase(request.getMethod())) {
+                map.put("body", CharStreams.toString(request.getReader()));
+            }
             record.setInfo(map);
 
             record.setAccountCode(request.getHeader("accountCode"));
