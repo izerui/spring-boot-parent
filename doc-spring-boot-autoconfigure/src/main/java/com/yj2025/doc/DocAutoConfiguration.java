@@ -38,10 +38,10 @@ public class DocAutoConfiguration implements WebMvcConfigurer {
     private String applicationName;
 
     @Value("${doc.head.wrap.enabled:true}")
-    private Boolean headWrapEnabled = true;
+    private Boolean headWrapEnabled;
 
     private List<RequestParameter> parameter() {
-        if (!headWrapEnabled) {
+        if (headWrapEnabled != null && !headWrapEnabled) {
             return null;
         }
         List<RequestParameter> params = new ArrayList<>();
