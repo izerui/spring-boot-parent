@@ -37,7 +37,13 @@ public class DocAutoConfiguration implements WebMvcConfigurer {
     @Value("${spring.application.name:null}")
     private String applicationName;
 
+    @Value("${doc.head.wrap.enabled:true}")
+    private Boolean headWrapEnabled = true;
+
     private List<RequestParameter> parameter() {
+        if (!headWrapEnabled) {
+            return null;
+        }
         List<RequestParameter> params = new ArrayList<>();
         params.add(new RequestParameterBuilder().name("entCode")
                 .description("企业编码")
