@@ -12,11 +12,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
+@Transactional
+@Rollback(value = false)
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
 public class TestJunit {
@@ -41,6 +47,26 @@ public class TestJunit {
     public void testConditions() {
         Conditions conditions = Conditions.where("entCode").is("11111").and("purchaseType").is(1).remove("entCode");
         System.out.println(conditions);
+    }
+
+    @Test
+    public void saveEntity() {
+        User user = new User();
+        user.setId(61L);
+        user.setCreateTime(new Date());
+        user.setCode("22");
+        user.setName("22");
+        user.setEmail("22");
+        user.setAge(22);
+        userRepository.save(user);
+    }
+
+    @Test
+    public void saveEntity2() {
+        User one = userRepository.getOne(61L);
+        one.setId(60L);
+        one.setName("吃饭");
+        userRepository.save(one);
     }
 
     @Test
