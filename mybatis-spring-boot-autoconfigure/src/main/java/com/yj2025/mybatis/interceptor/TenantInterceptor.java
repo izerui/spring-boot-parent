@@ -83,7 +83,7 @@ public class TenantInterceptor extends JsqlParserSupport implements InnerInterce
             return;
         }
         Assert.notEmpty(insert.getColumns(), "insert 语句怎么能少要插入的字段呢?");
-        Optional<String> optional = insert.getColumns().stream().map(Column::getColumnName).filter(s -> tenantConfig.getField().equals(s)).findAny();
+        Optional<String> optional = insert.getColumns().stream().map(Column::getColumnName).map(s -> s.replace("`", "")).filter(s -> tenantConfig.getField().equals(s)).findAny();
         Assert.isTrue(optional.isPresent(), "非法SQL，必须要有租户字段: [" + tenantConfig.getField() + "]");
     }
 
@@ -116,6 +116,7 @@ public class TenantInterceptor extends JsqlParserSupport implements InnerInterce
                     }
                     if (leftExpression instanceof Column) {
                         String columnName = ((Column) leftExpression).getColumnName();
+                        columnName = columnName.replace("`", "");
                         tenantFieldExist.set(tenantConfig.getField().equals(columnName));
                     }
                 }
