@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import java.net.URLDecoder;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by serv on 2016/12/8.
@@ -81,7 +82,7 @@ public class AuditWebMethodAspect {
             record.setUrl(request.getRequestURL().toString());
 
             Map<String, Object> map = new HashMap();
-            Object[] params = new Object[0];
+            List<String> params = null;
             if (point.getArgs() != null && point.getArgs().length > 0) {
                 params = Arrays.stream(point.getArgs()).map(o -> {
                     try {
@@ -98,7 +99,7 @@ public class AuditWebMethodAspect {
                         log.warn(o.getClass() + " to json error!");
                     }
                     return o.getClass() + " to json error! value is:" + o.toString();
-                }).toArray();
+                }).collect(Collectors.toList());
             }
             map.put("params", params);
             Map<String, String> headerMap = new HashMap<>();
