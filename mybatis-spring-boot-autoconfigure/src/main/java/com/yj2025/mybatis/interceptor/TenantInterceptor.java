@@ -117,6 +117,7 @@ public class TenantInterceptor extends JsqlParserSupport implements InnerInterce
                     if (leftExpression instanceof Column) {
                         String columnName = ((Column) leftExpression).getColumnName();
                         columnName = columnName.replace("`", "");
+                        columnName = columnName.toLowerCase();
                         tenantFieldExist.set(tenantConfig.getField().equals(columnName));
                     }
                 }
