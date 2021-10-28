@@ -28,7 +28,7 @@ public class Application implements CommandLineRunner {
         new CountDownLatch(1).await();
     }
 
-    private void difThreads() throws InterruptedException {
+    private void difThreads() {
         AtomicInteger count = new AtomicInteger();
         for (int i = 0; i < 100; i++) {
             new Thread(() -> {
