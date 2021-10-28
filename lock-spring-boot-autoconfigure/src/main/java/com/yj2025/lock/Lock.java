@@ -2,6 +2,7 @@ package com.yj2025.lock;
 
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.locks.InterProcessMutex;
+import org.apache.curator.framework.recipes.locks.InterProcessSemaphoreMutex;
 
 import java.util.concurrent.TimeUnit;
 
@@ -19,9 +20,9 @@ public class Lock {
 
     public <T> T execute(String lockPath, Integer leaseSeconds, LockPerform lockPerform) {
 
-        InterProcessMutex semaphoreMutex = null;
+        InterProcessSemaphoreMutex semaphoreMutex = null;
         try {
-            semaphoreMutex = new InterProcessMutex(client, "/lock/" + lockPath);
+            semaphoreMutex = new InterProcessSemaphoreMutex(client, "/lock/" + lockPath);
             boolean acquire = semaphoreMutex.acquire(leaseSeconds, TimeUnit.SECONDS);
             if (!acquire) {
                 throw new LockException("操作同步锁定,请重试");
@@ -44,7 +45,7 @@ public class Lock {
     }
 
     public <T> T execute(String lockPath, LockPerform lockPerform) {
-        return execute(lockPath, 3, lockPerform);
+        return execute(lockPath, 30, lockPerform);
     }
 
 }
