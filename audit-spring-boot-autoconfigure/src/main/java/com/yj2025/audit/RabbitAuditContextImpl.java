@@ -2,6 +2,8 @@ package com.yj2025.audit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessagePropertiesBuilder;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.scheduling.annotation.Async;
 
@@ -24,7 +26,13 @@ class RabbitAuditContextImpl implements AuditContext {
     @Async
     public void record(Record record) {
         try {
-            rabbitTemplate.convertAndSend(rabbitmqProperties.getExchange(), rabbitmqProperties.getRoutingKey(), record);
+            Message message = rabbitTemplate.getMessageConverter()
+                    .toMessage(record,
+                            MessagePropertiesBuilder.newInstance()
+                                    .setHeader("x-message-ttl", 60000)
+                                    .build()
+                    );
+            rabbitTemplate.send(rabbitmqProperties.getExchange(), rabbitmqProperties.getRoutingKey(), message);
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
         }
