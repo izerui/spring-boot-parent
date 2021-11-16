@@ -90,17 +90,6 @@
                 <scope>import</scope>
             </dependency>
 
-            <dependency>
-                <groupId>io.micrometer</groupId>
-                <artifactId>micrometer-core</artifactId>
-                <version>1.8.0</version>
-            </dependency>
-            <dependency>
-                <groupId>io.micrometer</groupId>
-                <artifactId>micrometer-registry-prometheus</artifactId>
-                <version>1.8.0</version>
-            </dependency>
-
             <!-- starter 基础依赖 -->
             <!-- job -->
             <dependency>
