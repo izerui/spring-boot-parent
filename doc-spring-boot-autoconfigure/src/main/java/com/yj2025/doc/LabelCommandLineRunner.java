@@ -36,7 +36,7 @@ public class LabelCommandLineRunner implements CommandLineRunner {
         variables.put("contextPath", Optional.ofNullable(env.getProperty("server.servlet.context-path")).orElse(""));
         variables.put("host", InetAddress.getLocalHost().getHostAddress());
         variables.put("application", env.getProperty("spring.application.name"));
-        variables.put("profile", env.getProperty("spring.profiles.active"));
+        variables.put("profile", Optional.ofNullable(env.getProperty("spring.profiles.active")).orElse("default"));
         log.info(new StringSubstitutor(variables).replace(LABEL_LINE_RUNNER));
     }
 }
