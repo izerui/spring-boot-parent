@@ -8,6 +8,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplicat
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -34,6 +35,7 @@ import java.util.List;
 @EnableSwagger2
 @Configuration
 @ConditionalOnWebApplication
+@Import(KoTimeConfiguration.class)
 public class DocAutoConfiguration implements WebMvcConfigurer {
 
     @Value("${spring.application.name:null}")
