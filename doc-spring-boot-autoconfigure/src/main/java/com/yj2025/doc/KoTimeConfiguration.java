@@ -57,7 +57,11 @@ public class KoTimeConfiguration {
         public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry beanDefinitionRegistry) throws BeansException {
             beanDefinitionRegistry.removeBeanDefinition("defaultConfig");
             BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.rootBeanDefinition(OverrideDefaultConfig.class);
-            beanDefinitionBuilder.addConstructorArgValue(applicationContext.getEnvironment().getProperty("override.ko-time.enable"));
+            if (applicationContext.getEnvironment().getProperty("spring.profiles.active") != null && applicationContext.getEnvironment().getProperty("spring.profiles.active").contains("yunji")) {
+                beanDefinitionBuilder.addConstructorArgValue(false);
+            } else {
+                beanDefinitionBuilder.addConstructorArgValue(applicationContext.getEnvironment().getProperty("override.ko-time.enable"));
+            }
             beanDefinitionBuilder.addConstructorArgValue(applicationContext.getEnvironment().getProperty("override.ko-time.pointcut"));
             beanDefinitionBuilder.setInitMethodName("init");
             beanDefinitionRegistry.registerBeanDefinition("defaultConfig", beanDefinitionBuilder.getBeanDefinition());
