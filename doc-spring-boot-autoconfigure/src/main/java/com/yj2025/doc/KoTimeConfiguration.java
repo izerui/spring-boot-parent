@@ -13,10 +13,15 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
+import java.util.logging.Level;
+
 @Configuration
 @AutoConfigureBefore(LoadConfig.class)
 public class KoTimeConfiguration {
 
+    static {
+        LoadConfig.log.setLevel(Level.OFF);
+    }
 
     public static class OverrideDefaultConfig extends DefaultConfig {
 
