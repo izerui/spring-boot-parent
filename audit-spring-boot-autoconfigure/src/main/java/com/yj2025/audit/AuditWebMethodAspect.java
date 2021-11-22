@@ -10,6 +10,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -29,7 +30,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class AuditWebMethodAspect {
 
-    private AuditContext auditContext;
+    private ObjectProvider<AuditContext> auditContextProvider;
 
     private String application;
 
@@ -41,8 +42,8 @@ public class AuditWebMethodAspect {
         OBJECT_MAPPER.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
     }
 
-    public AuditWebMethodAspect(AuditContext auditContext, String application) {
-        this.auditContext = auditContext;
+    public AuditWebMethodAspect(ObjectProvider<AuditContext> auditContextProvider, String application) {
+        this.auditContextProvider = auditContextProvider;
         this.application = application;
     }
 
@@ -52,6 +53,10 @@ public class AuditWebMethodAspect {
     public Object doAround(ProceedingJoinPoint point) throws Throwable {
         HttpServletRequest request = getRequest();
         if (request == null) {
+            return point.proceed();
+        }
+
+        if (auditContextProvider.stream().count() == 0l) {
             return point.proceed();
         }
 
@@ -151,7 +156,9 @@ public class AuditWebMethodAspect {
                 //操作结束时间
                 record.setEnd(new Date());
                 try {
-                    auditContext.record(record);
+                    auditContextProvider.stream().forEach(auditContext -> {
+                        auditContext.record(record);
+                    });
                 } catch (Exception ex) {
                     log.warn(ex.getMessage());
                 }

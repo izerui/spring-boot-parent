@@ -15,8 +15,8 @@ import org.springframework.context.annotation.Primary;
 @Configuration
 public class RabbitAutoConfiguration {
 
-    @Primary
     @Bean
+    @ConditionalOnMissingBean
     public ObjectMapper objectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -26,8 +26,8 @@ public class RabbitAutoConfiguration {
 
     @Primary
     @Bean
-    public RabbitTemplate rabbitTemplate(ObjectMapper objectMapper, ConnectionFactory connectionFactory) {
-        Jackson2JsonMessageConverter messageConverter = new Jackson2JsonMessageConverter(objectMapper);
+    public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
+        Jackson2JsonMessageConverter messageConverter = new Jackson2JsonMessageConverter(objectMapper());
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
         rabbitTemplate.setMessageConverter(messageConverter);
         rabbitTemplate.setChannelTransacted(true);

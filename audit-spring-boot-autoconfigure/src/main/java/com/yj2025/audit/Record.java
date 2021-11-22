@@ -1,6 +1,7 @@
 package com.yj2025.audit;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.ToString;
 
 import java.util.Date;
 import java.util.Map;
@@ -8,6 +9,7 @@ import java.util.Map;
 /**
  * Created by serv on 2016/12/8.
  */
+@ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Record {
     /**

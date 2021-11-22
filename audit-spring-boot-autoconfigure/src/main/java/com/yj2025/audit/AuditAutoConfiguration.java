@@ -4,6 +4,8 @@ import io.swagger.annotations.ApiOperation;
 import org.apache.skywalking.apm.meter.micrometer.SkywalkingConfig;
 import org.apache.skywalking.apm.meter.micrometer.SkywalkingMeterRegistry;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -41,9 +43,9 @@ public class AuditAutoConfiguration {
     @Bean
     @ConditionalOnWebApplication
     @ConditionalOnClass(ApiOperation.class)
-    public AuditWebMethodAspect auditWebMethodAspect(AuditContext auditContext,
+    public AuditWebMethodAspect auditWebMethodAspect(@Autowired ObjectProvider<AuditContext> auditContextProvider,
                                                      @Value("${spring.application.name:null}") String application) {
-        return new AuditWebMethodAspect(auditContext, application);
+        return new AuditWebMethodAspect(auditContextProvider, application);
     }
 
     @Bean
