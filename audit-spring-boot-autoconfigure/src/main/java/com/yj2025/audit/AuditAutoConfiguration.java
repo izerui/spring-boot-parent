@@ -1,6 +1,8 @@
 package com.yj2025.audit;
 
 import io.swagger.annotations.ApiOperation;
+import org.apache.skywalking.apm.meter.micrometer.SkywalkingConfig;
+import org.apache.skywalking.apm.meter.micrometer.SkywalkingMeterRegistry;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -13,6 +15,8 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.scheduling.annotation.EnableAsync;
+
+import java.util.Arrays;
 
 /**
  * Created by serv on 2016/12/8.
@@ -40,6 +44,13 @@ public class AuditAutoConfiguration {
     public AuditWebMethodAspect auditWebMethodAspect(AuditContext auditContext,
                                                      @Value("${spring.application.name:null}") String application) {
         return new AuditWebMethodAspect(auditContext, application);
+    }
+
+    @Bean
+    public SkywalkingMeterRegistry skywalkingMeterRegistry() {
+        // Add rate configs If you need, otherwise using none args construct
+        SkywalkingConfig config = new SkywalkingConfig(Arrays.asList(""));
+        return new SkywalkingMeterRegistry(config);
     }
 
 }
