@@ -26,8 +26,8 @@ public class RabbitAutoConfiguration {
 
     @Primary
     @Bean
-    public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
-        Jackson2JsonMessageConverter messageConverter = new Jackson2JsonMessageConverter(objectMapper());
+    public RabbitTemplate rabbitTemplate(ObjectMapper objectMapper, ConnectionFactory connectionFactory) {
+        Jackson2JsonMessageConverter messageConverter = new Jackson2JsonMessageConverter(objectMapper);
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
         rabbitTemplate.setMessageConverter(messageConverter);
         rabbitTemplate.setChannelTransacted(true);
