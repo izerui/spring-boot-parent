@@ -15,6 +15,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.logging.Level;
 
+import java.util.Arrays;
+
 @Configuration
 @AutoConfigureBefore(LoadConfig.class)
 public class KoTimeConfiguration {
@@ -22,6 +24,8 @@ public class KoTimeConfiguration {
     static {
         LoadConfig.log.setLevel(Level.OFF);
     }
+    private final static String PRD_PROFILE_CONTAINS_STR = "yunji";
+
 
     public static class OverrideDefaultConfig extends DefaultConfig {
 
@@ -62,8 +66,10 @@ public class KoTimeConfiguration {
         public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry beanDefinitionRegistry) throws BeansException {
             beanDefinitionRegistry.removeBeanDefinition("defaultConfig");
             BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.rootBeanDefinition(OverrideDefaultConfig.class);
-            if (applicationContext.getEnvironment().getProperty("spring.profiles.active") != null && applicationContext.getEnvironment().getProperty("spring.profiles.active").contains("yunji")) {
-                beanDefinitionBuilder.addConstructorArgValue(false);
+            String[] activeProfiles = applicationContext.getEnvironment().getActiveProfiles();
+            // 确保线上初始不开启kotime,其他环境使用override配置
+            if (activeProfiles != null && activeProfiles.length > 0 && Arrays.toString(activeProfiles).contains(PRD_PROFILE_CONTAINS_STR)) {
+                beanDefinitionBuilder.addConstructorArgValue(Boolean.FALSE);
             } else {
                 beanDefinitionBuilder.addConstructorArgValue(applicationContext.getEnvironment().getProperty("override.ko-time.enable"));
             }
