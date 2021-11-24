@@ -41,6 +41,9 @@
         <module>lock-spring-boot-autoconfigure</module>
         <module>lock-spring-boot-starter</module>
         <module>lock-spring-boot-sample</module>
+        <module>override-spring-boot-autoconfigure</module>
+        <module>override-spring-boot-starter</module>
+        <module>override-spring-boot-sample</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -70,6 +73,7 @@
         <doc.version>1.1.0-SNAPSHOT</doc.version>
         <mvc-rest.version>1.1.0-SNAPSHOT</mvc-rest.version>
         <lock.version>1.1.0-SNAPSHOT</lock.version>
+        <override.version>1.1.0-SNAPSHOT</override.version>
     </properties>
 
 
@@ -257,6 +261,18 @@
                 <groupId>com.yj2025</groupId>
                 <artifactId>lock-spring-boot-starter</artifactId>
                 <version>${lock.version}</version>
+            </dependency>
+
+            <!-- override -->
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>override-spring-boot-autoconfigure</artifactId>
+                <version>${override.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>override-spring-boot-starter</artifactId>
+                <version>${override.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

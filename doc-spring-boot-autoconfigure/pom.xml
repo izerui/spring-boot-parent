@@ -50,6 +50,10 @@
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.yj2025</groupId>
+            <artifactId>override-spring-boot-starter</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

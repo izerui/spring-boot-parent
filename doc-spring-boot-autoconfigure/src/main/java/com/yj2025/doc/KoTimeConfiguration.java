@@ -2,29 +2,41 @@ package com.yj2025.doc;
 
 import cn.langpy.kotime.config.DefaultConfig;
 import cn.langpy.kotime.config.LoadConfig;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import com.yj2025.override.OverrideBeanDefinitionContext;
+import com.yj2025.override.OverrideBeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
-import org.springframework.boot.autoconfigure.AutoConfigureBefore;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
-
-import java.util.logging.Level;
 
 import java.util.Arrays;
+import java.util.logging.Level;
 
 @Configuration
-@AutoConfigureBefore(LoadConfig.class)
 public class KoTimeConfiguration {
 
     static {
         LoadConfig.log.setLevel(Level.OFF);
     }
+
     private final static String PRD_PROFILE_CONTAINS_STR = "yunji";
+
+
+    @Bean
+    public OverrideBeanDefinitionRegistry overrideBeanRegistry() {
+        return applicationContext -> {
+            BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.rootBeanDefinition(OverrideDefaultConfig.class);
+            String[] activeProfiles = applicationContext.getEnvironment().getActiveProfiles();
+            // 确保线上初始不开启kotime,其他环境使用override配置
+            if (activeProfiles != null && activeProfiles.length > 0 && Arrays.toString(activeProfiles).contains(PRD_PROFILE_CONTAINS_STR)) {
+                beanDefinitionBuilder.addConstructorArgValue(Boolean.FALSE);
+            } else {
+                beanDefinitionBuilder.addConstructorArgValue(applicationContext.getEnvironment().getProperty("override.ko-time.enable"));
+            }
+            beanDefinitionBuilder.addConstructorArgValue(applicationContext.getEnvironment().getProperty("override.ko-time.pointcut"));
+            beanDefinitionBuilder.setInitMethodName("init");
+            return new OverrideBeanDefinitionContext("defaultConfig", beanDefinitionBuilder.getBeanDefinition());
+        };
+    }
 
 
     public static class OverrideDefaultConfig extends DefaultConfig {
@@ -54,37 +66,4 @@ public class KoTimeConfiguration {
         }
     }
 
-    /**
-     * 覆盖 {@link DefaultConfig}
-     */
-    @Component
-    public static class KoTimeConfigBeanDefinitionRegistryPostProcessor implements BeanDefinitionRegistryPostProcessor, ApplicationContextAware {
-
-        private ApplicationContext applicationContext;
-
-        @Override
-        public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry beanDefinitionRegistry) throws BeansException {
-            beanDefinitionRegistry.removeBeanDefinition("defaultConfig");
-            BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.rootBeanDefinition(OverrideDefaultConfig.class);
-            String[] activeProfiles = applicationContext.getEnvironment().getActiveProfiles();
-            // 确保线上初始不开启kotime,其他环境使用override配置
-            if (activeProfiles != null && activeProfiles.length > 0 && Arrays.toString(activeProfiles).contains(PRD_PROFILE_CONTAINS_STR)) {
-                beanDefinitionBuilder.addConstructorArgValue(Boolean.FALSE);
-            } else {
-                beanDefinitionBuilder.addConstructorArgValue(applicationContext.getEnvironment().getProperty("override.ko-time.enable"));
-            }
-            beanDefinitionBuilder.addConstructorArgValue(applicationContext.getEnvironment().getProperty("override.ko-time.pointcut"));
-            beanDefinitionBuilder.setInitMethodName("init");
-            beanDefinitionRegistry.registerBeanDefinition("defaultConfig", beanDefinitionBuilder.getBeanDefinition());
-        }
-
-        @Override
-        public void postProcessBeanFactory(ConfigurableListableBeanFactory configurableListableBeanFactory) throws BeansException {
-        }
-
-        @Override
-        public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-            this.applicationContext = applicationContext;
-        }
-    }
 }
