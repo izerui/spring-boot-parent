@@ -1,6 +1,5 @@
 package com.yj2025.override;
 
-import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -8,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 public class OverrideConfiguration {
 
     @Bean
-    public BeanDefinitionRegistryPostProcessor registryPostProcessor() {
+    public OverrideBeanPostProcessor registryPostProcessor() {
         return new OverrideBeanPostProcessor();
     }
 
