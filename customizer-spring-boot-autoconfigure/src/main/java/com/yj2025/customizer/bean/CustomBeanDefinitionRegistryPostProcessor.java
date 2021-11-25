@@ -28,52 +28,18 @@ public class CustomBeanDefinitionRegistryPostProcessor implements BeanDefinition
 
     /**
      * 扩展方式一：覆盖bean定义
-     * 示例：
-     * <code>
-     * @Bean
-     * public static CustomBeanDefinitionConfigurer originalBeanConfigurer() {
-     * return applicationContext -> {
-     *     BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.rootBeanDefinition(CustomBean.class);
-     *         beanDefinitionBuilder.setInitMethodName("init");
-     *         return new BeanDefinitionContext("originalBean", beanDefinitionBuilder.getBeanDefinition());
-     *     };
-     * }
-     * </code>
-     *
-     * @param beanDefinitionRegistry
-     * @throws BeansException
      */
     @Override
     public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry beanDefinitionRegistry) throws BeansException {
         // 找到所有定义的bean覆盖定义
-        Map<String, CustomBeanDefinitionConfigurer> beansOfType = applicationContext.getBeansOfType(CustomBeanDefinitionConfigurer.class);
-        for (CustomBeanDefinitionConfigurer customBeanDefinitionRegistry : beansOfType.values()) {
-            BeanDefinitionContext beanDefinitionContext = customBeanDefinitionRegistry.getBeanBeanDefinitionContext(applicationContext);
-            // 替换bean定义
-            if (beanDefinitionRegistry.containsBeanDefinition(beanDefinitionContext.getBeanName())) {
-                beanDefinitionRegistry.removeBeanDefinition(beanDefinitionContext.getBeanName());
-                beanDefinitionRegistry.registerBeanDefinition(beanDefinitionContext.getBeanName(), beanDefinitionContext.getBeanDefinition());
-            } else {
-                log.warn("Bean: {} Not found, Skip Override!", beanDefinitionContext.getBeanName());
-            }
+        Map<String, BeanDefinitionRegistryCustomizer> customizers = applicationContext.getBeansOfType(BeanDefinitionRegistryCustomizer.class);
+        for (BeanDefinitionRegistryCustomizer customizer : customizers.values()) {
+            customizer.customize(beanDefinitionRegistry, applicationContext);
         }
     }
 
     /**
      * 扩展方式二： 支持被spring bean管理的 BeanDefinitionCustomizer 实例，个性化每个bean定义
-     * <code>
-     * @Bean
-     * public static BeanDefinitionCustomizer customizer() {
-     *     return bd -> {
-     *         if (OriginalBean.class.getName().equals(bd.getBeanClassName())) {
-     *             bd.setBeanClassName(CustomBean.class.getName());
-     *             bd.setInitMethodName("init");
-     *         }
-     *     };
-     * }
-     * </code>
-     * @param configurableListableBeanFactory
-     * @throws BeansException
      */
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory configurableListableBeanFactory) throws BeansException {

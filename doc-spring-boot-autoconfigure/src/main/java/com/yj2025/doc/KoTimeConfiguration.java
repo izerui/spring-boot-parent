@@ -2,9 +2,7 @@ package com.yj2025.doc;
 
 import cn.langpy.kotime.config.DefaultConfig;
 import cn.langpy.kotime.config.LoadConfig;
-import com.yj2025.customizer.bean.BeanDefinitionContext;
-import com.yj2025.customizer.bean.CustomBeanDefinitionConfigurer;
-import org.springframework.beans.factory.config.BeanDefinitionCustomizer;
+import com.yj2025.customizer.bean.BeanDefinitionRegistryCustomizer;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,8 +21,8 @@ public class KoTimeConfiguration {
 
 
     @Bean
-    public static CustomBeanDefinitionConfigurer defaultConfigBeanRegistry() {
-        return applicationContext -> {
+    public static BeanDefinitionRegistryCustomizer defaultConfigBeanRegistryCustomizer() {
+        return (registry, applicationContext) -> {
             BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.rootBeanDefinition(OverrideDefaultConfig.class);
             String[] activeProfiles = applicationContext.getEnvironment().getActiveProfiles();
             // 确保线上初始不开启kotime,其他环境使用override配置
@@ -35,7 +33,8 @@ public class KoTimeConfiguration {
             }
             beanDefinitionBuilder.addConstructorArgValue(applicationContext.getEnvironment().getProperty("override.ko-time.pointcut"));
             beanDefinitionBuilder.setInitMethodName("init");
-            return new BeanDefinitionContext("defaultConfig", beanDefinitionBuilder.getBeanDefinition());
+            registry.removeBeanDefinition("defaultConfig");
+            registry.registerBeanDefinition("defaultConfig", beanDefinitionBuilder.getBeanDefinition());
         };
     }
 

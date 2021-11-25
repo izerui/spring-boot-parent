@@ -1,7 +1,6 @@
 package com.yj2025.customizer;
 
-import com.yj2025.customizer.bean.BeanDefinitionContext;
-import com.yj2025.customizer.bean.CustomBeanDefinitionConfigurer;
+import com.yj2025.customizer.bean.BeanDefinitionRegistryCustomizer;
 import org.springframework.beans.factory.config.BeanDefinitionCustomizer;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -18,17 +17,18 @@ public class Application {
 
 
     // 方式一
-//    @Bean
-//    public CustomBeanDefinitionConfigurer originalBeanConfigurer() {
-//        return applicationContext -> {
-//            BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.rootBeanDefinition(CustomBean.class);
-//            beanDefinitionBuilder.setInitMethodName("init");
-//            return new BeanDefinitionContext("originalBean", beanDefinitionBuilder.getBeanDefinition());
-//        };
-//    }
+    @Bean
+    public BeanDefinitionRegistryCustomizer originalBeanCustomizer() {
+        return (registry, applicationContext) -> {
+            BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.rootBeanDefinition(CustomBean.class);
+            beanDefinitionBuilder.setInitMethodName("init");
+            registry.removeBeanDefinition("originalBean");
+            registry.registerBeanDefinition("originalBean", beanDefinitionBuilder.getBeanDefinition());
+        };
+    }
 
 
-    // 方式二
+    // 方式二 (注释掉方式一，该方式自动生效)
     @Bean
     public BeanDefinitionCustomizer customizer() {
         return bd -> {
