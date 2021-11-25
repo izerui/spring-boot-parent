@@ -26,7 +26,7 @@ public class CustomBeanDefinitionRegistryPostProcessor implements BeanDefinition
     private ApplicationContext applicationContext;
 
     /**
-     * 收到否
+     * 覆盖bean定义
      * @param beanDefinitionRegistry
      * @throws BeansException
      */
