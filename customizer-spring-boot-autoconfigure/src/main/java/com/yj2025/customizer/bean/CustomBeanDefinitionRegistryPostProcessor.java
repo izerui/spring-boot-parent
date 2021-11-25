@@ -11,10 +11,11 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProce
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+import java.util.List;
 import java.util.Map;
 
 /**
- * bean 初始化前置处理器
+ * bean 初始化前置定义处理器 {@link org.springframework.context.support.PostProcessorRegistrationDelegate#invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory, List)}
  * <ul>
  *     <li>优先进一步注册bean定义: {@link BeanDefinitionRegistryPostProcessor}</li>
  *     <li>{@link BeanFactoryPostProcessor}</li>
@@ -26,7 +27,19 @@ public class CustomBeanDefinitionRegistryPostProcessor implements BeanDefinition
     private ApplicationContext applicationContext;
 
     /**
-     * 覆盖bean定义
+     * 扩展方式一：覆盖bean定义
+     * 示例：
+     * <code>
+     * @Bean
+     * public CustomBeanDefinitionConfigurer originalBeanConfigurer() {
+     * return applicationContext -> {
+     *     BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.rootBeanDefinition(CustomBean.class);
+     *         beanDefinitionBuilder.setInitMethodName("init");
+     *         return new BeanDefinitionContext("originalBean", beanDefinitionBuilder.getBeanDefinition());
+     *     };
+     * }
+     * </code>
+     *
      * @param beanDefinitionRegistry
      * @throws BeansException
      */
@@ -47,7 +60,18 @@ public class CustomBeanDefinitionRegistryPostProcessor implements BeanDefinition
     }
 
     /**
-     * 支持被spring bean管理的 BeanDefinitionCustomizer 实例，个性化每个bean定义
+     * 扩展方式二： 支持被spring bean管理的 BeanDefinitionCustomizer 实例，个性化每个bean定义
+     * <code>
+     * @Bean
+     * public BeanDefinitionCustomizer customizer() {
+     *     return bd -> {
+     *         if (OriginalBean.class.getName().equals(bd.getBeanClassName())) {
+     *             bd.setBeanClassName(CustomBean.class.getName());
+     *             bd.setInitMethodName("init");
+     *         }
+     *     };
+     * }
+     * </code>
      * @param configurableListableBeanFactory
      * @throws BeansException
      */
