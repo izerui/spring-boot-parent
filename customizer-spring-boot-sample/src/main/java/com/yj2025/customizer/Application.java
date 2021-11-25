@@ -18,14 +18,14 @@ public class Application {
 
 
     // 方式一
-    @Bean
-    public CustomBeanDefinitionConfigurer originalBeanConfigurer() {
-        return applicationContext -> {
-            BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.rootBeanDefinition(CustomBean.class);
-            beanDefinitionBuilder.setInitMethodName("init");
-            return new BeanDefinitionContext("originalBean", beanDefinitionBuilder.getBeanDefinition());
-        };
-    }
+//    @Bean
+//    public CustomBeanDefinitionConfigurer originalBeanConfigurer() {
+//        return applicationContext -> {
+//            BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.rootBeanDefinition(CustomBean.class);
+//            beanDefinitionBuilder.setInitMethodName("init");
+//            return new BeanDefinitionContext("originalBean", beanDefinitionBuilder.getBeanDefinition());
+//        };
+//    }
 
 
     // 方式二
