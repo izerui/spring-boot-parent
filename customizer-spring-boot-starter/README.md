@@ -7,7 +7,7 @@
 
 ```java
 @Bean
-public CustomBeanDefinitionConfigurer originalBeanConfigurer() {
+public static CustomBeanDefinitionConfigurer originalBeanConfigurer() {
 return applicationContext -> {
     BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.rootBeanDefinition(CustomBean.class);
         beanDefinitionBuilder.setInitMethodName("init");
@@ -20,7 +20,7 @@ return applicationContext -> {
 
 ```java
 @Bean
-public BeanDefinitionCustomizer customizer() {
+public static BeanDefinitionCustomizer customizer() {
     return bd -> {
         if (OriginalBean.class.getName().equals(bd.getBeanClassName())) {
             bd.setBeanClassName(CustomBean.class.getName());
@@ -31,4 +31,4 @@ public BeanDefinitionCustomizer customizer() {
 ```
 
 > 以上两种方式都支持在bean初始化之前修改bean的定义，并按照修改后的bean定义执行初始化动作，
-> 需要注意的是，因为该扩展机制是在spring bean工厂初始化之前，故尽量避免定义使用依赖注入。
+> 需要注意的是，因为该扩展机制是在spring bean工厂初始化之前，故尽量避免定义使用依赖注入，或者声明bean方法为`static`

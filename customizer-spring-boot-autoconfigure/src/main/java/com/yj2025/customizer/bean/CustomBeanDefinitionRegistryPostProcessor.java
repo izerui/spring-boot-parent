@@ -31,7 +31,7 @@ public class CustomBeanDefinitionRegistryPostProcessor implements BeanDefinition
      * 示例：
      * <code>
      * @Bean
-     * public CustomBeanDefinitionConfigurer originalBeanConfigurer() {
+     * public static CustomBeanDefinitionConfigurer originalBeanConfigurer() {
      * return applicationContext -> {
      *     BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.rootBeanDefinition(CustomBean.class);
      *         beanDefinitionBuilder.setInitMethodName("init");
@@ -63,7 +63,7 @@ public class CustomBeanDefinitionRegistryPostProcessor implements BeanDefinition
      * 扩展方式二： 支持被spring bean管理的 BeanDefinitionCustomizer 实例，个性化每个bean定义
      * <code>
      * @Bean
-     * public BeanDefinitionCustomizer customizer() {
+     * public static BeanDefinitionCustomizer customizer() {
      *     return bd -> {
      *         if (OriginalBean.class.getName().equals(bd.getBeanClassName())) {
      *             bd.setBeanClassName(CustomBean.class.getName());

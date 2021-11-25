@@ -1,10 +1,8 @@
 package com.yj2025.doc.sample;
 
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.config.BeanDefinitionCustomizer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,10 +21,4 @@ public class Application {
         SpringApplication.run(Application.class, args);
     }
 
-    @Bean
-    public BeanDefinitionCustomizer printBeanRegistry() {
-        return bd -> {
-            System.out.println(bd.getBeanClassName());
-        };
-    }
 }

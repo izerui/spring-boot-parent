@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 public class CustomConfiguration {
 
     @Bean
-    public CustomBeanDefinitionRegistryPostProcessor registryPostProcessor() {
+    public static CustomBeanDefinitionRegistryPostProcessor registryPostProcessor() {
         return new CustomBeanDefinitionRegistryPostProcessor();
     }
 

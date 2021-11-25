@@ -4,6 +4,7 @@ import cn.langpy.kotime.config.DefaultConfig;
 import cn.langpy.kotime.config.LoadConfig;
 import com.yj2025.customizer.bean.BeanDefinitionContext;
 import com.yj2025.customizer.bean.CustomBeanDefinitionConfigurer;
+import org.springframework.beans.factory.config.BeanDefinitionCustomizer;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,7 +23,7 @@ public class KoTimeConfiguration {
 
 
     @Bean
-    public CustomBeanDefinitionConfigurer defaultConfigBeanRegistry() {
+    public static CustomBeanDefinitionConfigurer defaultConfigBeanRegistry() {
         return applicationContext -> {
             BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.rootBeanDefinition(OverrideDefaultConfig.class);
             String[] activeProfiles = applicationContext.getEnvironment().getActiveProfiles();
@@ -37,6 +38,16 @@ public class KoTimeConfiguration {
             return new BeanDefinitionContext("defaultConfig", beanDefinitionBuilder.getBeanDefinition());
         };
     }
+
+//    @Bean
+//    public BeanDefinitionCustomizer loadConfigCustomizer() {
+//        return bd -> {
+//            System.out.println(bd.getBeanClassName());
+//            if(bd.getBeanClassName() != null && bd.getBeanClassName().contains("configurabledvisor")) {
+//                System.out.println(bd.getFactoryMethodName());
+//            }
+//        };
+//    }
 
 
     public static class OverrideDefaultConfig extends DefaultConfig {
