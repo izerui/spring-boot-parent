@@ -41,9 +41,9 @@
         <module>lock-spring-boot-autoconfigure</module>
         <module>lock-spring-boot-starter</module>
         <module>lock-spring-boot-sample</module>
-        <module>override-spring-boot-autoconfigure</module>
-        <module>override-spring-boot-starter</module>
-        <module>override-spring-boot-sample</module>
+        <module>customizer-spring-boot-autoconfigure</module>
+        <module>customizer-spring-boot-starter</module>
+        <module>customizer-spring-boot-sample</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -266,12 +266,12 @@
             <!-- override -->
             <dependency>
                 <groupId>com.yj2025</groupId>
-                <artifactId>override-spring-boot-autoconfigure</artifactId>
+                <artifactId>customizer-spring-boot-autoconfigure</artifactId>
                 <version>${override.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.yj2025</groupId>
-                <artifactId>override-spring-boot-starter</artifactId>
+                <artifactId>customizer-spring-boot-starter</artifactId>
                 <version>${override.version}</version>
             </dependency>
         </dependencies>

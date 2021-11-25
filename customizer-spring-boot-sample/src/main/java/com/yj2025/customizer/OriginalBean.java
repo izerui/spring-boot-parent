@@ -1,4 +1,4 @@
-package com.yj2025.override;
+package com.yj2025.customizer;
 
 import org.springframework.stereotype.Component;
 
