@@ -39,6 +39,7 @@ public class Application {
         };
     }
 
+    // 查看结果
     @Bean
     public BeanFactoryPostProcessor beanFactoryPostProcessor() {
         return beanFactory -> {
