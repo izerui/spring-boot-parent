@@ -3,15 +3,17 @@
 ## 修改spring的已加载的bean定义 参考： PostProcessorRegistrationDelegate#invokeBeanFactoryPostProcessors
 两种方式： 
 
-方式一：（会根据返回的 `BeanDefinitionContext` 对象中的 `beanName` 值，进行bean定义替换，因为是按名字替换，故对其他bean定义的影响为0）
+方式一：（进行bean定义替换，因为是按名字替换，故对其他bean定义的影响为0）
 
 ```java
 @Bean
-public static CustomBeanDefinitionConfigurer originalBeanConfigurer() {
-return applicationContext -> {
-    BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.rootBeanDefinition(CustomBean.class);
+@Bean
+public BeanDefinitionRegistryCustomizer originalBeanCustomizer() {
+    return (registry, applicationContext) -> {
+        BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.rootBeanDefinition(CustomBean.class);
         beanDefinitionBuilder.setInitMethodName("init");
-        return new BeanDefinitionContext("originalBean", beanDefinitionBuilder.getBeanDefinition());
+        registry.removeBeanDefinition("originalBean");
+        registry.registerBeanDefinition("originalBean", beanDefinitionBuilder.getBeanDefinition());
     };
 }
 ```
