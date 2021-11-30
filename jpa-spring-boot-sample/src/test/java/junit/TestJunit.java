@@ -1,9 +1,11 @@
 package junit;
 
 import com.yj2025.jpa.Application;
+import com.yj2025.jpa.entity.Abcd;
 import com.yj2025.jpa.entity.User;
 import com.yj2025.jpa.entity.UserDistinct;
 import com.yj2025.jpa.impl.Conditions;
+import com.yj2025.jpa.repository.AbcdRepository;
 import com.yj2025.jpa.repository.UserRepository;
 import org.assertj.core.util.Lists;
 import org.junit.Test;
@@ -29,6 +31,8 @@ public class TestJunit {
 
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    AbcdRepository abcdRepository;
 
 
     @Test
@@ -43,10 +47,15 @@ public class TestJunit {
         }
     }
 
+    /**
+     * PHASE 1 : Parse the HQL into an AST. 解析 hql
+     * {@link org.hibernate.hql.internal.ast.QueryTranslatorImpl#doCompile(Map, boolean, String)}
+     */
     @Test
     public void testConditions() {
-        Conditions conditions = Conditions.where("entCode").is("11111").and("purchaseType").is(1).remove("entCode");
-        System.out.println(conditions);
+        Conditions where = Conditions.where("a =1 and b = 1 or (a=2 and b = 3)");
+        List<Abcd> all = abcdRepository.findAll(where);
+        System.out.println(where.toString());
     }
 
     @Test

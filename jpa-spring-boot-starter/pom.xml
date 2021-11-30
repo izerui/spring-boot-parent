@@ -15,11 +15,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.zaxxer</groupId>
-            <artifactId>HikariCP</artifactId>
-            <version>4.0.3</version>
-        </dependency>
-        <dependency>
             <groupId>com.yj2025</groupId>
             <artifactId>jpa-spring-boot-autoconfigure</artifactId>
         </dependency>
