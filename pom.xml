@@ -53,27 +53,27 @@
     </parent>
     <groupId>com.yj2025</groupId>
     <artifactId>yj2025-spring-boot-parent</artifactId>
-    <version>1.1.0-RELEASE</version>
+    <version>1.1.1-SNAPSHOT</version>
     <properties>
         <java.version>1.8</java.version>
         <spring-cloud.version>Hoxton.SR11</spring-cloud.version>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
-        <job.version>1.1.0-RELEASE</job.version>
-        <jpa.version>1.1.0-RELEASE</jpa.version>
-        <mybatis.version>1.1.0-RELEASE</mybatis.version>
-        <nacos-config.version>1.1.0-RELEASE</nacos-config.version>
-        <nacos-discovery.version>1.1.0-RELEASE</nacos-discovery.version>
-        <sentinel-gateway.version>1.1.0-RELEASE</sentinel-gateway.version>
-        <sentinel-micro.version>1.1.0-RELEASE</sentinel-micro.version>
-        <sentinel-zuul.version>1.1.0-RELEASE</sentinel-zuul.version>
-        <rabbit.version>1.1.0-RELEASE</rabbit.version>
-        <websocket.version>1.1.0-RELEASE</websocket.version>
-        <audit.version>1.1.0-RELEASE</audit.version>
-        <doc.version>1.1.0-RELEASE</doc.version>
-        <mvc-rest.version>1.1.0-RELEASE</mvc-rest.version>
-        <lock.version>1.1.0-RELEASE</lock.version>
-        <override.version>1.1.0-RELEASE</override.version>
+        <job.version>1.1.1-SNAPSHOT</job.version>
+        <jpa.version>1.1.1-SNAPSHOT</jpa.version>
+        <mybatis.version>1.1.1-SNAPSHOT</mybatis.version>
+        <nacos-config.version>1.1.1-SNAPSHOT</nacos-config.version>
+        <nacos-discovery.version>1.1.1-SNAPSHOT</nacos-discovery.version>
+        <sentinel-gateway.version>1.1.1-SNAPSHOT</sentinel-gateway.version>
+        <sentinel-micro.version>1.1.1-SNAPSHOT</sentinel-micro.version>
+        <sentinel-zuul.version>1.1.1-SNAPSHOT</sentinel-zuul.version>
+        <rabbit.version>1.1.1-SNAPSHOT</rabbit.version>
+        <websocket.version>1.1.1-SNAPSHOT</websocket.version>
+        <audit.version>1.1.1-SNAPSHOT</audit.version>
+        <doc.version>1.1.1-SNAPSHOT</doc.version>
+        <mvc-rest.version>1.1.1-SNAPSHOT</mvc-rest.version>
+        <lock.version>1.1.1-SNAPSHOT</lock.version>
+        <override.version>1.1.1-SNAPSHOT</override.version>
     </properties>
 
 
