@@ -44,6 +44,9 @@
         <module>customizer-spring-boot-autoconfigure</module>
         <module>customizer-spring-boot-starter</module>
         <module>customizer-spring-boot-sample</module>
+        <module>redis-spring-boot-autoconfigure</module>
+        <module>redis-spring-boot-sample</module>
+        <module>redis-spring-boot-starter</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -201,6 +204,18 @@
                 <groupId>com.yj2025</groupId>
                 <artifactId>rabbit-spring-boot-starter</artifactId>
                 <version>${rabbit.version}</version>
+            </dependency>
+
+            <!-- redis -->
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>redis-spring-boot-autoconfigure</artifactId>
+                <version>${redis.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>redis-spring-boot-starter</artifactId>
+                <version>${redis.version}</version>
             </dependency>
 
             <!-- websocket -->
