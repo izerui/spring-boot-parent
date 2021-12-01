@@ -44,6 +44,9 @@
         <module>customizer-spring-boot-autoconfigure</module>
         <module>customizer-spring-boot-starter</module>
         <module>customizer-spring-boot-sample</module>
+        <module>redis-spring-boot-autoconfigure</module>
+        <module>redis-spring-boot-sample</module>
+        <module>redis-spring-boot-starter</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -68,6 +71,7 @@
         <sentinel-micro.version>1.1.0-SNAPSHOT</sentinel-micro.version>
         <sentinel-zuul.version>1.1.0-SNAPSHOT</sentinel-zuul.version>
         <rabbit.version>1.1.0-SNAPSHOT</rabbit.version>
+        <redis.version>1.1.0-SNAPSHOT</redis.version>
         <websocket.version>1.1.0-SNAPSHOT</websocket.version>
         <audit.version>1.1.0-SNAPSHOT</audit.version>
         <doc.version>1.1.0-SNAPSHOT</doc.version>
@@ -201,6 +205,18 @@
                 <groupId>com.yj2025</groupId>
                 <artifactId>rabbit-spring-boot-starter</artifactId>
                 <version>${rabbit.version}</version>
+            </dependency>
+
+            <!-- redis -->
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>redis-spring-boot-autoconfigure</artifactId>
+                <version>${redis.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>redis-spring-boot-starter</artifactId>
+                <version>${redis.version}</version>
             </dependency>
 
             <!-- websocket -->
