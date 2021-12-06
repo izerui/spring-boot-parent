@@ -15,6 +15,7 @@ import java.util.Map;
 
 /**
  * 重写 {@link MybatisMapperProxy} 目的是为了替换 {@link OverrideMybatisMapperMethod} mapper方法执行器
+ *
  * @param <T>
  */
 public class OverrideMybatisMapperProxy<T> extends MybatisMapperProxy<T> {
@@ -48,13 +49,15 @@ public class OverrideMybatisMapperProxy<T> extends MybatisMapperProxy<T> {
             return CollectionUtils.computeIfAbsent(cacheMethods, method, m -> {
                 if (m.isDefault()) {
                     try {
-                        Method privateLookupInMethod = ReflectionUtil.getPropertyValue(MybatisMapperProxy.class, this, "privateLookupInMethod");
+                        Method privateLookupInMethod = ReflectionUtil.getPropertyValue(OverrideMybatisMapperProxy.class, this, "privateLookupInMethod");
                         if (privateLookupInMethod == null) {
                             Method handleJava8 = ReflectionUtils.findMethod(MybatisMapperProxy.class, "getMethodHandleJava8", Method.class);
-                            return new DefaultMethodInvoker((MethodHandle) handleJava8.invoke(method));
+                            handleJava8.setAccessible(true);
+                            return new DefaultMethodInvoker((MethodHandle) handleJava8.invoke(this, method));
                         } else {
                             Method handleJava9 = ReflectionUtils.findMethod(MybatisMapperProxy.class, "getMethodHandleJava9", Method.class);
-                            return new DefaultMethodInvoker((MethodHandle) handleJava9.invoke(method));
+                            handleJava9.setAccessible(true);
+                            return new DefaultMethodInvoker((MethodHandle) handleJava9.invoke(this, method));
                         }
                     } catch (IllegalAccessException | InvocationTargetException e) {
                         throw new RuntimeException(e);

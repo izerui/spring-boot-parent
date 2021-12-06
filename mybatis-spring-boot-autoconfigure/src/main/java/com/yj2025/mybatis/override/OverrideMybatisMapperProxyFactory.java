@@ -21,7 +21,7 @@ public class OverrideMybatisMapperProxyFactory<T> extends MybatisMapperProxyFact
 
     @Override
     public T newInstance(SqlSession sqlSession) {
-        final MybatisMapperProxy<T> mapperProxy = new OverrideMybatisMapperProxy<>(sqlSession, getMapperInterface(), cacheMethods);
+        final OverrideMybatisMapperProxy<T> mapperProxy = new OverrideMybatisMapperProxy<>(sqlSession, getMapperInterface(), cacheMethods);
         return newInstance(mapperProxy);
     }
 }

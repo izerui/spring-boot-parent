@@ -59,4 +59,10 @@ public class SimpleTest {
         Page<Map<String, Object>> simples = simpleMapper.selectMapsPage(PageRequest.of(0, 15), wrapper);
         System.out.println(simples.getTotalElements());
     }
+
+    @Test
+    public void testSelectOne() {
+        Simple simple = simpleMapper.selectOne(Wrappers.lambdaQuery(Simple.class).eq(Simple::getWord, "1"));
+        System.out.println(simple);
+    }
 }
