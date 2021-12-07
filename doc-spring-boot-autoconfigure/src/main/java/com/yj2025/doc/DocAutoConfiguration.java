@@ -35,7 +35,6 @@ import java.util.List;
 @EnableSwagger2
 @Configuration
 @ConditionalOnWebApplication
-@Import(KoTimeConfiguration.class)
 public class DocAutoConfiguration implements WebMvcConfigurer {
 
     @Value("${spring.application.name:null}")
