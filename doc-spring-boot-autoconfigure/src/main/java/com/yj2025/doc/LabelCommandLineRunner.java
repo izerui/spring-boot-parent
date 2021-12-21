@@ -19,7 +19,6 @@ public class LabelCommandLineRunner implements CommandLineRunner {
                     "Application '${application}' is running! Profile Active:[${profile}] Access URLs:\n\t" +
                     "Web: \t\thttp://${host}:${port}${contextPath}\n\t" +
                     "Docs: \t\thttp://${host}:${port}${contextPath}/api\n\t" +
-                    "Xrebel: \thttp://${host}:${port}${contextPath}/xrebel\n\t" +
                     "Actuator: \thttp://${host}:${port}${contextPath}/actuator\n" +
                     "----------------------------------------------------------";
 
