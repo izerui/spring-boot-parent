@@ -4,49 +4,20 @@
     <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
     <modules>
-        <module>mybatis-spring-boot-autoconfigure</module>
-        <module>mybatis-spring-boot-starter</module>
-        <module>mybatis-spring-boot-sample</module>
-        <module>job-spring-boot-starter</module>
-        <module>job-spring-boot-autoconfigure</module>
-        <module>job-spring-boot-sample</module>
-        <module>sentinel-zuul-spring-boot-starter</module>
-        <module>sentinel-zuul-spring-boot-autoconfigure</module>
-        <module>sentinel-spring-boot-autoconfigure</module>
-        <module>sentinel-spring-boot-starter</module>
-        <module>sentinel-gateway-spring-boot-autoconfigure</module>
-        <module>sentinel-gateway-spring-boot-starter</module>
-        <module>nacos-config-spring-boot-starter</module>
-        <module>nacos-config-spring-boot-autoconfigure</module>
-        <module>nacos-discovery-spring-boot-autoconfigure</module>
-        <module>nacos-discovery-spring-boot-starter</module>
-        <module>nacos-config-discovery-spring-boot-sample</module>
-        <module>jpa-spring-boot-autoconfigure</module>
-        <module>jpa-spring-boot-starter</module>
-        <module>jpa-spring-boot-sample</module>
-        <module>audit-spring-boot-autoconfigure</module>
-        <module>rabbit-spring-boot-autoconfigure</module>
-        <module>rabbit-spring-boot-starter</module>
-        <module>websocket-spring-boot-autoconfigure</module>
-        <module>websocket-spring-boot-starter</module>
-        <module>rabbit-spring-boot-sample</module>
-        <module>audit-spring-boot-starter</module>
-        <module>audit-spring-boot-sample</module>
-        <module>doc-spring-boot-autoconfigure</module>
-        <module>doc-spring-boot-sample</module>
-        <module>doc-spring-boot-starter</module>
-        <module>mvc-rest-spring-boot-autoconfigure</module>
-        <module>mvc-rest-spring-boot-starter</module>
-        <module>mvc-rest-spring-boot-sample</module>
-        <module>lock-spring-boot-autoconfigure</module>
-        <module>lock-spring-boot-starter</module>
-        <module>lock-spring-boot-sample</module>
-        <module>customizer-spring-boot-autoconfigure</module>
-        <module>customizer-spring-boot-starter</module>
-        <module>customizer-spring-boot-sample</module>
-        <module>redis-spring-boot-autoconfigure</module>
-        <module>redis-spring-boot-sample</module>
-        <module>redis-spring-boot-starter</module>
+        <module>audit-spring-boot</module>
+        <module>audit-spring-boot</module>
+        <module>customizer-spring-boot</module>
+        <module>doc-spring-boot</module>
+        <module>job-spring-boot</module>
+        <module>jpa-spring-boot</module>
+        <module>lock-spring-boot</module>
+        <module>mvc-rest-spring-boot</module>
+        <module>mybatis-spring-boot</module>
+        <module>nacos-spring-boot</module>
+        <module>rabbit-spring-boot</module>
+        <module>redis-spring-boot</module>
+        <module>sentinel-spring-boot</module>
+        <module>websocket-spring-boot</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -54,30 +25,17 @@
         <version>2.3.12.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
+
     <groupId>com.yj2025</groupId>
     <artifactId>yj2025-spring-boot-parent</artifactId>
+
     <version>1.2.0-SNAPSHOT</version>
+
     <properties>
         <java.version>1.8</java.version>
         <spring-cloud.version>Hoxton.SR12</spring-cloud.version>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
-        <job.version>1.2.0-SNAPSHOT</job.version>
-        <jpa.version>1.2.0-SNAPSHOT</jpa.version>
-        <mybatis.version>1.2.0-SNAPSHOT</mybatis.version>
-        <nacos-config.version>1.2.0-SNAPSHOT</nacos-config.version>
-        <nacos-discovery.version>1.2.0-SNAPSHOT</nacos-discovery.version>
-        <sentinel-gateway.version>1.2.0-SNAPSHOT</sentinel-gateway.version>
-        <sentinel-micro.version>1.2.0-SNAPSHOT</sentinel-micro.version>
-        <sentinel-zuul.version>1.2.0-SNAPSHOT</sentinel-zuul.version>
-        <rabbit.version>1.2.0-SNAPSHOT</rabbit.version>
-        <websocket.version>1.2.0-SNAPSHOT</websocket.version>
-        <audit.version>1.2.0-SNAPSHOT</audit.version>
-        <doc.version>1.2.0-SNAPSHOT</doc.version>
-        <mvc-rest.version>1.2.0-SNAPSHOT</mvc-rest.version>
-        <lock.version>1.2.0-SNAPSHOT</lock.version>
-        <override.version>1.2.0-SNAPSHOT</override.version>
-        <redis.version>1.2.0-SNAPSHOT</redis.version>
     </properties>
 
 
@@ -103,192 +61,192 @@
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>job-spring-boot-autoconfigure</artifactId>
-                <version>${job.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>job-spring-boot-starter</artifactId>
-                <version>${job.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <!-- jpa -->
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>jpa-spring-boot-autoconfigure</artifactId>
-                <version>${jpa.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>jpa-spring-boot-starter</artifactId>
-                <version>${jpa.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <!-- mybatis -->
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>mybatis-spring-boot-autoconfigure</artifactId>
-                <version>${mybatis.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>mybatis-spring-boot-starter</artifactId>
-                <version>${mybatis.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <!-- nacos config -->
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>nacos-config-spring-boot-autoconfigure</artifactId>
-                <version>${nacos-config.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>nacos-config-spring-boot-starter</artifactId>
-                <version>${nacos-config.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <!-- nacos discovery -->
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>nacos-discovery-spring-boot-autoconfigure</artifactId>
-                <version>${nacos-discovery.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>nacos-discovery-spring-boot-starter</artifactId>
-                <version>${nacos-discovery.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <!-- sentinel gateway -->
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>sentinel-gateway-spring-boot-autoconfigure</artifactId>
-                <version>${sentinel-gateway.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>sentinel-gateway-spring-boot-starter</artifactId>
-                <version>${sentinel-gateway.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <!-- sentinel micro service -->
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>sentinel-spring-boot-autoconfigure</artifactId>
-                <version>${sentinel-micro.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>sentinel-spring-boot-starter</artifactId>
-                <version>${sentinel-micro.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <!-- sentinel zuul -->
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>sentinel-zuul-spring-boot-autoconfigure</artifactId>
-                <version>${sentinel-zuul.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>sentinel-zuul-spring-boot-starter</artifactId>
-                <version>${sentinel-zuul.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <!-- rabbit -->
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>rabbit-spring-boot-autoconfigure</artifactId>
-                <version>${rabbit.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>rabbit-spring-boot-starter</artifactId>
-                <version>${rabbit.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <!-- redis -->
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>redis-spring-boot-autoconfigure</artifactId>
-                <version>${redis.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>redis-spring-boot-starter</artifactId>
-                <version>${redis.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <!-- websocket -->
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>websocket-spring-boot-autoconfigure</artifactId>
-                <version>${websocket.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>websocket-spring-boot-starter</artifactId>
-                <version>${websocket.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <!-- audit -->
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>audit-spring-boot-autoconfigure</artifactId>
-                <version>${audit.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>audit-spring-boot-starter</artifactId>
-                <version>${audit.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <!-- doc -->
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>doc-spring-boot-autoconfigure</artifactId>
-                <version>${doc.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>doc-spring-boot-starter</artifactId>
-                <version>${doc.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <!-- mvc exception -->
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>mvc-rest-spring-boot-autoconfigure</artifactId>
-                <version>${mvc-rest.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>mvc-rest-spring-boot-starter</artifactId>
-                <version>${mvc-rest.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <!-- lock -->
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>lock-spring-boot-autoconfigure</artifactId>
-                <version>${lock.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>lock-spring-boot-starter</artifactId>
-                <version>${lock.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <!-- override -->
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>customizer-spring-boot-autoconfigure</artifactId>
-                <version>${override.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>customizer-spring-boot-starter</artifactId>
-                <version>${override.version}</version>
+                <version>${project.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -316,12 +274,12 @@
         <repository>
             <id>releases</id>
             <name>Nexus Release Repository</name>
-            <url>http://192.168.1.235:8081/nexus/content/repositories/releases/</url>
+            <url>https://repo.yj2025.com/nexus/content/repositories/releases/</url>
         </repository>
         <snapshotRepository>
             <id>snapshots</id>
             <name>Nexus Snapshot Repository</name>
-            <url>http://192.168.1.235:8081/nexus/content/repositories/snapshots/</url>
+            <url>https://repo.yj2025.com/nexus/content/repositories/snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
 
