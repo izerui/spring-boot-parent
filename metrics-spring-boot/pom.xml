@@ -9,17 +9,15 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <packaging>pom</packaging>
+    <modules>
+        <module>metrics-spring-boot-autoconfigure</module>
+        <module>metrics-spring-boot-starter</module>
+        <module>metrics-spring-boot-sample</module>
+    </modules>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>sentinel-spring-boot</artifactId>
+    <artifactId>metrics-spring-boot</artifactId>
 
-    <modules>
-        <module>sentinel-gateway-spring-boot-autoconfigure</module>
-        <module>sentinel-gateway-spring-boot-starter</module>
-        <module>sentinel-spring-boot-autoconfigure</module>
-        <module>sentinel-spring-boot-starter</module>
-        <module>sentinel-zuul-spring-boot-autoconfigure</module>
-        <module>sentinel-zuul-spring-boot-starter</module>
-    </modules>
+
 
 </project>

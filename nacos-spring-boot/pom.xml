@@ -8,7 +8,7 @@
         <version>1.2.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-
+    <packaging>pom</packaging>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>nacos-spring-boot</artifactId>
@@ -16,9 +16,9 @@
     <modules>
         <module>nacos-config-spring-boot-autoconfigure</module>
         <module>nacos-config-spring-boot-starter</module>
-        <module>nacos-config-discovery-spring-boot-sample</module>
         <module>nacos-discovery-spring-boot-autoconfigure</module>
         <module>nacos-discovery-spring-boot-starter</module>
+        <module>nacos-config-discovery-spring-boot-sample</module>
     </modules>
 
 </project>
