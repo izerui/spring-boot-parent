@@ -7,7 +7,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "sms")
 public class SmsProperties {
 
-    private static final String CAPTCHA_KEY_TEMPLATE = "MCHUAN-CAPTCHA-%s-%s";
     private static final String SMS_RECORD_EXCHANGE = "platform";
     private static final String SMS_RECORD_ROUTING_KEY = "platform.mchuan.sms.record";
 
