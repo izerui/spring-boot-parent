@@ -18,6 +18,7 @@
         <module>sentinel-spring-boot</module>
         <module>websocket-spring-boot</module>
         <module>metrics-spring-boot</module>
+        <module>sms-spring-boot</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -259,6 +260,18 @@
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>metrics-spring-boot-starter</artifactId>
+                <version>${base-starter.version}</version>
+            </dependency>
+
+            <!-- sms -->
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>sms-spring-boot-autoconfigure</artifactId>
+                <version>${base-starter.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>sms-spring-boot-starter</artifactId>
                 <version>${base-starter.version}</version>
             </dependency>
         </dependencies>
