@@ -90,6 +90,8 @@ public class MchuanSmsExecutor implements SmsExecutor {
             context.setSuccess(!response.hasError());
             context.setNativeResponse(response);
             context.setResponseTime(new Date());
+            context.setPhones(phones);
+            context.setContent(content);
             if (response.getError() != null) {
                 context.setErrCode(String.valueOf(response.getError().getCode()));
                 context.setErrMsg(response.getError().getMessage());

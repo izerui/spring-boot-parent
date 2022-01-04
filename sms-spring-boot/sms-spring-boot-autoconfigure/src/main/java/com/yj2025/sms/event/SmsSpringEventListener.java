@@ -10,6 +10,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.scheduling.annotation.Async;
 
 import java.util.Date;
+import java.util.HashMap;
 
 public class SmsSpringEventListener implements ApplicationListener<SmsSpringEvent> {
 
@@ -33,6 +34,10 @@ public class SmsSpringEventListener implements ApplicationListener<SmsSpringEven
         record.setRequest(context.getNativeRequest());
         record.setResponse(context.getNativeResponse());
         record.setError(context.getErrMsg());
+        record.setSms(new HashMap() {{
+            put("phone", context.getPhones());
+            put("content", context.getContent());
+        }});
         rabbitTemplate.convertAndSend(properties.getAudit().getExchange(), properties.getAudit().getRoutingKey(), record);
     }
 

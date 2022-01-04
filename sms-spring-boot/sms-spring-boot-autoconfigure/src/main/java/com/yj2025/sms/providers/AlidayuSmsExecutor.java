@@ -53,6 +53,8 @@ public class AlidayuSmsExecutor implements SmsExecutor {
         context.setErrCode(response.getErrorCode());
         context.setErrMsg(response.getMsg());
         context.setNativeResponse(response);
+        context.setPhones(phones);
+        context.setContent(template + ": " + String.valueOf(varaibles));
         return context;
     }
 

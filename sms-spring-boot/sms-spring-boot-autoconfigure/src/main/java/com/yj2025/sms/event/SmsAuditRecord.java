@@ -5,6 +5,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * 短信记录
@@ -53,5 +54,8 @@ public class SmsAuditRecord implements Serializable {
      * 错误信息
      **/
     private String error;
+
+    // 适配bboss
+    private Map<String, String> sms;
 
 }

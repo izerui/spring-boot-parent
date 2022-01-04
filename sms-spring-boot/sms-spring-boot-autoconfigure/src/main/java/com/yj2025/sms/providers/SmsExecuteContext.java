@@ -14,6 +14,8 @@ public class SmsExecuteContext {
     private Date requestTime;
     private Date responseTime;
     private Long time;
+    private String phones;
+    private String content;
 
     public Long getTime() {
         if (requestTime != null && responseTime != null) {
