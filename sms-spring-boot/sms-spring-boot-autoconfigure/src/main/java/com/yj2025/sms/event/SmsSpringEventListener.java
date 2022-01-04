@@ -1,7 +1,6 @@
 package com.yj2025.sms.event;
 
 
-import com.yj2025.sms.SmsAuditRecord;
 import com.yj2025.sms.SmsProperties;
 import com.yj2025.sms.providers.SmsExecuteContext;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;

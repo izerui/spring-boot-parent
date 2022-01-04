@@ -1,4 +1,4 @@
-package com.yj2025.sms;
+package com.yj2025.sms.event;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
