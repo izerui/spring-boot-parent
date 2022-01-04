@@ -26,7 +26,10 @@ public class RabbitAutoConfiguration {
 
     @Primary
     @Bean
-    public RabbitTemplate rabbitTemplate(ObjectMapper objectMapper, ConnectionFactory connectionFactory) {
+    public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         Jackson2JsonMessageConverter messageConverter = new Jackson2JsonMessageConverter(objectMapper);
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
         rabbitTemplate.setMessageConverter(messageConverter);
