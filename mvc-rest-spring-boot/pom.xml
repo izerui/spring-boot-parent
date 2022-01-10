@@ -17,6 +17,9 @@
         <module>mvc-rest-spring-boot-autoconfigure</module>
         <module>mvc-rest-spring-boot-starter</module>
         <module>mvc-rest-spring-boot-sample</module>
+        <module>mvc-rest-reactive-spring-boot-autoconfigure</module>
+        <module>mvc-rest-reactive-spring-boot-starter</module>
+        <module>mvc-rest-reactive-spring-boot-sample</module>
     </modules>
 
 </project>

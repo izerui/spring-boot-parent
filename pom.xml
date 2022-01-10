@@ -227,6 +227,18 @@
                 <version>${base-starter.version}</version>
             </dependency>
 
+            <!-- mvc reactive exception -->
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>mvc-rest-reactive-spring-boot-autoconfigure</artifactId>
+                <version>${base-starter.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>mvc-rest-reactive-spring-boot-starter</artifactId>
+                <version>${base-starter.version}</version>
+            </dependency>
+
             <!-- lock -->
             <dependency>
                 <groupId>com.yj2025</groupId>
