@@ -30,12 +30,12 @@
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
         </dependency>
-        <dependency>
-            <groupId>com.taobao</groupId>
-            <artifactId>taobao-sdk</artifactId>
-            <version>20160106</version>
-            <optional>true</optional>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.taobao</groupId>-->
+<!--            <artifactId>taobao-sdk</artifactId>-->
+<!--            <version>20160106</version>-->
+<!--            <optional>true</optional>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp</artifactId>
