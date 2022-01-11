@@ -11,6 +11,7 @@ import org.springframework.util.Base64Utils;
 import org.springframework.util.SerializationUtils;
 import org.springframework.web.reactive.function.server.ServerRequest;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
@@ -19,15 +20,17 @@ public class GlobalErrorAttributes extends DefaultErrorAttributes implements Con
 
     @Override
     public Map<String, Object> getErrorAttributes(ServerRequest request, ErrorAttributeOptions options) {
-        Map<String, Object> errorAttributes = super.getErrorAttributes(request, options);
+//        原生的错误信息
+//        Map<String, Object> errorAttributes = super.getErrorAttributes(request, options);
         Throwable throwable = getError(request);
         if (throwable instanceof HystrixRuntimeException && throwable.getCause() != null) {
             throwable = throwable.getCause();
         }
 
         log.error(throwable.getMessage(), throwable);
-        errorAttributes.put("success", false);
-        errorAttributes.put("errCode", "exception");
+        Map<String,Object> errorResponseMap = new HashMap<>();
+        errorResponseMap.put("success", false);
+        errorResponseMap.put("errCode", "exception");
         String errMsg = throwable.getMessage();
         if (throwable instanceof HttpMessageNotWritableException) {
             errMsg = ((HttpMessageNotWritableException) throwable).getRootCause().getMessage();
@@ -41,15 +44,15 @@ public class GlobalErrorAttributes extends DefaultErrorAttributes implements Con
         if (throwable.getClass().getName().equals("com.netflix.zuul.exception.ZuulException")) {
             errMsg = "请求服务暂时不可用,请稍后重试";
         }
-        errorAttributes.put("errMsg", errMsg);
-        errorAttributes.put("exceptionType", throwable.getClass().getName());
+        errorResponseMap.put("errMsg", errMsg);
+        errorResponseMap.put("exceptionType", throwable.getClass().getName());
 
         //feign 请求
         String clientType = request.headers().firstHeader(CLIENT_TYPE);
         if (clientType != null && FEIGN_REQUEST_TYPE.equals(clientType)) {
-            errorAttributes.put(EXCEPTION_SERIALIZABLE, Base64Utils.encodeToString(SerializationUtils.serialize(throwable)));
+            errorResponseMap.put(EXCEPTION_SERIALIZABLE, Base64Utils.encodeToString(SerializationUtils.serialize(throwable)));
         }
 
-        return errorAttributes;
+        return errorResponseMap;
     }
 }
