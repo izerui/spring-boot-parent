@@ -14,6 +14,6 @@ class RabbitWebSocketContextImpl implements WebSocketContext {
 
     @Override
     public void sendMessage(WebMsg webMsg) {
-        rabbitTemplate.convertAndSend(rabbitWebSocketProperties.getExchange(), rabbitWebSocketProperties.getExchange(), webMsg);
+        rabbitTemplate.convertAndSend(rabbitWebSocketProperties.getExchange(), rabbitWebSocketProperties.getRoutingKey(), webMsg);
     }
 }
