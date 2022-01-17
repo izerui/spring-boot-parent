@@ -4,6 +4,8 @@ import com.ecworking.commons.exception.BusinessException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpStatus;
@@ -16,6 +18,7 @@ import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.http.server.ServletServerHttpResponse;
 import org.springframework.util.Base64Utils;
+import org.springframework.util.ReflectionUtils;
 import org.springframework.util.SerializationUtils;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
@@ -31,6 +34,9 @@ import java.util.concurrent.ExecutionException;
  */
 @RestControllerAdvice
 public class GlobResponseBodyAdviceAdapter implements ResponseBodyAdvice<Object>, Constants {
+
+    @Value("spring.application.name:null")
+    private String applicationName;
 
     private static final String ERROR_ATTRIBUTE = DefaultErrorAttributes.class.getName()
             + ".ERROR";
@@ -79,6 +85,12 @@ public class GlobResponseBodyAdviceAdapter implements ResponseBodyAdvice<Object>
                 throwable = throwable.getCause();
             } else if (throwable.getClass().getName().equals("org.springframework.web.util.NestedServletException") && throwable.getCause() != null) {
                 throwable = throwable.getCause();
+            }
+
+            if (StringUtils.isNotEmpty(applicationName)
+                    && applicationName.equalsIgnoreCase("")) {
+                ReflectionUtils.handleReflectionException((Exception) throwable);
+                return null;
             }
 
             //自定义code异常
