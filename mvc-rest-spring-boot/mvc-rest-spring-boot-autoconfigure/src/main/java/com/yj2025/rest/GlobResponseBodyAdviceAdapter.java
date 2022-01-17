@@ -35,7 +35,7 @@ import java.util.concurrent.ExecutionException;
 @RestControllerAdvice
 public class GlobResponseBodyAdviceAdapter implements ResponseBodyAdvice<Object>, Constants {
 
-    @Value("spring.application.name:null")
+    @Value("${spring.application.name:null}")
     private String applicationName;
 
     private static final String ERROR_ATTRIBUTE = DefaultErrorAttributes.class.getName()
