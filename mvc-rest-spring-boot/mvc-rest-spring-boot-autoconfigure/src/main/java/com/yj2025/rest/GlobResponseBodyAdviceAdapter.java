@@ -88,7 +88,7 @@ public class GlobResponseBodyAdviceAdapter implements ResponseBodyAdvice<Object>
             }
 
             if (StringUtils.isNotEmpty(applicationName)
-                    && applicationName.equalsIgnoreCase("")) {
+                    && applicationName.equalsIgnoreCase("bboss-web")) {
                 ReflectionUtils.handleReflectionException((Exception) throwable);
                 return null;
             }
