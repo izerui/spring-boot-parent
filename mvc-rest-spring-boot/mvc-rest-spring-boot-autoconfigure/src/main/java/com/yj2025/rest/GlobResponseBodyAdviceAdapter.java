@@ -87,11 +87,11 @@ public class GlobResponseBodyAdviceAdapter implements ResponseBodyAdvice<Object>
                 throwable = throwable.getCause();
             }
 
-            if (StringUtils.isNotEmpty(applicationName)
-                    && applicationName.equalsIgnoreCase("bboss-web")) {
-                ReflectionUtils.handleReflectionException((Exception) throwable);
-                return null;
-            }
+//            if (StringUtils.isNotEmpty(applicationName)
+//                    && applicationName.equalsIgnoreCase("bboss-web")) {
+//                ReflectionUtils.handleReflectionException((Exception) throwable);
+//                return null;
+//            }
 
             //自定义code异常
             if (throwable instanceof BusinessException) {
