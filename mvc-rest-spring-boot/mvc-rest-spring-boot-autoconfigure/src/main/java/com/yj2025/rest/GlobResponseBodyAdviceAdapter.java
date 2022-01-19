@@ -35,7 +35,7 @@ import java.util.concurrent.ExecutionException;
 @RestControllerAdvice
 public class GlobResponseBodyAdviceAdapter implements ResponseBodyAdvice<Object>, Constants {
 
-    @Value("spring.application.name:null")
+    @Value("${spring.application.name:null}")
     private String applicationName;
 
     private static final String ERROR_ATTRIBUTE = DefaultErrorAttributes.class.getName()
@@ -87,11 +87,11 @@ public class GlobResponseBodyAdviceAdapter implements ResponseBodyAdvice<Object>
                 throwable = throwable.getCause();
             }
 
-            if (StringUtils.isNotEmpty(applicationName)
-                    && applicationName.equalsIgnoreCase("bboss-web")) {
-                ReflectionUtils.handleReflectionException((Exception) throwable);
-                return null;
-            }
+//            if (StringUtils.isNotEmpty(applicationName)
+//                    && applicationName.equalsIgnoreCase("bboss-web")) {
+//                ReflectionUtils.handleReflectionException((Exception) throwable);
+//                return null;
+//            }
 
             //自定义code异常
             if (throwable instanceof BusinessException) {
