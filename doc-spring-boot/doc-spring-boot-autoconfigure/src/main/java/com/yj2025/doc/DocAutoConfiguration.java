@@ -36,7 +36,7 @@ import java.util.List;
 @ConditionalOnWebApplication
 public class DocAutoConfiguration implements WebMvcConfigurer {
 
-    @Value("${spring.application.name:#{null}")
+    @Value("${spring.application.name:#{null}}")
     private String applicationName;
 
     @Value("${doc.head.wrap.enabled:true}")
