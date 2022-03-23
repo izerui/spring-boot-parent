@@ -70,6 +70,7 @@ public class GlobResponseBodyAdviceAdapter implements ResponseBodyAdvice<Object>
             //转换异常
             Throwable throwable = getError(request);
             if (throwable == null) {
+                response.setStatus(HttpStatus.OK.value());
                 if (body instanceof Map) {
                     resp.put("errMsg", ((Map) body).get("error"));
                     resp.put("data", ((Map) body).get("message"));
