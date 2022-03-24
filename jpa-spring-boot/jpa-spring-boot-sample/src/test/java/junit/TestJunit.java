@@ -1,6 +1,7 @@
 package junit;
 
 import com.yj2025.jpa.Application;
+import com.yj2025.jpa.PlatformJpaRepository;
 import com.yj2025.jpa.entity.Abcd;
 import com.yj2025.jpa.entity.User;
 import com.yj2025.jpa.entity.UserDistinct;
@@ -33,6 +34,16 @@ public class TestJunit {
     UserRepository userRepository;
     @Autowired
     AbcdRepository abcdRepository;
+
+    @Autowired
+    PlatformJpaRepository<User, Long> userLongPlatformJpaRepository;
+
+
+    @Test
+    public void lis22t() {
+        List<User> all = userLongPlatformJpaRepository.findAll();
+        System.out.println(all);
+    }
 
 
     @Test
