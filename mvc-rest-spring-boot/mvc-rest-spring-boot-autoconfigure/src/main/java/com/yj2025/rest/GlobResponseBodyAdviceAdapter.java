@@ -66,7 +66,7 @@ public class GlobResponseBodyAdviceAdapter implements ResponseBodyAdvice<Object>
             Map<String, Object> resp = new LinkedHashMap<>();
             resp.put("success", false);
             resp.put("status", response.getStatus());
-            resp.put("errCode", "exception");
+            resp.put("errCode", String.valueOf(response.getStatus()));
             //转换异常
             Throwable throwable = getError(request);
             if (throwable == null) {
