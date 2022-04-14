@@ -1,10 +1,8 @@
 package com.yj2025.rest;
 
-import com.ecworking.commons.exception.BusinessException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
 import org.springframework.core.MethodParameter;
@@ -18,7 +16,6 @@ import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.http.server.ServletServerHttpResponse;
 import org.springframework.util.Base64Utils;
-import org.springframework.util.ReflectionUtils;
 import org.springframework.util.SerializationUtils;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
@@ -66,10 +63,11 @@ public class GlobResponseBodyAdviceAdapter implements ResponseBodyAdvice<Object>
             Map<String, Object> resp = new LinkedHashMap<>();
             resp.put("success", false);
             resp.put("status", response.getStatus());
-            resp.put("errCode", "exception");
+            resp.put("errCode", String.valueOf(response.getStatus()));
             //转换异常
             Throwable throwable = getError(request);
             if (throwable == null) {
+                response.setStatus(HttpStatus.OK.value());
                 if (body instanceof Map) {
                     resp.put("errMsg", ((Map) body).get("error"));
                     resp.put("data", ((Map) body).get("message"));
@@ -93,18 +91,18 @@ public class GlobResponseBodyAdviceAdapter implements ResponseBodyAdvice<Object>
 //                return null;
 //            }
 
-            //自定义code异常
-            if (throwable instanceof BusinessException) {
-                //自定义异常status为200
-                resp.put("status", 200);
-                resp.put("errCode", ((BusinessException) throwable).getErrCode());
-            } else if (throwable instanceof ExecutionException) {
-                //自定义异常status为200
-                resp.put("status", 200);
-                resp.put("errCode", null);
-            } else {
-                resp.put("errCode", null);
-            }
+//            //自定义code异常
+//            if (throwable instanceof BusinessException) {
+//                //自定义异常status为200
+//                resp.put("status", 200);
+//                resp.put("errCode", ((BusinessException) throwable).getErrCode());
+//            } else if (throwable instanceof ExecutionException) {
+//                //自定义异常status为200
+//                resp.put("status", 200);
+//                resp.put("errCode", null);
+//            } else {
+//                resp.put("errCode", null);
+//            }
 
             String errMsg = throwable.getMessage();
             if (throwable instanceof HttpMessageNotWritableException) {

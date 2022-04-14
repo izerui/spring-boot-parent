@@ -1,7 +1,6 @@
 package com.yj2025.lock;
 
 import org.apache.curator.framework.CuratorFramework;
-import org.apache.curator.framework.recipes.locks.InterProcessMutex;
 import org.apache.curator.framework.recipes.locks.InterProcessSemaphoreMutex;
 
 import java.util.concurrent.TimeUnit;
@@ -30,7 +29,11 @@ public class Lock {
             //执行全局唯一逻辑
             return (T) lockPerform.perform();
         } catch (Exception e) {
-            throw new LockException(e.getMessage(), e);
+            if (e instanceof RuntimeException) {
+                throw (RuntimeException) e;
+            } else {
+                throw new LockException(e.getMessage(), e);
+            }
         } finally {
             try {
                 if (semaphoreMutex != null) {

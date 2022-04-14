@@ -1,6 +1,5 @@
 package com.yj2025.web.sample;
 
-import com.ecworking.commons.exception.BusinessException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,7 +12,7 @@ public class Application {
 
     @GetMapping(value = "/", produces = "application/json")
     public String getException() {
-        throw new BusinessException("测试异常");
+        throw new RuntimeException("测试异常");
     }
 
     public static void main(String[] args) {
