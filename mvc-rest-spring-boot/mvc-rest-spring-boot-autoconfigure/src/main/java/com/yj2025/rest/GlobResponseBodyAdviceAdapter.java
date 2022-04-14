@@ -76,6 +76,7 @@ public class GlobResponseBodyAdviceAdapter implements ResponseBodyAdvice<Object>
             if (throwable == null) {
                 response.setStatus(HttpStatus.OK.value());
                 Map<String, Object> errorAttributes = this.errorAttributes.getErrorAttributes(servletWebRequest, ErrorAttributeOptions.of(ErrorAttributeOptions.Include.values()));
+                logger.error(errorAttributes.toString());
                 if (body instanceof Map) {
                     resp.put("errMsg", ((Map) body).get("error"));
                     resp.put("data", ((Map) body).get("message"));
