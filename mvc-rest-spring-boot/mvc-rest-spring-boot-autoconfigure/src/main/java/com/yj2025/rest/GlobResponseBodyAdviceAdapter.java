@@ -3,7 +3,6 @@ package com.yj2025.rest;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
@@ -39,7 +38,6 @@ public class GlobResponseBodyAdviceAdapter implements ResponseBodyAdvice<Object>
     @Value("${spring.application.name:null}")
     private String applicationName;
 
-    @Autowired
     private ErrorAttributes errorAttributes;
 
     private static final String ERROR_ATTRIBUTE = DefaultErrorAttributes.class.getName()
@@ -47,7 +45,8 @@ public class GlobResponseBodyAdviceAdapter implements ResponseBodyAdvice<Object>
 
     private Logger logger = LoggerFactory.getLogger(GlobResponseBodyAdviceAdapter.class);
 
-    public GlobResponseBodyAdviceAdapter() {
+    public GlobResponseBodyAdviceAdapter(ErrorAttributes errorAttributes) {
+        this.errorAttributes = errorAttributes;
     }
 
     @Override
