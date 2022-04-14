@@ -3,8 +3,11 @@ package com.yj2025.rest;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
+import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,6 +21,7 @@ import org.springframework.http.server.ServletServerHttpResponse;
 import org.springframework.util.Base64Utils;
 import org.springframework.util.SerializationUtils;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,6 +39,9 @@ public class GlobResponseBodyAdviceAdapter implements ResponseBodyAdvice<Object>
     @Value("${spring.application.name:null}")
     private String applicationName;
 
+    @Autowired
+    private ErrorAttributes errorAttributes;
+
     private static final String ERROR_ATTRIBUTE = DefaultErrorAttributes.class.getName()
             + ".ERROR";
 
@@ -50,8 +57,8 @@ public class GlobResponseBodyAdviceAdapter implements ResponseBodyAdvice<Object>
 
     @Override
     public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType, Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest httpRequest, ServerHttpResponse httpResponse) {
-
         HttpServletRequest request = ((ServletServerHttpRequest) httpRequest).getServletRequest();
+        ServletWebRequest servletWebRequest = new ServletWebRequest(request);
 
         HttpServletResponse response = ((ServletServerHttpResponse) httpResponse).getServletResponse();
 
@@ -65,12 +72,14 @@ public class GlobResponseBodyAdviceAdapter implements ResponseBodyAdvice<Object>
             resp.put("status", response.getStatus());
             resp.put("errCode", String.valueOf(response.getStatus()));
             //转换异常
-            Throwable throwable = getError(request);
+            Throwable throwable = errorAttributes.getError(servletWebRequest);
             if (throwable == null) {
                 response.setStatus(HttpStatus.OK.value());
+                Map<String, Object> errorAttributes = this.errorAttributes.getErrorAttributes(servletWebRequest, ErrorAttributeOptions.of(ErrorAttributeOptions.Include.values()));
                 if (body instanceof Map) {
                     resp.put("errMsg", ((Map) body).get("error"));
                     resp.put("data", ((Map) body).get("message"));
+                    resp.putAll(errorAttributes);
                     return resp;
                 } else {
                     return body;
@@ -151,14 +160,5 @@ public class GlobResponseBodyAdviceAdapter implements ResponseBodyAdvice<Object>
     private String getPath(HttpServletRequest request) {
         return (String) request.getAttribute("javax.servlet.error.request_uri");
     }
-
-    public Throwable getError(HttpServletRequest request) {
-        Throwable exception = (Throwable) request.getAttribute(ERROR_ATTRIBUTE);
-        if (exception == null) {
-            exception = (Throwable) request.getAttribute("javax.servlet.error.exception");
-        }
-        return exception;
-    }
-
 
 }
