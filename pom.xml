@@ -19,6 +19,7 @@
         <module>websocket-spring-boot</module>
         <module>metrics-spring-boot</module>
         <module>sms-spring-boot</module>
+        <module>amazonaws-spring-boot</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -277,6 +278,18 @@
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>sms-spring-boot-starter</artifactId>
+                <version>${base-starter.version}</version>
+            </dependency>
+
+            <!-- amazonaws-sdk -->
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>amazonaws-spring-boot-autoconfigure</artifactId>
+                <version>${base-starter.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>amazonaws-spring-boot-starter</artifactId>
                 <version>${base-starter.version}</version>
             </dependency>
         </dependencies>
