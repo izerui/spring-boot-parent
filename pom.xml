@@ -20,6 +20,7 @@
         <module>metrics-spring-boot</module>
         <module>sms-spring-boot</module>
         <module>amazonaws-spring-boot</module>
+        <module>weixin-spring-boot</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -290,6 +291,17 @@
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>amazonaws-spring-boot-starter</artifactId>
+                <version>${base-starter.version}</version>
+            </dependency>
+            <!-- work weixin-->
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>work-weixin-spring-boot-autoconfigure</artifactId>
+                <version>${base-starter.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>work-weixin-spring-boot-starter</artifactId>
                 <version>${base-starter.version}</version>
             </dependency>
         </dependencies>
