@@ -41,7 +41,7 @@ public class AwsApplication implements CommandLineRunner {
     }
 
     private void getPresignedUrl() {
-        URL presignedUrl = awsService.getS3Service().getPresignedUrl("ucloud-bak", "AwsApplication.java", 10);
+        URL presignedUrl = awsService.getS3Service().getPresignedUrl("ucloud-bak", "AwsApplication.java");
         System.out.println(presignedUrl.toString());
     }
 

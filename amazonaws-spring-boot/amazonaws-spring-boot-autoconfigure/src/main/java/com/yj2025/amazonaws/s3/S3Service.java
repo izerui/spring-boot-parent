@@ -49,16 +49,20 @@ public interface S3Service {
      *
      * @param bucket         桶
      * @param key            路径
-     * @param expiredMinutes 失效时长(分钟)
      * @return
      */
-    URL getPresignedUrl(String bucket, String key, int expiredMinutes);
+    URL getPresignedUrl(String bucket, String key);
 
 
     @Deprecated
     S3Client getClient();
 
     final class Default implements S3Service {
+
+        /**
+         * 10分钟失效时长
+         */
+        private final static int EXPIRED_MINUTES = 10;
 
         /**
          * https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/API/Welcome.html
@@ -103,19 +107,18 @@ public interface S3Service {
          * @return
          */
         @Override
-        public URL getPresignedUrl(String bucket, String key, int expiredMinutes) {
+        public URL getPresignedUrl(String bucket, String key) {
             GetObjectRequest getObjectRequest = GetObjectRequest.builder()
                     .bucket(bucket)
                     .key(key)
                     .build();
 
             GetObjectPresignRequest getObjectPresignRequest = GetObjectPresignRequest.builder()
-                    .signatureDuration(Duration.ofMinutes(expiredMinutes))
+                    .signatureDuration(Duration.ofMinutes(EXPIRED_MINUTES))
                     .getObjectRequest(getObjectRequest)
                     .build();
 
-            PresignedGetObjectRequest presignedGetObjectRequest =
-                    presigner.presignGetObject(getObjectPresignRequest);
+            PresignedGetObjectRequest presignedGetObjectRequest = presigner.presignGetObject(getObjectPresignRequest);
             return presignedGetObjectRequest.url();
         }
     }
