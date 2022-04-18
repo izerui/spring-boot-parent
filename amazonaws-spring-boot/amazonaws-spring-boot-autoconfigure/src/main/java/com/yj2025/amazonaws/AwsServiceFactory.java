@@ -3,6 +3,7 @@ package com.yj2025.amazonaws;
 import com.yj2025.amazonaws.ec2.Ec2Service;
 import com.yj2025.amazonaws.ecr.EcrService;
 import com.yj2025.amazonaws.s3.S3Service;
+import com.yj2025.amazonaws.sts.StsService;
 import org.springframework.beans.factory.FactoryBean;
 
 /**
@@ -34,6 +35,11 @@ public class AwsServiceFactory implements FactoryBean<AwsService> {
             @Override
             public EcrService getEcrService() {
                 return EcrService.Default.createfrom(properties);
+            }
+
+            @Override
+            public StsService getStsService() {
+                return StsService.Default.createfrom(properties);
             }
         };
         return awsClient;
