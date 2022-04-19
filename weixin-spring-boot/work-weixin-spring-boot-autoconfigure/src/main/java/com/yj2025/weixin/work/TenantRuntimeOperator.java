@@ -6,7 +6,7 @@ import javax.annotation.concurrent.ThreadSafe;
 import java.util.concurrent.locks.Lock;
 
 /**
- * 租户运行时暂存结果操作类(继承于配置类)
+ * 租户运行时暂存结果操作类
  *
  * @author liuyuhua
  * @date 2022/4/18
