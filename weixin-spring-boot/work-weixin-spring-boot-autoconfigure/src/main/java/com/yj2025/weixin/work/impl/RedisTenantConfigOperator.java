@@ -5,7 +5,6 @@ import com.yj2025.weixin.work.WorkWeixinProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
-import java.io.File;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -98,31 +97,6 @@ public class RedisTenantConfigOperator implements TenantConfigOperator, KeyConst
     @Override
     public void setMsgAuditLibPath(String tenantId, String msgAuditLibPath) {
         redisTemplate.boundValueOps(MSGAUDITLIBPATH_KEY.apply(tenantId)).set(msgAuditLibPath);
-    }
-
-    @Override
-    public String getHttpProxyHost() {
-        return properties.getProxy().getHttpProxyHost();
-    }
-
-    @Override
-    public int getHttpProxyPort() {
-        return properties.getProxy().getHttpProxyPort();
-    }
-
-    @Override
-    public String getHttpProxyUsername() {
-        return properties.getProxy().getHttpProxyUsername();
-    }
-
-    @Override
-    public String getHttpProxyPassword() {
-        return properties.getProxy().getHttpProxyPassword();
-    }
-
-    @Override
-    public File getTmpDirFile() {
-        return properties.getTmpDirFile();
     }
 
     @Override

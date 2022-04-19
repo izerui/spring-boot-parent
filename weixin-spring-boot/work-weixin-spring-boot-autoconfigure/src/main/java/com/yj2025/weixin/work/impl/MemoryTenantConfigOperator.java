@@ -3,8 +3,6 @@ package com.yj2025.weixin.work.impl;
 import com.yj2025.weixin.work.TenantConfigOperator;
 import com.yj2025.weixin.work.WorkWeixinProperties;
 
-import java.io.File;
-
 /**
  * @author liuyuhua
  * @date 2022/4/19
@@ -85,31 +83,6 @@ public class MemoryTenantConfigOperator extends BaseMemoryTenantOperator impleme
     @Override
     public void setMsgAuditLibPath(String tenantId, String msgAuditLibPath) {
         set(MSGAUDITLIBPATH_KEY.apply(tenantId), msgAuditLibPath);
-    }
-
-    @Override
-    public String getHttpProxyHost() {
-        return properties.getProxy().getHttpProxyHost();
-    }
-
-    @Override
-    public int getHttpProxyPort() {
-        return properties.getProxy().getHttpProxyPort();
-    }
-
-    @Override
-    public String getHttpProxyUsername() {
-        return properties.getProxy().getHttpProxyUsername();
-    }
-
-    @Override
-    public String getHttpProxyPassword() {
-        return properties.getProxy().getHttpProxyPassword();
-    }
-
-    @Override
-    public File getTmpDirFile() {
-        return properties.getTmpDirFile();
     }
 
     @Override

@@ -19,17 +19,20 @@ public class TenantWxCpConfigStorageAdpatder implements WxCpConfigStorage {
 
     private TenantConfigOperator configOperator;
     private TenantRuntimeOperator runtimeOperator;
+    private WorkWeixinProperties properties;
     private ObjectProvider<ApacheHttpClientBuilder> apacheHttpClientBuilders;
 
     public TenantWxCpConfigStorageAdpatder(TenantConfigOperator configOperator,
                                            TenantRuntimeOperator runtimeOperator,
+                                           WorkWeixinProperties properties,
                                            ObjectProvider<ApacheHttpClientBuilder> apacheHttpClientBuilders) {
         this.configOperator = configOperator;
         this.runtimeOperator = runtimeOperator;
+        this.properties = properties;
         this.apacheHttpClientBuilders = apacheHttpClientBuilders;
     }
 
-    // 当无法获取对应租户ID的时候使用的默认的租户ID
+    // 当未指定租户ID的时候使用的默认的租户ID
     public final static String DEFAULT_TENANT_ID = "default";
 
     // 当前线程使用的tenantId(公司编号)
@@ -194,27 +197,27 @@ public class TenantWxCpConfigStorageAdpatder implements WxCpConfigStorage {
 
     @Override
     public String getHttpProxyHost() {
-        return configOperator.getHttpProxyHost();
+        return properties.getProxy().getHttpProxyHost();
     }
 
     @Override
     public int getHttpProxyPort() {
-        return configOperator.getHttpProxyPort();
+        return properties.getProxy().getHttpProxyPort();
     }
 
     @Override
     public String getHttpProxyUsername() {
-        return configOperator.getHttpProxyUsername();
+        return properties.getProxy().getHttpProxyUsername();
     }
 
     @Override
     public String getHttpProxyPassword() {
-        return configOperator.getHttpProxyPassword();
+        return properties.getProxy().getHttpProxyPassword();
     }
 
     @Override
     public File getTmpDirFile() {
-        return configOperator.getTmpDirFile();
+        return properties.getTmpDirFile();
     }
 
     @Override

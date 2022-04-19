@@ -26,8 +26,9 @@ public class WorkWeixinAutoConfiguration {
     @Bean
     public TenantWxCpConfigStorageAdpatder multiConfigStorage(TenantConfigOperator configOperator,
                                                               TenantRuntimeOperator runtimeOperator,
+                                                              WorkWeixinProperties properties,
                                                               ObjectProvider<ApacheHttpClientBuilder> apacheHttpClientBuilders) {
-        return new TenantWxCpConfigStorageAdpatder(configOperator, runtimeOperator, apacheHttpClientBuilders);
+        return new TenantWxCpConfigStorageAdpatder(configOperator, runtimeOperator, properties, apacheHttpClientBuilders);
     }
 
 

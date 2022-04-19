@@ -1,7 +1,5 @@
 package com.yj2025.weixin.work;
 
-import java.io.File;
-
 /**
  * 租户相关配置的获取及更新操作类
  *
@@ -79,16 +77,6 @@ public interface TenantConfigOperator {
      * 微信企业号应用 会话存档类库路径
      */
     void setMsgAuditLibPath(String tenantId, String msgAuditLibPath);
-
-    String getHttpProxyHost();
-
-    int getHttpProxyPort();
-
-    String getHttpProxyUsername();
-
-    String getHttpProxyPassword();
-
-    File getTmpDirFile();
 
     String getWebhookKey(String tenantId);
 
