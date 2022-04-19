@@ -5,17 +5,31 @@ import me.chanjar.weixin.cp.api.impl.WxCpServiceImpl;
 import org.springframework.beans.factory.InitializingBean;
 
 public class TenantWxCpServiceImpl extends WxCpServiceImpl implements TenantWxCpService, InitializingBean {
+
+    @Override
+    public TenantWxCpConfigStorageAdpatder getStorageAdpatder() {
+        return (TenantWxCpConfigStorageAdpatder) getWxCpConfigStorage();
+    }
+
     @Override
     public TenantWxCpService tenant(String tenantId) {
-        TenantWxCpConfigStorageAdpatder wxCpConfigStorage = (TenantWxCpConfigStorageAdpatder) getWxCpConfigStorage();
-        wxCpConfigStorage.tenant(tenantId);
+        getStorageAdpatder().tenant(tenantId);
         return this;
     }
 
     @Override
     public String getTenantIdByAgentId(String agentId) {
-        TenantWxCpConfigStorageAdpatder wxCpConfigStorage = (TenantWxCpConfigStorageAdpatder) getWxCpConfigStorage();
-        return wxCpConfigStorage.getTenantIdByAgentId(agentId);
+        return getStorageAdpatder().getTenantIdByAgentId(agentId);
+    }
+
+    @Override
+    public TenantConfigOperator getConfigOperator() {
+        return getStorageAdpatder().getConfigOperator();
+    }
+
+    @Override
+    public TenantRuntimeOperator getRuntimeOperator() {
+        return getStorageAdpatder().getRuntimeOperator();
     }
 
     @Override

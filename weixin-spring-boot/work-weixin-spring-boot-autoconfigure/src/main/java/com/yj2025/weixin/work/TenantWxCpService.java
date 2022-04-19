@@ -20,4 +20,22 @@ public interface TenantWxCpService extends WxCpService {
      * @return
      */
     String getTenantIdByAgentId(String agentId);
+
+    /**
+     * 获取配置操作对象
+     * @return
+     */
+    TenantConfigOperator getConfigOperator();
+
+    /**
+     * 获取运行时操作对象
+     * @return
+     */
+    TenantRuntimeOperator getRuntimeOperator();
+
+    /**
+     * 获取桥接的存储适配器
+     * @return
+     */
+    TenantWxCpConfigStorageAdpatder getStorageAdpatder();
 }
