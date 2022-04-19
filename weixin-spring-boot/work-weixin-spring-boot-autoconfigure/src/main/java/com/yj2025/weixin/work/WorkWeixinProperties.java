@@ -12,6 +12,8 @@ import java.io.File;
 @Data
 @ConfigurationProperties(prefix = "work.weixin")
 public class WorkWeixinProperties {
+
+    private StorageType storage = StorageType.memory;
     /**
      * 代理服务器配置
      */
@@ -33,5 +35,9 @@ public class WorkWeixinProperties {
         private Integer httpProxyPort = 0;
         private String httpProxyUsername;
         private String httpProxyPassword;
+    }
+
+    public enum StorageType {
+        memory, redis;
     }
 }

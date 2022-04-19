@@ -23,10 +23,10 @@ public class Application implements CommandLineRunner {
 
 
     @Autowired
-    private WorkWeixinTenantConfigOperator tenantConfigOperator;
+    private TenantConfigOperator tenantConfigOperator;
 
     @Autowired
-    private WorkWeixinService workWeixinService;
+    private TenantWxCpService workWeixinService;
 
     @Override
     public void run(String... args) throws Exception {
@@ -36,6 +36,12 @@ public class Application implements CommandLineRunner {
         tenantConfigOperator.setAesKey("yunji", "WGSJDot0bvUy72RMeqoi5966lsFyuzdcQiSSntpUtu2");
         tenantConfigOperator.setAgentId("yunji", "1000013");
 
+
+        tenantConfigOperator.setCorpId("jingguan", "ww7c4f40dafaee2f4c");
+        tenantConfigOperator.setCorpSecret("jingguan", "hgKyD3RjUD43v0E2N2C2Pzfd8BKDyG8AlP1EntU923I");
+//        tenantConfigOperator.setToken("jingguan", "3ORc6qO5uMJeQNmbd9Tf1b27w");
+//        tenantConfigOperator.setAesKey("jingguan", "WGSJDot0bvUy72RMeqoi5966lsFyuzdcQiSSntpUtu2");
+        tenantConfigOperator.setAgentId("jingguan", "1000017");
 
         sendDemoMessage();
     }
@@ -47,7 +53,7 @@ public class Application implements CommandLineRunner {
         message.setToUser("serv");
         message.setContent("11111欢迎欢迎，热烈欢迎\n换行测试\n超链接:<a href=\"http://www.baidu.com\">Hello World</a>");
 
-        WxCpMessageSendResult messageSendResult = this.workWeixinService.tenant("yunji").getMessageService().send(message);
+        WxCpMessageSendResult messageSendResult = this.workWeixinService.tenant("jingguan").getMessageService().send(message);
         System.out.println(messageSendResult.toString());
     }
 }

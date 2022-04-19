@@ -15,15 +15,15 @@ import java.util.concurrent.locks.Lock;
  * @date 2022/4/18
  */
 @ThreadSafe
-public class WorkWeixinMultiConfigRuntimeStorage implements WxCpConfigStorage {
+public class TenantWxCpConfigStorage implements WxCpConfigStorage {
 
-    private WorkWeixinTenantConfigOperator configOperator;
-    private WorkWeixinTenantRuntimeOperator runtimeOperator;
+    private TenantConfigOperator configOperator;
+    private TenantRuntimeOperator runtimeOperator;
     private ObjectProvider<ApacheHttpClientBuilder> apacheHttpClientBuilders;
 
-    public WorkWeixinMultiConfigRuntimeStorage(WorkWeixinTenantConfigOperator configOperator,
-                                               WorkWeixinTenantRuntimeOperator runtimeOperator,
-                                               ObjectProvider<ApacheHttpClientBuilder> apacheHttpClientBuilders) {
+    public TenantWxCpConfigStorage(TenantConfigOperator configOperator,
+                                   TenantRuntimeOperator runtimeOperator,
+                                   ObjectProvider<ApacheHttpClientBuilder> apacheHttpClientBuilders) {
         this.configOperator = configOperator;
         this.runtimeOperator = runtimeOperator;
         this.apacheHttpClientBuilders = apacheHttpClientBuilders;
@@ -46,13 +46,17 @@ public class WorkWeixinMultiConfigRuntimeStorage implements WxCpConfigStorage {
      * @param tenantId
      * @return
      */
-    public WorkWeixinMultiConfigRuntimeStorage tenant(String tenantId) {
+    public TenantWxCpConfigStorage tenant(String tenantId) {
         INHERITABLE_THREAD_ACTIVE_TENANT_ID.set(tenantId);
         return this;
     }
 
     private String tenantId() {
         return INHERITABLE_THREAD_ACTIVE_TENANT_ID.get();
+    }
+
+    public String getTenantIdByAgentId(String agentId) {
+        return configOperator.getTenantIdByAgentId(agentId);
     }
 
     @Override
