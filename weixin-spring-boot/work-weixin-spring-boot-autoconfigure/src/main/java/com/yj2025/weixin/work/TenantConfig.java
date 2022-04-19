@@ -2,6 +2,7 @@ package com.yj2025.weixin.work;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 
 import javax.annotation.Nonnull;
@@ -9,6 +10,7 @@ import javax.annotation.Nonnull;
 @Data
 @NoArgsConstructor
 @Accessors(chain = true)
+@ToString
 public class TenantConfig {
     @Nonnull
     private String tenantId;
