@@ -9,6 +9,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.util.concurrent.CountDownLatch;
+
 /**
  * @author liuyuhua
  * @date 2022/4/18
@@ -42,6 +44,7 @@ public class Application implements CommandLineRunner {
 //                        .setAgentId(1000017)
 //        );
         sendDemoMessage();
+//        new CountDownLatch(1).await();
     }
 
     private void sendDemoMessage() throws WxErrorException {

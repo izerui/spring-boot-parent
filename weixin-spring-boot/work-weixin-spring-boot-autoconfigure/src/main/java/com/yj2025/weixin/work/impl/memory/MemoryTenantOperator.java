@@ -1,26 +1,32 @@
-package com.yj2025.weixin.work.impl;
+package com.yj2025.weixin.work.impl.memory;
 
+import com.yj2025.weixin.work.TenantConfig;
 import com.yj2025.weixin.work.WorkWeixinProperties;
+import com.yj2025.weixin.work.impl.AbstractBaseTenantOperator;
 import org.springframework.util.Assert;
 
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @author liuyuhua
  * @date 2022/4/19
  */
-public abstract class BaseMemoryTenantOperator implements KeyConstants {
+public class MemoryTenantOperator extends AbstractBaseTenantOperator {
 
-    protected WorkWeixinProperties properties;
     protected final Map<String, String> configRuntimeKeyValues;
     protected final Map<String, Integer> configRuntimeKeyExpireds;
     private final Timer timer;
+    protected transient Lock accessTokenLock = new ReentrantLock();
+    protected transient Lock jsapiTicketLock = new ReentrantLock();
+    protected transient Lock agentJsapiTicketLock = new ReentrantLock();
 
-    public BaseMemoryTenantOperator(WorkWeixinProperties properties) {
-        this.properties = properties;
+    public MemoryTenantOperator(WorkWeixinProperties properties) {
+        super(properties);
         this.configRuntimeKeyValues = new ConcurrentHashMap<>();
         this.configRuntimeKeyExpireds = new ConcurrentHashMap<>();
         this.timer = new Timer("memory_expireds_checker", true);
@@ -32,10 +38,21 @@ public abstract class BaseMemoryTenantOperator implements KeyConstants {
         }, 0, 1000);
     }
 
+
+    @Override
+    public String getTenantIdByAgentId(String agentId) {
+        String key = searchKeyByValue(AGENTID_KEY.apply(""), agentId);
+        String tenantId = REPLACE_AGENTID_KEY.apply(key);
+        return tenantId;
+    }
+
+
+    @Override
     protected String get(String key) {
         return configRuntimeKeyValues.get(key);
     }
 
+    @Override
     protected void set(String key, String value) {
         Assert.notNull(key, "key不能为空");
         if (value == null) {
@@ -44,7 +61,8 @@ public abstract class BaseMemoryTenantOperator implements KeyConstants {
         configRuntimeKeyValues.put(key, value);
     }
 
-    protected void set(String key, String value, Integer expiredSeconds) {
+    @Override
+    protected void set(String key, String value, int expiredSeconds) {
         Assert.notNull(expiredSeconds, "超时时间不能为空");
         set(key, value);
         if (expiredSeconds > 0) {
@@ -52,23 +70,27 @@ public abstract class BaseMemoryTenantOperator implements KeyConstants {
         }
     }
 
+    @Override
     protected void remove(String key) {
         configRuntimeKeyValues.remove(key);
         configRuntimeKeyExpireds.remove(key);
     }
 
+    @Override
     protected boolean exist(String key) {
         return configRuntimeKeyValues.containsKey(key);
     }
 
-    protected int getExpiredSeconds(String key) {
+    @Override
+    protected long getExpiredSeconds(String key) {
         Integer integer = configRuntimeKeyExpireds.get(key);
         if (integer == null) {
             integer = 0;
         }
-        return integer;
+        return Long.valueOf(integer.toString());
     }
 
+    @Override
     protected String searchKeyByValue(String keyPattern, String value) {
         for (String key : configRuntimeKeyValues.keySet()) {
             if (key.startsWith(keyPattern)
@@ -82,14 +104,35 @@ public abstract class BaseMemoryTenantOperator implements KeyConstants {
     private void checkAndUpdateExpiredKeys() {
         for (String key : configRuntimeKeyExpireds.keySet()) {
             Integer integer = configRuntimeKeyExpireds.get(key);
+            if (integer == null) {
+                return;
+            }
             integer--;
-            if (integer != null && integer == 0) {
+//            System.out.println("还剩: " + integer + "到期");
+            if (integer == 0) {
                 configRuntimeKeyExpireds.remove(key);
                 configRuntimeKeyValues.remove(key);
             } else {
                 configRuntimeKeyExpireds.put(key, integer);
             }
         }
+    }
+
+
+    @Override
+    public Lock getAccessTokenLock(String tenantId) {
+        return accessTokenLock;
+    }
+
+    @Override
+    public Lock getJsapiTicketLock(String tenantId) {
+        return jsapiTicketLock;
+    }
+
+
+    @Override
+    public Lock getAgentJsapiTicketLock(String tenantId) {
+        return agentJsapiTicketLock;
     }
 
 }

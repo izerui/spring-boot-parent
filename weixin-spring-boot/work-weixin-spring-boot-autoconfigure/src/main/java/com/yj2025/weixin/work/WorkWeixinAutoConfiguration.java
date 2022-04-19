@@ -1,6 +1,8 @@
 package com.yj2025.weixin.work;
 
-import com.yj2025.weixin.work.impl.*;
+import com.yj2025.weixin.work.impl.TenantWxCpServiceImpl;
+import com.yj2025.weixin.work.impl.memory.MemoryTenantOperator;
+import com.yj2025.weixin.work.impl.redis.RedisTenantOperator;
 import me.chanjar.weixin.common.util.http.apache.ApacheHttpClientBuilder;
 import me.chanjar.weixin.cp.config.WxCpConfigStorage;
 import org.springframework.beans.factory.ObjectProvider;
@@ -51,14 +53,10 @@ public class WorkWeixinAutoConfiguration {
     @Configuration
     public class MemoryOperator {
 
-        @Bean
-        public TenantRuntimeOperator tenantRuntimeOperator(WorkWeixinProperties properties) {
-            return new MemoryTenantRuntimeOperator(properties);
-        }
 
         @Bean
-        public TenantConfigOperator tenantConfigOperator(WorkWeixinProperties properties) {
-            return new MemoryTenantConfigOperator(properties);
+        public MemoryTenantOperator memoryTenantOperator(WorkWeixinProperties properties) {
+            return new MemoryTenantOperator(properties);
         }
 
     }
@@ -67,16 +65,11 @@ public class WorkWeixinAutoConfiguration {
     @Configuration
     public class RedisOperator {
 
-        @Bean
-        public TenantRuntimeOperator tenantRuntimeOperator(StringRedisTemplate redisTemplate,
-                                                           WorkWeixinProperties properties) {
-            return new RedisTenantRuntimeOperator(redisTemplate, properties);
-        }
 
         @Bean
-        public TenantConfigOperator tenantConfigOperator(StringRedisTemplate redisTemplate,
-                                                         WorkWeixinProperties properties) {
-            return new RedisTenantConfigOperator(redisTemplate, properties);
+        public RedisTenantOperator redisTenantOperator(StringRedisTemplate redisTemplate,
+                                                       WorkWeixinProperties properties) {
+            return new RedisTenantOperator(properties, redisTemplate);
         }
 
     }
