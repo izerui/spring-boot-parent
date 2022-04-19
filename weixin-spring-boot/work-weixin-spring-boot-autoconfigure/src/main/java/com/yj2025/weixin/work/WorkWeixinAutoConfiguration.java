@@ -10,8 +10,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
-import javax.annotation.concurrent.ThreadSafe;
-
 /**
  * @author liuyuhua
  * @date 2022/4/18
@@ -56,7 +54,6 @@ public class WorkWeixinAutoConfiguration {
         return wxCpService;
     }
 
-    @ThreadSafe
     public static class WorkWeixinServiceImpl extends WxCpServiceImpl implements WorkWeixinService {
         @Override
         public WorkWeixinService tenant(String tenantId) {
