@@ -24,10 +24,10 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 public class WorkWeixinAutoConfiguration {
 
     @Bean
-    public TenantWxCpConfigStorage multiConfigStorage(TenantConfigOperator configOperator,
-                                                      TenantRuntimeOperator runtimeOperator,
-                                                      ObjectProvider<ApacheHttpClientBuilder> apacheHttpClientBuilders) {
-        return new TenantWxCpConfigStorage(configOperator, runtimeOperator, apacheHttpClientBuilders);
+    public TenantWxCpConfigStorageAdpatder multiConfigStorage(TenantConfigOperator configOperator,
+                                                              TenantRuntimeOperator runtimeOperator,
+                                                              ObjectProvider<ApacheHttpClientBuilder> apacheHttpClientBuilders) {
+        return new TenantWxCpConfigStorageAdpatder(configOperator, runtimeOperator, apacheHttpClientBuilders);
     }
 
 
@@ -52,14 +52,14 @@ public class WorkWeixinAutoConfiguration {
     public static class WorkWeixinServiceImpl extends WxCpServiceImpl implements TenantWxCpService {
         @Override
         public TenantWxCpService tenant(String tenantId) {
-            TenantWxCpConfigStorage wxCpConfigStorage = (TenantWxCpConfigStorage) getWxCpConfigStorage();
+            TenantWxCpConfigStorageAdpatder wxCpConfigStorage = (TenantWxCpConfigStorageAdpatder) getWxCpConfigStorage();
             wxCpConfigStorage.tenant(tenantId);
             return this;
         }
 
         @Override
         public String getTenantIdByAgentId(String agentId) {
-            TenantWxCpConfigStorage wxCpConfigStorage = (TenantWxCpConfigStorage) getWxCpConfigStorage();
+            TenantWxCpConfigStorageAdpatder wxCpConfigStorage = (TenantWxCpConfigStorageAdpatder) getWxCpConfigStorage();
             return wxCpConfigStorage.getTenantIdByAgentId(agentId);
         }
     }

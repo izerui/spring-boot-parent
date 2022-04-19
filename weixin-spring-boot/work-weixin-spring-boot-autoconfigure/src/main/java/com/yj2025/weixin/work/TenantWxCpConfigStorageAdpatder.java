@@ -15,15 +15,15 @@ import java.util.concurrent.locks.Lock;
  * @date 2022/4/18
  */
 @ThreadSafe
-public class TenantWxCpConfigStorage implements WxCpConfigStorage {
+public class TenantWxCpConfigStorageAdpatder implements WxCpConfigStorage {
 
     private TenantConfigOperator configOperator;
     private TenantRuntimeOperator runtimeOperator;
     private ObjectProvider<ApacheHttpClientBuilder> apacheHttpClientBuilders;
 
-    public TenantWxCpConfigStorage(TenantConfigOperator configOperator,
-                                   TenantRuntimeOperator runtimeOperator,
-                                   ObjectProvider<ApacheHttpClientBuilder> apacheHttpClientBuilders) {
+    public TenantWxCpConfigStorageAdpatder(TenantConfigOperator configOperator,
+                                           TenantRuntimeOperator runtimeOperator,
+                                           ObjectProvider<ApacheHttpClientBuilder> apacheHttpClientBuilders) {
         this.configOperator = configOperator;
         this.runtimeOperator = runtimeOperator;
         this.apacheHttpClientBuilders = apacheHttpClientBuilders;
@@ -46,7 +46,7 @@ public class TenantWxCpConfigStorage implements WxCpConfigStorage {
      * @param tenantId
      * @return
      */
-    public TenantWxCpConfigStorage tenant(String tenantId) {
+    public TenantWxCpConfigStorageAdpatder tenant(String tenantId) {
         INHERITABLE_THREAD_ACTIVE_TENANT_ID.set(tenantId);
         return this;
     }
