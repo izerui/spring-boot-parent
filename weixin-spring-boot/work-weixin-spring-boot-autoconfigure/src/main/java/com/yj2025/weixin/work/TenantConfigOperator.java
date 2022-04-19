@@ -8,8 +8,11 @@ package com.yj2025.weixin.work;
  */
 public interface TenantConfigOperator {
 
+    void setConfigs(TenantConfig... configs);
+
     /**
      * 根据消息相应的agentId获取对应的tenantId
+     *
      * @param agentId
      * @return
      */
@@ -85,5 +88,4 @@ public interface TenantConfigOperator {
     String getOauth2redirectUri(String tenantId);
 
     void setOauth2redirectUri(String tenantId, String oauth2redirectUri);
-
 }

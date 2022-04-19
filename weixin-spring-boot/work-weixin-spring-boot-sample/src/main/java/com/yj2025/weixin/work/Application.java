@@ -30,19 +30,22 @@ public class Application implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        tenantConfigOperator.setCorpId("yunji", "ww7c4f40dafaee2f4c");
-        tenantConfigOperator.setCorpSecret("yunji", "c3fMZXD7qjfLz4ghNxhE8_SjsmYizPwf_QmcDISyXBM");
-        tenantConfigOperator.setToken("yunji", "3ORc6qO5uMJeQNmbd9Tf1b27w");
-        tenantConfigOperator.setAesKey("yunji", "WGSJDot0bvUy72RMeqoi5966lsFyuzdcQiSSntpUtu2");
-        tenantConfigOperator.setAgentId("yunji", "1000013");
-
-
-        tenantConfigOperator.setCorpId("jingguan", "ww7c4f40dafaee2f4c");
-        tenantConfigOperator.setCorpSecret("jingguan", "hgKyD3RjUD43v0E2N2C2Pzfd8BKDyG8AlP1EntU923I");
-//        tenantConfigOperator.setToken("jingguan", "3ORc6qO5uMJeQNmbd9Tf1b27w");
-//        tenantConfigOperator.setAesKey("jingguan", "WGSJDot0bvUy72RMeqoi5966lsFyuzdcQiSSntpUtu2");
-        tenantConfigOperator.setAgentId("jingguan", "1000017");
-
+        tenantConfigOperator.setConfigs(
+                TenantConfig.builder()
+                        .tenantId("yunji")
+                        .corpId("ww7c4f40dafaee2f4c")
+                        .corpSecret("c3fMZXD7qjfLz4ghNxhE8_SjsmYizPwf_QmcDISyXBM")
+                        .token("3ORc6qO5uMJeQNmbd9Tf1b27w")
+                        .aesKey("WGSJDot0bvUy72RMeqoi5966lsFyuzdcQiSSntpUtu2")
+                        .agentId("1000013")
+                        .build(),
+                TenantConfig.builder()
+                        .tenantId("jingguan")
+                        .corpId("ww7c4f40dafaee2f4c")
+                        .corpSecret("hgKyD3RjUD43v0E2N2C2Pzfd8BKDyG8AlP1EntU923I")
+                        .agentId("1000017")
+                        .build()
+        );
         sendDemoMessage();
     }
 

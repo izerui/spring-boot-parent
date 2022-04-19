@@ -1,5 +1,6 @@
 package com.yj2025.weixin.work.impl;
 
+import com.yj2025.weixin.work.TenantConfig;
 import com.yj2025.weixin.work.TenantConfigOperator;
 import com.yj2025.weixin.work.WorkWeixinProperties;
 
@@ -13,6 +14,20 @@ public class MemoryTenantConfigOperator extends BaseMemoryTenantOperator impleme
         super(properties);
     }
 
+
+    @Override
+    public void setConfigs(TenantConfig... configs) {
+        for (TenantConfig config : configs) {
+            this.setCorpId(config.getTenantId(), config.getCorpId());
+            this.setCorpSecret(config.getTenantId(), config.getCorpSecret());
+            this.setToken(config.getTenantId(), config.getToken());
+            this.setAesKey(config.getTenantId(), config.getAesKey());
+            this.setAgentId(config.getTenantId(), config.getAgentId());
+            this.setMsgAuditLibPath(config.getTenantId(), config.getMsgAuditLibPath());
+            this.setWebhookKey(config.getTenantId(), config.getWebhookKey());
+            this.setOauth2redirectUri(config.getTenantId(), config.getOauth2redirectUri());
+        }
+    }
 
     @Override
     public String getTenantIdByAgentId(String agentId) {

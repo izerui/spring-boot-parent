@@ -37,14 +37,14 @@ public abstract class BaseMemoryTenantOperator implements KeyConstants {
     }
 
     protected void set(String key, String value) {
-        Assert.notNull(key);
-        Assert.notNull(value);
+        Assert.notNull(key, "key不能为空");
+        if (value == null) {
+            return;
+        }
         configRuntimeKeyValues.put(key, value);
     }
 
     protected void set(String key, String value, Integer expiredSeconds) {
-        Assert.notNull(key);
-        Assert.notNull(value);
         Assert.notNull(expiredSeconds, "超时时间不能为空");
         set(key, value);
         if (expiredSeconds > 0) {
