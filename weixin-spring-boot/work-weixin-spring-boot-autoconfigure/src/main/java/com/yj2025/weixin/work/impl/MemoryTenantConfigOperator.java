@@ -30,6 +30,20 @@ public class MemoryTenantConfigOperator extends BaseMemoryTenantOperator impleme
     }
 
     @Override
+    public TenantConfig getConfig(String tenantId) {
+        return TenantConfig.builder()
+                .tenantId(tenantId)
+                .corpId(getCorpId(tenantId))
+                .corpSecret(getCorpSecret(tenantId))
+                .token(getToken(tenantId))
+                .aesKey(getAesKey(tenantId))
+                .agentId(getAgentId(tenantId))
+                .msgAuditLibPath(getMsgAuditLibPath(tenantId))
+                .webhookKey(getWebhookKey(tenantId))
+                .build();
+    }
+
+    @Override
     public String getTenantIdByAgentId(String agentId) {
         String key = searchKeyByValue(AGENTID_KEY.apply(""), agentId);
         String tenantId = REPLACE_AGENTID_KEY.apply(key);
@@ -91,8 +105,8 @@ public class MemoryTenantConfigOperator extends BaseMemoryTenantOperator impleme
     }
 
     @Override
-    public void setAgentId(String tenantId, String agentId) {
-        set(AGENTID_KEY.apply(tenantId), agentId);
+    public void setAgentId(String tenantId, Integer agentId) {
+        set(AGENTID_KEY.apply(tenantId), String.valueOf(agentId));
     }
 
     @Override

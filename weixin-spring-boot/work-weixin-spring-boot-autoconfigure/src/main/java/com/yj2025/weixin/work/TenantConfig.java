@@ -6,7 +6,7 @@ import lombok.Data;
 import javax.annotation.Nonnull;
 
 @Data
-@Builder
+@Builder(builderClassName = "Builder", toBuilder = true)
 public class TenantConfig {
     @Nonnull
     private String tenantId;
@@ -17,7 +17,7 @@ public class TenantConfig {
     private String token;
     private String aesKey;
     @Nonnull
-    private String agentId;
+    private Integer agentId;
     private String msgAuditLibPath;
     private String oauth2redirectUri;
     private String webhookKey;

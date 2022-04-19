@@ -37,13 +37,13 @@ public class Application implements CommandLineRunner {
                         .corpSecret("c3fMZXD7qjfLz4ghNxhE8_SjsmYizPwf_QmcDISyXBM")
                         .token("3ORc6qO5uMJeQNmbd9Tf1b27w")
                         .aesKey("WGSJDot0bvUy72RMeqoi5966lsFyuzdcQiSSntpUtu2")
-                        .agentId("1000013")
+                        .agentId(1000013)
                         .build(),
                 TenantConfig.builder()
                         .tenantId("jingguan")
                         .corpId("ww7c4f40dafaee2f4c")
                         .corpSecret("hgKyD3RjUD43v0E2N2C2Pzfd8BKDyG8AlP1EntU923I")
-                        .agentId("1000017")
+                        .agentId(1000017)
                         .build()
         );
         sendDemoMessage();

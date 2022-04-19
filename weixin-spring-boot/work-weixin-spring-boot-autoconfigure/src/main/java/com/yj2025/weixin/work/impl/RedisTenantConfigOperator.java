@@ -38,6 +38,20 @@ public class RedisTenantConfigOperator implements TenantConfigOperator, KeyConst
     }
 
     @Override
+    public TenantConfig getConfig(String tenantId) {
+        return TenantConfig.builder()
+                .tenantId(tenantId)
+                .corpId(getCorpId(tenantId))
+                .corpSecret(getCorpSecret(tenantId))
+                .token(getToken(tenantId))
+                .aesKey(getAesKey(tenantId))
+                .agentId(getAgentId(tenantId))
+                .msgAuditLibPath(getMsgAuditLibPath(tenantId))
+                .webhookKey(getWebhookKey(tenantId))
+                .build();
+    }
+
+    @Override
     public String getTenantIdByAgentId(String agentId) {
         String pattern = AGENTID_KEY.apply("*");
         Set<String> keys = redisTemplate.keys(pattern);
@@ -105,8 +119,8 @@ public class RedisTenantConfigOperator implements TenantConfigOperator, KeyConst
     }
 
     @Override
-    public void setAgentId(String tenantId, String agentId) {
-        redisTemplate.boundValueOps(AGENTID_KEY.apply(tenantId)).set(agentId);
+    public void setAgentId(String tenantId, Integer agentId) {
+        redisTemplate.boundValueOps(AGENTID_KEY.apply(tenantId)).set(String.valueOf(agentId));
     }
 
     @Override
