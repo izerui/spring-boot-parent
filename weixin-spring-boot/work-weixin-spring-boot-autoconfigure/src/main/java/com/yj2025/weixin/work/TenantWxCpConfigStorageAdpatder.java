@@ -1,5 +1,6 @@
 package com.yj2025.weixin.work;
 
+import lombok.Getter;
 import me.chanjar.weixin.common.bean.WxAccessToken;
 import me.chanjar.weixin.common.util.http.apache.ApacheHttpClientBuilder;
 import me.chanjar.weixin.cp.config.WxCpConfigStorage;
@@ -17,8 +18,11 @@ import java.util.concurrent.locks.Lock;
 @ThreadSafe
 public class TenantWxCpConfigStorageAdpatder implements WxCpConfigStorage {
 
+    @Getter
     private TenantConfigOperator configOperator;
+    @Getter
     private TenantRuntimeOperator runtimeOperator;
+    @Getter
     private WorkWeixinProperties properties;
     private ObjectProvider<ApacheHttpClientBuilder> apacheHttpClientBuilders;
 

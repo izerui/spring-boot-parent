@@ -1,12 +1,14 @@
 package com.yj2025.weixin.work;
 
-import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 import javax.annotation.Nonnull;
 
 @Data
-@Builder(builderClassName = "Builder", toBuilder = true)
+@NoArgsConstructor
+@Accessors(chain = true)
 public class TenantConfig {
     @Nonnull
     private String tenantId;

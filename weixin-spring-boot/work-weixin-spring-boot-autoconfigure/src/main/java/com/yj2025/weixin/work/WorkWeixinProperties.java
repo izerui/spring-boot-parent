@@ -4,6 +4,7 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * @author liuyuhua
@@ -12,6 +13,8 @@ import java.io.File;
 @Data
 @ConfigurationProperties(prefix = "work.weixin")
 public class WorkWeixinProperties {
+
+    private List<TenantConfig> configs;
 
     private StorageType storage = StorageType.memory;
     /**

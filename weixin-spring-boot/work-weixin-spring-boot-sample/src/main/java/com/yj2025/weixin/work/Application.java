@@ -22,30 +22,28 @@ public class Application implements CommandLineRunner {
     }
 
 
-    @Autowired
-    private TenantConfigOperator tenantConfigOperator;
+//    @Autowired
+//    private TenantConfigOperator tenantConfigOperator;
 
     @Autowired
     private TenantWxCpService workWeixinService;
 
     @Override
     public void run(String... args) throws Exception {
-        tenantConfigOperator.setConfigs(
-                TenantConfig.builder()
-                        .tenantId("yunji")
-                        .corpId("ww7c4f40dafaee2f4c")
-                        .corpSecret("c3fMZXD7qjfLz4ghNxhE8_SjsmYizPwf_QmcDISyXBM")
-                        .token("3ORc6qO5uMJeQNmbd9Tf1b27w")
-                        .aesKey("WGSJDot0bvUy72RMeqoi5966lsFyuzdcQiSSntpUtu2")
-                        .agentId(1000013)
-                        .build(),
-                TenantConfig.builder()
-                        .tenantId("jingguan")
-                        .corpId("ww7c4f40dafaee2f4c")
-                        .corpSecret("hgKyD3RjUD43v0E2N2C2Pzfd8BKDyG8AlP1EntU923I")
-                        .agentId(1000017)
-                        .build()
-        );
+//        tenantConfigOperator.setConfigs(
+//                new TenantConfig()
+//                        .setTenantId("yunji")
+//                        .setCorpId("ww7c4f40dafaee2f4c")
+//                        .setCorpSecret("c3fMZXD7qjfLz4ghNxhE8_SjsmYizPwf_QmcDISyXBM")
+//                        .setToken("3ORc6qO5uMJeQNmbd9Tf1b27w")
+//                        .setAesKey("WGSJDot0bvUy72RMeqoi5966lsFyuzdcQiSSntpUtu2")
+//                        .setAgentId(1000013),
+//                new TenantConfig()
+//                        .setTenantId("jingguan")
+//                        .setCorpId("ww7c4f40dafaee2f4c")
+//                        .setCorpSecret("hgKyD3RjUD43v0E2N2C2Pzfd8BKDyG8AlP1EntU923I")
+//                        .setAgentId(1000017)
+//        );
         sendDemoMessage();
     }
 

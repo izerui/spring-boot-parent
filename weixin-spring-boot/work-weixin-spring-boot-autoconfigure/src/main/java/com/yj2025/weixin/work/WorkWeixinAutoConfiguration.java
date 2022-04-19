@@ -1,11 +1,7 @@
 package com.yj2025.weixin.work;
 
-import com.yj2025.weixin.work.impl.MemoryTenantConfigOperator;
-import com.yj2025.weixin.work.impl.MemoryTenantRuntimeOperator;
-import com.yj2025.weixin.work.impl.RedisTenantConfigOperator;
-import com.yj2025.weixin.work.impl.RedisTenantRuntimeOperator;
+import com.yj2025.weixin.work.impl.*;
 import me.chanjar.weixin.common.util.http.apache.ApacheHttpClientBuilder;
-import me.chanjar.weixin.cp.api.impl.WxCpServiceImpl;
 import me.chanjar.weixin.cp.config.WxCpConfigStorage;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -35,7 +31,7 @@ public class WorkWeixinAutoConfiguration {
     @Bean
     @ConditionalOnBean(WxCpConfigStorage.class)
     public TenantWxCpService wxCpService(WxCpConfigStorage wxCpConfigStorage, WorkWeixinProperties properties) {
-        TenantWxCpService wxCpService = new WorkWeixinServiceImpl();
+        TenantWxCpService wxCpService = new TenantWxCpServiceImpl();
         wxCpService.setWxCpConfigStorage(wxCpConfigStorage);
         int maxRetryTimes = properties.getMaxRetryTimes();
         if (maxRetryTimes < 0) {
@@ -48,21 +44,6 @@ public class WorkWeixinAutoConfiguration {
         wxCpService.setRetrySleepMillis(retrySleepMillis);
         wxCpService.setMaxRetryTimes(maxRetryTimes);
         return wxCpService;
-    }
-
-    public static class WorkWeixinServiceImpl extends WxCpServiceImpl implements TenantWxCpService {
-        @Override
-        public TenantWxCpService tenant(String tenantId) {
-            TenantWxCpConfigStorageAdpatder wxCpConfigStorage = (TenantWxCpConfigStorageAdpatder) getWxCpConfigStorage();
-            wxCpConfigStorage.tenant(tenantId);
-            return this;
-        }
-
-        @Override
-        public String getTenantIdByAgentId(String agentId) {
-            TenantWxCpConfigStorageAdpatder wxCpConfigStorage = (TenantWxCpConfigStorageAdpatder) getWxCpConfigStorage();
-            return wxCpConfigStorage.getTenantIdByAgentId(agentId);
-        }
     }
 
 

@@ -31,16 +31,15 @@ public class MemoryTenantConfigOperator extends BaseMemoryTenantOperator impleme
 
     @Override
     public TenantConfig getConfig(String tenantId) {
-        return TenantConfig.builder()
-                .tenantId(tenantId)
-                .corpId(getCorpId(tenantId))
-                .corpSecret(getCorpSecret(tenantId))
-                .token(getToken(tenantId))
-                .aesKey(getAesKey(tenantId))
-                .agentId(getAgentId(tenantId))
-                .msgAuditLibPath(getMsgAuditLibPath(tenantId))
-                .webhookKey(getWebhookKey(tenantId))
-                .build();
+        return new TenantConfig()
+                .setTenantId(tenantId)
+                .setCorpId(getCorpId(tenantId))
+                .setCorpSecret(getCorpSecret(tenantId))
+                .setToken(getToken(tenantId))
+                .setAesKey(getAesKey(tenantId))
+                .setAgentId(getAgentId(tenantId))
+                .setMsgAuditLibPath(getMsgAuditLibPath(tenantId))
+                .setWebhookKey(getWebhookKey(tenantId));
     }
 
     @Override
