@@ -18,11 +18,6 @@ public class TenantWxCpServiceImpl extends WxCpServiceImpl implements TenantWxCp
     }
 
     @Override
-    public String getTenantIdByAgentId(String agentId) {
-        return getStorageAdpatder().getTenantIdByAgentId(agentId);
-    }
-
-    @Override
     public TenantConfigOperator getConfigOperator() {
         return getStorageAdpatder().getConfigOperator();
     }

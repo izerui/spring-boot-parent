@@ -3,11 +3,9 @@ package com.yj2025.weixin.work.impl.redis;
 import com.yj2025.weixin.work.WorkWeixinProperties;
 import com.yj2025.weixin.work.impl.AbstractBaseTenantOperator;
 import me.chanjar.weixin.common.util.locks.RedisTemplateSimpleDistributedLock;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.util.Assert;
 
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
@@ -22,13 +20,6 @@ public class RedisTenantOperator extends AbstractBaseTenantOperator {
     public RedisTenantOperator(WorkWeixinProperties properties, StringRedisTemplate redisTemplate) {
         super(properties);
         this.redisTemplate = redisTemplate;
-    }
-
-    @Override
-    public String getTenantIdByAgentId(String agentId) {
-        String key = searchKeyByValue(AGENTID_KEY.apply("*"), agentId);
-        String tenantId = REPLACE_AGENTID_KEY.apply(key);
-        return tenantId;
     }
 
     @Override
@@ -68,18 +59,6 @@ public class RedisTenantOperator extends AbstractBaseTenantOperator {
     @Override
     protected long getExpiredSeconds(String key) {
         return redisTemplate.boundValueOps(key).getExpire();
-    }
-
-    @Override
-    protected String searchKeyByValue(String keyPattern, String value) {
-        Set<String> keys = redisTemplate.keys(keyPattern);
-        for (String key : keys) {
-            String dbValue = redisTemplate.boundValueOps(key).get();
-            if (StringUtils.equals(dbValue, value)) {
-                return key;
-            }
-        }
-        return null;
     }
 
     @Override

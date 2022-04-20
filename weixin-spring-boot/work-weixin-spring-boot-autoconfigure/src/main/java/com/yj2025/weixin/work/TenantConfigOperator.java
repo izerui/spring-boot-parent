@@ -10,24 +10,18 @@ public interface TenantConfigOperator {
 
     /**
      * 设置租户的相关配置
+     *
      * @param configs
      */
     void setConfigs(TenantConfig... configs);
 
     /**
      * 根据租户ID获取对应的配置
+     *
      * @param tenantId
      * @return
      */
     TenantConfig getConfig(String tenantId);
-
-    /**
-     * 根据消息相应的agentId获取对应的tenantId
-     *
-     * @param agentId
-     * @return
-     */
-    String getTenantIdByAgentId(String agentId);
 
     /**
      * 微信企业号 corpId

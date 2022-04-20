@@ -9,32 +9,29 @@ import me.chanjar.weixin.cp.api.WxCpService;
 public interface TenantWxCpService extends WxCpService {
     /**
      * 指定以某一个租户操作service请求
+     *
      * @param tenantId
      * @return
      */
     TenantWxCpService tenant(String tenantId);
 
     /**
-     * 根据agentId获取对应的租户
-     * @param agentId
-     * @return
-     */
-    String getTenantIdByAgentId(String agentId);
-
-    /**
      * 获取配置操作对象
+     *
      * @return
      */
     TenantConfigOperator getConfigOperator();
 
     /**
      * 获取运行时操作对象
+     *
      * @return
      */
     TenantRuntimeOperator getRuntimeOperator();
 
     /**
      * 获取桥接的存储适配器
+     *
      * @return
      */
     TenantWxCpConfigStorageAdpatder getStorageAdpatder();

@@ -20,6 +20,7 @@ public abstract class AbstractBaseTenantOperator implements TenantConfigOperator
 
     /**
      * 通过key获取值
+     *
      * @param key
      * @return
      */
@@ -27,6 +28,7 @@ public abstract class AbstractBaseTenantOperator implements TenantConfigOperator
 
     /**
      * 持久化一个kv
+     *
      * @param key
      * @param value
      */
@@ -34,6 +36,7 @@ public abstract class AbstractBaseTenantOperator implements TenantConfigOperator
 
     /**
      * 持久化kv并设置失效时长（秒）
+     *
      * @param key
      * @param value
      * @param expiredSeconds
@@ -42,12 +45,14 @@ public abstract class AbstractBaseTenantOperator implements TenantConfigOperator
 
     /**
      * 移除一个key
+     *
      * @param key
      */
     protected abstract void remove(String key);
 
     /**
      * 判断一个key是否存在
+     *
      * @param key
      * @return
      */
@@ -55,19 +60,11 @@ public abstract class AbstractBaseTenantOperator implements TenantConfigOperator
 
     /**
      * 获取一个key的到期时长
+     *
      * @param key
      * @return
      */
     protected abstract long getExpiredSeconds(String key);
-
-    /**
-     * 通过keyPattern定位等于value的key
-     * @param keyPattern
-     * @param value
-     * @return
-     */
-    protected abstract String searchKeyByValue(String keyPattern, String value);
-
 
     // config
     @Override
@@ -180,8 +177,6 @@ public abstract class AbstractBaseTenantOperator implements TenantConfigOperator
     public void setOauth2redirectUri(String tenantId, String oauth2redirectUri) {
         set(OAUTH2REDIRECTURI_KEY.apply(tenantId), oauth2redirectUri);
     }
-
-
 
 
     // runtime

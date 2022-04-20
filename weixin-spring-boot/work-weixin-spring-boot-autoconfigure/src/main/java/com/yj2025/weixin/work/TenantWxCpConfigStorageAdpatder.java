@@ -62,10 +62,6 @@ public class TenantWxCpConfigStorageAdpatder implements WxCpConfigStorage {
         return INHERITABLE_THREAD_ACTIVE_TENANT_ID.get();
     }
 
-    public String getTenantIdByAgentId(String agentId) {
-        return configOperator.getTenantIdByAgentId(agentId);
-    }
-
     @Override
     public void setBaseApiUrl(String baseUrl) {
         throw new UnsupportedOperationException();

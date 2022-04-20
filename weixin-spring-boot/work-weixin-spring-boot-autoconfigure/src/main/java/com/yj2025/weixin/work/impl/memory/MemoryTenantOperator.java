@@ -1,6 +1,5 @@
 package com.yj2025.weixin.work.impl.memory;
 
-import com.yj2025.weixin.work.TenantConfig;
 import com.yj2025.weixin.work.WorkWeixinProperties;
 import com.yj2025.weixin.work.impl.AbstractBaseTenantOperator;
 import org.springframework.util.Assert;
@@ -36,14 +35,6 @@ public class MemoryTenantOperator extends AbstractBaseTenantOperator {
                 checkAndUpdateExpiredKeys();
             }
         }, 0, 1000);
-    }
-
-
-    @Override
-    public String getTenantIdByAgentId(String agentId) {
-        String key = searchKeyByValue(AGENTID_KEY.apply(""), agentId);
-        String tenantId = REPLACE_AGENTID_KEY.apply(key);
-        return tenantId;
     }
 
 
@@ -88,17 +79,6 @@ public class MemoryTenantOperator extends AbstractBaseTenantOperator {
             integer = 0;
         }
         return Long.valueOf(integer.toString());
-    }
-
-    @Override
-    protected String searchKeyByValue(String keyPattern, String value) {
-        for (String key : configRuntimeKeyValues.keySet()) {
-            if (key.startsWith(keyPattern)
-                    && configRuntimeKeyValues.get(key).equals(value)) {
-                return key;
-            }
-        }
-        return null;
     }
 
     private void checkAndUpdateExpiredKeys() {

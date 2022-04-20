@@ -54,7 +54,7 @@ public class Application implements CommandLineRunner {
         message.setToUser("serv");
         message.setContent("11111欢迎欢迎，热烈欢迎\n换行测试\n超链接:<a href=\"http://www.baidu.com\">Hello World</a>");
 
-        WxCpMessageSendResult messageSendResult = this.tenantWxCpService.tenant("jingguan").getMessageService().send(message);
+        WxCpMessageSendResult messageSendResult = this.tenantWxCpService.tenant("yunji").getMessageService().send(message);
         System.out.println(messageSendResult.toString());
     }
 }

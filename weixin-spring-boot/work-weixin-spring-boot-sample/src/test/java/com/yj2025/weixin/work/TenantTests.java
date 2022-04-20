@@ -31,16 +31,18 @@ public class TenantTests {
 
     /**
      * 测试读取spring 配置的多租户信息进行发送测试
+     *
      * @throws WxErrorException
      */
     @Test
     public void testSpring() throws WxErrorException {
-        this.sendDemoMessage("feike");
+        this.sendDemoMessage("yunji");
     }
 
 
     /**
      * 手动初始化多租户配置，并测试发送
+     *
      * @throws WxErrorException
      */
     @Test
@@ -60,6 +62,7 @@ public class TenantTests {
 
     /**
      * 测试调用bean修改其中某个租户的配置，并发送
+     *
      * @throws WxErrorException
      */
     @Test
@@ -67,18 +70,6 @@ public class TenantTests {
         TenantConfigOperator configOperator = tenantWxCpService.getConfigOperator();
         configOperator.setCorpSecret("feike", "f4QXoH0x5KJgMnLBxoAik6NmKrcYA26ZEZCkz_f94uQ");
         this.sendDemoMessage("feike");
-    }
-
-    /**
-     * 通过消息回调里面的 agentId 获取对应的配置
-     */
-    @Test
-    public void testGetConfig() {
-        String agentId = "1000003";
-        TenantConfigOperator configOperator = tenantWxCpService.getConfigOperator();
-        String tenantId = configOperator.getTenantIdByAgentId(agentId);
-        TenantConfig config = configOperator.getConfig(tenantId);
-        System.out.println(config.toString());
     }
 
 }
