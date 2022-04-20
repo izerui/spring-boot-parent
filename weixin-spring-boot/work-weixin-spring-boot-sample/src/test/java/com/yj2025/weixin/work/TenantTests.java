@@ -4,9 +4,15 @@ import me.chanjar.weixin.common.api.WxConsts;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.cp.bean.message.WxCpMessage;
 import me.chanjar.weixin.cp.bean.message.WxCpMessageSendResult;
+import me.chanjar.weixin.cp.bean.templatecard.HorizontalContent;
+import me.chanjar.weixin.cp.bean.templatecard.TemplateCardJump;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author liuyuhua
@@ -36,7 +42,42 @@ public class TenantTests {
      */
     @Test
     public void testSpring() throws WxErrorException {
-        this.sendDemoMessage("yunji");
+        this.sendDemoMessage("k8s-local");
+    }
+
+    @Test
+    public void testTemplateMessage() throws WxErrorException {
+        WxCpMessage reply = WxCpMessage.TEMPLATECARD().toUser("serv")
+                .cardType(WxConsts.TemplateCardType.TEXT_NOTICE)
+                .sourceIconUrl("http://www.yunji2025.com/_nuxt/img/logo.27aea34.png")
+                .sourceDesc("服务发布")
+                .mainTitleTitle("admin-server 发布成功")
+                .mainTitleDesc(new Date().toString())
+                .horizontalContents(Arrays.asList(
+                        HorizontalContent.builder()
+                                .keyname("集群")
+                                .value("local")
+                                .build(),
+                        HorizontalContent.builder()
+                                .keyname("环境")
+                                .value("test")
+                                .build(),
+                        HorizontalContent.builder()
+                                .keyname("镜像版本")
+                                .value("UIHJDNSFIU")
+                                .build()))
+                .jumps(List.of(
+                        TemplateCardJump.builder()
+                                .type(1)
+                                .title("进入我的的经管")
+                                .url("https://yj2025.com")
+                                .build()
+                ))
+                .cardActionType(1)
+                .cardActionUrl("https://yj2025.com")
+                .build();
+        WxCpMessageSendResult yunji = tenantWxCpService.tenant("k8s-local").getMessageService().send(reply);
+        System.out.println(yunji.toString());
     }
 
 
@@ -51,10 +92,10 @@ public class TenantTests {
         configOperator.setConfigs(
                 new TenantConfig()
                         .setTenantId("feike")
-                        .setCorpId("wx7004ac2607aae3ac")
-                        .setCorpSecret("f4QXoH0x5KJgMnLBxoAik6NmKrcYA26ZEZCkz_f94uQ")
-                        .setToken("6HFXyimVNitD3REk87E5f")
-                        .setAesKey("oHhKlG1xj2aEyZM2WC7YXFkwg9Ncglm2wfIANxFAGn9")
+                        .setCorpId("wx7003aae3ac")
+                        .setCorpSecret("f4Q3KJgMnLBxoAik6NmKrcYA26ZEZCkz_f94uQ")
+                        .setToken("6HFXyimVN37E5f")
+                        .setAesKey("oHhKlG1x37YXFkwg9Ncglm2wfIANxFAGn9")
                         .setAgentId(1000003)
         );
         this.sendDemoMessage("feike");
@@ -68,8 +109,8 @@ public class TenantTests {
     @Test
     public void testUpdateConfig() throws WxErrorException {
         TenantConfigOperator configOperator = tenantWxCpService.getConfigOperator();
-        configOperator.setCorpSecret("feike", "f4QXoH0x5KJgMnLBxoAik6NmKrcYA26ZEZCkz_f94uQ");
-        this.sendDemoMessage("feike");
+        configOperator.setCorpSecret("k8s-local", "f4QXoH0x5KJgMnLBxoAik6NmKrcYA26ZEZCkz_f94uQ");
+        this.sendDemoMessage("k8s-local");
     }
 
 }
