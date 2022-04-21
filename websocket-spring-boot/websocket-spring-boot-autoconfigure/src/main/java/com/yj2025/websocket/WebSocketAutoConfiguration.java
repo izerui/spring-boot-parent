@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @EnableConfigurationProperties(WebSocketProperties.class)
-public class WebSocketAutoconfiguration {
+public class WebSocketAutoConfiguration {
 
 
     @Bean

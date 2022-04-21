@@ -19,6 +19,8 @@
         <module>websocket-spring-boot</module>
         <module>metrics-spring-boot</module>
         <module>sms-spring-boot</module>
+        <module>amazonaws-spring-boot</module>
+        <module>weixin-spring-boot</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -30,14 +32,14 @@
     <groupId>com.yj2025</groupId>
     <artifactId>yj2025-spring-boot-parent</artifactId>
 
-    <version>1.3.0-SNAPSHOT</version>
+    <version>1.3.1-SNAPSHOT</version>
 
     <properties>
-        <java.version>1.8</java.version>
+        <java.version>11</java.version>
         <spring-cloud.version>Hoxton.SR12</spring-cloud.version>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
-        <base-starter.version>1.3.0-SNAPSHOT</base-starter.version>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <base-starter.version>1.3.1-SNAPSHOT</base-starter.version>
     </properties>
 
 
@@ -47,13 +49,6 @@
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
                 <version>${spring-cloud.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.yj2025</groupId>
-                <artifactId>business-dependencies</artifactId>
-                <version>1.1.9</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -286,6 +281,29 @@
                 <artifactId>sms-spring-boot-starter</artifactId>
                 <version>${base-starter.version}</version>
             </dependency>
+
+            <!-- amazonaws-sdk -->
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>amazonaws-spring-boot-autoconfigure</artifactId>
+                <version>${base-starter.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>amazonaws-spring-boot-starter</artifactId>
+                <version>${base-starter.version}</version>
+            </dependency>
+            <!-- work weixin-->
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>work-weixin-spring-boot-autoconfigure</artifactId>
+                <version>${base-starter.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>work-weixin-spring-boot-starter</artifactId>
+                <version>${base-starter.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -293,7 +311,7 @@
     <repositories>
         <repository>
             <id>nexus</id>
-            <url>https://repo.yj2025.com/nexus/content/groups/public/</url>
+            <url>http://192.168.1.235:8081/nexus/content/groups/public/</url>
         </repository>
     </repositories>
 

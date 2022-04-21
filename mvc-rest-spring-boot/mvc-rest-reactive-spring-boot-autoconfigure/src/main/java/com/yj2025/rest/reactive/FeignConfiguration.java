@@ -32,7 +32,6 @@ public class FeignConfiguration {
     @Value("${spring.application.name:unknown}")
     private String applicationName;
 
-
     @Bean
     public Decoder feignDecoder() {
         return new ResponseEntityDecoder(new SpringDecoder(feignHttpMessageConverter()));
@@ -40,13 +39,7 @@ public class FeignConfiguration {
 
     public ObjectFactory<HttpMessageConverters> feignHttpMessageConverter() {
         final HttpMessageConverters httpMessageConverters = new HttpMessageConverters(new MappingJackson2HttpMessageConverter());
-        //没有写成lambda
-        return new ObjectFactory<HttpMessageConverters>() {
-            @Override
-            public HttpMessageConverters getObject() throws BeansException {
-                return httpMessageConverters;
-            }
-        };
+        return () -> httpMessageConverters;
     }
 
     @Bean
