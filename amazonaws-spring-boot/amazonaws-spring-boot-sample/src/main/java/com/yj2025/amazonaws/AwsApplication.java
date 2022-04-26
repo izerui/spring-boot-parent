@@ -34,14 +34,11 @@ public class AwsApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        this.getFile();
-        this.uploadFile();
-        this.getStsToken();
         this.getPresignedUrl();
     }
 
     private void getPresignedUrl() {
-        URL presignedUrl = awsService.getS3Service().getPresignedUrl("ucloud-bak", "AwsApplication.java");
+        URL presignedUrl = awsService.getS3Service().getPresignedUrl("tenant-datalake", "backup/tar/c42a1cdd-6290-443c-aaba-14cc35a78bc4.tar");
         System.out.println(presignedUrl.toString());
     }
 
