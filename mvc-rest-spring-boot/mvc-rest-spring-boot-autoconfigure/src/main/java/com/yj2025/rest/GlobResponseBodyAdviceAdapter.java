@@ -86,7 +86,7 @@ public class GlobResponseBodyAdviceAdapter implements ResponseBodyAdvice<Object>
                 }
             } else {
                 // 不再输出异常堆栈信息，统一参考 dispatcherServlet 中的异常打印
-                logger.error("request:[" + getPath(request) + "]\t\trequestApp:[" + requestApp + "]\t\terror:[" + throwable.getMessage() + "]");
+                logger.error("客户端: {} 请求: {} 出错: {}", requestApp, getPath(request), throwable.getMessage());
             }
 
             if (throwable.getClass().getName().equals("com.netflix.hystrix.exception.HystrixRuntimeException") && throwable.getCause() != null) {
@@ -145,7 +145,6 @@ public class GlobResponseBodyAdviceAdapter implements ResponseBodyAdvice<Object>
 
             String clientType = request.getHeader(CLIENT_TYPE);
             if (clientType != null && FEIGN_REQUEST_TYPE.equals(clientType)) {
-                logger.error("客户端: {} 请求: {} 出错: {}", request.getHeader(CLIENT_NAME), request.getRequestURI(), errMsg);
                 //feign 请求返回异常堆栈信息 ，并且将发生异常的所属应用名一并返回
                 resp.put(EXCEPTION_SERIALIZABLE, Base64Utils.encodeToString(SerializationUtils.serialize(throwable)));
                 resp.put(EXCEPTION_APPLICATION_NAME, applicationName);
