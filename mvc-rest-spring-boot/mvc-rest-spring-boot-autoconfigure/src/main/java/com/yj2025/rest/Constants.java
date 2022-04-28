@@ -11,4 +11,5 @@ public interface Constants {
 
 
     String EXCEPTION_SERIALIZABLE = "exception_serializable";
+    String EXCEPTION_APPLICATION_NAME = "exception_application_name";
 }
