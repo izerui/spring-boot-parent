@@ -145,8 +145,9 @@ public class GlobResponseBodyAdviceAdapter implements ResponseBodyAdvice<Object>
 
             String clientType = request.getHeader(CLIENT_TYPE);
             if (clientType != null && FEIGN_REQUEST_TYPE.equals(clientType)) {
-                //feign 请求返回异常堆栈信息
+                //feign 请求返回异常堆栈信息 ，并且将发生异常的所属应用名一并返回
                 resp.put(EXCEPTION_SERIALIZABLE, Base64Utils.encodeToString(SerializationUtils.serialize(throwable)));
+                resp.put(EXCEPTION_APPLICATION_NAME, applicationName);
             } else {
                 // 浏览器请求统一返回200状态码
                 response.setStatus(HttpStatus.OK.value());
