@@ -70,6 +70,7 @@ public class GlobResponseBodyAdviceAdapter implements ResponseBodyAdvice<Object>
             resp.put("success", false);
             resp.put("status", response.getStatus());
             resp.put("errCode", String.valueOf(response.getStatus()));
+            resp.put("errApp", applicationName);
             //转换异常
             Throwable throwable = errorAttributes.getError(servletWebRequest);
             if (throwable == null) {
