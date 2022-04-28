@@ -166,9 +166,9 @@ public class AuditWebMethodAspect {
             return reaultValue;
 
         } catch (Exception e) {
-            if (e != null) {
-                log.error("audit-error:" + e.getMessage(), e);
-            }
+//            if (e != null) {
+//                log.error("audit-error:" + e.getMessage(), e);
+//            }
             throw e;
         }
 
