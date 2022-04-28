@@ -31,7 +31,11 @@ public class GlobalErrorAttributes extends DefaultErrorAttributes implements Con
             errorResponseMap.put("errMsg", errorAttributes.get("message"));
             errorResponseMap.put("exceptionType", errorAttributes.get("exception"));
         } else {
-            log.error(throwable.getMessage(), throwable);
+            if (throwable instanceof IllegalStateException && "Session was invalidated".equals(throwable.getMessage())) {
+                log.error(throwable.getMessage());
+            } else {
+                log.error(throwable.getMessage(), throwable);
+            }
             if (throwable instanceof HystrixRuntimeException && throwable.getCause() != null) {
                 throwable = throwable.getCause();
             }
