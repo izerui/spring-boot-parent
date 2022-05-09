@@ -22,6 +22,8 @@
         <module>amazonaws-spring-boot</module>
         <module>weixin-spring-boot</module>
         <module>sequence-number-spring-boot</module>
+        <module>oauth2-server-spring-boot</module>
+        <module>gateway-spring-boot</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -314,6 +316,28 @@
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>sequence-number-spring-boot-starter</artifactId>
+                <version>${base-starter.version}</version>
+            </dependency>
+            <!-- oauth2 -->
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>oauth2-server-spring-boot-autoconfigure</artifactId>
+                <version>${base-starter.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>oauth2-server-spring-boot-starter</artifactId>
+                <version>${base-starter.version}</version>
+            </dependency>
+            <!-- gateway -->
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>gateway-spring-boot-autoconfigure</artifactId>
+                <version>${base-starter.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>gateway-spring-boot-starter</artifactId>
                 <version>${base-starter.version}</version>
             </dependency>
         </dependencies>
