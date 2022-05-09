@@ -21,6 +21,7 @@
         <module>sms-spring-boot</module>
         <module>amazonaws-spring-boot</module>
         <module>weixin-spring-boot</module>
+        <module>sequence-number-spring-boot</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -302,6 +303,17 @@
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>work-weixin-spring-boot-starter</artifactId>
+                <version>${base-starter.version}</version>
+            </dependency>
+            <!-- sequence number -->
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>sequence-number-spring-boot-autoconfigure</artifactId>
+                <version>${base-starter.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>sequence-number-spring-boot-starter</artifactId>
                 <version>${base-starter.version}</version>
             </dependency>
         </dependencies>

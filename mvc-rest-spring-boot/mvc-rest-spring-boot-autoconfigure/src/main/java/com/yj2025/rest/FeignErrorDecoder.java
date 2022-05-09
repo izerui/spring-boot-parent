@@ -47,7 +47,9 @@ public class FeignErrorDecoder implements ErrorDecoder, Constants {
             return new RuntimeException((String) map.get("message"));
         } finally {
             if (map != null && map.get(EXCEPTION_APPLICATION_NAME) != null) {
-                LOGGER.error("api服务: {} 返回出错: {}", map.get(EXCEPTION_APPLICATION_NAME), map.get("errMsg"));
+                LOGGER.error("远程服务: {} 返回出错: {} 错误信息: {}", map.get(EXCEPTION_APPLICATION_NAME), methodKey, map.get("errMsg"));
+            } else {
+                LOGGER.error("返回出错: {} 错误信息: {}", methodKey, map.get("errMsg"));
             }
         }
     }

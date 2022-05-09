@@ -86,7 +86,7 @@ public class GlobResponseBodyAdviceAdapter implements ResponseBodyAdvice<Object>
                 }
             } else {
                 // 不再输出异常堆栈信息，统一参考 dispatcherServlet 中的异常打印
-                logger.error("request:[" + getPath(request) + "]\t\trequestApp:[" + requestApp + "]\t\terror:[" + throwable.getMessage() + "]");
+                logger.error("客户端: {} 请求: {} 出错: {}", requestApp, getPath(request), throwable.getMessage());
             }
 
             if (throwable.getClass().getName().equals("com.netflix.hystrix.exception.HystrixRuntimeException") && throwable.getCause() != null) {
