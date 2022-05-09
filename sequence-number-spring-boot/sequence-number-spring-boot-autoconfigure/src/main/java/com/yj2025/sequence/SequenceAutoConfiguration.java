@@ -11,7 +11,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 public class SequenceAutoConfiguration {
 
     @Bean
-    public RedisNumberStorage sequenceNumberStorage(StringRedisTemplate redisTemplate) {
+    public NumberStorage sequenceNumberStorage(StringRedisTemplate redisTemplate) {
         return new RedisNumberStorage(redisTemplate);
     }
 
