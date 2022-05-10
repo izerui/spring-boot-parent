@@ -1,4 +1,4 @@
-package com.yj2025.oauth2.server.security;
+package com.yj2025.oauth2.server.controller;
 
 import com.yj2025.oauth2.security.RespVo;
 import org.springframework.beans.factory.annotation.Autowired;

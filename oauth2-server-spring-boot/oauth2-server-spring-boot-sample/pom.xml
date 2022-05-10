@@ -21,6 +21,14 @@
             <groupId>com.yj2025</groupId>
             <artifactId>oauth2-server-spring-boot-starter</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.yj2025</groupId>
+            <artifactId>nacos-discovery-spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.yj2025</groupId>
+            <artifactId>nacos-config-spring-boot-starter</artifactId>
+        </dependency>
     </dependencies>
 
 

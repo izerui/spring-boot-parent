@@ -3,7 +3,7 @@ package com.yj2025.oauth2.server;
 import com.yj2025.oauth2.server.advice.GlobalResponseBodyAdviceAdapter;
 import com.yj2025.oauth2.server.security.Oauth2ServerConfig;
 import com.yj2025.oauth2.server.security.SecurityConfig;
-import com.yj2025.oauth2.server.security.TokenController;
+import com.yj2025.oauth2.server.controller.TokenController;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.context.annotation.Bean;
