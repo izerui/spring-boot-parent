@@ -1,6 +1,6 @@
 package com.yj2025.gateway.security;
 
-import com.yj2025.gateway.PathMatcherAuthoritiesLoader;
+import com.yj2025.gateway.PathMatcherAuthoritiesRemoteLoader;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
@@ -28,7 +28,7 @@ import java.util.Set;
 public class WebAuthorizationManager implements ReactiveAuthorizationManager<AuthorizationContext> {
 
     @Autowired
-    private PathMatcherAuthoritiesLoader pathMatcherAuthoritiesLoader;
+    private PathMatcherAuthoritiesRemoteLoader pathMatcherAuthoritiesLoader;
     private volatile Map<String, Set<String>> pathMatcherAuthoritiesMap = new HashMap<>();
     private AntPathMatcher antPathMatcher = new AntPathMatcher();
 

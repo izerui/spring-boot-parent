@@ -3,7 +3,7 @@ package com.yj2025.oauth2.server;
 import com.yj2025.oauth2.security.User;
 import org.springframework.lang.Nullable;
 
-public interface UserDetailsLoader {
+public interface UserDetailsRemoteLoader {
     /**
      * 获取用户
      *

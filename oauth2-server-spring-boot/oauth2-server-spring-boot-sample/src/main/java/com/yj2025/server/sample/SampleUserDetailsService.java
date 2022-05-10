@@ -1,17 +1,16 @@
 package com.yj2025.server.sample;
 
 import com.yj2025.oauth2.security.User;
-import com.yj2025.oauth2.server.UserDetailsLoader;
+import com.yj2025.oauth2.server.UserDetailsRemoteLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 
 @Component
-public class SampleUserDetailsService implements UserDetailsLoader {
+public class SampleUserDetailsService implements UserDetailsRemoteLoader {
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;

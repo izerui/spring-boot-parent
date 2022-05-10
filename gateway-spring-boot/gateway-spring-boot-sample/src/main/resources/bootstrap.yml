@@ -13,6 +13,22 @@ spring:
       discovery:
         server-addr: 10.96.55.103:8848
         namespace: dev
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      filter:
+        remove-hop-by-hop:
+          headers:
+            - access-control-allow-credentials
+            - access-control-allow-headers
+            - access-control-allow-methods
+            - access-control-allow-origin
+            - access-control-max-age
+      loadbalancer:
+        ribbon:
+          enabled: false
   main:
     allow-bean-definition-overriding: true
   #redis:

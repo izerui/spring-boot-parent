@@ -1,6 +1,6 @@
 package com.yj2025.oauth2.server.security;
 
-import com.yj2025.oauth2.server.UserDetailsLoader;
+import com.yj2025.oauth2.server.UserDetailsRemoteLoader;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -75,7 +75,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
     }
 
     @Bean
-    public UserDetailsService userDetailsService(UserDetailsLoader userDetailsLoader) {
+    public UserDetailsService userDetailsService(UserDetailsRemoteLoader userDetailsLoader) {
         return username -> {
             HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
             return userDetailsLoader.loadUserByUsername(username, request.getParameter("usercode"));
