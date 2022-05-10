@@ -2,6 +2,7 @@ package com.yj2025.oauth2.server.security;
 
 import com.yj2025.oauth2.server.Oauth2Properties;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -13,7 +14,15 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.token.TokenEnhancer;
+import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
+import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore;
+import org.springframework.security.rsa.crypto.KeyStoreKeyFactory;
+
+import java.security.KeyPair;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 认证服务器配置
@@ -52,6 +61,15 @@ public class Oauth2ServerConfig extends AuthorizationServerConfigurerAdapter {
                 //.reuseRefreshTokens(false)
                 .tokenStore(redisTokenStore())
                 .reuseRefreshTokens(false); // 不重复使用refreshToken， 每次刷新accessToken的时候，同时返回新的刷新token
+        if (oauth2Properties.getJwt().isEnabled()) {
+            List<TokenEnhancer> delegates = new ArrayList<>();
+            delegates.add(jwtTokenEnhancer());
+            delegates.add(accessTokenConverter());
+            TokenEnhancerChain enhancerChain = new TokenEnhancerChain();
+            enhancerChain.setTokenEnhancers(delegates); //配置JWT的内容增强器
+            endpoints.accessTokenConverter(accessTokenConverter())
+                    .tokenEnhancer(enhancerChain);
+        }
     }
 
     @Override
@@ -67,6 +85,29 @@ public class Oauth2ServerConfig extends AuthorizationServerConfigurerAdapter {
     @Bean
     public RedisTokenStore redisTokenStore() {
         return new RedisTokenStore(redisConnectionFactory);
+    }
+
+
+    @Bean
+    @ConditionalOnProperty(name = "oauth2.server.jwt.enabled", havingValue = "true")
+    public JwtAccessTokenConverter accessTokenConverter() {
+        JwtAccessTokenConverter jwtAccessTokenConverter = new JwtAccessTokenConverter();
+        jwtAccessTokenConverter.setKeyPair(keyPair());
+        return jwtAccessTokenConverter;
+    }
+
+    @Bean
+    @ConditionalOnProperty(name = "oauth2.server.jwt.enabled", havingValue = "true")
+    public KeyPair keyPair() {
+        //从classpath下的证书中获取秘钥对
+        KeyStoreKeyFactory keyStoreKeyFactory = new KeyStoreKeyFactory(oauth2Properties.getJwt().getKeyFile(), oauth2Properties.getJwt().getKeyPassword().toCharArray());
+        return keyStoreKeyFactory.getKeyPair(oauth2Properties.getJwt().getKeyAlias(), oauth2Properties.getJwt().getKeyPassword().toCharArray());
+    }
+
+    @Bean
+    @ConditionalOnProperty(name = "oauth2.server.jwt.enabled", havingValue = "true")
+    public JwtTokenEnhancer jwtTokenEnhancer() {
+        return new JwtTokenEnhancer();
     }
 
 }

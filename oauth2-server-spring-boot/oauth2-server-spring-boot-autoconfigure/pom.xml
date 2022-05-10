@@ -18,6 +18,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
             <groupId>com.yj2025</groupId>
             <artifactId>oauth2-server-security-core</artifactId>
             <version>${project.version}</version>
@@ -39,6 +44,16 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-tomcat</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-undertow</artifactId>
         </dependency>
 
         <!-- 提供的对应用系统的自省和监控的集成功能，可以对应用系统进行配置查看、相关功能统计等 -->
@@ -55,6 +70,11 @@
         <dependency>
             <groupId>com.yj2025</groupId>
             <artifactId>redis-spring-boot-starter</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.nimbusds</groupId>
+            <artifactId>nimbus-jose-jwt</artifactId>
         </dependency>
     </dependencies>
 
