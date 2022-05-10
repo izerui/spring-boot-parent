@@ -1,9 +1,15 @@
 package com.yj2025.oauth2.server;
 
 import com.yj2025.oauth2.security.User;
-
-import javax.servlet.http.HttpServletRequest;
+import org.springframework.lang.Nullable;
 
 public interface UserDetailsLoader {
-    User loadUserByUsername(String username, HttpServletRequest request);
+    /**
+     * 获取用户
+     *
+     * @param username 用户输入的手机号或者邮箱
+     * @param usercode 指定的用户代码
+     * @return
+     */
+    User loadUserByUsername(String username, @Nullable String usercode);
 }

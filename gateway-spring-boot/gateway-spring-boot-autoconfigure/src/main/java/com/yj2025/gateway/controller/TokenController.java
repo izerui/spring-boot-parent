@@ -1,21 +1,23 @@
 package com.yj2025.gateway.controller;
 
 import com.yj2025.gateway.GatewayProxyProperties;
+import com.yj2025.gateway.request.RefreshRequest;
+import com.yj2025.gateway.request.TokenRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.security.oauth2.server.resource.BearerTokenAuthenticationToken;
 import org.springframework.security.oauth2.server.resource.web.server.ServerBearerTokenAuthenticationConverter;
-import org.springframework.stereotype.Controller;
-import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
@@ -34,42 +36,38 @@ public class TokenController {
     @Autowired
     private GatewayProxyProperties gatewayProxyProperties;
 
-    @RequestMapping(value = "/oauth/token", method = RequestMethod.POST)
-    public Mono<Map> getToken(@RequestParam("username") String username,
-                              @RequestParam("password") String password) {
-        MultiValueMap<String, String> paramMap = new LinkedMultiValueMap<>();
-        paramMap.set("client_id", gatewayProxyProperties.getClient_id());
-        paramMap.set("client_secret", gatewayProxyProperties.getClient_secret());
-        paramMap.set("grant_type", "password");
-        paramMap.set("username", username);
-        paramMap.set("password", password);
+    @PostMapping("/oauth/token")
+    public Mono<Map> getToken(@RequestBody TokenRequest request) {
+        MultiValueMap<String, String> multiValueMap = request.newRequest(
+                gatewayProxyProperties.getClient_id(),
+                gatewayProxyProperties.getClient_secret(),
+                "password"
+        );
         return webClientBuilder
                 .build()
                 .post()
                 .uri("http://" + gatewayProxyProperties.getAuthAppName() + "/oauth/token")
-                .body(BodyInserters.fromFormData(paramMap))
+                .body(BodyInserters.fromFormData(multiValueMap))
                 .accept(MediaType.APPLICATION_JSON)
                 .header("Content-Type", "application/json;charset=UTF-8")
                 .retrieve()
                 .bodyToMono(Map.class);
     }
 
-    @RequestMapping(value = "/oauth/refresh", method = RequestMethod.POST)
-    public Mono<String> refreshToken(@RequestHeader("userCode") String userCode,
-                                     @RequestParam("refresh_token") String refreshToken) {
-        MultiValueMap<String, String> paramMap = new LinkedMultiValueMap<>();
-        paramMap.set("client_id", gatewayProxyProperties.getClient_id());
-        paramMap.set("client_secret", gatewayProxyProperties.getClient_secret());
-        paramMap.set("grant_type", "refresh_token");
-        paramMap.set("refresh_token", refreshToken);
+    @PostMapping("/oauth/refresh")
+    public Mono<String> refreshToken(@RequestBody RefreshRequest request) {
+        MultiValueMap<String, String> multiValueMap = request.newRequest(
+                gatewayProxyProperties.getClient_id(),
+                gatewayProxyProperties.getClient_secret(),
+                "refresh_token"
+        );
         return webClientBuilder
                 .build()
                 .post()
                 .uri("http://" + gatewayProxyProperties.getAuthAppName() + "/oauth/token")
-                .body(BodyInserters.fromFormData(paramMap))
+                .body(BodyInserters.fromFormData(multiValueMap))
                 .accept(MediaType.APPLICATION_JSON)
                 .header("Content-Type", "application/json;charset=UTF-8")
-                .header("userCode", userCode)
                 .retrieve()
                 .bodyToMono(String.class);
     }

@@ -78,7 +78,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
     public UserDetailsService userDetailsService(UserDetailsLoader userDetailsLoader) {
         return username -> {
             HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-            return userDetailsLoader.loadUserByUsername(username, request);
+            return userDetailsLoader.loadUserByUsername(username, request.getParameter("usercode"));
         };
     }
 
