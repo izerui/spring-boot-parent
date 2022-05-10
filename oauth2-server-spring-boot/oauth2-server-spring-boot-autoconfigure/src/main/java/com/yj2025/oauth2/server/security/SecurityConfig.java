@@ -36,7 +36,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
                 .formLogin()
                 .and()
                 .authorizeRequests(a -> a.antMatchers(
-                                "/oauth/revoke_token",
+                                "/oauth/revoke",
                                 "/oauth/token")
                         .permitAll()
                         .anyRequest()
