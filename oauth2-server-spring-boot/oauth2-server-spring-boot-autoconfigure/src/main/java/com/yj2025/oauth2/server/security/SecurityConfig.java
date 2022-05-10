@@ -14,8 +14,11 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -73,7 +76,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
 
     @Bean
     public UserDetailsService userDetailsService(UserDetailsLoader userDetailsLoader) {
-        return username -> userDetailsLoader.loadUserByUsername(username);
+        return username -> {
+            HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+            return userDetailsLoader.loadUserByUsername(username, request);
+        };
     }
 
 }

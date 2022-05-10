@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.security.oauth2.server.resource.BearerTokenAuthenticationToken;
 import org.springframework.security.oauth2.server.resource.web.server.ServerBearerTokenAuthenticationConverter;
+import org.springframework.stereotype.Controller;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
@@ -73,7 +75,7 @@ public class TokenController {
     }
 
 
-    @RequestMapping(value = "/oauth/revoke", method = RequestMethod.POST)
+    @GetMapping("/oauth/revoke")
     public Mono<String> revokeToken(ServerWebExchange exchange) {
         return tokenAuthenticationConverter.convert(exchange)
                 .map(authentication -> {
@@ -82,7 +84,7 @@ public class TokenController {
                 }).flatMap(accessToken -> webClientBuilder
                         .build()
                         .get()
-                        .uri("http://" + gatewayProxyProperties.getAuthAppName() + "/oauth/revoke")
+                        .uri("http://" + gatewayProxyProperties.getAuthAppName() + "/oauth/revoke?access_token=" + accessToken)
                         .accept(MediaType.APPLICATION_JSON)
                         .header("Content-Type", "application/json;charset=UTF-8")
                         .retrieve()

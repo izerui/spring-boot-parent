@@ -85,7 +85,7 @@ public class SecurityConfig {
                                 .authenticationEntryPoint(authenticationEntryPoint)
                 )
                 .authorizeExchange(auth ->
-                        auth.pathMatchers(gatewayProxyProperties.getIgnoredUrls().toArray(new String[gatewayProxyProperties.getIgnoredUrls().size()])).permitAll()
+                        auth.pathMatchers(gatewayProxyProperties.getIgnoredUrls()).permitAll()
                                 .anyExchange().access(authorizationManager)
                                 .and()
                                 .exceptionHandling().accessDeniedHandler(serverAccessDeniedHandler)

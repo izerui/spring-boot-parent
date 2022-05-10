@@ -1,6 +1,6 @@
 spring:
   application:
-    name: oauth2-server-spring-boot-sample
+    name: gateway-spring-boot-sample
   cloud:
     nacos:
       config:
@@ -16,15 +16,12 @@ spring:
   main:
     allow-bean-definition-overriding: true
   #redis:
-oauth2:
-  server:
-    client-id: ierp
-    client-secret: 123456
-    redirect-uri: https://yj2025.com
-    access-token-validity-seconds: 7200
-    refresh-token-validity-seconds: 86400
-    jwt:
-      enabled: false
-      key-file: classpath:jwt.jks
-      key-alias: jwt
-      key-password: 123456
+server:
+  port: 8088
+gateway:
+  client-id: ierp
+  client-secret: 123456
+  auth-app-name: oauth2-server-spring-boot-sample
+  ignored-urls:
+    - /oauth/token
+    - /oauth/refresh

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 
 @Component
@@ -15,7 +16,12 @@ public class SampleUserDetailsService implements UserDetailsLoader {
     private BCryptPasswordEncoder passwordEncoder;
 
     @Override
-    public User loadUserByUsername(String username) {
+    public User loadUserByUsername(String username, HttpServletRequest request) {
+        String switchUser = request.getHeader("userCode");
+        if (switchUser != null) {
+            System.out.println("切换用户: " + switchUser);
+            return new User(switchUser, passwordEncoder.encode("123456"), Collections.emptyList());
+        }
         return new User("test", passwordEncoder.encode("123456"), Collections.emptyList());
     }
 }

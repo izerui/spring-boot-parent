@@ -4,7 +4,9 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author leiyang
@@ -15,11 +17,12 @@ import java.util.List;
 @ConfigurationProperties(prefix = "gateway")
 public class GatewayProxyProperties {
 
-    private List<String> ignoredUrls;
+    private String[] ignoredUrls;
 
     private String authAppName;
 
     private String client_id;
 
     private String client_secret;
+
 }

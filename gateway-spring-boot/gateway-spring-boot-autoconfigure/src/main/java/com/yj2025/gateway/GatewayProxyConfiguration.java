@@ -1,6 +1,7 @@
 package com.yj2025.gateway;
 
 import com.google.gson.Gson;
+import com.yj2025.gateway.controller.TokenController;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,7 +10,7 @@ import org.springframework.security.config.annotation.web.reactive.EnableWebFlux
 
 @EnableWebFluxSecurity
 @Configuration
-@Import({SecurityConfig.class})
+@Import({SecurityConfig.class, TokenController.class})
 public class GatewayProxyConfiguration {
 
     @Bean
