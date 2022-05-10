@@ -13,6 +13,7 @@ public class Oauth2Properties {
     private String redirectUri = "https://yj2025.com";
     private int accessTokenValiditySeconds = 7200;
     private int refreshTokenValiditySeconds = 86400;
+    private boolean allowUriToken = true;
     private Jwt jwt = new Jwt();
 
     @Data
