@@ -30,7 +30,7 @@ import java.util.Optional;
  */
 @Slf4j
 @Configuration
-public class ServerSecurityConfig extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
+public class ServerSecurityConfiguration extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
 
     @Autowired
     private List<AuthenticationProvider> authenticationProviders;
@@ -47,7 +47,9 @@ public class ServerSecurityConfig extends WebSecurityConfigurerAdapter implement
                 )
                 .authorizeRequests(a -> a.antMatchers(
                                 "/oauth/revoke",
-                                "/oauth/token")
+                                "/oauth/token",
+                                "/oauth/token_key",
+                                "/rsa/key")
                         .permitAll()
                         .anyRequest()
                         .authenticated()

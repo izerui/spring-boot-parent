@@ -41,4 +41,5 @@ gateway:
   ignored-urls:
     - /oauth/token
     - /oauth/refresh
+    - /oauth/token_key
     - /test

@@ -22,7 +22,7 @@ import java.util.Map;
 
 @Configuration
 @RestController
-public class TokenController {
+public class TokenKeyController {
 
     /**
      * https://docs.spring.io/spring-security/site/docs/5.1.1.RELEASE/reference/html/webclient.html
@@ -87,5 +87,17 @@ public class TokenController {
                         .header("Content-Type", "application/json;charset=UTF-8")
                         .retrieve()
                         .bodyToMono(String.class));
+    }
+
+    @GetMapping("/oauth/token_key")
+    public Mono<String> getKey() {
+        return webClientBuilder
+                .build()
+                .get()
+                .uri("http://" + gatewayProxyProperties.getAuthAppName() + "/oauth/token_key")
+                .accept(MediaType.APPLICATION_JSON)
+                .header("Content-Type", "application/json;charset=UTF-8")
+                .retrieve()
+                .bodyToMono(String.class);
     }
 }

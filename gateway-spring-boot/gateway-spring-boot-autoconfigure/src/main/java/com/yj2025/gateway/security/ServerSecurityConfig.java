@@ -1,6 +1,5 @@
 package com.yj2025.gateway.security;
 
-import com.google.gson.Gson;
 import com.yj2025.gateway.GatewayProxyProperties;
 import com.yj2025.gateway.filter.ComplementHeaderFilter;
 import com.yj2025.gateway.filter.IgnoreUrlsRemoveAuthorizationHeaderFilter;
