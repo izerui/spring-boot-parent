@@ -93,8 +93,7 @@ public class ServerSecurityConfiguration extends WebSecurityConfigurerAdapter im
 
     @Bean
     public DelegatingSuccessEventListener successHandler(ObjectProvider<LoginSuccessHandler> loginSuccessHandlers) {
-        DelegatingSuccessEventListener delegatingSuccessHandler = new DelegatingSuccessEventListener(loginSuccessHandlers.iterator());
-        return delegatingSuccessHandler;
+        return new DelegatingSuccessEventListener(loginSuccessHandlers.iterator());
     }
 
 }
