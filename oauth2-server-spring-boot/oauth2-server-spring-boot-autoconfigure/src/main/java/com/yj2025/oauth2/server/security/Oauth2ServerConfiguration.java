@@ -8,6 +8,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.core.userdetails.UserDetailsByNameServiceWrapper;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
@@ -21,11 +24,14 @@ import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore;
 import org.springframework.security.rsa.crypto.KeyStoreKeyFactory;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Method;
 import java.security.KeyPair;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -44,6 +50,8 @@ public class Oauth2ServerConfiguration extends AuthorizationServerConfigurerAdap
     private BCryptPasswordEncoder passwordEncoder;
     @Autowired
     private Oauth2Properties oauth2Properties;
+    @Autowired
+    private UserDetailsService userDetailsService;
 
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
@@ -71,6 +79,7 @@ public class Oauth2ServerConfiguration extends AuthorizationServerConfigurerAdap
         }
         endpoints.authenticationManager(authenticationManager)
                 .tokenStore(redisTokenStore())
+                .userDetailsService(userDetailsService)
                 .reuseRefreshTokens(false) // 无用，标记下
                 .tokenServices(new TokenSerivces() {{
                     this.setTokenStore(endpoints.getTokenStore());
@@ -78,7 +87,10 @@ public class Oauth2ServerConfiguration extends AuthorizationServerConfigurerAdap
                     this.setReuseRefreshToken(false);
                     this.setClientDetailsService(endpoints.getClientDetailsService());
                     this.setTokenEnhancer(endpoints.getTokenEnhancer());
-                    this.setAuthenticationManager(authenticationManager);
+                    PreAuthenticatedAuthenticationProvider provider = new PreAuthenticatedAuthenticationProvider();
+                    provider.setPreAuthenticatedUserDetailsService(new UserDetailsByNameServiceWrapper<PreAuthenticatedAuthenticationToken>(
+                            userDetailsService));
+                    this.setAuthenticationManager(new ProviderManager(Arrays.<AuthenticationProvider> asList(provider)));
                 }}); // 不重复使用refreshToken， 每次刷新accessToken的时候，同时返回新的刷新token
     }
 
