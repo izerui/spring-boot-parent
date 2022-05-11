@@ -1,7 +1,10 @@
 package com.yj2025.oauth2.server.security;
 
+import com.yj2025.oauth2.server.LoginSuccessHandler;
 import com.yj2025.oauth2.server.UserDetailsRemoteLoader;
+import com.yj2025.oauth2.server.events.DelegatingSuccessEventListener;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,24 +23,28 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by serv on 2017/4/11.
  */
 @Slf4j
 @Configuration
-public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
+public class ServerSecurityConfig extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
 
     @Autowired
     private List<AuthenticationProvider> authenticationProviders;
+    @Autowired
+    private DelegatingSuccessEventListener delegatingSuccessHandler;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
-                .formLogin()
-                .and()
+                .formLogin(
+                        form -> form.disable()
+                )
                 .authorizeRequests(a -> a.antMatchers(
                                 "/oauth/revoke",
                                 "/oauth/token")
@@ -71,15 +78,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
     @Order(0)
     @Bean
     public AuthenticationProvider formAuthenticationProvider(UserDetailsService userDetailsService) {
-        return new FormDaoAuthenticationProvider(userDetailsService, passwordEncoder());
+        return new UserAuthenticationProvider(userDetailsService, passwordEncoder());
     }
 
     @Bean
     public UserDetailsService userDetailsService(UserDetailsRemoteLoader userDetailsLoader) {
         return username -> {
             HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-            return userDetailsLoader.loadUserByUsername(username, request.getParameter("usercode"));
+            return userDetailsLoader.loadUserByUsername(username, Optional.ofNullable(request.getParameter("usercode")));
         };
+    }
+
+    @Bean
+    public DelegatingSuccessEventListener successHandler(ObjectProvider<LoginSuccessHandler> loginSuccessHandlers) {
+        DelegatingSuccessEventListener delegatingSuccessHandler = new DelegatingSuccessEventListener(loginSuccessHandlers.iterator());
+        return delegatingSuccessHandler;
     }
 
 }

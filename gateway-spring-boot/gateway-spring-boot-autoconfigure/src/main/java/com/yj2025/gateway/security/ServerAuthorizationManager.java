@@ -25,7 +25,7 @@ import java.util.Set;
  */
 @Slf4j
 @Component
-public class WebAuthorizationManager implements ReactiveAuthorizationManager<AuthorizationContext> {
+public class ServerAuthorizationManager implements ReactiveAuthorizationManager<AuthorizationContext> {
 
     @Autowired
     private PathMatcherAuthoritiesRemoteLoader pathMatcherAuthoritiesLoader;

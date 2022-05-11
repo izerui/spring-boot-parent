@@ -36,8 +36,9 @@ public class User extends org.springframework.security.core.userdetails.User {
         return accountName;
     }
 
-    public void setAccountName(String accountName) {
+    public User setAccountName(String accountName) {
         this.accountName = accountName;
+        return this;
     }
 
     @JsonIgnore
@@ -45,8 +46,9 @@ public class User extends org.springframework.security.core.userdetails.User {
         return accountCode;
     }
 
-    public void setAccountCode(String accountCode) {
+    public User setAccountCode(String accountCode) {
         this.accountCode = accountCode;
+        return this;
     }
 
     @JsonIgnore
@@ -54,8 +56,9 @@ public class User extends org.springframework.security.core.userdetails.User {
         return entCode;
     }
 
-    public void setEntCode(String entCode) {
+    public User setEntCode(String entCode) {
         this.entCode = entCode;
+        return this;
     }
 
     @JsonIgnore
@@ -63,8 +66,9 @@ public class User extends org.springframework.security.core.userdetails.User {
         return entName;
     }
 
-    public void setEntName(String entName) {
+    public User setEntName(String entName) {
         this.entName = entName;
+        return this;
     }
 
     @JsonIgnore
@@ -72,8 +76,9 @@ public class User extends org.springframework.security.core.userdetails.User {
         return userCode;
     }
 
-    public void setUserCode(String userCode) {
+    public User setUserCode(String userCode) {
         this.userCode = userCode;
+        return this;
     }
 
     @JsonIgnore
@@ -81,7 +86,8 @@ public class User extends org.springframework.security.core.userdetails.User {
         return userName;
     }
 
-    public void setUserName(String userName) {
+    public User setUserName(String userName) {
         this.userName = userName;
+        return this;
     }
 }

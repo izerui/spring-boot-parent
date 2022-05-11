@@ -16,10 +16,10 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 根据token解析出用户等信息,放入header中
+ * 根据token解析出用户等信息,放入header中,header补充过滤器
  */
 @Slf4j
-public class HeaderFilter implements WebFilter {
+public class ComplementHeaderFilter implements WebFilter {
 
     private final static Set<String> includeHeaders = Sets.newHashSet(
             "accountCode",

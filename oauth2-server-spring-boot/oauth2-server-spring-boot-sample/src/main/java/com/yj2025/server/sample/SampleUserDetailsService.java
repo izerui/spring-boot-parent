@@ -8,6 +8,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
+import java.util.Optional;
 
 @Component
 public class SampleUserDetailsService implements UserDetailsRemoteLoader {
@@ -16,10 +17,10 @@ public class SampleUserDetailsService implements UserDetailsRemoteLoader {
     private BCryptPasswordEncoder passwordEncoder;
 
     @Override
-    public User loadUserByUsername(String username, @Nullable String usercode) {
-        if (usercode != null) {
-            System.out.println("切换用户: " + usercode);
-            return new User(usercode + "001", passwordEncoder.encode("123456"), Collections.emptyList());
+    public User loadUserByUsername(String username, Optional<String> usercode) {
+        if (usercode.isPresent()) {
+            System.out.println("切换用户: " + usercode.get());
+            return new User(usercode.get() + "001", passwordEncoder.encode("123456"), Collections.emptyList());
         }
         return new User("test", passwordEncoder.encode("123456"), Collections.emptyList());
     }

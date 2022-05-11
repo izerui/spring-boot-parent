@@ -11,14 +11,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-public class FormDaoAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
+public class UserAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
 
     private UserDetailsService userDetailsService;
-    private BCryptPasswordEncoder md5PasswordEncoder;
+    private BCryptPasswordEncoder passwordEncoder;
 
-    public FormDaoAuthenticationProvider(UserDetailsService userDetailsService, BCryptPasswordEncoder md5PasswordEncoder) {
+    public UserAuthenticationProvider(UserDetailsService userDetailsService, BCryptPasswordEncoder md5PasswordEncoder) {
         this.userDetailsService = userDetailsService;
-        this.md5PasswordEncoder = md5PasswordEncoder;
+        this.passwordEncoder = md5PasswordEncoder;
     }
 
     @Override
@@ -28,7 +28,7 @@ public class FormDaoAuthenticationProvider extends AbstractUserDetailsAuthentica
         }
         User user = (User) userDetails;
         String inputPassword = authentication.getCredentials().toString();
-        if (!this.md5PasswordEncoder.matches(inputPassword, user.getPassword())) {
+        if (!this.passwordEncoder.matches(inputPassword, user.getPassword())) {
             throw new BadCredentialsException("用户名或密码错误!");
         }
         if (!user.isEnabled()) {

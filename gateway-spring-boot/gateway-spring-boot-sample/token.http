@@ -3,7 +3,7 @@ POST http://localhost:8088/oauth/token
 Content-Type: application/json
 
 {
-  "username": "ierp",
+  "username": "test",
   "password": "123456"
 }
 
@@ -23,4 +23,8 @@ Accept: application/json
 
 ### 注销token 方式二
 GET http://localhost:8088/oauth/revoke?access_token=db82815f-7969-46a1-8069-be8fae9d9c85
+Accept: application/json
+
+### 测试白名单
+GET http://localhost:8088/test?access_token=c9ee01f0-b382-4fd0-8db4-a2039279067a
 Accept: application/json
