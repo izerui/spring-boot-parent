@@ -40,10 +40,9 @@ gateway:
     - /oauth/token
     - /oauth/refresh
     - /oauth/token_key
-    - /test
   oauth2:
     client-id: ierp
     client-secret: 123456
     app-name: oauth2-server-spring-boot-sample
-    jwt-enabled: false
+    jwt-enabled: true
   maintenance: false
