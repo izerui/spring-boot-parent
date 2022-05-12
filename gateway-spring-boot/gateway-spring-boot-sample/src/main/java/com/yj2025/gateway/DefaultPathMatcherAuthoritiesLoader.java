@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 @Component
-public class DefaultPathMatcherAuthoritiesLoader implements PathMatcherAuthoritiesRemoteLoader {
+public class DefaultPathMatcherAuthoritiesLoader implements PathMatcherAuthoritiesLoader {
     @Override
     public Map<String, Set<String>> getPathMatcherAuthoritiesMap() {
         return Collections.emptyMap();

@@ -34,12 +34,16 @@ spring:
   #redis:
 server:
   port: 8088
+# 网关配置
 gateway:
-  client-id: ierp
-  client-secret: 123456
-  auth-app-name: oauth2-server-spring-boot-sample
   ignored-urls:
     - /oauth/token
     - /oauth/refresh
     - /oauth/token_key
     - /test
+  oauth2:
+    client-id: ierp
+    client-secret: 123456
+    app-name: oauth2-server-spring-boot-sample
+    jwt-enabled: false
+  maintenance: false

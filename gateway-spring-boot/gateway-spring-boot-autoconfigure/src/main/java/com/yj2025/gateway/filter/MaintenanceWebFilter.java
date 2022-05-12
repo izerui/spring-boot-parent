@@ -1,5 +1,6 @@
 package com.yj2025.gateway.filter;
 
+import com.yj2025.gateway.GatewayProxyProperties;
 import com.yj2025.gateway.utils.NetworkUtils;
 import com.yj2025.gateway.utils.ResponseUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -13,20 +14,18 @@ import java.util.Arrays;
 @Slf4j
 public class MaintenanceWebFilter implements WebFilter {
 
-    private Boolean maintenance;
-    private String whitelistIp;
+    private GatewayProxyProperties properties;
 
-    public MaintenanceWebFilter(Boolean maintenance, String whitelistIp) {
-        this.maintenance = maintenance;
-        this.whitelistIp = whitelistIp;
+    public MaintenanceWebFilter(GatewayProxyProperties properties) {
+        this.properties = properties;
     }
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-        if (maintenance != null && maintenance) {
-            if (whitelistIp != null) {
+        if (properties.isMaintenance()) {
+            if (properties.getWhitelistIp() != null) {
                 String clientIp = NetworkUtils.getIpAddress(exchange);
-                boolean inWhitelist = Arrays.stream(whitelistIp.split(",")).anyMatch(s -> clientIp.equals(s));
+                boolean inWhitelist = Arrays.stream(properties.getWhitelistIp().split(",")).anyMatch(s -> clientIp.equals(s));
                 if (inWhitelist) {
                     log.info("维护模式 request-ip: {} 放行...", clientIp);
                     return chain.filter(exchange);

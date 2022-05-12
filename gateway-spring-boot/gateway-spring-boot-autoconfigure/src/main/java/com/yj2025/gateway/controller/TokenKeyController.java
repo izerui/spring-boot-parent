@@ -38,15 +38,16 @@ public class TokenKeyController {
 
     @PostMapping("/oauth/token")
     public Mono<Map> getToken(@RequestBody TokenRequest request) {
+        GatewayProxyProperties.Oauth2Properties oauth2Properties = gatewayProxyProperties.getOauth2();
         MultiValueMap<String, String> multiValueMap = request.newRequest(
-                gatewayProxyProperties.getClient_id(),
-                gatewayProxyProperties.getClient_secret(),
+                oauth2Properties.getClientId(),
+                oauth2Properties.getClientSecret(),
                 "password"
         );
         return webClientBuilder
                 .build()
                 .post()
-                .uri("http://" + gatewayProxyProperties.getAuthAppName() + "/oauth/token")
+                .uri("http://" + oauth2Properties.getAppName() + "/oauth/token")
                 .body(BodyInserters.fromFormData(multiValueMap))
                 .accept(MediaType.APPLICATION_JSON)
                 .header("Content-Type", "application/json;charset=UTF-8")
@@ -56,15 +57,16 @@ public class TokenKeyController {
 
     @PostMapping("/oauth/refresh")
     public Mono<String> refreshToken(@RequestBody RefreshRequest request) {
+        GatewayProxyProperties.Oauth2Properties oauth2Properties = gatewayProxyProperties.getOauth2();
         MultiValueMap<String, String> multiValueMap = request.newRequest(
-                gatewayProxyProperties.getClient_id(),
-                gatewayProxyProperties.getClient_secret(),
+                oauth2Properties.getClientId(),
+                oauth2Properties.getClientSecret(),
                 "refresh_token"
         );
         return webClientBuilder
                 .build()
                 .post()
-                .uri("http://" + gatewayProxyProperties.getAuthAppName() + "/oauth/token")
+                .uri("http://" + oauth2Properties.getAppName() + "/oauth/token")
                 .body(BodyInserters.fromFormData(multiValueMap))
                 .accept(MediaType.APPLICATION_JSON)
                 .header("Content-Type", "application/json;charset=UTF-8")
@@ -75,6 +77,7 @@ public class TokenKeyController {
 
     @GetMapping("/oauth/revoke")
     public Mono<String> revokeToken(ServerWebExchange exchange) {
+        GatewayProxyProperties.Oauth2Properties oauth2Properties = gatewayProxyProperties.getOauth2();
         return tokenAuthenticationConverter.convert(exchange)
                 .map(authentication -> {
                     BearerTokenAuthenticationToken bearerTokenAuthenticationToken = (BearerTokenAuthenticationToken) authentication;
@@ -82,7 +85,7 @@ public class TokenKeyController {
                 }).flatMap(accessToken -> webClientBuilder
                         .build()
                         .get()
-                        .uri("http://" + gatewayProxyProperties.getAuthAppName() + "/oauth/revoke?access_token=" + accessToken)
+                        .uri("http://" + oauth2Properties.getAppName() + "/oauth/revoke?access_token=" + accessToken)
                         .accept(MediaType.APPLICATION_JSON)
                         .header("Content-Type", "application/json;charset=UTF-8")
                         .retrieve()
@@ -91,10 +94,11 @@ public class TokenKeyController {
 
     @GetMapping("/oauth/token_key")
     public Mono<String> getKey() {
+        GatewayProxyProperties.Oauth2Properties oauth2Properties = gatewayProxyProperties.getOauth2();
         return webClientBuilder
                 .build()
                 .get()
-                .uri("http://" + gatewayProxyProperties.getAuthAppName() + "/oauth/token_key")
+                .uri("http://" + oauth2Properties.getAppName() + "/oauth/token_key")
                 .accept(MediaType.APPLICATION_JSON)
                 .header("Content-Type", "application/json;charset=UTF-8")
                 .retrieve()

@@ -4,25 +4,23 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-/**
- * @author leiyang
- * @date 2021/8/6 10:25
- */
 @Data
 @Configuration
 @ConfigurationProperties(prefix = "gateway")
 public class GatewayProxyProperties {
 
+    private boolean maintenance;
+    private String whitelistIp;
     private String[] ignoredUrls;
+    private Oauth2Properties oauth2;
 
-    private String authAppName;
+    @Data
+    public static class Oauth2Properties {
 
-    private String client_id;
-
-    private String client_secret;
+        private String appName;
+        private String clientId;
+        private String clientSecret;
+        private boolean jwtEnabled = false;
+    }
 
 }

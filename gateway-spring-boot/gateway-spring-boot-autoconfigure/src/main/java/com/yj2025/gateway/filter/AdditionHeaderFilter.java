@@ -35,15 +35,15 @@ public class AdditionHeaderFilter implements WebFilter {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-        final ServerWebExchange finalExchange = exchange;
+        // https://qa.icopy.site/questions/61397201/how-do-you-set-programmatically-the-authentication-object-in-spring-security-rea
         return ReactiveSecurityContextHolder.getContext()
                 .map(securityContext -> securityContext.getAuthentication())
-                .flatMap(bearerTokenAuthentication -> {
+                .map(bearerTokenAuthentication -> {
                     if (bearerTokenAuthentication == null) {
-                        return chain.filter(finalExchange);
+                        return exchange;
                     }
                     Map<String, Object> claims = ((BearerTokenAuthentication) bearerTokenAuthentication).getTokenAttributes();
-                    ServerHttpRequest.Builder requestBuilder = finalExchange.getRequest().mutate();
+                    ServerHttpRequest.Builder requestBuilder = exchange.getRequest().mutate();
                     claims.forEach((key, value) -> {
                         if (includeHeaders.contains(key)) {
                             // 需要编码的请求头
@@ -58,8 +58,9 @@ public class AdditionHeaderFilter implements WebFilter {
                             }
                         }
                     });
-                    return chain.filter(finalExchange.mutate().request(requestBuilder.build()).build());
+                    return exchange.mutate().request(requestBuilder.build()).build();
                 })
-                .switchIfEmpty(chain.filter(exchange));
+                .defaultIfEmpty(exchange)
+                .flatMap(wrapExchange -> chain.filter(wrapExchange));
     }
 }
