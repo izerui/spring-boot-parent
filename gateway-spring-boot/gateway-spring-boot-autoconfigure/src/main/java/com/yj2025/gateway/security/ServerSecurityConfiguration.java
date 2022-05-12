@@ -5,7 +5,6 @@ import com.yj2025.gateway.PathMatcherAuthoritiesLoader;
 import com.yj2025.gateway.filter.AdditionHeaderFilter;
 import com.yj2025.gateway.filter.IgnoreUrlsRemoveAuthorizationHeaderFilter;
 import com.yj2025.gateway.filter.MaintenanceWebFilter;
-import com.yj2025.gateway.security.authorization.AuthorizationManagerFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -27,7 +26,7 @@ import org.springframework.web.util.pattern.PathPatternParser;
 import java.time.Duration;
 
 @Configuration
-@Import({ServerSecurityConfiguration.JwtTokenConfig.class, ServerSecurityConfiguration.OpaqueTokenConfig.class})
+@Import({ServerSecurityConfiguration.JwtTokenConfig.class, ServerSecurityConfiguration.OpaqueRedisTokenConfig.class, ServerSecurityConfiguration.OpaqueRestTokenConfig.class})
 public class ServerSecurityConfiguration {
 
     @Autowired
@@ -50,30 +49,6 @@ public class ServerSecurityConfiguration {
     }
 
     @Bean
-    public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
-        AuthorizationManagerFactory managerFactory = new AuthorizationManagerFactory(pathMatcherAuthoritiesLoader);
-        http.csrf(c -> c.disable())
-                .cors(s -> s.configurationSource(new UrlBasedCorsConfigurationSource(new PathPatternParser()) {{
-                    this.registerCorsConfiguration("/**", buildConfig());
-                }}))
-                .requestCache().disable()
-                .addFilterBefore(new MaintenanceWebFilter(properties), SecurityWebFiltersOrder.AUTHENTICATION) // 前置加入系统维护中过滤器
-                .addFilterBefore(new IgnoreUrlsRemoveAuthorizationHeaderFilter(properties), SecurityWebFiltersOrder.AUTHENTICATION)
-                .addFilterAfter(new AdditionHeaderFilter(), SecurityWebFiltersOrder.AUTHORIZATION) // header 信息补充过滤器
-                .oauth2ResourceServer(authCustomizerObjectProvider.getIfAvailable())
-                .authorizeExchange(auth ->
-                        auth.pathMatchers(properties.getIgnoredUrls()).permitAll()
-                                .anyExchange()
-                                .access(managerFactory.getAuthorizationManager(properties.getOauth2().isJwtEnabled()))
-                                .and()
-                                .exceptionHandling()
-                                .accessDeniedHandler(new AccessDeniedHandler())
-                                .authenticationEntryPoint(new AuthenticationEntryPoint())
-                );
-        return http.build();
-    }
-
-    @Bean
     public ServerBearerTokenAuthenticationConverter tokenAuthenticationConverter() {
         ServerBearerTokenAuthenticationConverter tokenAuthenticationConverter = new ServerBearerTokenAuthenticationConverter();
         tokenAuthenticationConverter.setAllowUriQueryParameter(true);
@@ -85,15 +60,44 @@ public class ServerSecurityConfiguration {
         return new BCryptPasswordEncoder();
     }
 
+    @Bean
+    public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
+        http.csrf(c -> c.disable())
+                .cors(s -> s.configurationSource(new UrlBasedCorsConfigurationSource(new PathPatternParser()) {{
+                    this.registerCorsConfiguration("/**", buildConfig());
+                }}))
+                .requestCache().disable()
+                .addFilterBefore(new MaintenanceWebFilter(properties), SecurityWebFiltersOrder.AUTHENTICATION) // 前置加入系统维护中过滤器
+                .addFilterBefore(new IgnoreUrlsRemoveAuthorizationHeaderFilter(properties), SecurityWebFiltersOrder.AUTHENTICATION)
+                .addFilterAfter(new AdditionHeaderFilter(), SecurityWebFiltersOrder.AUTHORIZATION) // header 信息补充过滤器
+                .oauth2ResourceServer(auth -> {
+                    auth.bearerTokenConverter(tokenAuthenticationConverter())
+                            .accessDeniedHandler(new AccessDeniedHandler())
+                            .authenticationEntryPoint(new AuthenticationEntryPoint());
+                    Customizer<ServerHttpSecurity.OAuth2ResourceServerSpec> specCustomizer = authCustomizerObjectProvider.getIfAvailable();
+                    if (specCustomizer != null) {
+                        specCustomizer.customize(auth);
+                    }
+                })
+                .authorizeExchange(auth ->
+                        auth.pathMatchers(properties.getIgnoredUrls()).permitAll()
+                                .anyExchange()
+                                .access(properties.getOauth2().getAuthType().getAuthorizationManager(pathMatcherAuthoritiesLoader))
+                                .and()
+                                .exceptionHandling()
+                                .accessDeniedHandler(new AccessDeniedHandler())
+                                .authenticationEntryPoint(new AuthenticationEntryPoint())
+                );
+        return http.build();
+    }
+
     /**
      * redis token配置
      */
     @Configuration
-    @ConditionalOnProperty(name = "gateway.oauth2.jwt-enabled", matchIfMissing = true, havingValue = "false")
-    public static class OpaqueTokenConfig implements Customizer<ServerHttpSecurity.OAuth2ResourceServerSpec> {
+    @ConditionalOnProperty(name = "gateway.oauth2.auth-type", matchIfMissing = true, havingValue = "OPAQUE_REDIS")
+    public static class OpaqueRedisTokenConfig implements Customizer<ServerHttpSecurity.OAuth2ResourceServerSpec> {
 
-        @Autowired
-        private ServerBearerTokenAuthenticationConverter tokenAuthenticationConverter;
         @Autowired
         private RedisConnectionFactory redisConnectionFactory;
 
@@ -104,12 +108,27 @@ public class ServerSecurityConfiguration {
 
         @Override
         public void customize(ServerHttpSecurity.OAuth2ResourceServerSpec auth) {
-            auth.bearerTokenConverter(tokenAuthenticationConverter)
-                    .opaqueToken()
-                    .introspector(new RedisTokenIntrospector(redisTokenStore()))
-                    .and()
-                    .accessDeniedHandler(new AccessDeniedHandler())
-                    .authenticationEntryPoint(new AuthenticationEntryPoint());
+            auth.opaqueToken()
+                    .introspector(new RedisTokenIntrospector(redisTokenStore()));
+        }
+    }
+
+    @Configuration
+    @ConditionalOnProperty(name = "gateway.oauth2.auth-type", havingValue = "OPAQUE_REST")
+    public static class OpaqueRestTokenConfig implements Customizer<ServerHttpSecurity.OAuth2ResourceServerSpec> {
+
+        @Autowired
+        private RedisConnectionFactory redisConnectionFactory;
+
+        @Bean
+        public RedisTokenStore redisTokenStore() {
+            return new RedisTokenStore(redisConnectionFactory);
+        }
+
+        @Override
+        public void customize(ServerHttpSecurity.OAuth2ResourceServerSpec auth) {
+            auth.opaqueToken()
+                    .introspector(new RedisTokenIntrospector(redisTokenStore()));
         }
     }
 
@@ -117,19 +136,12 @@ public class ServerSecurityConfiguration {
      * jwt token配置
      */
     @Configuration
-    @ConditionalOnProperty(name = "gateway.oauth2.jwt-enabled", havingValue = "true")
+    @ConditionalOnProperty(name = "gateway.oauth2.auth-type", havingValue = "JWT")
     public static class JwtTokenConfig implements Customizer<ServerHttpSecurity.OAuth2ResourceServerSpec> {
-
-        @Autowired
-        private ServerBearerTokenAuthenticationConverter tokenAuthenticationConverter;
 
         @Override
         public void customize(ServerHttpSecurity.OAuth2ResourceServerSpec auth) {
-            auth.bearerTokenConverter(tokenAuthenticationConverter)
-                    .jwt()
-                    .and()
-                    .accessDeniedHandler(new AccessDeniedHandler())
-                    .authenticationEntryPoint(new AuthenticationEntryPoint());
+            auth.jwt();
         }
     }
 
