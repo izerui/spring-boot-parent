@@ -1,7 +1,7 @@
 package com.yj2025.gateway.security;
 
 import com.yj2025.gateway.GatewayProxyProperties;
-import com.yj2025.gateway.filter.ComplementHeaderFilter;
+import com.yj2025.gateway.filter.AdditionHeaderFilter;
 import com.yj2025.gateway.filter.IgnoreUrlsRemoveAuthorizationHeaderFilter;
 import com.yj2025.gateway.filter.MaintenanceWebFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,7 +71,7 @@ public class ServerSecurityConfig {
                 .requestCache().disable()
                 .addFilterBefore(new MaintenanceWebFilter(maintenance, whitelistIp), SecurityWebFiltersOrder.AUTHENTICATION) // 前置加入系统维护中过滤器
                 .addFilterBefore(new IgnoreUrlsRemoveAuthorizationHeaderFilter(gatewayProxyProperties), SecurityWebFiltersOrder.AUTHENTICATION)
-                .addFilterAfter(new ComplementHeaderFilter(), SecurityWebFiltersOrder.AUTHORIZATION) // header 信息补充过滤器
+                .addFilterAfter(new AdditionHeaderFilter(), SecurityWebFiltersOrder.AUTHORIZATION) // header 信息补充过滤器
                 .oauth2ResourceServer(auth ->
                         auth.bearerTokenConverter(tokenAuthenticationConverter)
                                 .opaqueToken()

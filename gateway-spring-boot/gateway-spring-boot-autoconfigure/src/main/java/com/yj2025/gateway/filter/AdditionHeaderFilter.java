@@ -19,7 +19,7 @@ import java.util.Set;
  * 根据token解析出用户等信息,放入header中,header补充过滤器
  */
 @Slf4j
-public class ComplementHeaderFilter implements WebFilter {
+public class AdditionHeaderFilter implements WebFilter {
 
     private final static Set<String> includeHeaders = Sets.newHashSet(
             "accountCode",
