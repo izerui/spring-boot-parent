@@ -3,6 +3,7 @@ package com.yj2025.gateway.controller;
 import com.yj2025.gateway.GatewayProxyProperties;
 import com.yj2025.gateway.request.RefreshRequest;
 import com.yj2025.gateway.request.TokenRequest;
+import com.yj2025.oauth2.security.RespVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
@@ -37,7 +38,7 @@ public class TokenKeyController {
     private GatewayProxyProperties gatewayProxyProperties;
 
     @PostMapping("/oauth/token")
-    public Mono<Map> getToken(@RequestBody TokenRequest request) {
+    public Mono<RespVo> getToken(@RequestBody TokenRequest request) {
         GatewayProxyProperties.Oauth2Properties oauth2Properties = gatewayProxyProperties.getOauth2();
         MultiValueMap<String, String> multiValueMap = request.newRequest(
                 oauth2Properties.getClientId(),
@@ -52,11 +53,12 @@ public class TokenKeyController {
                 .accept(MediaType.APPLICATION_JSON)
                 .header("Content-Type", "application/json;charset=UTF-8")
                 .retrieve()
-                .bodyToMono(Map.class);
+                .bodyToMono(Map.class)
+                .map(map -> RespVo.success(map));
     }
 
     @PostMapping("/oauth/refresh")
-    public Mono<String> refreshToken(@RequestBody RefreshRequest request) {
+    public Mono<RespVo> refreshToken(@RequestBody RefreshRequest request) {
         GatewayProxyProperties.Oauth2Properties oauth2Properties = gatewayProxyProperties.getOauth2();
         MultiValueMap<String, String> multiValueMap = request.newRequest(
                 oauth2Properties.getClientId(),
@@ -71,12 +73,13 @@ public class TokenKeyController {
                 .accept(MediaType.APPLICATION_JSON)
                 .header("Content-Type", "application/json;charset=UTF-8")
                 .retrieve()
-                .bodyToMono(String.class);
+                .bodyToMono(String.class)
+                .map(map -> RespVo.success(map));
     }
 
 
     @GetMapping("/oauth/revoke")
-    public Mono<String> revokeToken(ServerWebExchange exchange) {
+    public Mono<RespVo> revokeToken(ServerWebExchange exchange) {
         GatewayProxyProperties.Oauth2Properties oauth2Properties = gatewayProxyProperties.getOauth2();
         return tokenAuthenticationConverter.convert(exchange)
                 .map(authentication -> {
@@ -89,11 +92,12 @@ public class TokenKeyController {
                         .accept(MediaType.APPLICATION_JSON)
                         .header("Content-Type", "application/json;charset=UTF-8")
                         .retrieve()
-                        .bodyToMono(String.class));
+                        .bodyToMono(String.class)
+                        .map(map -> RespVo.success(map)));
     }
 
     @GetMapping("/oauth/token_key")
-    public Mono<String> getKey() {
+    public Mono<RespVo> getKey() {
         GatewayProxyProperties.Oauth2Properties oauth2Properties = gatewayProxyProperties.getOauth2();
         return webClientBuilder
                 .build()
@@ -102,6 +106,7 @@ public class TokenKeyController {
                 .accept(MediaType.APPLICATION_JSON)
                 .header("Content-Type", "application/json;charset=UTF-8")
                 .retrieve()
-                .bodyToMono(String.class);
+                .bodyToMono(String.class)
+                .map(s -> RespVo.success(s));
     }
 }

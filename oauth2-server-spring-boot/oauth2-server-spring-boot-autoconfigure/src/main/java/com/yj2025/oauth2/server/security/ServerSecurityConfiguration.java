@@ -49,6 +49,7 @@ public class ServerSecurityConfiguration extends WebSecurityConfigurerAdapter im
                                 "/oauth/revoke",
                                 "/oauth/token",
                                 "/oauth/token_key",
+                                "/oauth/check_token",
                                 "/rsa/key")
                         .permitAll()
                         .anyRequest()

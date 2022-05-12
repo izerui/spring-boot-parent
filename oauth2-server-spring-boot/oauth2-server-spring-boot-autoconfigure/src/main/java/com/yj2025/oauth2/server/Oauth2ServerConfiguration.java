@@ -14,9 +14,9 @@ import org.springframework.context.annotation.Import;
 @Import({ServerSecurityConfiguration.class, com.yj2025.oauth2.server.security.Oauth2ServerConfiguration.class, TokenController.class})
 public class Oauth2ServerConfiguration {
 
-    @Bean
-    public GlobalResponseBodyAdviceAdapter globalResponseBodyAdviceAdapter(ErrorAttributes errorAttributes) {
-        return new GlobalResponseBodyAdviceAdapter(errorAttributes);
-    }
+//    @Bean
+//    public GlobalResponseBodyAdviceAdapter globalResponseBodyAdviceAdapter(ErrorAttributes errorAttributes) {
+//        return new GlobalResponseBodyAdviceAdapter(errorAttributes);
+//    }
 
 }
