@@ -4,7 +4,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
+import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,6 +20,7 @@ import org.springframework.http.server.ServletServerHttpResponse;
 import org.springframework.util.Base64Utils;
 import org.springframework.util.SerializationUtils;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,12 +38,15 @@ public class GlobResponseBodyAdviceAdapter implements ResponseBodyAdvice<Object>
     @Value("${spring.application.name:null}")
     private String applicationName;
 
+    private ErrorAttributes errorAttributes;
+
     private static final String ERROR_ATTRIBUTE = DefaultErrorAttributes.class.getName()
             + ".ERROR";
 
     private Logger logger = LoggerFactory.getLogger(GlobResponseBodyAdviceAdapter.class);
 
-    public GlobResponseBodyAdviceAdapter() {
+    public GlobResponseBodyAdviceAdapter(ErrorAttributes errorAttributes) {
+        this.errorAttributes = errorAttributes;
     }
 
     @Override
@@ -50,8 +56,8 @@ public class GlobResponseBodyAdviceAdapter implements ResponseBodyAdvice<Object>
 
     @Override
     public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType, Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest httpRequest, ServerHttpResponse httpResponse) {
-
         HttpServletRequest request = ((ServletServerHttpRequest) httpRequest).getServletRequest();
+        ServletWebRequest servletWebRequest = new ServletWebRequest(request);
 
         HttpServletResponse response = ((ServletServerHttpResponse) httpResponse).getServletResponse();
 
@@ -65,18 +71,22 @@ public class GlobResponseBodyAdviceAdapter implements ResponseBodyAdvice<Object>
             resp.put("status", response.getStatus());
             resp.put("errCode", String.valueOf(response.getStatus()));
             //转换异常
-            Throwable throwable = getError(request);
+            Throwable throwable = errorAttributes.getError(servletWebRequest);
             if (throwable == null) {
                 response.setStatus(HttpStatus.OK.value());
+                Map<String, Object> errorAttributes = this.errorAttributes.getErrorAttributes(servletWebRequest, ErrorAttributeOptions.of(ErrorAttributeOptions.Include.values()));
+                logger.error(errorAttributes.toString());
                 if (body instanceof Map) {
                     resp.put("errMsg", ((Map) body).get("error"));
                     resp.put("data", ((Map) body).get("message"));
+                    resp.putAll(errorAttributes);
                     return resp;
                 } else {
                     return body;
                 }
             } else {
-                logger.error("request:[" + getPath(request) + "]\t\trequestApp:[" + requestApp + "]\t\terror:[" + throwable.getMessage() + "]", throwable);
+                // 不再输出异常堆栈信息，统一参考 dispatcherServlet 中的异常打印
+                logger.error("客户端: {} 请求: {} 出错: {}", requestApp, getPath(request), throwable.getMessage());
             }
 
             if (throwable.getClass().getName().equals("com.netflix.hystrix.exception.HystrixRuntimeException") && throwable.getCause() != null) {
@@ -135,8 +145,9 @@ public class GlobResponseBodyAdviceAdapter implements ResponseBodyAdvice<Object>
 
             String clientType = request.getHeader(CLIENT_TYPE);
             if (clientType != null && FEIGN_REQUEST_TYPE.equals(clientType)) {
-                //feign 请求返回异常堆栈信息
+                //feign 请求返回异常堆栈信息 ，并且将发生异常的所属应用名一并返回
                 resp.put(EXCEPTION_SERIALIZABLE, Base64Utils.encodeToString(SerializationUtils.serialize(throwable)));
+                resp.put(EXCEPTION_APPLICATION_NAME, applicationName);
             } else {
                 // 浏览器请求统一返回200状态码
                 response.setStatus(HttpStatus.OK.value());
@@ -151,14 +162,5 @@ public class GlobResponseBodyAdviceAdapter implements ResponseBodyAdvice<Object>
     private String getPath(HttpServletRequest request) {
         return (String) request.getAttribute("javax.servlet.error.request_uri");
     }
-
-    public Throwable getError(HttpServletRequest request) {
-        Throwable exception = (Throwable) request.getAttribute(ERROR_ATTRIBUTE);
-        if (exception == null) {
-            exception = (Throwable) request.getAttribute("javax.servlet.error.exception");
-        }
-        return exception;
-    }
-
 
 }

@@ -2,13 +2,14 @@ package com.yj2025.lock;
 
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.locks.InterProcessSemaphoreMutex;
+import org.springframework.beans.factory.DisposableBean;
 
 import java.util.concurrent.TimeUnit;
 
 /**
  * Created by serv on 16/8/16.
  */
-public class Lock {
+public class Lock implements DisposableBean {
 
     private CuratorFramework client;
 
@@ -49,6 +50,11 @@ public class Lock {
 
     public <T> T execute(String lockPath, LockPerform lockPerform) {
         return execute(lockPath, 30, lockPerform);
+    }
+
+    @Override
+    public void destroy() {
+        client.close();
     }
 
 }

@@ -12,6 +12,9 @@ import reactor.core.publisher.Mono;
 
 import java.util.Map;
 
+import static org.springframework.boot.web.error.ErrorAttributeOptions.Include.*;
+import static org.springframework.boot.web.error.ErrorAttributeOptions.of;
+
 public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHandler implements Constants {
 
     public GlobalErrorWebExceptionHandler(ErrorAttributes errorAttributes, ResourceProperties resourceProperties, ApplicationContext applicationContext) {
@@ -24,7 +27,7 @@ public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHan
     }
 
     private Mono<ServerResponse> renderErrorResponse(final ServerRequest request) {
-        final Map<String, Object> errorPropertiesMap = getErrorAttributes(request, true);
+        final Map<String, Object> errorPropertiesMap = getErrorAttributes(request, of(EXCEPTION, STACK_TRACE, MESSAGE, BINDING_ERRORS));
         //feign 请求
         if (errorPropertiesMap.containsKey(EXCEPTION_SERIALIZABLE)) {
             return ServerResponse.status(HttpStatus.OK)

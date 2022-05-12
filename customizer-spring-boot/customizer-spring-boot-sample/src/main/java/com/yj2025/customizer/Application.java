@@ -18,7 +18,7 @@ public class Application {
 
     // 方式一
     @Bean
-    public BeanDefinitionRegistryCustomizer originalBeanCustomizer() {
+    public BeanDefinitionRegistryCustomizer<CustomBean> originalBeanCustomizer() {
         return (registry, applicationContext) -> {
             BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.rootBeanDefinition(CustomBean.class);
             beanDefinitionBuilder.setInitMethodName("init");

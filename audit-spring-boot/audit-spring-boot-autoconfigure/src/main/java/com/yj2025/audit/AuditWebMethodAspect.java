@@ -56,7 +56,7 @@ public class AuditWebMethodAspect {
             return point.proceed();
         }
 
-        if (auditContextProvider.stream().count() == 0l) {
+        if (auditContextProvider.stream().count() == 0L) {
             return point.proceed();
         }
 
@@ -166,7 +166,9 @@ public class AuditWebMethodAspect {
             return reaultValue;
 
         } catch (Exception e) {
-            log.error("audit-error:" + e.getMessage(), e);
+//            if (e != null) {
+//                log.error("audit-error:" + e.getMessage(), e);
+//            }
             throw e;
         }
 

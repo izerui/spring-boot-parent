@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: oauth2-server-spring-boot-sample
+  cloud:
+    nacos:
+      config:
+        name: ${spring.application.name}
+        server-addr: 10.96.55.103:8848
+        namespace: dev
+        shared-configs:
+          - data-id: global.properties
+            refresh: true
+      discovery:
+        server-addr: 10.96.55.103:8848
+        namespace: dev
+  main:
+    allow-bean-definition-overriding: true
+  #redis:
+oauth2:
+  server:
+    client-id: ierp
+    client-secret: 123456
+    redirect-uri: https://yj2025.com
+    access-token-validity-seconds: 7200
+    refresh-token-validity-seconds: 86400
+    jwt:
+      enabled: true
+      key-file: classpath:jwt.jks
+      key-alias: jwt
+      key-password: 123456
