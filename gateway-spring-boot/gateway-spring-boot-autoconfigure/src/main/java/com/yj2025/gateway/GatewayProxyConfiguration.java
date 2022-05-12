@@ -2,7 +2,7 @@ package com.yj2025.gateway;
 
 import com.yj2025.gateway.controller.TokenKeyController;
 import com.yj2025.gateway.filter.RelaxedQueryCharsWebServerCustomize;
-import com.yj2025.gateway.security.ServerSecurityConfiguration;
+import com.yj2025.gateway.security.SecurityConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
@@ -14,7 +14,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @EnableWebFluxSecurity
 @Configuration
-@Import({ServerSecurityConfiguration.class, TokenKeyController.class})
+@Import({SecurityConfiguration.class, TokenKeyController.class})
 public class GatewayProxyConfiguration {
 
     @Autowired

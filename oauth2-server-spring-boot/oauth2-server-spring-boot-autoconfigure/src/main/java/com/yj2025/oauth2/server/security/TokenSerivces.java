@@ -12,6 +12,9 @@ import org.springframework.util.ReflectionUtils;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+/**
+ * 每次请求token都返回新的
+ */
 public class TokenSerivces extends DefaultTokenServices {
 
     @Transactional

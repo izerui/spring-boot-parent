@@ -24,7 +24,7 @@ import static org.springframework.security.oauth2.server.resource.introspection.
 import static org.springframework.security.oauth2.server.resource.introspection.OAuth2IntrospectionClaimNames.EXPIRES_AT;
 
 /**
- * redis token配置，通过redis获取token信息，进行验证
+ * redis token配置，通过redis获取token信息，进行验证(效率其次)
  */
 @Configuration
 @ConditionalOnProperty(name = "gateway.oauth2.auth-type", matchIfMissing = true, havingValue = "OPAQUE_REDIS")

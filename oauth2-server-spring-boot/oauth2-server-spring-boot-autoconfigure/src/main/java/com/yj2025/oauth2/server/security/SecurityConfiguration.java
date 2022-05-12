@@ -30,7 +30,7 @@ import java.util.Optional;
  */
 @Slf4j
 @Configuration
-public class ServerSecurityConfiguration extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
+public class SecurityConfiguration extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
 
     @Autowired
     private List<AuthenticationProvider> authenticationProviders;

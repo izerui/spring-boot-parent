@@ -13,7 +13,7 @@ import org.springframework.security.oauth2.server.resource.introspection.NimbusR
 import org.springframework.web.reactive.function.client.WebClient;
 
 /**
- * 验证token通过auth服务器url地址验证,当auth服务异常导致请求无法继续
+ * 验证token通过auth服务器url地址验证,当auth服务异常导致请求无法继续(效率最低)
  */
 @Configuration
 @ConditionalOnProperty(name = "gateway.oauth2.auth-type", havingValue = "OPAQUE_REST")

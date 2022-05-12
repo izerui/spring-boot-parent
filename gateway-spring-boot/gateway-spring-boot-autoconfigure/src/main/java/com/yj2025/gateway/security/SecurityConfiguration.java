@@ -24,7 +24,7 @@ import java.time.Duration;
 
 @Configuration
 @Import({JwtTokenConfiguration.class, OpaqueRedisTokenConfiguration.class, OpaqueRestTokenConfiguration.class})
-public class ServerSecurityConfiguration {
+public class SecurityConfiguration {
 
     @Autowired
     private GatewayProxyProperties properties;
