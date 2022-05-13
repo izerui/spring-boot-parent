@@ -1,11 +1,13 @@
 package com.yj2025.oauth2.server.security;
 
 import com.yj2025.oauth2.server.LoginSuccessHandler;
+import com.yj2025.oauth2.server.PasswordEncoderMatchor;
 import com.yj2025.oauth2.server.UserDetailsRemoteLoader;
 import com.yj2025.oauth2.server.events.DelegatingSuccessEventListener;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -78,10 +80,17 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter implemen
         return new BCryptPasswordEncoder();
     }
 
+    @Bean
+    @ConditionalOnMissingBean
+    public PasswordEncoderMatchor passwordCheckMatchor() {
+        return new DefaultPasswordEncoderMatchor(passwordEncoder());
+    }
+
     @Order(0)
     @Bean
-    public AuthenticationProvider formAuthenticationProvider(UserDetailsService userDetailsService) {
-        return new UserAuthenticationProvider(userDetailsService, passwordEncoder());
+    public AuthenticationProvider authenticationProvider(UserDetailsService userDetailsService,
+                                                             ObjectProvider<PasswordEncoderMatchor> passwordCheckMatchorProvider) {
+        return new UserAuthenticationProvider(userDetailsService, passwordCheckMatchorProvider);
     }
 
     @Bean

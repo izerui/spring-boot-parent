@@ -5,6 +5,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -20,6 +21,12 @@ public class User extends org.springframework.security.core.userdetails.User {
     private String entName;
     private String userCode;
     private String userName;
+    private String additionalSalt;
+
+    public User(String accountName, String password, String... authorities) {
+        super(accountName, password, AuthorityUtils.createAuthorityList(Optional.ofNullable(authorities).orElse(new String[0])));
+        this.accountName = accountName;
+    }
 
     public User(String accountName, String password, Collection<? extends GrantedAuthority> authorities) {
         super(accountName, password, authorities);
@@ -28,6 +35,11 @@ public class User extends org.springframework.security.core.userdetails.User {
 
     public User(String accountName, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, Set<String> authorities) {
         super(accountName, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, AuthorityUtils.createAuthorityList(authorities.toArray(new String[authorities.size()])));
+        this.accountName = accountName;
+    }
+
+    public User(String accountName, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, String... authorities) {
+        super(accountName, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, AuthorityUtils.createAuthorityList(Optional.ofNullable(authorities).orElse(new String[0])));
         this.accountName = accountName;
     }
 
@@ -88,6 +100,15 @@ public class User extends org.springframework.security.core.userdetails.User {
 
     public User setUserName(String userName) {
         this.userName = userName;
+        return this;
+    }
+
+    public String getAdditionalSalt() {
+        return additionalSalt;
+    }
+
+    public User setAdditionalSalt(String additionalSalt) {
+        this.additionalSalt = additionalSalt;
         return this;
     }
 }

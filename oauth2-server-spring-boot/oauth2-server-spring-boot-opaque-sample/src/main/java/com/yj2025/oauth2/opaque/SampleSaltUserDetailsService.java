@@ -1,4 +1,4 @@
-package com.yj2025.oauth2.jwt;
+package com.yj2025.oauth2.opaque;
 
 import com.yj2025.oauth2.security.User;
 import com.yj2025.oauth2.server.PasswordEncoderMatchor;
@@ -9,7 +9,9 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 
 @Component
-public class SampleUserDetailsService implements UserDetailsRemoteLoader {
+public class SampleSaltUserDetailsService implements UserDetailsRemoteLoader {
+
+    private final static String salt = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
     @Autowired
     private PasswordEncoderMatchor passwordEncoderMatchor;
@@ -18,8 +20,10 @@ public class SampleUserDetailsService implements UserDetailsRemoteLoader {
     public User loadUserByUsername(String username, Optional<String> usercode) {
         if (usercode.isPresent()) {
             System.out.println("切换用户: " + usercode.get());
-            return new User(usercode.get() + "001", passwordEncoderMatchor.encode("123456", null), "postCode001", "postCode002");
+            return new User(usercode.get() + "001", passwordEncoderMatchor.encode("123456", salt), "postCode001", "postCode002")
+                    .setAdditionalSalt(salt);
         }
-        return new User("test", passwordEncoderMatchor.encode("123456", null), "postCode001", "postCode002");
+        return new User("test", passwordEncoderMatchor.encode("123456", salt), "postCode001", "postCode002")
+                .setAdditionalSalt(salt);
     }
 }

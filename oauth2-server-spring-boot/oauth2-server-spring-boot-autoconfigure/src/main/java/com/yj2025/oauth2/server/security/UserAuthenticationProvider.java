@@ -1,6 +1,8 @@
 package com.yj2025.oauth2.server.security;
 
 import com.yj2025.oauth2.security.User;
+import com.yj2025.oauth2.server.PasswordEncoderMatchor;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
@@ -9,16 +11,15 @@ import org.springframework.security.authentication.dao.AbstractUserDetailsAuthen
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 public class UserAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
 
     private UserDetailsService userDetailsService;
-    private BCryptPasswordEncoder passwordEncoder;
+    private ObjectProvider<PasswordEncoderMatchor> passwordCheckMatchorProvider;
 
-    public UserAuthenticationProvider(UserDetailsService userDetailsService, BCryptPasswordEncoder md5PasswordEncoder) {
+    public UserAuthenticationProvider(UserDetailsService userDetailsService, ObjectProvider<PasswordEncoderMatchor> passwordCheckMatchorProvider) {
         this.userDetailsService = userDetailsService;
-        this.passwordEncoder = md5PasswordEncoder;
+        this.passwordCheckMatchorProvider = passwordCheckMatchorProvider;
     }
 
     @Override
@@ -28,7 +29,7 @@ public class UserAuthenticationProvider extends AbstractUserDetailsAuthenticatio
         }
         User user = (User) userDetails;
         String inputPassword = authentication.getCredentials().toString();
-        if (!this.passwordEncoder.matches(inputPassword, user.getPassword())) {
+        if (!this.passwordCheckMatchorProvider.getIfAvailable().matches(inputPassword, user.getPassword(), user.getAdditionalSalt())) {
             throw new BadCredentialsException("用户名或密码错误!");
         }
         if (!user.isEnabled()) {
