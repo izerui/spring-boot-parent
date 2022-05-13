@@ -36,8 +36,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter implemen
 
     @Autowired
     private List<AuthenticationProvider> authenticationProviders;
-    @Autowired
-    private DelegatingSuccessEventListener delegatingSuccessHandler;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
