@@ -12,12 +12,12 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
-public class UserAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
+public class UsernamePasswordAuthProvider extends AbstractUserDetailsAuthenticationProvider {
 
     private UserDetailsService userDetailsService;
     private ObjectProvider<PasswordEncoderMatchor> passwordCheckMatchorProvider;
 
-    public UserAuthenticationProvider(UserDetailsService userDetailsService, ObjectProvider<PasswordEncoderMatchor> passwordCheckMatchorProvider) {
+    public UsernamePasswordAuthProvider(UserDetailsService userDetailsService, ObjectProvider<PasswordEncoderMatchor> passwordCheckMatchorProvider) {
         this.userDetailsService = userDetailsService;
         this.passwordCheckMatchorProvider = passwordCheckMatchorProvider;
     }

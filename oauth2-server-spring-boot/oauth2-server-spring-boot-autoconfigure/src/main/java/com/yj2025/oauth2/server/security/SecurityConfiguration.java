@@ -86,9 +86,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter implemen
 
     @Order(0)
     @Bean
-    public AuthenticationProvider authenticationProvider(UserDetailsService userDetailsService,
+    public AuthenticationProvider usernamePasswordAuthProvider(UserDetailsService userDetailsService,
                                                              ObjectProvider<PasswordEncoderMatchor> passwordCheckMatchorProvider) {
-        return new UserAuthenticationProvider(userDetailsService, passwordCheckMatchorProvider);
+        return new UsernamePasswordAuthProvider(userDetailsService, passwordCheckMatchorProvider);
     }
 
     @Bean
