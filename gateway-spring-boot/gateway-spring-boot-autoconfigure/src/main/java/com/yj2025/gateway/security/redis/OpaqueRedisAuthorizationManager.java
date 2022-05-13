@@ -23,6 +23,12 @@ public class OpaqueRedisAuthorizationManager extends AbstracAuthorizationManager
         super(pathMatcherAuthoritiesLoader);
     }
 
+    /**
+     * authorities 设置的地方： {@link RedisTokenIntrospector#introspect)}
+     * @param authenticationMono
+     * @param pathAuthorities
+     * @return
+     */
     @Override
     protected Mono<AuthorizationDecision> checkAuthorities(Mono<Authentication> authenticationMono, Set<String> pathAuthorities) {
         // 验证用户authorities里面是否具备该权限

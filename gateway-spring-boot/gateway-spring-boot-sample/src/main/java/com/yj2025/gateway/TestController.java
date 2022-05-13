@@ -7,9 +7,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class TestController {
 
-    @GetMapping("/test")
-    public String test(@RequestHeader(value = "accountName",required = false) String accountName) {
+    @GetMapping({"/ignore", "/test"})
+    public String test(@RequestHeader(value = "accountName", required = false) String accountName) {
         System.out.println(accountName);
         return "success" + accountName;
     }
+
 }

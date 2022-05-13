@@ -23,6 +23,12 @@ public class JwtAuthorizationManager extends AbstracAuthorizationManager {
         super(pathMatcherAuthoritiesLoader);
     }
 
+    /**
+     * authorities 设置的地方： {@link org.springframework.security.oauth2.provider.token.DefaultAccessTokenConverter#convertAccessToken}
+     * @param authenticationMono
+     * @param pathAuthorities
+     * @return
+     */
     @Override
     protected Mono<AuthorizationDecision> checkAuthorities(Mono<Authentication> authenticationMono, Set<String> pathAuthorities) {
         return

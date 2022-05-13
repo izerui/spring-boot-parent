@@ -40,9 +40,10 @@ gateway:
     - /oauth/token
     - /oauth/refresh
     - /oauth/token_key
+    - /ignore
   oauth2:
     client-id: ierp
     client-secret: 123456
     app-name: oauth2-server-spring-boot-sample
-    auth-type: opaque_redis
+    auth-type: jwt
   maintenance: false

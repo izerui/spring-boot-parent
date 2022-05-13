@@ -3,7 +3,7 @@ package com.yj2025.gateway.security;
 import com.yj2025.gateway.GatewayProxyProperties;
 import com.yj2025.gateway.PathMatcherAuthoritiesLoader;
 import com.yj2025.gateway.filter.AdditionHeaderFilter;
-import com.yj2025.gateway.filter.IgnoreUrlsRemoveAuthorizationHeaderFilter;
+import com.yj2025.gateway.filter.RemoveAuthorizationFilter;
 import com.yj2025.gateway.filter.MaintenanceWebFilter;
 import com.yj2025.gateway.security.jwt.JwtTokenConfiguration;
 import com.yj2025.gateway.security.redis.OpaqueRedisTokenConfiguration;
@@ -68,7 +68,7 @@ public class SecurityConfiguration {
                 }}))
                 .requestCache().disable()
                 .addFilterBefore(new MaintenanceWebFilter(properties), SecurityWebFiltersOrder.AUTHENTICATION) // 前置加入系统维护中过滤器
-                .addFilterBefore(new IgnoreUrlsRemoveAuthorizationHeaderFilter(properties), SecurityWebFiltersOrder.AUTHENTICATION)
+                .addFilterBefore(new RemoveAuthorizationFilter(properties), SecurityWebFiltersOrder.AUTHENTICATION)
                 .addFilterAfter(new AdditionHeaderFilter(), SecurityWebFiltersOrder.AUTHORIZATION) // header 信息补充过滤器
                 .oauth2ResourceServer(auth -> {
                     auth.bearerTokenConverter(tokenAuthenticationConverter())

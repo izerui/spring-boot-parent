@@ -20,11 +20,10 @@ oauth2:
   server:
     client-id: ierp
     client-secret: 123456
-    redirect-uri: https://yj2025.com
     access-token-validity-seconds: 7200
     refresh-token-validity-seconds: 86400
     jwt:
-      enabled: false
+      enabled: true
       key-file: classpath:jwt.jks
       key-alias: jwt
       key-password: 123456
