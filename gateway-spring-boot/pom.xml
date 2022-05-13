@@ -14,7 +14,9 @@
     <modules>
         <module>gateway-spring-boot-autoconfigure</module>
         <module>gateway-spring-boot-starter</module>
-        <module>gateway-spring-boot-sample</module>
+        <module>gateway-spring-boot-jwt-sample</module>
+        <module>gateway-spring-boot-opaque-redis-sample</module>
+        <module>gateway-spring-boot-opaque-rest-sample</module>
     </modules>
 
     <properties>
