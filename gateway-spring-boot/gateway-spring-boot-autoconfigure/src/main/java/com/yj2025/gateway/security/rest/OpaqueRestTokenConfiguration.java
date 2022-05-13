@@ -1,4 +1,4 @@
-package com.yj2025.gateway.security;
+package com.yj2025.gateway.security.rest;
 
 
 import com.yj2025.gateway.GatewayProxyProperties;

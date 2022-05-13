@@ -1,4 +1,4 @@
-package com.yj2025.gateway.security;
+package com.yj2025.gateway.security.jwt;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;

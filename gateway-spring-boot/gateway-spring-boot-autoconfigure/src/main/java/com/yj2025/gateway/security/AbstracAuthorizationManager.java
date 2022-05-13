@@ -1,4 +1,4 @@
-package com.yj2025.gateway.security.authorization;
+package com.yj2025.gateway.security;
 
 import com.yj2025.gateway.PathMatcherAuthoritiesLoader;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +19,7 @@ import java.util.Set;
  * opaque 鉴权管理器，用于判断是否有资源的访问权限
  */
 @Slf4j
-abstract class AbstracAuthorizationManager implements ReactiveAuthorizationManager<AuthorizationContext> {
+public abstract class AbstracAuthorizationManager implements ReactiveAuthorizationManager<AuthorizationContext> {
 
     private PathMatcherAuthoritiesLoader pathMatcherAuthoritiesLoader;
 

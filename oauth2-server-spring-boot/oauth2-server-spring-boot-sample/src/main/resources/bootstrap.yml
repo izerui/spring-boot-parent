@@ -24,7 +24,7 @@ oauth2:
     access-token-validity-seconds: 7200
     refresh-token-validity-seconds: 86400
     jwt:
-      enabled: true
+      enabled: false
       key-file: classpath:jwt.jks
       key-alias: jwt
       key-password: 123456

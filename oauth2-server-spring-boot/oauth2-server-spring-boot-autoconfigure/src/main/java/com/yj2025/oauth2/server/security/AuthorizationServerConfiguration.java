@@ -1,6 +1,8 @@
 package com.yj2025.oauth2.server.security;
 
 import com.yj2025.oauth2.server.Oauth2Properties;
+import com.yj2025.oauth2.server.security.jwt.JwtTokenConfiguration;
+import com.yj2025.oauth2.server.security.opaque.OpaqueTokenConfiguration;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;

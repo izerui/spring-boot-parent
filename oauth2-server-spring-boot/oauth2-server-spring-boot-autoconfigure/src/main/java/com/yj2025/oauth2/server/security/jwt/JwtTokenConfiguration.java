@@ -1,8 +1,10 @@
-package com.yj2025.oauth2.server.security;
+package com.yj2025.oauth2.server.security.jwt;
 
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.yj2025.oauth2.server.Oauth2Properties;
+import com.yj2025.oauth2.server.security.ExpandEndpointsConfigurer;
+import com.yj2025.oauth2.server.security.TokenInfoEnhancer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;

@@ -1,23 +1,24 @@
-package com.yj2025.gateway.security.authorization;
+package com.yj2025.gateway.security.rest;
 
 import com.yj2025.gateway.PathMatcherAuthoritiesLoader;
+import com.yj2025.gateway.security.AbstracAuthorizationManager;
 import lombok.extern.slf4j.Slf4j;
+import net.minidev.json.JSONArray;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.server.resource.authentication.BearerTokenAuthentication;
 import reactor.core.publisher.Mono;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * opaque 鉴权管理器，用于判断是否有资源的访问权限
  */
 @Slf4j
-public class OpaqueAuthorizationManager extends AbstracAuthorizationManager {
+public class OpaqueRestAuthorizationManager extends AbstracAuthorizationManager {
 
 
-    public OpaqueAuthorizationManager(PathMatcherAuthoritiesLoader pathMatcherAuthoritiesLoader) {
+    public OpaqueRestAuthorizationManager(PathMatcherAuthoritiesLoader pathMatcherAuthoritiesLoader) {
         super(pathMatcherAuthoritiesLoader);
     }
 
@@ -26,7 +27,7 @@ public class OpaqueAuthorizationManager extends AbstracAuthorizationManager {
         // 验证用户authorities里面是否具备该权限
         return
                 authenticationMono.cast(BearerTokenAuthentication.class)
-                        .flatMapIterable(authentication -> authentication.getAuthorities() != null ? authentication.getAuthorities() : new HashSet<>())
+                        .flatMapIterable(authentication -> Optional.ofNullable((JSONArray)authentication.getTokenAttributes().get("authorities")).orElse(new JSONArray()))
                         .any(authority -> pathAuthorities.contains(authority))
                         .map(AuthorizationDecision::new)
                         .defaultIfEmpty(new AuthorizationDecision(false));

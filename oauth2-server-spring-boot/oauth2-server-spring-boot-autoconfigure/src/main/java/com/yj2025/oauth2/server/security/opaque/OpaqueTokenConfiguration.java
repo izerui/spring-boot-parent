@@ -1,6 +1,8 @@
-package com.yj2025.oauth2.server.security;
+package com.yj2025.oauth2.server.security.opaque;
 
 
+import com.yj2025.oauth2.server.security.ExpandEndpointsConfigurer;
+import com.yj2025.oauth2.server.security.TokenInfoEnhancer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;

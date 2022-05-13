@@ -1,7 +1,7 @@
 package com.yj2025.gateway;
 
-import com.yj2025.gateway.security.authorization.JwtAuthorizationManager;
-import com.yj2025.gateway.security.authorization.OpaqueAuthorizationManager;
+import com.yj2025.gateway.security.jwt.JwtAuthorizationManager;
+import com.yj2025.gateway.security.rest.OpaqueRestAuthorizationManager;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -28,8 +28,18 @@ public class GatewayProxyProperties {
     }
 
     public enum AuthenticationType {
-        OPAQUE_REDIS,
-        OPAQUE_REST,
+        OPAQUE_REDIS {
+            @Override
+            public ReactiveAuthorizationManager<AuthorizationContext> getAuthorizationManager(PathMatcherAuthoritiesLoader pathMatcherAuthoritiesLoader) {
+                return new OpaqueRestAuthorizationManager(pathMatcherAuthoritiesLoader);
+            }
+        },
+        OPAQUE_REST{
+            @Override
+            public ReactiveAuthorizationManager<AuthorizationContext> getAuthorizationManager(PathMatcherAuthoritiesLoader pathMatcherAuthoritiesLoader) {
+                return new OpaqueRestAuthorizationManager(pathMatcherAuthoritiesLoader);
+            }
+        },
         JWT {
             @Override
             public ReactiveAuthorizationManager<AuthorizationContext> getAuthorizationManager(PathMatcherAuthoritiesLoader pathMatcherAuthoritiesLoader) {
@@ -37,8 +47,6 @@ public class GatewayProxyProperties {
             }
         };
 
-        public ReactiveAuthorizationManager<AuthorizationContext> getAuthorizationManager(PathMatcherAuthoritiesLoader pathMatcherAuthoritiesLoader) {
-            return new OpaqueAuthorizationManager(pathMatcherAuthoritiesLoader);
-        }
+        public abstract ReactiveAuthorizationManager<AuthorizationContext> getAuthorizationManager(PathMatcherAuthoritiesLoader pathMatcherAuthoritiesLoader);
     }
 }
