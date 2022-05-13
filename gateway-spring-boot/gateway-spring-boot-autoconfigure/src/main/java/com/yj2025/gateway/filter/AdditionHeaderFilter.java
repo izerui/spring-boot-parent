@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.oauth2.server.resource.authentication.BearerTokenAuthentication;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
@@ -12,6 +13,7 @@ import reactor.core.publisher.Mono;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -38,11 +40,16 @@ public class AdditionHeaderFilter implements WebFilter {
         // https://qa.icopy.site/questions/61397201/how-do-you-set-programmatically-the-authentication-object-in-spring-security-rea
         return ReactiveSecurityContextHolder.getContext()
                 .map(securityContext -> securityContext.getAuthentication())
-                .map(bearerTokenAuthentication -> {
-                    if (bearerTokenAuthentication == null) {
+                .map(authentication -> {
+                    if (authentication == null) {
                         return exchange;
                     }
-                    Map<String, Object> claims = ((BearerTokenAuthentication) bearerTokenAuthentication).getTokenAttributes();
+                    Map<String, Object> claims = new HashMap<>();
+                    if(authentication instanceof JwtAuthenticationToken) {
+                        claims = ((JwtAuthenticationToken) authentication).getToken().getClaims();
+                    }else if(authentication instanceof BearerTokenAuthentication) {
+                        claims = ((BearerTokenAuthentication) authentication).getTokenAttributes();
+                    }
                     ServerHttpRequest.Builder requestBuilder = exchange.getRequest().mutate();
                     claims.forEach((key, value) -> {
                         if (includeHeaders.contains(key)) {

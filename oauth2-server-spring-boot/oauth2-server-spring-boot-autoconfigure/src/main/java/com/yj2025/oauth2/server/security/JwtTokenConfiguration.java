@@ -8,6 +8,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
+import org.springframework.security.oauth2.provider.endpoint.FrameworkEndpoint;
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
@@ -23,6 +24,7 @@ import java.util.Map;
 
 
 @Configuration
+@FrameworkEndpoint
 @ConditionalOnProperty(name = "oauth2.server.jwt.enabled", havingValue = "true")
 public class JwtTokenConfiguration implements ExpandEndpointsConfigurer {
 
