@@ -5,6 +5,7 @@ import com.yj2025.oauth2.server.security.jwt.JwtTokenConfiguration;
 import com.yj2025.oauth2.server.security.opaque.OpaqueTokenConfiguration;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -46,13 +47,16 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
     private Oauth2Properties properties;
     @Autowired
     private UserDetailsService userDetailsService;
-
     @Autowired
     private ObjectProvider<ExpandEndpointsConfigurer> expandEndpointsConfigurers;
+    @Value("${spring.application.name:''}")
+    private String applicationName;
 
     @Bean
     public RedisTokenStore redisTokenStore() {
-        return new RedisTokenStore(redisConnectionFactory);
+        RedisTokenStore redisTokenStore = new RedisTokenStore(redisConnectionFactory);
+        redisTokenStore.setPrefix(applicationName);
+        return redisTokenStore;
     }
 
     @Bean

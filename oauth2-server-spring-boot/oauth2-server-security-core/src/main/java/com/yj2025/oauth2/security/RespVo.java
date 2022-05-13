@@ -1,5 +1,10 @@
 package com.yj2025.oauth2.security;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+
 /**
  * Copyright (C), 2015-2016, 深圳云集智造系统技术有限公司
  *
@@ -9,6 +14,15 @@ package com.yj2025.oauth2.security;
  * @date 2016/10/12 17:43
  */
 public class RespVo<T> {
+
+    private final static ObjectMapper OBJECT_MAPPER;
+
+    static {
+        OBJECT_MAPPER = new ObjectMapper();
+        OBJECT_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        OBJECT_MAPPER.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+    }
+
     /**
      * 请求处理是否成功
      */
@@ -99,4 +113,11 @@ public class RespVo<T> {
         this.data = data;
     }
 
+    public String toJson() {
+        try {
+            return OBJECT_MAPPER.writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

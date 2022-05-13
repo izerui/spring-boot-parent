@@ -1,5 +1,6 @@
 package com.yj2025.gateway.proxy.security.redis;
 
+import com.yj2025.gateway.proxy.GatewayProxyProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -18,10 +19,14 @@ public class OpaqueRedisTokenConfiguration implements Customizer<ServerHttpSecur
 
     @Autowired
     private RedisConnectionFactory redisConnectionFactory;
+    @Autowired
+    private GatewayProxyProperties properties;
 
     @Bean
     public RedisTokenStore redisTokenStore() {
-        return new RedisTokenStore(redisConnectionFactory);
+        RedisTokenStore redisTokenStore = new RedisTokenStore(redisConnectionFactory);
+        redisTokenStore.setPrefix(properties.getOauth2().getAppName());
+        return redisTokenStore;
     }
 
     @Override

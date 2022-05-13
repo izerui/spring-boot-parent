@@ -1,6 +1,6 @@
 spring:
   application:
-    name: oauth2-server-spring-boot-sample
+    name: oauth2-server-spring-boot-jwt-sample
   cloud:
     nacos:
       config:

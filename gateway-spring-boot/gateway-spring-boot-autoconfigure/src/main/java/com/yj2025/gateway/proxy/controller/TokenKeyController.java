@@ -1,8 +1,9 @@
 package com.yj2025.gateway.proxy.controller;
 
+import com.yj2025.gateway.proxy.GatewayProxyProperties;
 import com.yj2025.gateway.proxy.request.RefreshRequest;
 import com.yj2025.gateway.proxy.request.TokenRequest;
-import com.yj2025.gateway.proxy.GatewayProxyProperties;
+import com.yj2025.oauth2.security.RespVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
@@ -50,7 +51,8 @@ public class TokenKeyController {
                 .accept(MediaType.APPLICATION_JSON)
                 .header("Content-Type", "application/json;charset=UTF-8")
                 .retrieve()
-                .bodyToMono(String.class);
+                .bodyToMono(String.class)
+                .onErrorResume(throwable -> Mono.just(RespVo.error("error", throwable.getMessage()).toJson()));
     }
 
     @PostMapping("/oauth/refresh")
@@ -69,7 +71,8 @@ public class TokenKeyController {
                 .accept(MediaType.APPLICATION_JSON)
                 .header("Content-Type", "application/json;charset=UTF-8")
                 .retrieve()
-                .bodyToMono(String.class);
+                .bodyToMono(String.class)
+                .onErrorResume(throwable -> Mono.just(RespVo.error("error", throwable.getMessage()).toJson()));
     }
 
 
@@ -87,7 +90,8 @@ public class TokenKeyController {
                         .accept(MediaType.APPLICATION_JSON)
                         .header("Content-Type", "application/json;charset=UTF-8")
                         .retrieve()
-                        .bodyToMono(String.class));
+                        .bodyToMono(String.class)
+                        .onErrorResume(throwable -> Mono.just(RespVo.error("error", throwable.getMessage()).toJson())));
     }
 
     @GetMapping("/oauth/token_key")
@@ -100,6 +104,7 @@ public class TokenKeyController {
                 .accept(MediaType.APPLICATION_JSON)
                 .header("Content-Type", "application/json;charset=UTF-8")
                 .retrieve()
-                .bodyToMono(String.class);
+                .bodyToMono(String.class)
+                .onErrorResume(throwable -> Mono.just(RespVo.error("error", throwable.getMessage()).toJson()));
     }
 }

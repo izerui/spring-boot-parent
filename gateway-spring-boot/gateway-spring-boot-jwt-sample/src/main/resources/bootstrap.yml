@@ -1,6 +1,6 @@
 spring:
   application:
-    name: gateway-spring-boot-sample
+    name: gateway-spring-boot-jwt-sample
   cloud:
     nacos:
       config:
