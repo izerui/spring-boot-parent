@@ -33,7 +33,7 @@ public class SecurityConfiguration {
     private GatewayProxyProperties properties;
 
     @Autowired
-    private PathMatcherAuthoritiesLoader pathMatcherAuthoritiesLoader;
+    private ObjectProvider<PathMatcherAuthoritiesLoader> pathMatcherAuthoritiesLoaderObjectProvider;
 
     @Autowired
     private ObjectProvider<Customizer<ServerHttpSecurity.OAuth2ResourceServerSpec>> authCustomizerObjectProvider;
@@ -82,7 +82,7 @@ public class SecurityConfiguration {
                 .authorizeExchange(auth ->
                         auth.pathMatchers(properties.getIgnoredUrls()).permitAll()
                                 .anyExchange()
-                                .access(properties.getOauth2().getAuthType().getAuthorizationManager(pathMatcherAuthoritiesLoader))
+                                .access(properties.getOauth2().getAuthType().getAuthorizationManager(pathMatcherAuthoritiesLoaderObjectProvider.getIfAvailable(() -> PathMatcherAuthoritiesLoader.DEFALT)))
                                 .and()
                                 .exceptionHandling()
                                 .accessDeniedHandler(new AccessDeniedHandler())

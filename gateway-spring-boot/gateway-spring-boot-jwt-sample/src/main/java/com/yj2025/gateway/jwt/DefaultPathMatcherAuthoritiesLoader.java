@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-@Component
+//@Component
 public class DefaultPathMatcherAuthoritiesLoader implements PathMatcherAuthoritiesLoader {
     @Override
     public Map<String, Set<String>> getPathMatcherAuthoritiesMap() {
