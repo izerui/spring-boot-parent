@@ -36,7 +36,7 @@ import java.util.Arrays;
 @EnableAuthorizationServer
 @AutoConfigureAfter(SecurityConfiguration.class)
 @Import({OpaqueTokenConfiguration.class, JwtTokenConfiguration.class})
-public class Oauth2ServerConfiguration extends AuthorizationServerConfigurerAdapter {
+public class Oauth2Configuration extends AuthorizationServerConfigurerAdapter {
 
     @Autowired
     private AuthenticationManager authenticationManager;

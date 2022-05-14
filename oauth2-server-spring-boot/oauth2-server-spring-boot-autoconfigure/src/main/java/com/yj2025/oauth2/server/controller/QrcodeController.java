@@ -5,9 +5,9 @@ import com.yj2025.oauth2.security.support.RespVo;
 import com.yj2025.oauth2.server.security.provider.QrcodeService;
 import com.yj2025.oauth2.server.security.provider.QrcodeStatus;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.WebUtils;
 
 import javax.servlet.http.Cookie;
@@ -22,13 +22,13 @@ import static com.yj2025.oauth2.security.support.QrcodeConstants.QRCODE_TICKET_K
  * 二维码登录相关接口
  * Created by serv on 2016/12/20.
  */
-@Controller
+@Configuration
+@RestController
 public class QrcodeController {
 
     @Autowired
     private QrcodeService qrcodeService;
 
-    @ResponseBody
     @PostMapping(MappingUrls.QRCODE_GENERATE_URL)
     public RespVo<Map<String, String>> generateQrCode(HttpServletResponse response) {
         String qrcode = qrcodeService.createQrcode();
@@ -43,7 +43,6 @@ public class QrcodeController {
     }
 
 
-    @ResponseBody
     @PostMapping(MappingUrls.QRCODE_VALIDATE_URL)
     public RespVo<QrcodeStatus> validateQrCode(HttpServletRequest request) {
         Cookie cookie = WebUtils.getCookie(request, QRCODE_TICKET_KEY);

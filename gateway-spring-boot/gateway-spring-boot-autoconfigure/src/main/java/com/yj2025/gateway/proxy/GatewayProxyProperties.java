@@ -1,5 +1,6 @@
 package com.yj2025.gateway.proxy;
 
+import com.nimbusds.jose.util.ArrayUtils;
 import com.yj2025.gateway.proxy.security.jwt.JwtAuthorizationManager;
 import com.yj2025.gateway.proxy.security.rest.OpaqueRestAuthorizationManager;
 import com.yj2025.oauth2.security.support.MappingUrls;
@@ -11,6 +12,7 @@ import org.springframework.security.web.server.authorization.AuthorizationContex
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Data
 @Configuration
@@ -23,11 +25,7 @@ public class GatewayProxyProperties {
     private Oauth2Properties oauth2 = new Oauth2Properties();
 
     public String[] getIgnoredUrls() {
-        List<String> strings = Arrays.asList(MappingUrls.GATEWAY_IGNORE_URLS);
-        for (String ignoredUrl : ignoredUrls) {
-            strings.add(ignoredUrl);
-        }
-        return strings.toArray(new String[strings.size()]);
+        return ArrayUtils.concat(MappingUrls.GATEWAY_IGNORE_URLS, Optional.ofNullable(ignoredUrls).orElse(new String[0]));
     }
 
     @Data
