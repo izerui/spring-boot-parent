@@ -17,11 +17,12 @@ import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.core.userdetails.UserDetailsByNameServiceWrapper;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
+import org.springframework.security.oauth2.config.annotation.builders.InMemoryClientDetailsServiceBuilder;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
@@ -35,7 +36,7 @@ import java.util.Arrays;
 @EnableAuthorizationServer
 @AutoConfigureAfter(SecurityConfiguration.class)
 @Import({OpaqueTokenConfiguration.class, JwtTokenConfiguration.class})
-public class AuthorizationServerConfiguration extends AuthorizationServerConfigurerAdapter {
+public class Oauth2ServerConfiguration extends AuthorizationServerConfigurerAdapter {
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -64,17 +65,37 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
         return new TokenInfoEnhancer();
     }
 
-    @Override
-    public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        clients.inMemory()
-                .withClient(properties.getClientId())
-                .secret(passwordEncoder.encode(properties.getClientSecret()))
-                .scopes("all")
-                .authorizedGrantTypes("authorization_code", "password", "refresh_token")
-                .accessTokenValiditySeconds(properties.getAccessTokenValiditySeconds())
-                .refreshTokenValiditySeconds(properties.getRefreshTokenValiditySeconds());
+    @Bean
+    public ClientDetailsService clientDetailsService() {
+        try {
+            InMemoryClientDetailsServiceBuilder inMemory = new InMemoryClientDetailsServiceBuilder();
+            inMemory.withClient(properties.getClientId())
+                    .secret(passwordEncoder.encode(properties.getClientSecret()))
+                    .scopes("all")
+                    .authorizedGrantTypes("authorization_code", "password", "refresh_token")
+                    .accessTokenValiditySeconds(properties.getAccessTokenValiditySeconds())
+                    .refreshTokenValiditySeconds(properties.getRefreshTokenValiditySeconds());
+            return inMemory.build();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
+    @Bean
+    public TokenSerivces tokenSerivces() {
+        TokenSerivces tokenSerivces = new TokenSerivces() {{
+            this.setTokenStore(redisTokenStore());
+            this.setSupportRefreshToken(true);
+            this.setReuseRefreshToken(false);
+            this.setClientDetailsService(clientDetailsService());
+            this.setTokenEnhancer(tokenInfoEnhancer());
+            PreAuthenticatedAuthenticationProvider provider = new PreAuthenticatedAuthenticationProvider();
+            provider.setPreAuthenticatedUserDetailsService(new UserDetailsByNameServiceWrapper<PreAuthenticatedAuthenticationToken>(
+                    userDetailsService));
+            this.setAuthenticationManager(new ProviderManager(Arrays.<AuthenticationProvider>asList(provider)));
+        }};
+        return tokenSerivces;
+    }
 
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
@@ -86,17 +107,7 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
                 .tokenStore(redisTokenStore())
                 .userDetailsService(userDetailsService)
                 .reuseRefreshTokens(false) // 无用，标记下
-                .tokenServices(new TokenSerivces() {{
-                    this.setTokenStore(endpoints.getTokenStore());
-                    this.setSupportRefreshToken(true);
-                    this.setReuseRefreshToken(false);
-                    this.setClientDetailsService(endpoints.getClientDetailsService());
-                    this.setTokenEnhancer(endpoints.getTokenEnhancer());
-                    PreAuthenticatedAuthenticationProvider provider = new PreAuthenticatedAuthenticationProvider();
-                    provider.setPreAuthenticatedUserDetailsService(new UserDetailsByNameServiceWrapper<PreAuthenticatedAuthenticationToken>(
-                            userDetailsService));
-                    this.setAuthenticationManager(new ProviderManager(Arrays.<AuthenticationProvider>asList(provider)));
-                }}); // 不重复使用refreshToken， 每次刷新accessToken的时候，同时返回新的刷新token
+                .tokenServices(tokenSerivces()); // 不重复使用refreshToken， 每次刷新accessToken的时候，同时返回新的刷新token
     }
 
     @Override

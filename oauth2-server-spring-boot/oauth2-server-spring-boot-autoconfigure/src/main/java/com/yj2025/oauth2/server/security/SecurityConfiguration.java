@@ -53,7 +53,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter implemen
                                 "/rsa/key")
                         .permitAll()
                         .anyRequest()
-                        .authenticated()
+                        .denyAll()
                 );
 
     }

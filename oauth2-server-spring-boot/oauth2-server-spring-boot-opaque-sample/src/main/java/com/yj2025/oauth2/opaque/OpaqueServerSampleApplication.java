@@ -1,5 +1,6 @@
 package com.yj2025.oauth2.opaque;
 
+import com.yj2025.oauth2.server.PasswordEncoderMatchor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -8,7 +9,7 @@ import org.springframework.context.annotation.Bean;
 public class OpaqueServerSampleApplication {
 
     @Bean
-    public MD5PasswordEncoderMatchor passwordEncoderMatchor() {
+    public PasswordEncoderMatchor passwordEncoderMatchor() {
         return new MD5PasswordEncoderMatchor();
     }
 
