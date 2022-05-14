@@ -3,7 +3,8 @@ package com.yj2025.gateway.proxy.controller;
 import com.yj2025.gateway.proxy.GatewayProxyProperties;
 import com.yj2025.gateway.proxy.request.RefreshRequest;
 import com.yj2025.gateway.proxy.request.TokenRequest;
-import com.yj2025.oauth2.security.RespVo;
+import com.yj2025.oauth2.security.support.MappingUrls;
+import com.yj2025.oauth2.security.support.RespVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
@@ -21,7 +22,7 @@ import reactor.core.publisher.Mono;
 
 @Configuration
 @RestController
-public class TokenKeyController {
+public class ProxyTokenKeyController {
 
     /**
      * https://docs.spring.io/spring-security/site/docs/5.1.1.RELEASE/reference/html/webclient.html
@@ -35,7 +36,7 @@ public class TokenKeyController {
     @Autowired
     private GatewayProxyProperties properties;
 
-    @PostMapping("/oauth/token")
+    @PostMapping(MappingUrls.OAUTH_TOKEN_URL)
     public Mono<String> getToken(@RequestBody TokenRequest request) {
         GatewayProxyProperties.Oauth2Properties oauth2Properties = properties.getOauth2();
         MultiValueMap<String, String> multiValueMap = request.newRequest(
@@ -46,7 +47,7 @@ public class TokenKeyController {
         return webClientBuilder
                 .build()
                 .post()
-                .uri("http://" + oauth2Properties.getAppName() + "/oauth/token")
+                .uri("http://" + oauth2Properties.getAppName() + MappingUrls.OAUTH_TOKEN_URL)
                 .body(BodyInserters.fromFormData(multiValueMap))
                 .accept(MediaType.APPLICATION_JSON)
                 .header("Content-Type", "application/json;charset=UTF-8")
@@ -55,7 +56,7 @@ public class TokenKeyController {
                 .onErrorResume(throwable -> Mono.just(RespVo.error("error", throwable.getMessage()).toJson()));
     }
 
-    @PostMapping("/oauth/refresh")
+    @PostMapping(MappingUrls.OAUTH_REFRESH_URL)
     public Mono<String> refreshToken(@RequestBody RefreshRequest request) {
         GatewayProxyProperties.Oauth2Properties oauth2Properties = properties.getOauth2();
         MultiValueMap<String, String> multiValueMap = request.newRequest(
@@ -66,7 +67,7 @@ public class TokenKeyController {
         return webClientBuilder
                 .build()
                 .post()
-                .uri("http://" + oauth2Properties.getAppName() + "/oauth/token")
+                .uri("http://" + oauth2Properties.getAppName() + MappingUrls.OAUTH_TOKEN_URL)
                 .body(BodyInserters.fromFormData(multiValueMap))
                 .accept(MediaType.APPLICATION_JSON)
                 .header("Content-Type", "application/json;charset=UTF-8")
@@ -76,9 +77,8 @@ public class TokenKeyController {
     }
 
 
-    @GetMapping("/oauth/revoke")
+    @GetMapping(MappingUrls.OAUTH_REVOKE_URL)
     public Mono<String> revokeToken(ServerWebExchange exchange) {
-        GatewayProxyProperties.Oauth2Properties oauth2Properties = properties.getOauth2();
         return tokenAuthenticationConverter.convert(exchange)
                 .map(authentication -> {
                     BearerTokenAuthenticationToken bearerTokenAuthenticationToken = (BearerTokenAuthenticationToken) authentication;
@@ -86,7 +86,7 @@ public class TokenKeyController {
                 }).flatMap(accessToken -> webClientBuilder
                         .build()
                         .get()
-                        .uri("http://" + oauth2Properties.getAppName() + "/oauth/revoke?access_token=" + accessToken)
+                        .uri("http://" + properties.getOauth2().getAppName() + MappingUrls.OAUTH_REVOKE_URL + "?access_token=" + accessToken)
                         .accept(MediaType.APPLICATION_JSON)
                         .header("Content-Type", "application/json;charset=UTF-8")
                         .retrieve()
@@ -94,13 +94,12 @@ public class TokenKeyController {
                         .onErrorResume(throwable -> Mono.just(RespVo.error("error", throwable.getMessage()).toJson())));
     }
 
-    @GetMapping("/oauth/token_key")
+    @GetMapping(MappingUrls.TOKEN_KEY_URL)
     public Mono<String> getKey() {
-        GatewayProxyProperties.Oauth2Properties oauth2Properties = properties.getOauth2();
         return webClientBuilder
                 .build()
                 .get()
-                .uri("http://" + oauth2Properties.getAppName() + "/oauth/token_key")
+                .uri("http://" + properties.getOauth2().getAppName() + MappingUrls.TOKEN_KEY_URL)
                 .accept(MediaType.APPLICATION_JSON)
                 .header("Content-Type", "application/json;charset=UTF-8")
                 .retrieve()

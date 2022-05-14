@@ -1,6 +1,6 @@
 package com.yj2025.oauth2.server;
 
-import com.yj2025.oauth2.security.User;
+import com.yj2025.oauth2.security.support.User;
 
 @FunctionalInterface
 public interface LoginSuccessHandler {

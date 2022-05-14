@@ -1,4 +1,4 @@
-package com.yj2025.oauth2.security;
+package com.yj2025.oauth2.security.support;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;

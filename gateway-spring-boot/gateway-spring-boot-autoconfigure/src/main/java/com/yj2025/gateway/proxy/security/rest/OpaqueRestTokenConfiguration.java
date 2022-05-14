@@ -2,6 +2,7 @@ package com.yj2025.gateway.proxy.security.rest;
 
 
 import com.yj2025.gateway.proxy.GatewayProxyProperties;
+import com.yj2025.oauth2.security.support.MappingUrls;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
@@ -34,7 +35,7 @@ public class OpaqueRestTokenConfiguration implements Customizer<ServerHttpSecuri
         auth.opaqueToken()
                 .introspectionClientCredentials(properties.getOauth2().getClientId(), properties.getOauth2().getClientSecret())
                 .introspector(new NimbusReactiveOpaqueTokenIntrospector(
-                        "lb://" + properties.getOauth2().getAppName() + "/oauth/check_token",
+                        "lb://" + properties.getOauth2().getAppName() + MappingUrls.OAUTH_CHECK_TOKEN_URL,
                         authLb().build()
                 ));
     }

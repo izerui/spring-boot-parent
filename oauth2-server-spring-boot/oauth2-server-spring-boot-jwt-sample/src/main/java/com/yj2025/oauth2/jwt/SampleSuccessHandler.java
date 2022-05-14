@@ -1,6 +1,6 @@
 package com.yj2025.oauth2.jwt;
 
-import com.yj2025.oauth2.security.User;
+import com.yj2025.oauth2.security.support.User;
 import com.yj2025.oauth2.server.LoginSuccessHandler;
 import com.yj2025.oauth2.server.LogoutSuccessHandler;
 import org.springframework.stereotype.Component;

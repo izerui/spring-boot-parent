@@ -1,6 +1,7 @@
 package com.yj2025.gateway.proxy.security.jwt;
 
 import com.yj2025.gateway.proxy.GatewayProxyProperties;
+import com.yj2025.oauth2.security.support.MappingUrls;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
@@ -28,7 +29,7 @@ public class JwtTokenConfiguration implements Customizer<ServerHttpSecurity.OAut
         auth.jwt()
                 .jwtDecoder(
                         NimbusReactiveJwtDecoder
-                                .withJwkSetUri("lb://" + properties.getOauth2().getAppName() + "/rsa/key")
+                                .withJwkSetUri("lb://" + properties.getOauth2().getAppName() + MappingUrls.JWT_RSA_KEY_URL)
                                 .webClient(webClientBuilder.build())
                                 .build()
                 );

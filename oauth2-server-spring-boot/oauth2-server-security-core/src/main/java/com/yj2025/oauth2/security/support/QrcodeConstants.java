@@ -1,4 +1,4 @@
-package com.yj2025.oauth2.server.security.provider;
+package com.yj2025.oauth2.security.support;
 
 public class QrcodeConstants {
 

@@ -10,8 +10,8 @@ public interface UserSelector {
 
     enum SelectorType {
         NONE_SELECTOR, // 无账号选择器
-        USERCODE_SELECTOR, // 用户编码选择器
-        ENTCODE_SELECTOR; // 账套编号选择器
+        USER_CODE_SELECTOR, // 用户编码选择器
+        ENT_CODE_SELECTOR; // 账套编号选择器
     }
 
     UserSelector NONE_SELECTOR = new UserSelector() {

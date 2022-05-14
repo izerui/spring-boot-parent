@@ -1,5 +1,6 @@
 package com.yj2025.oauth2.server.security;
 
+import com.yj2025.oauth2.security.support.MappingUrls;
 import com.yj2025.oauth2.server.LoginSuccessHandler;
 import com.yj2025.oauth2.server.PasswordEncoderMatchor;
 import com.yj2025.oauth2.server.UserDetailsRemoteLoader;
@@ -22,7 +23,6 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -48,27 +48,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter implemen
                 .formLogin(
                         form -> form.disable()
                 )
-                .authorizeRequests(a -> a.antMatchers(
-                                        // 注销
-                                        "/oauth/revoke",
-                                        // 登录
-                                        "/oauth/token",
-                                        // 暴露给第三方获取jwt公钥，用来验签(云集本身不用)
-                                        "/oauth/token_key",
-                                        // rest 模式验证token地址
-                                        "/oauth/check_token",
-                                        // 网关获取jwt证书key，用来验token
-                                        "/rsa/key",
-                                        // 非我的经管扫描二维码后跳转的url地址
-                                        "/qrcode/redirect",
-                                        // 生成二维码
-                                        "/qrcode/generate",
-                                        // 验证二维码
-                                        "/qrcode/validate"
-                                )
-                                .permitAll()
-                                .anyRequest()
-                                .denyAll()
+                .authorizeRequests(a -> a.antMatchers(MappingUrls.OAUTH_SERVER_IGNORE_URLS)
+                        .permitAll()
+                        .anyRequest()
+                        .denyAll()
                 );
 
     }
@@ -140,7 +123,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter implemen
      */
     @Bean
     public UserDetailsServiceAdapter userDetailsService(@NonNull UserDetailsRemoteLoader userDetailsLoader,
-                                                 QrcodeService qrcodeService) {
+                                                        QrcodeService qrcodeService) {
         return new UserDetailsServiceAdapter(userDetailsLoader, qrcodeService);
     }
 

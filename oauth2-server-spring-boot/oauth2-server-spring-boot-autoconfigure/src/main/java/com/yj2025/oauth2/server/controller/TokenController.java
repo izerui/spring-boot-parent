@@ -1,7 +1,8 @@
 package com.yj2025.oauth2.server.controller;
 
-import com.yj2025.oauth2.security.RespVo;
-import com.yj2025.oauth2.security.User;
+import com.yj2025.oauth2.security.support.MappingUrls;
+import com.yj2025.oauth2.security.support.RespVo;
+import com.yj2025.oauth2.security.support.User;
 import com.yj2025.oauth2.server.LogoutSuccessHandler;
 import com.yj2025.oauth2.server.security.TokenSerivces;
 import org.springframework.beans.factory.ObjectProvider;
@@ -36,7 +37,7 @@ public class TokenController {
         this.bearerTokenResolver = defaultBearerTokenResolver;
     }
 
-    @GetMapping("/oauth/revoke")
+    @GetMapping(MappingUrls.OAUTH_REVOKE_URL)
     public RespVo revokeToken(HttpServletRequest request) {
         String accessToken = bearerTokenResolver.resolve(request);
         OAuth2Authentication authentication = tokenSerivces.loadAuthentication(accessToken);

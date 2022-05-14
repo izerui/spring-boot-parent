@@ -1,6 +1,6 @@
 package com.yj2025.oauth2.opaque;
 
-import com.yj2025.oauth2.security.User;
+import com.yj2025.oauth2.security.support.User;
 import com.yj2025.oauth2.server.PasswordEncoderMatchor;
 import com.yj2025.oauth2.server.UserDetailsRemoteLoader;
 import com.yj2025.oauth2.server.security.provider.UserSelector;
@@ -20,7 +20,7 @@ public class SampleSaltUserDetailsService implements UserDetailsRemoteLoader {
         User demoUser = new User("test", passwordEncoderMatchor.encode("123456", salt), "postCode001", "postCode002")
                 .setAdditionalSalt(salt);
         switch (selector.getType()) {
-            case USERCODE_SELECTOR:
+            case USER_CODE_SELECTOR:
                 if (selector.getSelector().isPresent()) {
                     System.out.println("切换用户: " + selector.getSelector().get());
                     return new User(selector.getSelector().get() + "001", passwordEncoderMatchor.encode("123456", salt), "postCode001", "postCode002")
@@ -28,7 +28,7 @@ public class SampleSaltUserDetailsService implements UserDetailsRemoteLoader {
                 } else {
                     return demoUser;
                 }
-            case ENTCODE_SELECTOR:
+            case ENT_CODE_SELECTOR:
                 return demoUser;
             default:
                 return demoUser;

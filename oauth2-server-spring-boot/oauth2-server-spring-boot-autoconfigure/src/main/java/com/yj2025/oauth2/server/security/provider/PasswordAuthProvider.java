@@ -1,6 +1,6 @@
 package com.yj2025.oauth2.server.security.provider;
 
-import com.yj2025.oauth2.security.User;
+import com.yj2025.oauth2.security.support.User;
 import com.yj2025.oauth2.server.PasswordEncoderMatchor;
 import com.yj2025.oauth2.server.security.UserDetailsServiceAdapter;
 import org.springframework.beans.factory.ObjectProvider;
@@ -65,6 +65,6 @@ public class PasswordAuthProvider extends AbstractUserDetailsAuthenticationProvi
 
     @Override
     public SelectorType getType() {
-        return SelectorType.USERCODE_SELECTOR;
+        return SelectorType.USER_CODE_SELECTOR;
     }
 }

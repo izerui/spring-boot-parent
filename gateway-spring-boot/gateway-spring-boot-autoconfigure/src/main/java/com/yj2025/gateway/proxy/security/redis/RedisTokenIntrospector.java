@@ -1,10 +1,9 @@
 package com.yj2025.gateway.proxy.security.redis;
 
 
-import com.yj2025.oauth2.security.User;
+import com.yj2025.oauth2.security.support.User;
 import net.minidev.json.JSONArray;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.core.DefaultOAuth2AuthenticatedPrincipal;
 import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;

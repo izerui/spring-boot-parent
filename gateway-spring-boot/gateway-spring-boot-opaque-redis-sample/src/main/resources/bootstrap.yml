@@ -37,9 +37,6 @@ server:
 # 网关配置
 gateway:
   ignored-urls:
-    - /oauth/token
-    - /oauth/refresh
-    - /oauth/token_key
     - /ignore
   oauth2:
     client-id: ierp

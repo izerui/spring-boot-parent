@@ -1,6 +1,6 @@
 package com.yj2025.oauth2.server.security;
 
-import com.yj2025.oauth2.security.User;
+import com.yj2025.oauth2.security.support.User;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;

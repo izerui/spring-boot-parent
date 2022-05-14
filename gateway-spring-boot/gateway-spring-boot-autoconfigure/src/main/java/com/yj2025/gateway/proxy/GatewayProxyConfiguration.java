@@ -1,6 +1,7 @@
 package com.yj2025.gateway.proxy;
 
-import com.yj2025.gateway.proxy.controller.TokenKeyController;
+import com.yj2025.gateway.proxy.controller.ProxyQrcodeController;
+import com.yj2025.gateway.proxy.controller.ProxyTokenKeyController;
 import com.yj2025.gateway.proxy.filter.RelaxedQueryCharsWebServerCustomize;
 import com.yj2025.gateway.proxy.security.SecurityConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -15,7 +16,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 @EnableWebFluxSecurity
 @Configuration
 @EnableConfigurationProperties(GatewayProxyProperties.class)
-@Import({SecurityConfiguration.class, TokenKeyController.class})
+@Import({SecurityConfiguration.class, ProxyTokenKeyController.class, ProxyQrcodeController.class})
 public class GatewayProxyConfiguration {
 
     @LoadBalanced

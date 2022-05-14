@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.yj2025.oauth2.server.security.provider.QrcodeConstants.QRCODE_TICKET_KEY;
+import static com.yj2025.oauth2.security.support.QrcodeConstants.QRCODE_TICKET_KEY;
 
 /**
  * 二维码登录认证器
@@ -79,6 +79,6 @@ public class QrcodeAuthProvider extends AbstractUserDetailsAuthenticationProvide
 
     @Override
     public SelectorType getType() {
-        return SelectorType.ENTCODE_SELECTOR;
+        return SelectorType.ENT_CODE_SELECTOR;
     }
 }

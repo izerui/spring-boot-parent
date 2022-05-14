@@ -2,6 +2,7 @@ package com.yj2025.oauth2.server.security.jwt;
 
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
+import com.yj2025.oauth2.security.support.MappingUrls;
 import com.yj2025.oauth2.server.Oauth2Properties;
 import com.yj2025.oauth2.server.security.ExpandEndpointsConfigurer;
 import com.yj2025.oauth2.server.security.TokenInfoEnhancer;
@@ -51,7 +52,7 @@ public class JwtTokenConfiguration implements ExpandEndpointsConfigurer {
     }
 
     @ResponseBody
-    @GetMapping("/rsa/key")
+    @GetMapping(MappingUrls.JWT_RSA_KEY_URL)
     public Map<String, Object> getKey() {
         RSAPublicKey publicKey = (RSAPublicKey) keyPair().getPublic();
         RSAKey key = new RSAKey.Builder(publicKey).build();

@@ -1,6 +1,6 @@
 package com.yj2025.oauth2.server.advice;
 
-import com.yj2025.oauth2.security.RespVo;
+import com.yj2025.oauth2.security.support.RespVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
@@ -26,8 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.yj2025.oauth2.security.RespVo.error;
-import static com.yj2025.oauth2.security.RespVo.success;
+import static com.yj2025.oauth2.security.support.RespVo.error;
+import static com.yj2025.oauth2.security.support.RespVo.success;
 
 @Slf4j
 @RestControllerAdvice
