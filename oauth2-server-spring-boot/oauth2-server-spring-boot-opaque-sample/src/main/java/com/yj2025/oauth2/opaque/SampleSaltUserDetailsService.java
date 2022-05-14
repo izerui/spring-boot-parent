@@ -3,10 +3,9 @@ package com.yj2025.oauth2.opaque;
 import com.yj2025.oauth2.security.User;
 import com.yj2025.oauth2.server.PasswordEncoderMatchor;
 import com.yj2025.oauth2.server.UserDetailsRemoteLoader;
+import com.yj2025.oauth2.server.security.provider.UserSelector;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.Optional;
 
 @Component
 public class SampleSaltUserDetailsService implements UserDetailsRemoteLoader {
@@ -17,13 +16,22 @@ public class SampleSaltUserDetailsService implements UserDetailsRemoteLoader {
     private PasswordEncoderMatchor passwordEncoderMatchor;
 
     @Override
-    public User loadUserByUsername(String username, Optional<String> usercode) {
-        if (usercode.isPresent()) {
-            System.out.println("切换用户: " + usercode.get());
-            return new User(usercode.get() + "001", passwordEncoderMatchor.encode("123456", salt), "postCode001", "postCode002")
-                    .setAdditionalSalt(salt);
-        }
-        return new User("test", passwordEncoderMatchor.encode("123456", salt), "postCode001", "postCode002")
+    public User loadUserByUsername(String username, UserSelector selector) {
+        User demoUser = new User("test", passwordEncoderMatchor.encode("123456", salt), "postCode001", "postCode002")
                 .setAdditionalSalt(salt);
+        switch (selector.getType()) {
+            case USERCODE_SELECTOR:
+                if (selector.getSelector().isPresent()) {
+                    System.out.println("切换用户: " + selector.getSelector().get());
+                    return new User(selector.getSelector().get() + "001", passwordEncoderMatchor.encode("123456", salt), "postCode001", "postCode002")
+                            .setAdditionalSalt(salt);
+                } else {
+                    return demoUser;
+                }
+            case ENTCODE_SELECTOR:
+                return demoUser;
+            default:
+                return demoUser;
+        }
     }
 }

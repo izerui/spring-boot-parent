@@ -25,10 +25,6 @@ public class Oauth2Properties {
      */
     private int refreshTokenValiditySeconds = 86400;
     /**
-     * 是否支持通过url参数传递access_token来获取用户身份
-     */
-    private boolean allowUriToken = true;
-    /**
      * jwt 支持
      */
     private Jwt jwt = new Jwt();

@@ -1,0 +1,84 @@
+package com.yj2025.oauth2.server.security.provider;
+
+import com.yj2025.oauth2.server.security.UserDetailsServiceAdapter;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.util.Assert;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.util.WebUtils;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
+import java.util.Optional;
+
+import static com.yj2025.oauth2.server.security.provider.QrcodeConstants.QRCODE_TICKET_KEY;
+
+/**
+ * 二维码登录认证器
+ */
+public class QrcodeAuthProvider extends AbstractUserDetailsAuthenticationProvider implements UserSelector {
+
+    private UserDetailsServiceAdapter userDetailsServiceAdapter;
+    private QrcodeService qrcodeService;
+
+    public QrcodeAuthProvider(UserDetailsServiceAdapter userDetailsServiceAdapter,
+                              QrcodeService qrcodeService) {
+        this.userDetailsServiceAdapter = userDetailsServiceAdapter;
+        this.qrcodeService = qrcodeService;
+    }
+
+    @Override
+    protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        Assert.notNull(request, "非web请求,被拒绝!");
+        String username = authentication.getName();
+        Assert.notNull(username, "扫码登录失败");
+        String qrCodeTicket = (String) request.getSession().getAttribute(QRCODE_TICKET_KEY);
+        Map<String, Object> qrCodeMapValue = qrcodeService.getQrCodeMapValue(qrCodeTicket);
+        if (qrCodeMapValue == null) {
+            throw new BadCredentialsException("扫码无效,请重试!");
+        }
+        String accountName = (String) qrCodeMapValue.get("accountName");
+        if (qrCodeMapValue == null || "".equals(accountName) || "unknown".equals(accountName)) {
+            throw new BadCredentialsException("扫码无效,请重试!");
+        }
+        if (!accountName.equals(username)) {
+            throw new BadCredentialsException("扫码无效,请自重!");
+        }
+
+        String entCode = (String) qrCodeMapValue.get("entCode");
+        request.setAttribute("entCode", entCode);
+    }
+
+    @Override
+    protected UserDetails retrieveUser(String username, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
+        UserDetails user = this.userDetailsServiceAdapter.loadUserByUsername(username, this);
+        if (user == null) {
+            throw new InternalAuthenticationServiceException("用户名或密码错误!");
+        }
+        return user;
+    }
+
+    @Override
+    public Optional<String> getSelector() {
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        Cookie cookie = WebUtils.getCookie(request, QRCODE_TICKET_KEY);
+        if (cookie == null) {
+            return Optional.empty();
+        }
+        String qrCodeTicket = cookie.getValue();
+        QrcodeStatus qrcodeStatus = qrcodeService.getQrcodeStatus(qrCodeTicket);
+        return Optional.ofNullable(qrcodeStatus.getEntCode());
+    }
+
+    @Override
+    public SelectorType getType() {
+        return SelectorType.ENTCODE_SELECTOR;
+    }
+}

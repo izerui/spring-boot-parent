@@ -1,7 +1,8 @@
-package com.yj2025.oauth2.server.security;
+package com.yj2025.oauth2.server.security.provider;
 
 import com.yj2025.oauth2.security.User;
 import com.yj2025.oauth2.server.PasswordEncoderMatchor;
+import com.yj2025.oauth2.server.security.UserDetailsServiceAdapter;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -10,15 +11,22 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
-public class UsernamePasswordAuthProvider extends AbstractUserDetailsAuthenticationProvider {
+import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
 
-    private UserDetailsService userDetailsService;
+/**
+ * 密码登录验证器
+ */
+public class PasswordAuthProvider extends AbstractUserDetailsAuthenticationProvider implements UserSelector {
+
+    private UserDetailsServiceAdapter userDetailsServiceAdapter;
     private ObjectProvider<PasswordEncoderMatchor> passwordCheckMatchorProvider;
 
-    public UsernamePasswordAuthProvider(UserDetailsService userDetailsService, ObjectProvider<PasswordEncoderMatchor> passwordCheckMatchorProvider) {
-        this.userDetailsService = userDetailsService;
+    public PasswordAuthProvider(UserDetailsServiceAdapter userDetailsServiceAdapter, ObjectProvider<PasswordEncoderMatchor> passwordCheckMatchorProvider) {
+        this.userDetailsServiceAdapter = userDetailsServiceAdapter;
         this.passwordCheckMatchorProvider = passwordCheckMatchorProvider;
     }
 
@@ -39,15 +47,24 @@ public class UsernamePasswordAuthProvider extends AbstractUserDetailsAuthenticat
 
     @Override
     protected UserDetails retrieveUser(String username, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
-        UserDetails user = this.getUserDetailsService().loadUserByUsername(username);
+        UserDetails user = this.userDetailsServiceAdapter.loadUserByUsername(username, this);
         if (user == null) {
             throw new InternalAuthenticationServiceException("用户名或密码错误!");
         }
         return user;
     }
 
-    protected UserDetailsService getUserDetailsService() {
-        return this.userDetailsService;
+    @Override
+    public Optional<String> getSelector() {
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        if (request != null) {
+            return Optional.ofNullable(request.getParameter("usercode"));
+        }
+        return Optional.empty();
     }
 
+    @Override
+    public SelectorType getType() {
+        return SelectorType.USERCODE_SELECTOR;
+    }
 }
