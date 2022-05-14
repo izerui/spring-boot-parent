@@ -3,6 +3,7 @@ package com.yj2025.oauth2.server.security;
 import com.yj2025.oauth2.server.Oauth2Properties;
 import com.yj2025.oauth2.server.security.jwt.JwtTokenConfiguration;
 import com.yj2025.oauth2.server.security.opaque.OpaqueTokenConfiguration;
+import com.yj2025.oauth2.server.security.provider.RefreshAuthServiceWrapper;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,8 +15,6 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
-import org.springframework.security.core.userdetails.UserDetailsByNameServiceWrapper;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.builders.InMemoryClientDetailsServiceBuilder;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
@@ -47,7 +46,7 @@ public class Oauth2Configuration extends AuthorizationServerConfigurerAdapter {
     @Autowired
     private Oauth2Properties properties;
     @Autowired
-    private UserDetailsService userDetailsService;
+    private UserDetailsServiceAdapter userDetailsServiceAdapter;
     @Autowired
     private ObjectProvider<ExpandEndpointsConfigurer> expandEndpointsConfigurers;
     @Value("${spring.application.name:''}")
@@ -90,8 +89,8 @@ public class Oauth2Configuration extends AuthorizationServerConfigurerAdapter {
             this.setClientDetailsService(clientDetailsService());
             this.setTokenEnhancer(tokenInfoEnhancer());
             PreAuthenticatedAuthenticationProvider provider = new PreAuthenticatedAuthenticationProvider();
-            provider.setPreAuthenticatedUserDetailsService(new UserDetailsByNameServiceWrapper<PreAuthenticatedAuthenticationToken>(
-                    userDetailsService));
+            provider.setPreAuthenticatedUserDetailsService(new RefreshAuthServiceWrapper<PreAuthenticatedAuthenticationToken>(
+                    userDetailsServiceAdapter));
             this.setAuthenticationManager(new ProviderManager(Arrays.<AuthenticationProvider>asList(provider)));
         }};
         return tokenSerivces;
@@ -105,7 +104,7 @@ public class Oauth2Configuration extends AuthorizationServerConfigurerAdapter {
         }
         endpoints.authenticationManager(authenticationManager)
                 .tokenStore(redisTokenStore())
-                .userDetailsService(userDetailsService)
+                .userDetailsService(userDetailsServiceAdapter)
                 .reuseRefreshTokens(false) // 无用，标记下
                 .tokenServices(tokenSerivces()); // 不重复使用refreshToken， 每次刷新accessToken的时候，同时返回新的刷新token
     }
