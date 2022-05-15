@@ -43,10 +43,9 @@ public class TokenController {
         OAuth2Authentication authentication = tokenSerivces.loadAuthentication(accessToken);
         boolean revokeToken = tokenSerivces.revokeToken(accessToken);
         if (revokeToken) {
-            LogoutSuccessHandler successHandler = logoutSuccessHandlerObjectProvider.getIfAvailable();
-            if (successHandler != null) {
-                successHandler.revokeTokenSuccess((User) authentication.getPrincipal());
-            }
+            logoutSuccessHandlerObjectProvider.ifAvailable(logoutSuccessHandler -> {
+                logoutSuccessHandler.revokeTokenSuccess((User) authentication.getPrincipal());
+            });
             return RespVo.success("登出成功!");
         }
         return RespVo.error("logout_error", "token注销失败");

@@ -4,6 +4,7 @@ import com.yj2025.oauth2.server.Oauth2Properties;
 import com.yj2025.oauth2.server.security.jwt.JwtTokenConfiguration;
 import com.yj2025.oauth2.server.security.opaque.OpaqueTokenConfiguration;
 import com.yj2025.oauth2.server.security.provider.RefreshAuthServiceWrapper;
+import com.yj2025.oauth2.server.utils.ExceptionUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -98,10 +99,9 @@ public class Oauth2Configuration extends AuthorizationServerConfigurerAdapter {
 
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-        ExpandEndpointsConfigurer expandEndpointsConfigurer = expandEndpointsConfigurers.getIfAvailable();
-        if (expandEndpointsConfigurer != null) {
-            expandEndpointsConfigurer.configure(endpoints);
-        }
+        expandEndpointsConfigurers.ifAvailable(expandEndpointsConfigurer -> {
+            ExceptionUtils.wrapExceptions(() -> expandEndpointsConfigurer.configure(endpoints));
+        });
         endpoints.authenticationManager(authenticationManager)
                 .tokenStore(redisTokenStore())
                 .userDetailsService(userDetailsServiceAdapter)

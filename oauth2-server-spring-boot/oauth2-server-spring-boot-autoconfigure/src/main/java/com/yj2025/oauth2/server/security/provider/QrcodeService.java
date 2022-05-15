@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import static com.yj2025.oauth2.security.support.QrcodeConstants.QRCODE_REDIS_KEY_PREFIX;
 import static com.yj2025.oauth2.security.support.QrcodeConstants.TIMEOUT;
 import static com.yj2025.oauth2.server.utils.ExceptionUtils.wrapExceptions;
 

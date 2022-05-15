@@ -3,8 +3,8 @@ package com.yj2025.gateway.proxy.security;
 import com.yj2025.gateway.proxy.GatewayProxyProperties;
 import com.yj2025.gateway.proxy.PathMatcherAuthoritiesLoader;
 import com.yj2025.gateway.proxy.filter.AdditionHeaderFilter;
-import com.yj2025.gateway.proxy.filter.RemoveAuthorizationFilter;
 import com.yj2025.gateway.proxy.filter.MaintenanceWebFilter;
+import com.yj2025.gateway.proxy.filter.RemoveAuthorizationFilter;
 import com.yj2025.gateway.proxy.security.jwt.JwtTokenConfiguration;
 import com.yj2025.gateway.proxy.security.redis.OpaqueRedisTokenConfiguration;
 import com.yj2025.gateway.proxy.security.rest.OpaqueRestTokenConfiguration;
@@ -74,10 +74,9 @@ public class SecurityConfiguration {
                     auth.bearerTokenConverter(tokenAuthenticationConverter())
                             .accessDeniedHandler(new AccessDeniedHandler())
                             .authenticationEntryPoint(new AuthenticationEntryPoint());
-                    Customizer<ServerHttpSecurity.OAuth2ResourceServerSpec> specCustomizer = authCustomizerObjectProvider.getIfAvailable();
-                    if (specCustomizer != null) {
+                    authCustomizerObjectProvider.ifAvailable(specCustomizer -> {
                         specCustomizer.customize(auth);
-                    }
+                    });
                 })
                 .authorizeExchange(auth ->
                         auth.pathMatchers(properties.getIgnoredUrls()).permitAll()
