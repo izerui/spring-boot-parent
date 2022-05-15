@@ -54,6 +54,10 @@ public class PasswordAuthProvider extends AbstractUserDetailsAuthenticationProvi
         return user;
     }
 
+    /**
+     * 如果是切换账套的话，读取指定的usercode
+     * @return
+     */
     @Override
     public Optional<String> getSelector() {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();

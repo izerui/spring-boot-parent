@@ -62,6 +62,10 @@ public class QrcodeAuthProvider extends AbstractUserDetailsAuthenticationProvide
         return user;
     }
 
+    /**
+     * 从cookie中获取ticket，然后读取qrcode服务中的记录的entcode
+     * @return
+     */
     @Override
     public Optional<String> getSelector() {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
