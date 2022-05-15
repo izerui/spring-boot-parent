@@ -11,6 +11,7 @@ import com.yj2025.oauth2.server.security.provider.QrcodeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -37,8 +38,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter implemen
 
     @Autowired
     private List<AuthenticationProvider> authenticationProviders;
-    @Autowired
-    private QrcodeService qrcodeService;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -110,8 +109,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter implemen
     }
 
     @Bean
-    public QrcodeService qrcodeService(RedisConnectionFactory redisConnectionFactory) {
-        return new QrcodeService(redisConnectionFactory);
+    public QrcodeService qrcodeService(RedisConnectionFactory redisConnectionFactory,
+                                       @Value("${spring.application.name:'CAS:QRCODE:'}") String applicationName) {
+        return new QrcodeService(redisConnectionFactory, applicationName);
     }
 
     /**

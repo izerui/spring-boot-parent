@@ -40,7 +40,7 @@ public class QrcodeAuthProvider extends AbstractUserDetailsAuthenticationProvide
         String username = authentication.getName();
         Assert.notNull(username, "扫码登录失败");
         String qrCodeTicket = (String) request.getSession().getAttribute(QRCODE_TICKET_KEY);
-        Map<String, Object> qrCodeMapValue = qrcodeService.getQrCodeMapValue(qrCodeTicket);
+        Map<String, Object> qrCodeMapValue = qrcodeService.getAndRemoveTicketValue(qrCodeTicket);
         if (qrCodeMapValue == null) {
             throw new BadCredentialsException("扫码无效,请重试!");
         }
