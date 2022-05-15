@@ -4,9 +4,17 @@ import java.util.Optional;
 
 public interface UserSelector {
 
+    /**
+     * 加载用户的时候，可选的指定选择项，比如指定usercode、entcode
+     * @return
+     */
     Optional<String> getSelector();
 
-    SelectorType getType();
+    /**
+     * 选择器类型
+     * @return
+     */
+    SelectorType getSelectorType();
 
     enum SelectorType {
         NONE_SELECTOR, // 无账号选择器
@@ -21,7 +29,7 @@ public interface UserSelector {
         }
 
         @Override
-        public SelectorType getType() {
+        public SelectorType getSelectorType() {
             return SelectorType.NONE_SELECTOR;
         }
     };

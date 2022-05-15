@@ -51,9 +51,6 @@ public class QrcodeAuthProvider extends AbstractUserDetailsAuthenticationProvide
         if (!accountName.equals(username)) {
             throw new BadCredentialsException("扫码无效,请自重!");
         }
-
-        String entCode = (String) qrCodeMapValue.get("entCode");
-        request.setAttribute("entCode", entCode);
     }
 
     @Override
@@ -78,7 +75,7 @@ public class QrcodeAuthProvider extends AbstractUserDetailsAuthenticationProvide
     }
 
     @Override
-    public SelectorType getType() {
+    public SelectorType getSelectorType() {
         return SelectorType.ENT_CODE_SELECTOR;
     }
 }

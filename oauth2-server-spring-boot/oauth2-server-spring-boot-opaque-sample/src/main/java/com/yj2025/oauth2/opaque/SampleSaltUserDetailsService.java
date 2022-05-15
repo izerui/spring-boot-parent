@@ -19,7 +19,7 @@ public class SampleSaltUserDetailsService implements UserDetailsRemoteLoader {
     public User loadUserByUsername(String username, UserSelector selector) {
         User demoUser = new User("test", passwordEncoderMatchor.encode("123456", salt), "postCode001", "postCode002")
                 .setAdditionalSalt(salt);
-        switch (selector.getType()) {
+        switch (selector.getSelectorType()) {
             case USER_CODE_SELECTOR:
                 if (selector.getSelector().isPresent()) {
                     System.out.println("切换用户: " + selector.getSelector().get());

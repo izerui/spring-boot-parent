@@ -64,7 +64,7 @@ public class PasswordAuthProvider extends AbstractUserDetailsAuthenticationProvi
     }
 
     @Override
-    public SelectorType getType() {
+    public SelectorType getSelectorType() {
         return SelectorType.USER_CODE_SELECTOR;
     }
 }
