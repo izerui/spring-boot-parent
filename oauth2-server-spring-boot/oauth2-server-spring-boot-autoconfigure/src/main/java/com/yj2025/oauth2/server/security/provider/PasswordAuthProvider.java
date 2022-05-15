@@ -55,7 +55,7 @@ public class PasswordAuthProvider extends AbstractUserDetailsAuthenticationProvi
     }
 
     /**
-     * 如果是切换账套的话，读取指定的usercode
+     * 如果是切换账套的话（刷新token-指定usercode），读取指定的usercode
      * @return
      */
     @Override
