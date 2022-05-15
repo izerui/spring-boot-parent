@@ -3,12 +3,9 @@ package com.yj2025.oauth2.server.security.provider;
 import com.yj2025.oauth2.security.support.User;
 import com.yj2025.oauth2.server.PasswordEncoderMatchor;
 import com.yj2025.oauth2.server.security.UserDetailsServiceAdapter;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.DisabledException;
-import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -20,7 +17,7 @@ import java.util.Optional;
 /**
  * 密码登录验证器
  */
-public class PasswordAuthProvider extends AbstractUserDetailsAuthenticationProvider implements UserSelector {
+public class PasswordAuthProvider extends AbstractAuthenticationProvider implements UserSelector {
 
     private UserDetailsServiceAdapter userDetailsServiceAdapter;
     private ObjectProvider<PasswordEncoderMatchor> passwordCheckMatchorProvider;
@@ -32,30 +29,34 @@ public class PasswordAuthProvider extends AbstractUserDetailsAuthenticationProvi
 
     @Override
     protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
-        if (authentication.getCredentials() == null) {
-            throw new BadCredentialsException("请输入密码!");
-        }
         User user = (User) userDetails;
         String inputPassword = authentication.getCredentials().toString();
         if (!this.passwordCheckMatchorProvider.getIfAvailable().matches(inputPassword, user.getPassword(), user.getAdditionalSalt())) {
-            throw new BadCredentialsException("用户名或密码错误!");
+            throwCredentialsExpiredExceptionBlock("用户名或密码错误!");
         }
         if (!user.isEnabled()) {
-            throw new DisabledException("用户已禁用!");
+            throwDisabledExceptionBlock("用户已禁用!");
         }
     }
 
     @Override
     protected UserDetails retrieveUser(String username, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
+        if (username == null) {
+            throwUsernameNotFoundExceptionNext("请输入用户名!");
+        }
+        if (authentication.getCredentials() == null || StringUtils.isEmpty(authentication.getCredentials().toString())) {
+            throwPreAuthenticatedCredentialsNotFoundExceptionNext("用户密码为空,继续进行二维码登录验证!");
+        }
         UserDetails user = this.userDetailsServiceAdapter.loadUserByUsername(username, this);
         if (user == null) {
-            throw new InternalAuthenticationServiceException("用户名或密码错误!");
+            throwAccountExpiredExceptionBlock("用户名或密码错误!");
         }
         return user;
     }
 
     /**
      * 如果是切换账套的话（刷新token-指定usercode），读取指定的usercode
+     *
      * @return
      */
     @Override

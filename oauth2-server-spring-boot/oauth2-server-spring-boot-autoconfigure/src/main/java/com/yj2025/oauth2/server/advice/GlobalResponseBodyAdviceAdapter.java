@@ -84,7 +84,7 @@ public class GlobalResponseBodyAdviceAdapter implements ResponseBodyAdvice<Objec
                 Map<String, Object> map = errorAttributes.getErrorAttributes(servletWebRequest, ErrorAttributeOptions.of(ErrorAttributeOptions.Include.values()));
                 return error(String.valueOf(map.get("error")), String.valueOf(map.get("message")));
             }
-            String errCode = String.valueOf(response.getStatus());
+            String errCode = "error";
             if (throwable instanceof OAuth2Exception) {
                 errCode = ((OAuth2Exception) throwable).getOAuth2ErrorCode();
             }

@@ -5,6 +5,7 @@ import com.yj2025.oauth2.server.LoginSuccessHandler;
 import com.yj2025.oauth2.server.PasswordEncoderMatchor;
 import com.yj2025.oauth2.server.UserDetailsRemoteLoader;
 import com.yj2025.oauth2.server.events.DelegatingSuccessEventListener;
+import com.yj2025.oauth2.server.security.provider.DeniedAuthProvider;
 import com.yj2025.oauth2.server.security.provider.PasswordAuthProvider;
 import com.yj2025.oauth2.server.security.provider.QrcodeAuthProvider;
 import com.yj2025.oauth2.server.security.provider.QrcodeService;
@@ -63,6 +64,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter implemen
         for (AuthenticationProvider authenticationProvider : authenticationProviders) {
             auth.authenticationProvider(authenticationProvider);
         }
+        auth.authenticationProvider(new DeniedAuthProvider());
     }
 
     @Bean
@@ -92,8 +94,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter implemen
      */
     @Order(-1)
     @Bean
-    public AuthenticationProvider passwordAuthProvider(UserDetailsServiceAdapter userDetailsServiceAdapter,
-                                                       ObjectProvider<PasswordEncoderMatchor> passwordCheckMatchorProvider) {
+    public PasswordAuthProvider passwordAuthProvider(UserDetailsServiceAdapter userDetailsServiceAdapter,
+                                                     ObjectProvider<PasswordEncoderMatchor> passwordCheckMatchorProvider) {
         return new PasswordAuthProvider(userDetailsServiceAdapter, passwordCheckMatchorProvider);
     }
 
@@ -105,8 +107,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter implemen
      * @return
      */
     @Bean
-    public AuthenticationProvider qrcodeAuthProvider(UserDetailsServiceAdapter userDetailsServiceAdapter,
-                                                     QrcodeService qrcodeService) {
+    public QrcodeAuthProvider qrcodeAuthProvider(UserDetailsServiceAdapter userDetailsServiceAdapter,
+                                                 QrcodeService qrcodeService) {
         return new QrcodeAuthProvider(userDetailsServiceAdapter, qrcodeService);
     }
 
