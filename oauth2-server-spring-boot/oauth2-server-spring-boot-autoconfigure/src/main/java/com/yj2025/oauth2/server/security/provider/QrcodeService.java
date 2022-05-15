@@ -25,9 +25,9 @@ public class QrcodeService {
     private ObjectMapper objectMapper;
     private String qrcodePrefix;
 
-    public QrcodeService(RedisConnectionFactory redisConnectionFactory, String applicationName) {
+    public QrcodeService(RedisConnectionFactory redisConnectionFactory, String qrcodePrefix) {
         this.redisTemplate = new StringRedisTemplate(redisConnectionFactory);
-        this.qrcodePrefix = QRCODE_REDIS_KEY_PREFIX.apply(applicationName);
+        this.qrcodePrefix = qrcodePrefix;
         this.objectMapper = new ObjectMapper();
         this.objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         this.objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);

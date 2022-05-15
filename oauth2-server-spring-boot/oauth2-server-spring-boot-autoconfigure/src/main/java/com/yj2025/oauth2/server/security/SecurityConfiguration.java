@@ -29,6 +29,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.List;
 
+import static com.yj2025.oauth2.security.support.QrcodeConstants.QRCODE_REDIS_KEY_PREFIX;
+
 /**
  * Created by serv on 2017/4/11.
  */
@@ -111,7 +113,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter implemen
     @Bean
     public QrcodeService qrcodeService(RedisConnectionFactory redisConnectionFactory,
                                        @Value("${spring.application.name:'CAS:QRCODE:'}") String applicationName) {
-        return new QrcodeService(redisConnectionFactory, applicationName);
+        return new QrcodeService(redisConnectionFactory, QRCODE_REDIS_KEY_PREFIX.apply(applicationName));
     }
 
     /**
