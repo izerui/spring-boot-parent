@@ -62,6 +62,9 @@ public class QrcodeService {
      * @return
      */
     public QrcodeStatus getQrcodeStatus(String qrCodeTicket) {
+        if (qrCodeTicket == null) {
+            return new QrcodeStatus(-2, "二维码已失效");
+        }
         String value = redisTemplate.boundValueOps(QRCODE_REDIS_KEY_PREFIX + qrCodeTicket).get();
         if (value == null || "".equals(value)) {
             return new QrcodeStatus(-2, "无效的二维码");

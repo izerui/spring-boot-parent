@@ -45,8 +45,11 @@ public class QrcodeController {
 
     @PostMapping(MappingUrls.QRCODE_VALIDATE_URL)
     public RespVo<QrcodeStatus> validateQrCode(HttpServletRequest request) {
+        String qrCodeTicket = null;
         Cookie cookie = WebUtils.getCookie(request, QRCODE_TICKET_KEY);
-        String qrCodeTicket = cookie.getValue();
+        if (cookie != null) {
+            qrCodeTicket = cookie.getValue();
+        }
         QrcodeStatus status = qrcodeService.getQrcodeStatus(qrCodeTicket);
         return RespVo.success(status);
     }

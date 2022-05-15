@@ -76,7 +76,11 @@ public class ProxyQrcodeController {
                 .uri("http://" + properties.getOauth2().getAppName() + MappingUrls.QRCODE_VALIDATE_URL)
                 .accept(MediaType.APPLICATION_JSON)
                 .header("Content-Type", "application/json;charset=UTF-8")
-                .cookie(ticketKeyCookie.getName(), ticketKeyCookie.getValue())
+                .cookies(requestCookies -> {
+                    if (ticketKeyCookie != null) {
+                        requestCookies.add(ticketKeyCookie.getName(), ticketKeyCookie.getValue());
+                    }
+                })
                 .retrieve()
                 .bodyToMono(String.class)
                 .onErrorResume(throwable -> Mono.just(RespVo.error("error", throwable.getMessage()).toJson()));
