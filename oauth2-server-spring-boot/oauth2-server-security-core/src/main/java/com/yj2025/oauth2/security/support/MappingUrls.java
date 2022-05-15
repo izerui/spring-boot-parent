@@ -50,13 +50,13 @@ public class MappingUrls {
      * 认证服务器默认放开访问权限的地址集合
      */
     public final static String[] OAUTH_SERVER_IGNORE_URLS = {
-            MappingUrls.OAUTH_REVOKE_URL,
-            MappingUrls.OAUTH_TOKEN_URL,
-            MappingUrls.TOKEN_KEY_URL,
-            MappingUrls.OAUTH_CHECK_TOKEN_URL,
-            MappingUrls.JWT_RSA_KEY_URL,
-            MappingUrls.QRCODE_GENERATE_URL,
-            MappingUrls.QRCODE_VALIDATE_URL
+            OAUTH_REVOKE_URL,
+            OAUTH_TOKEN_URL,
+            TOKEN_KEY_URL,
+            OAUTH_CHECK_TOKEN_URL,
+            JWT_RSA_KEY_URL,
+            QRCODE_GENERATE_URL,
+            QRCODE_VALIDATE_URL
     };
 
 
