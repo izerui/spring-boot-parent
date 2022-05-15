@@ -1,5 +1,6 @@
 package com.yj2025.oauth2.server;
 
+import com.yj2025.oauth2.security.support.MappingUrls;
 import com.yj2025.oauth2.server.advice.GlobalResponseBodyAdviceAdapter;
 import com.yj2025.oauth2.server.controller.QrcodeController;
 import com.yj2025.oauth2.server.controller.TokenController;
@@ -17,8 +18,8 @@ import org.springframework.context.annotation.Import;
 public class Oauth2ServerConfiguration {
 
     private final static String[] ignoreWrapPathMatchers = {
-            "/oauth/check_token", // opaque token，通过rest请求方式进行token校验地址
-            "/rsa/key" // jwt获取公钥用来校验token的地址
+            MappingUrls.OAUTH_CHECK_TOKEN_URL, // opaque token，通过rest请求方式进行token校验地址
+            MappingUrls.JWT_RSA_KEY_URL // jwt获取公钥用来校验token的地址
     };
 
     @Bean
