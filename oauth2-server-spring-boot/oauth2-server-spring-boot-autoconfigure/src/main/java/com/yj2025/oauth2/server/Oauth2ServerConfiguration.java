@@ -22,7 +22,7 @@ import org.springframework.context.annotation.Import;
  * 6.  通过配置可选择token生成模式 不透明模式、jwt模式
  * 7.  支持刷新token的时候指定usercode用来切换用户
  * 8.  支持二维码登录的时候，按指定账套登录
- * 9.  支持用户权限authrities集合
+ * 9.  支持用户权限authorities集合
  * 10. token获取每次获取新的access_token、refresh_token，防止一端注销，多处登出
  * 11. 非登录验证相关的请求一概拒绝
  */
