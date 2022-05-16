@@ -119,7 +119,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter implemen
     }
 
     /**
-     * 获取用户选择器
+     * 用户加载适配器
      *
      * @param userDetailsLoader 用户加载器
      * @param qrcodeService     二维码服务
