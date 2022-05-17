@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessagePropertiesBuilder;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.scheduling.annotation.Async;
 
 /**
  * Created by serv on 2016/12/8.
@@ -23,9 +22,9 @@ class RabbitAuditContextImpl implements AuditContext {
     }
 
     @Override
-    @Async
     public void record(Record record) {
         try {
+            logger.info(record.toString());
             Message message = rabbitTemplate.getMessageConverter()
                     .toMessage(record,
                             MessagePropertiesBuilder.newInstance()

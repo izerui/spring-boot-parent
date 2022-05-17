@@ -14,8 +14,9 @@
     <modules>
         <module>oauth2-server-spring-boot-autoconfigure</module>
         <module>oauth2-server-spring-boot-starter</module>
-        <module>oauth2-server-spring-boot-sample</module>
         <module>oauth2-server-security-core</module>
+        <module>oauth2-server-spring-boot-jwt-sample</module>
+        <module>oauth2-server-spring-boot-opaque-sample</module>
     </modules>
 
     <properties>

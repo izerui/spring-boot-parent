@@ -17,10 +17,6 @@ public class Oauth2Properties {
      */
     private String clientSecret = "123456";
     /**
-     * 重定向url
-     */
-    private String redirectUri = "https://yj2025.com";
-    /**
      * access_token 失效时长（秒）
      */
     private int accessTokenValiditySeconds = 7200;
@@ -28,10 +24,6 @@ public class Oauth2Properties {
      * refresh_token 失效时长（秒）
      */
     private int refreshTokenValiditySeconds = 86400;
-    /**
-     * 是否支持通过url参数传递access_token来获取用户身份
-     */
-    private boolean allowUriToken = true;
     /**
      * jwt 支持
      */
