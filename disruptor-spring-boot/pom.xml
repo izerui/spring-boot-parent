@@ -6,19 +6,20 @@
         <artifactId>yj2025-spring-boot-parent</artifactId>
         <groupId>com.yj2025</groupId>
         <version>1.3.1-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
     </parent>
-    <packaging>pom</packaging>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>websocket-spring-boot</artifactId>
-
+    <artifactId>disruptor-spring-boot</artifactId>
+    <packaging>pom</packaging>
     <modules>
-        <module>websocket-spring-boot-autoconfigure</module>
-        <module>websocket-spring-boot-starter</module>
-        <module>websocket-server-spring-boot-autoconfigure</module>
-        <module>websocket-server-spring-boot-starter</module>
-        <module>websocket-server-spring-boot-sample</module>
+        <module>disruptor-spring-boot-autoconfiguration</module>
+        <module>disruptor-spring-boot-starter</module>
+        <module>disruptor-spring-boot-sample</module>
     </modules>
+
+    <properties>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+    </properties>
 
 </project>

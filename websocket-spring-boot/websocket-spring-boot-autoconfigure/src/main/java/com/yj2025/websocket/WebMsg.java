@@ -1,9 +1,12 @@
 package com.yj2025.websocket;
 
+import lombok.ToString;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+@ToString
 public class WebMsg implements Serializable {
 
     private String entCode;
