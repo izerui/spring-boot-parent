@@ -24,7 +24,6 @@ class RabbitAuditContextImpl implements AuditContext {
     @Override
     public void record(Record record) {
         try {
-            logger.info(record.toString());
             Message message = rabbitTemplate.getMessageConverter()
                     .toMessage(record,
                             MessagePropertiesBuilder.newInstance()
