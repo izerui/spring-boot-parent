@@ -24,6 +24,7 @@
         <module>sequence-number-spring-boot</module>
         <module>oauth2-server-spring-boot</module>
         <module>gateway-spring-boot</module>
+        <module>disruptor-spring-boot</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -189,6 +190,18 @@
                 <version>${base-starter.version}</version>
             </dependency>
 
+            <!-- websocket server -->
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>websocket-server-spring-boot-autoconfigure</artifactId>
+                <version>${base-starter.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>websocket-server-spring-boot-starter</artifactId>
+                <version>${base-starter.version}</version>
+            </dependency>
+
             <!-- audit -->
             <dependency>
                 <groupId>com.yj2025</groupId>
@@ -340,6 +353,8 @@
                 <artifactId>gateway-spring-boot-starter</artifactId>
                 <version>${base-starter.version}</version>
             </dependency>
+            <!-- websocket server -->
+
         </dependencies>
     </dependencyManagement>
 
