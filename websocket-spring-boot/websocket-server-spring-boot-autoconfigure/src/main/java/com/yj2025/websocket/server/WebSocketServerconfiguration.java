@@ -9,6 +9,8 @@ import com.yj2025.websocket.server.impl.UserChannelService;
 import com.yj2025.websocket.server.impl.rabbit.RabbitConfiguration;
 import com.yj2025.websocket.server.support.ChannelIdRedisTemplate;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,8 +32,8 @@ public class WebSocketServerconfiguration {
     }
 
     @Bean
-    @Primary
-    public ObjectMapper getObjectMapper() {
+    @ConditionalOnMissingBean
+    public ObjectMapper objectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         objectMapper.enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT);
