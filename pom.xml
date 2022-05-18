@@ -353,7 +353,6 @@
                 <artifactId>gateway-spring-boot-starter</artifactId>
                 <version>${base-starter.version}</version>
             </dependency>
-            <!-- websocket server -->
 
         </dependencies>
     </dependencyManagement>
