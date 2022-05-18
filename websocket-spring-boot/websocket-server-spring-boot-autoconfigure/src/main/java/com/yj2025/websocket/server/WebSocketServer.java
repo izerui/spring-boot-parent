@@ -51,8 +51,8 @@ public class WebSocketServer implements InitializingBean, DisposableBean, Runnab
             Channel ch = b.bind(port).sync().channel();
             ch.config().setOption(ChannelOption.TCP_NODELAY, true);
             ch.config().setOption(ChannelOption.SO_BACKLOG, 1024);
-            ch.closeFuture().sync();
             log.info("websocket server 启动成功,监听端口: {}", port);
+            ch.closeFuture().sync();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         } finally {
