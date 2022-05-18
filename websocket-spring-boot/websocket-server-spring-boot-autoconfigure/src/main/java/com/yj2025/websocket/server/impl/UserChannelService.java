@@ -5,6 +5,7 @@ import com.yj2025.websocket.WebMsg;
 import com.yj2025.websocket.server.OnAfterForwardMessageHandler;
 import com.yj2025.websocket.server.OnBeforeForwardMessageHandler;
 import com.yj2025.websocket.server.UserNameLoader;
+import com.yj2025.websocket.server.WebSocketServerProperties;
 import com.yj2025.websocket.server.support.ChannelIdRedisTemplate;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelId;
@@ -32,16 +33,11 @@ public class UserChannelService {
 
     private static final ChannelGroup channelGroup = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
 
-    private static String USERID_REDIS_PREFIX = "ws_uid:";
-
-    /**
-     * 保存在redis中的临时websocket channelId的有效时长 单位：分钟
-     */
-    private int CHANNEL_ID_TIMEOUT = 5;
-
     private ChannelIdRedisTemplate redisTemplate;
 
     private ObjectMapper objectMapper;
+
+    private WebSocketServerProperties serverProperties;
 
     private ObjectProvider<UserNameLoader> userNameLoaderObjectProvider;
 
@@ -50,11 +46,13 @@ public class UserChannelService {
 
     public UserChannelService(ChannelIdRedisTemplate redisTemplate,
                               ObjectMapper objectMapper,
+                              WebSocketServerProperties serverProperties,
                               ObjectProvider<UserNameLoader> userNameLoaderObjectProvider,
                               ObjectProvider<OnBeforeForwardMessageHandler> beforeForwardMessageHandlers,
                               ObjectProvider<OnAfterForwardMessageHandler> afterForwardMessageHandlers) {
         this.redisTemplate = redisTemplate;
         this.objectMapper = objectMapper;
+        this.serverProperties = serverProperties;
         this.userNameLoaderObjectProvider = userNameLoaderObjectProvider;
         this.beforeForwardMessageHandlers = beforeForwardMessageHandlers;
         this.afterForwardMessageHandlers = afterForwardMessageHandlers;
@@ -100,7 +98,7 @@ public class UserChannelService {
         channel.attr(AttributeKey.valueOf("userCode")).set(userCode);
         channel.attr(AttributeKey.valueOf("userName")).set(userName);
         channelGroup.add(channel);
-        redisTemplate.boundValueOps(key).set(channel.id(), CHANNEL_ID_TIMEOUT, TimeUnit.MINUTES);
+        redisTemplate.boundValueOps(key).set(channel.id(), serverProperties.getChannelIdTimeoutMinutes(), TimeUnit.MINUTES);
 
         Map<String, String> result = new HashMap<>();
         result.put("type", "connected");
@@ -131,7 +129,7 @@ public class UserChannelService {
     public void activeConnect(Channel channel) {
         String key = (String) channel.attr(AttributeKey.valueOf("key")).get();
         if (key != null && !"".equals(key)) {
-            redisTemplate.boundValueOps(key).expire(CHANNEL_ID_TIMEOUT, TimeUnit.MINUTES);
+            redisTemplate.boundValueOps(key).expire(serverProperties.getChannelIdTimeoutMinutes(), TimeUnit.MINUTES);
         }
     }
 
@@ -203,7 +201,7 @@ public class UserChannelService {
     private String getRedisKey(String entCode, String userCode, String random) {
         String _entParten = StringUtils.isEmpty(entCode) ? "" : entCode + "-";
         String _userParten = StringUtils.isEmpty(userCode) ? "" : userCode;
-        String _keyParten = USERID_REDIS_PREFIX + _entParten + _userParten;
+        String _keyParten = serverProperties.getUserIdPrefix() + _entParten + _userParten;
         if (random != null && !random.equals("")) {
             _keyParten += random.equals("*") ? "*" : "-" + random;
         }

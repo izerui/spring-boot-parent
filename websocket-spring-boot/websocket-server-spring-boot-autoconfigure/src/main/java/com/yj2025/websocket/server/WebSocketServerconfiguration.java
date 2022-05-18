@@ -16,6 +16,10 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 
+/**
+ * websocket 服务配置：
+ * 1.
+ */
 @Configuration
 @Import({RabbitConfiguration.class})
 public class WebSocketServerconfiguration {
@@ -38,6 +42,11 @@ public class WebSocketServerconfiguration {
         return objectMapper;
     }
 
+    /**
+     * channelId的序列化、反序列化配置
+     * @param redisConnectionFactory
+     * @return
+     */
     @Bean
     public ChannelIdRedisTemplate channelIdBeanRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
         return new ChannelIdRedisTemplate(redisConnectionFactory);
@@ -52,12 +61,14 @@ public class WebSocketServerconfiguration {
     @Bean
     public UserChannelService userService(ChannelIdRedisTemplate redisTemplate,
                                           ObjectMapper objectMapper,
+                                          WebSocketServerProperties properties,
                                           ObjectProvider<UserNameLoader> userNameLoaderObjectProvider,
                                           ObjectProvider<OnBeforeForwardMessageHandler> beforeForwardMessageHandlers,
                                           ObjectProvider<OnAfterForwardMessageHandler> afterForwardMessageHandlers) {
         return new UserChannelService(
                 redisTemplate,
                 objectMapper,
+                properties,
                 userNameLoaderObjectProvider,
                 beforeForwardMessageHandlers,
                 afterForwardMessageHandlers);

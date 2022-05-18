@@ -15,7 +15,10 @@ spring:
         namespace: dev
   main:
     allow-bean-definition-overriding: true
-  #redis:
+  redis:
+    host: localhost
+    database: 0
+    port: 6379
 oauth2:
   server:
     client-id: ierp

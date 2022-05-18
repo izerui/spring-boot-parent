@@ -8,16 +8,19 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class WebSocketServerProperties {
 
     private Integer port = 8066;
-    private ChannelCache cache = new ChannelCache();
+    /**
+     * 用户Id缓存的key前缀
+     */
+    private String userIdPrefix = "ws_uid:";
+    /**
+     * 保存在redis中的临时websocket channelId的有效时长 单位：分钟
+     */
+    private Integer channelIdTimeoutMinutes = 5;
+    /**
+     * 消息监听的实现类型，kafka暂未实现，现只支持rabbit模式
+     */
     private MessageListenerType listenerType = MessageListenerType.RABBIT;
     private Rabbit rabbit = new Rabbit();
-
-    @Data
-    public static class ChannelCache {
-        private String userIdPrefix = "ws_uid:";
-        private Integer channelIdTimeoutMinutes = 5;
-
-    }
 
     public enum MessageListenerType {
         RABBIT,
