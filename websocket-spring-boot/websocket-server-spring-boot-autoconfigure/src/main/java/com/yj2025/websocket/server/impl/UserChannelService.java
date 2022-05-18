@@ -195,6 +195,9 @@ public class UserChannelService {
                 }
             }
         }
+        if (channels.isEmpty()) {
+            logger.warn("未找到对应的websocket连接, entCode:{} userCode:{}", entCode, userCode);
+        }
         return channels;
     }
 

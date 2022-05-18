@@ -1,4 +1,6 @@
-package com.yj2025.websocket;
+package com.yj2025.websocket.producer;
+
+import com.yj2025.websocket.WebMsg;
 
 public interface WebSocketContext {
 
