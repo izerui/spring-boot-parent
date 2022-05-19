@@ -50,7 +50,7 @@ public class Oauth2Configuration extends AuthorizationServerConfigurerAdapter {
     private UserDetailsServiceAdapter userDetailsServiceAdapter;
     @Autowired
     private ObjectProvider<ExpandEndpointsConfigurer> expandEndpointsConfigurers;
-    @Value("${spring.application.name:''}")
+    @Value("${spring.application.name:'oauth2'}")
     private String applicationName;
 
     @Bean
