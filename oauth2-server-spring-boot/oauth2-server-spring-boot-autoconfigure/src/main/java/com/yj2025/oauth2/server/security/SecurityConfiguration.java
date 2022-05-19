@@ -81,22 +81,18 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter implemen
 
     @Bean
     @ConditionalOnMissingBean
-    public PasswordEncoderMatchor passwordCheckMatchor() {
+    public PasswordEncoderMatchor defaultPasswordCheckMatchor() {
         return new DefaultPasswordEncoderMatchor(passwordEncoder());
     }
 
     /**
      * 用户密码登录验证器
-     *
-     * @param userDetailsServiceAdapter
-     * @param passwordCheckMatchorProvider
-     * @return
      */
     @Order(-1)
     @Bean
     public PasswordAuthProvider passwordAuthProvider(UserDetailsServiceAdapter userDetailsServiceAdapter,
-                                                     ObjectProvider<PasswordEncoderMatchor> passwordCheckMatchorProvider) {
-        return new PasswordAuthProvider(userDetailsServiceAdapter, passwordCheckMatchorProvider);
+                                                     ObjectProvider<PasswordEncoderMatchor> passwordEncoderMatchorObjectProvider) {
+        return new PasswordAuthProvider(userDetailsServiceAdapter, passwordEncoderMatchorObjectProvider);
     }
 
     /**
@@ -121,14 +117,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter implemen
     /**
      * 用户加载适配器
      *
-     * @param userDetailsLoader 用户加载器
-     * @param qrcodeService     二维码服务
      * @return
      */
     @Bean
-    public UserDetailsServiceAdapter userDetailsService(@NonNull UserDetailsRemoteLoader userDetailsLoader,
-                                                        QrcodeService qrcodeService) {
-        return new UserDetailsServiceAdapter(userDetailsLoader, qrcodeService);
+    public UserDetailsServiceAdapter userDetailsService(ObjectProvider<UserDetailsRemoteLoader> userDetailsRemoteLoaderObjectProvider) {
+        return new UserDetailsServiceAdapter(userDetailsRemoteLoaderObjectProvider);
     }
 
     @Bean
