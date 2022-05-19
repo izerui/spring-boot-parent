@@ -46,9 +46,9 @@ public class TokenController {
             logoutSuccessHandlerObjectProvider.ifAvailable(logoutSuccessHandler -> {
                 logoutSuccessHandler.revokeTokenSuccess((User) authentication.getPrincipal());
             });
-            return RespVo.success("登出成功!");
+            return RespVo.success("成功注销TOKEN!");
         }
-        return RespVo.error("logout_error", "token注销失败");
+        return RespVo.success("未成功注销TOKEN!");
     }
 
 }
