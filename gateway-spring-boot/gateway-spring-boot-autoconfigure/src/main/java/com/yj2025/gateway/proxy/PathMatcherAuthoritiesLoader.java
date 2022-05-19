@@ -11,7 +11,7 @@ public interface PathMatcherAuthoritiesLoader {
      *
      * @return
      */
-    Map<String, Set<String>> getPathMatcherAuthoritiesMap();
+    Map<String, Set<String>> getInitializePathMatcherAuthoritiesMap();
 
     PathMatcherAuthoritiesLoader DEFALT = () -> Collections.EMPTY_MAP;
 }
