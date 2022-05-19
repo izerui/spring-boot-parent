@@ -42,5 +42,5 @@ gateway:
     client-id: ierp
     client-secret: 123456
     app-name: oauth2-server-spring-boot-jwt-sample
-    auth-type: jwt
+    auth-type: opaque_redis
   maintenance: false
