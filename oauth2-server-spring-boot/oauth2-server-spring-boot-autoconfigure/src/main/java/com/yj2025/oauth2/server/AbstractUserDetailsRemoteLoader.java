@@ -19,13 +19,13 @@ public abstract class AbstractUserDetailsRemoteLoader implements UserDetailsRemo
                     return loadUserByUsername(username);
                 }
             case ENT_CODE_SELECTOR:
-                return loadUserBySelectEntcode(selector.getSelector().get());
+                return loadUserBySelectEntcode(username, selector.getSelector().get());
             default:
                 return loadUserByUsername(username);
         }
     }
 
-    protected abstract User loadUserBySelectEntcode(String entcode);
+    protected abstract User loadUserBySelectEntcode(String username, String entcode);
 
     protected abstract User loadUserBySelectUsercode(String username, String usercode);
 
