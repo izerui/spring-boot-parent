@@ -2,7 +2,6 @@ package com.yj2025.oauth2.server.security;
 
 import com.yj2025.oauth2.server.UserDetailsRemoteLoader;
 import com.yj2025.oauth2.server.security.provider.UserSelector;
-import com.yj2025.oauth2.server.security.provider.QrcodeService;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
