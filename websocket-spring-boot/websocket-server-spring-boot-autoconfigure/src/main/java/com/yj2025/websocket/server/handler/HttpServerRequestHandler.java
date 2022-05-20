@@ -7,6 +7,7 @@ import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpUtil;
+import io.netty.handler.codec.http.websocketx.WebSocketHandshakeException;
 import io.netty.handler.codec.http.websocketx.WebSocketServerHandshaker;
 import io.netty.handler.codec.http.websocketx.WebSocketServerHandshakerFactory;
 import io.netty.util.CharsetUtil;
@@ -83,7 +84,11 @@ public class HttpServerRequestHandler extends SimpleChannelInboundHandler<FullHt
         if (handshaker == null) {
             WebSocketServerHandshakerFactory.sendUnsupportedVersionResponse(ctx.channel());
         } else {
-            handshaker.handshake(ctx.channel(), msg);
+            try {
+                handshaker.handshake(ctx.channel(), msg);
+            } catch (WebSocketHandshakeException exception) {
+                logger.warn("request:{} 不是有效的Websocket请求", msg.uri());
+            }
         }
     }
 }
