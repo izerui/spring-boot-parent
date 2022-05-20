@@ -13,7 +13,7 @@ public class DefaultPathMatcherAuthoritiesLoader implements PathMatcherAuthoriti
     @Override
     public Map<String, Set<String>> getInitializePathMatcherAuthoritiesMap() {
         Map<String, Set<String>> authorities = new HashMap<>();
-        authorities.put("GET:/test", Sets.newHashSet("postCode001", "postCode003"));
+        authorities.put("GET:/authenrity", Sets.newHashSet("postCode001", "postCode003"));
         return authorities;
     }
 }

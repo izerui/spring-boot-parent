@@ -17,7 +17,7 @@ public class SampleSaltUserDetailsService implements UserDetailsRemoteLoader {
 
     @Override
     public User loadUserByUsername(String username, UserSelector selector) {
-        User demoUser = new User("test", passwordEncoderMatchor.encode("123456", salt), "postCode001", "postCode002")
+        User demoUser = new User("test", passwordEncoderMatchor.encode("123456", salt), "postCode005", "postCode006")
                 .setAdditionalSalt(salt);
         switch (selector.getSelectorType()) {
             case USER_CODE_SELECTOR:
