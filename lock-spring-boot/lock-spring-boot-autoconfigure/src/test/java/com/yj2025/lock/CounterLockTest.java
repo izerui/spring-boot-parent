@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author liuyuhua
@@ -25,10 +26,11 @@ public class CounterLockTest {
         String path = UUID.randomUUID().toString();
         counterLock.initialize(path);
 
+        AtomicBoolean finish = new AtomicBoolean(false);
         Set<Long> sets = new HashSet<>();
         for (int i = 0; i < 10; i++) {
             new Thread(() -> {
-                while (true) {
+                while (!finish.get()) {
                     AtomicValue<Long> increment = counterLock.increment(path);
                     if (sets.add(increment.postValue())) {
                         System.out.println(Thread.currentThread().getName() + " value: " + increment.postValue());
@@ -38,7 +40,19 @@ public class CounterLockTest {
                 }
             }).start();
         }
-        new CountDownLatch(1).await();
+        CountDownLatch countDownLatch = new CountDownLatch(1);
+        new Thread(() -> {
+            while (!finish.get()) {
+                counterLock.executeGreaterOrEqualThan(path,1000L, () -> {
+                    System.out.println("=======================够了1000");
+                    System.out.println("=======================够了1000");
+                    System.out.println("=======================够了1000");
+                    countDownLatch.countDown();
+                    finish.set(true);
+                });
+            }
+        }).start();
+        countDownLatch.await();
 
     }
 }
