@@ -1,5 +1,6 @@
 package com.yj2025.lock;
 
+import com.yj2025.lock.support.ThrowsRunnable;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.locks.InterProcessSemaphoreMutex;
 import org.springframework.beans.factory.DisposableBean;
@@ -11,6 +12,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class Lock implements DisposableBean {
 
+    private final static Integer LEASE_SECONDS = 30;
+
     private CuratorFramework client;
 
 
@@ -18,8 +21,7 @@ public class Lock implements DisposableBean {
         this.client = client;
     }
 
-    public <T> T execute(String lockPath, Integer leaseSeconds, LockPerform lockPerform) {
-
+    public void execute(String lockPath, Integer leaseSeconds, ThrowsRunnable runnable) {
         InterProcessSemaphoreMutex semaphoreMutex = null;
         try {
             semaphoreMutex = new InterProcessSemaphoreMutex(client, "/lock/" + lockPath);
@@ -28,7 +30,7 @@ public class Lock implements DisposableBean {
                 throw new LockException("操作同步锁定,请重试");
             }
             //执行全局唯一逻辑
-            return (T) lockPerform.perform();
+            runnable.run();
         } catch (Exception e) {
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;
@@ -44,13 +46,14 @@ public class Lock implements DisposableBean {
                 throw new LockException(e.getMessage());
             }
         }
-
-
     }
 
-    public <T> T execute(String lockPath, LockPerform lockPerform) {
-        return execute(lockPath, 30, lockPerform);
+    public void execute(String lockPath, ThrowsRunnable runnable) {
+        execute(lockPath, LEASE_SECONDS, () -> {
+            runnable.run();
+        });
     }
+
 
     @Override
     public void destroy() {
