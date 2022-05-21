@@ -100,7 +100,7 @@ public abstract class AbstractCounterLock {
             long expirationTimeMillis = beginTimeMillis + waitMilliseconds;
             while (true) {
                 if (System.currentTimeMillis() > expirationTimeMillis) {
-                    System.out.println(System.currentTimeMillis() + " - " + expirationTimeMillis + " - " + beginTimeMillis);
+//                    System.out.println(System.currentTimeMillis() + " - " + expirationTimeMillis + " - " + beginTimeMillis);
                     consumer.accept(false);
                     break;
                 }
