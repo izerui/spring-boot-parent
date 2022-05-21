@@ -29,7 +29,7 @@ public class CounterLockTest {
         AtomicBoolean finish = new AtomicBoolean(false);
         Set<Long> sets = new HashSet<>();
         for (int i = 0; i < 10; i++) {
-            new Thread(() -> {
+            Thread thread = new Thread(() -> {
                 while (!finish.get()) {
                     AtomicValue<Long> increment = counterLock.increment(path);
                     if (sets.add(increment.postValue())) {
@@ -38,15 +38,23 @@ public class CounterLockTest {
                         throw new RuntimeException("递增冲突，发现重复的数字：" + increment.postValue());
                     }
                 }
-            }).start();
+            });
+            thread.setDaemon(true);
+            thread.start();
         }
         CountDownLatch countDownLatch = new CountDownLatch(1);
         new Thread(() -> {
             while (!finish.get()) {
-                counterLock.executeGreaterOrEqualThan(path,1000L, () -> {
-                    System.out.println("=======================够了1000");
-                    System.out.println("=======================够了1000");
-                    System.out.println("=======================够了1000");
+                counterLock.runWithWaitUntilGreaterThan(path, 10000, 1000, (predicateStatus) -> {
+                    if (predicateStatus) {
+                        System.out.println("=======================够了1000");
+                        System.out.println("=======================够了1000");
+                        System.out.println("=======================够了1000");
+                    } else {
+                        System.out.println("=======================等了这么久，还是不到1000，算了退出");
+                        System.out.println("=======================等了这么久，还是不到1000，算了退出");
+                        System.out.println("=======================等了这么久，还是不到1000，算了退出");
+                    }
                     countDownLatch.countDown();
                     finish.set(true);
                 });

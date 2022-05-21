@@ -9,6 +9,8 @@ import org.apache.curator.framework.recipes.atomic.DistributedAtomicLong;
 import org.apache.curator.framework.recipes.atomic.PromotedToLock;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 
+import java.util.function.Predicate;
+
 /**
  * @author liuyuhua
  * @date 2022/5/21
@@ -39,7 +41,7 @@ public abstract class AbstractCounterLock {
         return distributedAtomicLong;
     }
 
-    protected <T> T execute(String path, ThrowsFunction<DistributedAtomicLong, T> function) {
+    protected <T> T runWith(String path, ThrowsFunction<DistributedAtomicLong, T> function) {
         try {
             DistributedAtomicLong distributedAtomicLong = createDistributedAtomicLong(path);
             return function.apply(distributedAtomicLong);
@@ -51,7 +53,7 @@ public abstract class AbstractCounterLock {
         }
     }
 
-    protected void execute(String path, ThrowsConsumer<DistributedAtomicLong> consumer) {
+    protected void runWith(String path, ThrowsConsumer<DistributedAtomicLong> consumer) {
         try {
             DistributedAtomicLong distributedAtomicLong = createDistributedAtomicLong(path);
             consumer.accept(distributedAtomicLong);
@@ -64,7 +66,7 @@ public abstract class AbstractCounterLock {
     }
 
     public void executeCompareThan(String path, long expectedValue, CompareRunnable runnable) {
-        execute(path, distributedAtomicLong -> {
+        runWith(path, distributedAtomicLong -> {
             AtomicValue<Long> result = distributedAtomicLong.get();
             if (!result.succeeded()) {
                 throw new LockException("[" + path + "] 计数器获取结果失败!");
@@ -80,6 +82,37 @@ public abstract class AbstractCounterLock {
             } else {
                 runnable.greaterOrEqualThan();
                 runnable.greaterThan();
+            }
+        });
+    }
+
+    /**
+     * 等待计数器直到满足条件则触发runnable，否则等待达到超时时长则抛出异常
+     *
+     * @param path             bk
+     * @param waitMilliseconds 等待时长(毫秒)
+     * @param predicate        条件
+     * @param consumer         执行逻辑(true: 满足条件触发  false: 超时触发)
+     */
+    public void runWithWaitUntil(String path, long waitMilliseconds, Predicate<Long> predicate, ThrowsConsumer<Boolean> consumer) {
+        runWith(path, distributedAtomicLong -> {
+            long beginTimeMillis = System.currentTimeMillis();
+            long expirationTimeMillis = beginTimeMillis + waitMilliseconds;
+            while (true) {
+                if (System.currentTimeMillis() > expirationTimeMillis) {
+                    System.out.println(System.currentTimeMillis() + " - " + expirationTimeMillis + " - " + beginTimeMillis);
+                    consumer.accept(false);
+                    break;
+                }
+                AtomicValue<Long> result = distributedAtomicLong.get();
+                if (!result.succeeded()) {
+                    throw new LockException("[" + path + "] 计数器获取结果失败!");
+                }
+                if (predicate.test(result.postValue().longValue())) {
+                    consumer.accept(true);
+                    break;
+                }
+                Thread.sleep(baseSleepTimeMs / 2);
             }
         });
     }
