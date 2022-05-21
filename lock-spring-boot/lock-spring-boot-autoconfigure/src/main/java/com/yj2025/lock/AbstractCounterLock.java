@@ -1,6 +1,5 @@
 package com.yj2025.lock;
 
-import com.yj2025.lock.support.CompareRunnable;
 import com.yj2025.lock.support.ThrowsConsumer;
 import com.yj2025.lock.support.ThrowsFunction;
 import org.apache.curator.framework.CuratorFramework;
@@ -63,27 +62,6 @@ public abstract class AbstractCounterLock {
             }
             throw new LockException(e.getMessage(), e);
         }
-    }
-
-    public void executeCompareThan(String path, long expectedValue, CompareRunnable runnable) {
-        runWith(path, distributedAtomicLong -> {
-            AtomicValue<Long> result = distributedAtomicLong.get();
-            if (!result.succeeded()) {
-                throw new LockException("[" + path + "] 计数器获取结果失败!");
-            }
-            long value = result.postValue();
-            if (value < expectedValue) {
-                runnable.lessThan();
-                runnable.lessOrEqualThan();
-            } else if (value == expectedValue) {
-                runnable.lessOrEqualThan();
-                runnable.equalThan();
-                runnable.greaterOrEqualThan();
-            } else {
-                runnable.greaterOrEqualThan();
-                runnable.greaterThan();
-            }
-        });
     }
 
     /**
