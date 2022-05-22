@@ -57,7 +57,7 @@ public abstract class AbstractCounterLock {
         }
     }
 
-    protected void runWith(String path, ThrowsConsumer<DistributedAtomicLong> consumer) {
+    public void runWith(String path, ThrowsConsumer<DistributedAtomicLong> consumer) {
         try {
             DistributedAtomicLong distributedAtomicLong = createDistributedAtomicLong(path);
             consumer.accept(distributedAtomicLong);
@@ -77,8 +77,8 @@ public abstract class AbstractCounterLock {
      * @param predicate        条件
      * @param consumer         执行逻辑(true: 满足条件触发  false: 超时触发)
      */
-    public void runWithAsyncUntil(String path, long waitMilliseconds, Predicate<Long> predicate, ThrowsConsumer<Boolean> consumer) {
-        Runnable runnable = () -> runWith(path, distributedAtomicLong -> {
+    public void runWithUntil(String path, long waitMilliseconds, Predicate<Long> predicate, ThrowsConsumer<Boolean> consumer) {
+        runWith(path, distributedAtomicLong -> {
             long beginTimeMillis = System.currentTimeMillis();
             long expirationTimeMillis = beginTimeMillis + waitMilliseconds;
             while (true) {
@@ -100,7 +100,6 @@ public abstract class AbstractCounterLock {
                 Thread.sleep(baseSleepTimeMs / 2);
             }
         });
-        new Thread(runnable).start();
     }
 
 }
