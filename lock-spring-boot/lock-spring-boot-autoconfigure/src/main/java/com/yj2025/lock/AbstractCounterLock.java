@@ -82,21 +82,6 @@ public abstract class AbstractCounterLock {
             long beginTimeMillis = System.currentTimeMillis();
             long expirationTimeMillis = beginTimeMillis + waitseconds * 1000;
             while (true) {
-                if (System.currentTimeMillis() > expirationTimeMillis) {
-//                    System.out.println(System.currentTimeMillis() + " - " + expirationTimeMillis + " - " + beginTimeMillis);
-                    consumer.accept(new PredicateStatus() {
-                        @Override
-                        public boolean isSatisfy() {
-                            return false;
-                        }
-
-                        @Override
-                        public long getTimeMillis() {
-                            return System.currentTimeMillis() - beginTimeMillis;
-                        }
-                    });
-                    break;
-                }
                 AtomicValue<Long> result = distributedAtomicLong.get();
                 if (!result.succeeded()) {
                     throw new LockException("[" + path + "] 计数器获取结果失败!");
@@ -108,6 +93,31 @@ public abstract class AbstractCounterLock {
                         @Override
                         public boolean isSatisfy() {
                             return true;
+                        }
+
+                        @Override
+                        public long getCounterValue() {
+                            return value;
+                        }
+
+                        @Override
+                        public long getTimeMillis() {
+                            return System.currentTimeMillis() - beginTimeMillis;
+                        }
+                    });
+                    break;
+                }
+                if (System.currentTimeMillis() > expirationTimeMillis) {
+//                    System.out.println(System.currentTimeMillis() + " - " + expirationTimeMillis + " - " + beginTimeMillis);
+                    consumer.accept(new PredicateStatus() {
+                        @Override
+                        public boolean isSatisfy() {
+                            return false;
+                        }
+
+                        @Override
+                        public long getCounterValue() {
+                            return value;
                         }
 
                         @Override
@@ -130,6 +140,12 @@ public abstract class AbstractCounterLock {
          * @return
          */
         boolean isSatisfy();
+
+        /**
+         * 获取计数器的值
+         * @return
+         */
+        long getCounterValue();
 
         /**
          * 耗时
