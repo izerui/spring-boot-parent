@@ -79,8 +79,8 @@ public abstract class AbstractCounterLock {
      * @param consumer    执行逻辑(满足条件触发 或者 超时触发)
      */
     public void runWithUntil(String path, long waitseconds, Predicate<Long> predicate, ThrowsConsumer<PredicateStatus> consumer) {
+        final long beginTimeMillis = System.currentTimeMillis();
         runWith(path, distributedAtomicLong -> {
-            long beginTimeMillis = System.currentTimeMillis();
             long expirationTimeMillis = beginTimeMillis + waitseconds * 1000;
             while (true) {
                 AtomicValue<Long> result = distributedAtomicLong.get();
