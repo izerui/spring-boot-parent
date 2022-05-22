@@ -1,5 +1,6 @@
 package com.yj2025.lock;
 
+import com.yj2025.lock.support.PredicateStatus;
 import com.yj2025.lock.support.ThrowsConsumer;
 import com.yj2025.lock.support.ThrowsFunction;
 import org.apache.curator.framework.CuratorFramework;
@@ -89,70 +90,17 @@ public abstract class AbstractCounterLock {
                 // 当前计数器记录的值
                 long value = result.postValue().longValue();
                 if (predicate.test(value)) {
-                    consumer.accept(new PredicateStatus() {
-                        @Override
-                        public boolean isSatisfy() {
-                            return true;
-                        }
-
-                        @Override
-                        public long getCounterValue() {
-                            return value;
-                        }
-
-                        @Override
-                        public long getTimeMillis() {
-                            return System.currentTimeMillis() - beginTimeMillis;
-                        }
-                    });
+                    consumer.accept(new PredicateStatus(true, value, beginTimeMillis));
                     break;
                 }
                 if (System.currentTimeMillis() > expirationTimeMillis) {
 //                    System.out.println(System.currentTimeMillis() + " - " + expirationTimeMillis + " - " + beginTimeMillis);
-                    consumer.accept(new PredicateStatus() {
-                        @Override
-                        public boolean isSatisfy() {
-                            return false;
-                        }
-
-                        @Override
-                        public long getCounterValue() {
-                            return value;
-                        }
-
-                        @Override
-                        public long getTimeMillis() {
-                            return System.currentTimeMillis() - beginTimeMillis;
-                        }
-                    });
+                    consumer.accept(new PredicateStatus(false, value, beginTimeMillis));
                     break;
                 }
                 Thread.sleep(baseSleepTimeMs / 2);
             }
         });
-    }
-
-    public interface PredicateStatus {
-
-        /**
-         * 是否满足条件
-         *
-         * @return
-         */
-        boolean isSatisfy();
-
-        /**
-         * 获取计数器的值
-         * @return
-         */
-        long getCounterValue();
-
-        /**
-         * 耗时
-         *
-         * @return
-         */
-        long getTimeMillis();
     }
 
 }

@@ -1,5 +1,6 @@
 package com.yj2025.lock;
 
+import com.yj2025.lock.support.PredicateStatus;
 import com.yj2025.lock.support.ThrowsConsumer;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.atomic.AtomicValue;
