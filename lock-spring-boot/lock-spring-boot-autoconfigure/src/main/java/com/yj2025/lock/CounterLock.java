@@ -5,6 +5,8 @@ import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.atomic.AtomicValue;
 import org.springframework.beans.factory.DisposableBean;
 
+import java.util.function.Predicate;
+
 /**
  * @author liuyuhua
  * @date 2022/5/21
@@ -103,53 +105,19 @@ public class CounterLock extends AbstractCounterLock implements DisposableBean {
         });
     }
 
-    /**
-     * 等待计数器直到 > 指定值触发true，否则等待达到超时时长触发false
-     *
-     * @param path             bk
-     * @param waitMilliseconds 等待时长(毫秒)
-     * @param value            大于指定值
-     * @param consumer         执行逻辑(true: 满足条件触发  false: 超时触发)
-     */
-    public void asyncRunWithUntilGreaterThan(String path, long waitMilliseconds, long value, ThrowsConsumer<Boolean> consumer) {
-        new Thread(() -> runWithUntil(path, waitMilliseconds, aLong -> aLong > value, consumer)).start();
-    }
 
     /**
-     * 等待计数器直到 < 指定值触发true，否则等待达到超时时长触发false
+     * 开启一个异步线程等待计数器直到满足条件触发true，否则等待达到超时时长触发false
      *
      * @param path             bk
      * @param waitMilliseconds 等待时长(毫秒)
-     * @param value            小于指定值
+     * @param predicate        条件
      * @param consumer         执行逻辑(true: 满足条件触发  false: 超时触发)
      */
-    public void asyncRunWithUntilLessThan(String path, long waitMilliseconds, long value, ThrowsConsumer<Boolean> consumer) {
-        new Thread(() -> runWithUntil(path, waitMilliseconds, aLong -> aLong < value, consumer)).start();
+    public void runWithAsyncUntil(String path, long waitMilliseconds, Predicate<Long> predicate, ThrowsConsumer<Boolean> consumer) {
+        new Thread(() -> runWithUntil(path, waitMilliseconds, predicate, consumer)).start();
     }
 
-    /**
-     * 等待计数器直到 >= 指定值触发true，否则等待达到超时时长触发false
-     *
-     * @param path             bk
-     * @param waitMilliseconds 等待时长(毫秒)
-     * @param value            大于指定值
-     * @param consumer         执行逻辑(true: 满足条件触发  false: 超时触发)
-     */
-    public void asyncRunWithUntilGreaterOrEqualThan(String path, long waitMilliseconds, long value, ThrowsConsumer<Boolean> consumer) {
-        new Thread(() -> runWithUntil(path, waitMilliseconds, aLong -> aLong >= value, consumer)).start();
-    }
-
-    /**
-     * 等待计数器直到 <= 指定值触发true，否则等待达到超时时长触发false
-     *
-     * @param path             bk
-     * @param waitMilliseconds 等待时长(毫秒)
-     * @param value            小于指定值
-     * @param consumer         执行逻辑(true: 满足条件触发  false: 超时触发)
-     */
-    public void asyncRunWithUntilLessOrEqualThan(String path, long waitMilliseconds, long value, ThrowsConsumer<Boolean> consumer) {
-        new Thread(() -> runWithUntil(path, waitMilliseconds, aLong -> aLong <= value, consumer)).start();
-    }
 
     @Override
     public void destroy() throws Exception {

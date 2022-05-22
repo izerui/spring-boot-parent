@@ -70,7 +70,7 @@ public abstract class AbstractCounterLock {
     }
 
     /**
-     * 开启一个异步线程来等待计数器直到满足条件触发true，否则等待达到超时时长触发false
+     * 等待计数器直到满足条件触发true，否则等待达到超时时长触发false
      *
      * @param path             bk
      * @param waitMilliseconds 等待时长(毫秒)
