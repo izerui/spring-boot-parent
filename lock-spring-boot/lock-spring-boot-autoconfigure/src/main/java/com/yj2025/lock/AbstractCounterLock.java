@@ -75,16 +75,26 @@ public abstract class AbstractCounterLock {
      * @param path        bk
      * @param waitseconds 等待时长(秒)
      * @param predicate   条件
-     * @param consumer    执行逻辑(true: 满足条件触发  false: 超时触发)
+     * @param consumer    执行逻辑(满足条件触发 或者 超时触发)
      */
-    public void runWithUntil(String path, long waitseconds, Predicate<Long> predicate, ThrowsConsumer<Boolean> consumer) {
+    public void runWithUntil(String path, long waitseconds, Predicate<Long> predicate, ThrowsConsumer<PredicateStatus> consumer) {
         runWith(path, distributedAtomicLong -> {
             long beginTimeMillis = System.currentTimeMillis();
             long expirationTimeMillis = beginTimeMillis + waitseconds * 1000;
             while (true) {
                 if (System.currentTimeMillis() > expirationTimeMillis) {
 //                    System.out.println(System.currentTimeMillis() + " - " + expirationTimeMillis + " - " + beginTimeMillis);
-                    consumer.accept(false);
+                    consumer.accept(new PredicateStatus() {
+                        @Override
+                        public boolean isSatisfy() {
+                            return false;
+                        }
+
+                        @Override
+                        public long getTimeMillis() {
+                            return System.currentTimeMillis() - beginTimeMillis;
+                        }
+                    });
                     break;
                 }
                 AtomicValue<Long> result = distributedAtomicLong.get();
@@ -94,12 +104,39 @@ public abstract class AbstractCounterLock {
                 // 当前计数器记录的值
                 long value = result.postValue().longValue();
                 if (predicate.test(value)) {
-                    consumer.accept(true);
+                    consumer.accept(new PredicateStatus() {
+                        @Override
+                        public boolean isSatisfy() {
+                            return true;
+                        }
+
+                        @Override
+                        public long getTimeMillis() {
+                            return System.currentTimeMillis() - beginTimeMillis;
+                        }
+                    });
                     break;
                 }
                 Thread.sleep(baseSleepTimeMs / 2);
             }
         });
+    }
+
+    public interface PredicateStatus {
+
+        /**
+         * 是否满足条件
+         *
+         * @return
+         */
+        boolean isSatisfy();
+
+        /**
+         * 耗时
+         *
+         * @return
+         */
+        long getTimeMillis();
     }
 
 }

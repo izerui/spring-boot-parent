@@ -114,7 +114,7 @@ public class CounterLock extends AbstractCounterLock implements DisposableBean {
      * @param predicate   条件
      * @param consumer    执行逻辑(true: 满足条件触发  false: 超时触发)
      */
-    public void runWithAsyncUntil(String path, long waitseconds, Predicate<Long> predicate, ThrowsConsumer<Boolean> consumer) {
+    public void runWithAsyncUntil(String path, long waitseconds, Predicate<Long> predicate, ThrowsConsumer<PredicateStatus> consumer) {
         new Thread(() -> runWithUntil(path, waitseconds, predicate, consumer)).start();
     }
 
