@@ -30,6 +30,7 @@ public class CounterLockTest {
         AtomicBoolean finish = new AtomicBoolean(false);
         // 等待10秒
         counterLock.runWithAsyncUntil(path, 10, aLong -> aLong > 1000, predicateStatus -> {
+            System.out.println("计数器的值为： " + predicateStatus.getCounterValue());
             if (predicateStatus.isSatisfy()) {
                 System.out.println("=======================够了1000");
                 System.out.println("=======================够了1000");
