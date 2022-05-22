@@ -10,6 +10,7 @@ import com.yj2025.disruptor.RunnableWrapper;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Optional;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -25,18 +26,17 @@ public class DisruptorTests {
                 return new RunnableWrapper();
             }
         };
-
         // 生产者的线程工厂
-        ThreadFactory threadFactory = Executors.defaultThreadFactory();
+        ExecutorService threadFactory = Executors.newFixedThreadPool(5);
 
         // 处理Event的handler
-        EventHandler<RunnableWrapper> handler = new EventHandler<RunnableWrapper>() {
-            @Override
-            public void onEvent(RunnableWrapper event, long sequence, boolean endOfBatch) throws Exception {
+        WorkHandler<RunnableWrapper>[] handlers = new WorkHandler[16];
+        for (int i = 0; i < 16; i++) {
+            handlers[i] = event -> {
                 log.info("onEvent: {}", event.toString());
                 event.getRunnable().run();
-            }
-        };
+            };
+        }
 
 
         // 创建disruptor，采用单生产者模式
@@ -48,10 +48,10 @@ public class DisruptorTests {
                 threadFactory,
                 ProducerType.SINGLE,
                 // 阻塞策略
-                new BlockingWaitStrategy());
+                new SleepingWaitStrategy());
 
         // 设置EventHandler
-        disruptor.handleEventsWith(handler);
+        disruptor.handleEventsWithWorkerPool(handlers);
 
         // 启动disruptor的线程
         RingBuffer<RunnableWrapper> ringBuffer = disruptor.start();
@@ -59,16 +59,15 @@ public class DisruptorTests {
         long l = System.currentTimeMillis();
         AtomicInteger atomicLong = new AtomicInteger(1);
         while ((l + 10000L) > System.currentTimeMillis()) { // 10秒
-            int andIncrement = atomicLong.getAndIncrement();
             ringBuffer.publishEvent((wrapper, sequence) -> {
-                log.info("1: {}", andIncrement);
                 wrapper.setRunnable(() -> {
                     try {
                         Thread.sleep(10);
+                        int andIncrement = atomicLong.getAndIncrement();
+                        log.info("2: {}", andIncrement);
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
-                    log.info("2: {}", andIncrement);
                 });
             });
         }
