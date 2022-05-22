@@ -25,7 +25,7 @@ public class CounterLock extends AbstractCounterLock implements DisposableBean {
      * @param path 业务path
      */
     public void initialize(String path) {
-        runWith(path, distributedAtomicLong -> {
+        executeWith(path, distributedAtomicLong -> {
             boolean initialize = distributedAtomicLong.initialize(0L);
             if (!initialize) {
                 throw new LockException("[" + path + "] 计数器已存在或者初始化0失败!");
@@ -54,7 +54,7 @@ public class CounterLock extends AbstractCounterLock implements DisposableBean {
      */
     @Nullable
     public AtomicValue<Long> increment(String path) {
-        return runWith(path, distributedAtomicLong -> {
+        return executeWith(path, distributedAtomicLong -> {
             AtomicValue<Long> result = distributedAtomicLong.increment();
             if (!result.succeeded()) {
                 throw new LockException("[" + path + "] 计数器增加1计数操作,重试10次后最终失败!");
@@ -70,7 +70,7 @@ public class CounterLock extends AbstractCounterLock implements DisposableBean {
      */
     @Nullable
     public AtomicValue<Long> add(String path, Long delta) {
-        return runWith(path, distributedAtomicLong -> {
+        return executeWith(path, distributedAtomicLong -> {
             AtomicValue<Long> result = distributedAtomicLong.add(delta);
             if (!result.succeeded()) {
                 throw new LockException("[" + path + "] 计数器增加" + delta + "计数操作,重试10次后最终失败!");
@@ -86,7 +86,7 @@ public class CounterLock extends AbstractCounterLock implements DisposableBean {
      */
     @Nullable
     public AtomicValue<Long> decrement(String path) {
-        return runWith(path, distributedAtomicLong -> {
+        return executeWith(path, distributedAtomicLong -> {
             AtomicValue<Long> result = distributedAtomicLong.decrement();
             if (!result.succeeded()) {
                 throw new LockException("[" + path + "] 计数器减少1计数操作,重试10次后最终失败!");
@@ -102,7 +102,7 @@ public class CounterLock extends AbstractCounterLock implements DisposableBean {
      */
     @Nullable
     public AtomicValue<Long> subtract(String path, Long delta) {
-        return runWith(path, distributedAtomicLong -> {
+        return executeWith(path, distributedAtomicLong -> {
             AtomicValue<Long> result = distributedAtomicLong.subtract(delta);
             if (!result.succeeded()) {
                 throw new LockException("[" + path + "] 计数器减少" + delta + "计数操作,重试10次后最终失败!");

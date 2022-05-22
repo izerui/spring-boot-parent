@@ -46,7 +46,7 @@ public abstract class AbstractCounterLock {
         return distributedAtomicLong;
     }
 
-    protected <T> T runWith(String path, ThrowsFunction<DistributedAtomicLong, T> function) {
+    protected <T> T executeWith(String path, ThrowsFunction<DistributedAtomicLong, T> function) {
         try {
             if (path == null || "".equals(path)) {
                 return null;
@@ -61,7 +61,7 @@ public abstract class AbstractCounterLock {
         }
     }
 
-    public void runWith(String path, ThrowsConsumer<DistributedAtomicLong> consumer) {
+    public void executeWith(String path, ThrowsConsumer<DistributedAtomicLong> consumer) {
         try {
             DistributedAtomicLong distributedAtomicLong = createDistributedAtomicLong(path);
             consumer.accept(distributedAtomicLong);
@@ -83,7 +83,7 @@ public abstract class AbstractCounterLock {
      */
     public void runWithUntil(String path, long waitseconds, Predicate<Long> predicate, ThrowsConsumer<PredicateStatus> consumer) {
         final long beginTimeMillis = System.currentTimeMillis();
-        runWith(path, distributedAtomicLong -> {
+        executeWith(path, distributedAtomicLong -> {
             long expirationTimeMillis = beginTimeMillis + waitseconds * 1000;
             while (true) {
                 AtomicValue<Long> result = distributedAtomicLong.get();
