@@ -36,7 +36,7 @@ public class CounterLock extends AbstractCounterLock implements DisposableBean {
      */
     public void delete(String path) {
         try {
-            client.delete().forPath("/counter/" + path);
+            client.delete().forPath(COUNTER_PREFIX_PATH + path);
         } catch (Exception e) {
             throw new LockException(e.getMessage(), e);
         }
@@ -111,7 +111,7 @@ public class CounterLock extends AbstractCounterLock implements DisposableBean {
      * @param value            大于指定值
      * @param consumer         执行逻辑(true: 满足条件触发  false: 超时触发)
      */
-    public void runWithWaitUntilGreaterThan(String path, long waitMilliseconds, long value, ThrowsConsumer<Boolean> consumer) {
+    public void runWithWaitGreaterThan(String path, long waitMilliseconds, long value, ThrowsConsumer<Boolean> consumer) {
         runWithWaitUntil(path, waitMilliseconds, aLong -> aLong > value, consumer);
     }
 
@@ -123,7 +123,7 @@ public class CounterLock extends AbstractCounterLock implements DisposableBean {
      * @param value            小于指定值
      * @param consumer         执行逻辑(true: 满足条件触发  false: 超时触发)
      */
-    public void runWithWaitUntilLessThan(String path, long waitMilliseconds, long value, ThrowsConsumer<Boolean> consumer) {
+    public void runWithWaitLessThan(String path, long waitMilliseconds, long value, ThrowsConsumer<Boolean> consumer) {
         runWithWaitUntil(path, waitMilliseconds, aLong -> aLong < value, consumer);
     }
 
@@ -135,7 +135,7 @@ public class CounterLock extends AbstractCounterLock implements DisposableBean {
      * @param value            大于指定值
      * @param consumer         执行逻辑(true: 满足条件触发  false: 超时触发)
      */
-    public void runWithWaitUntilGreaterOrEqualThan(String path, long waitMilliseconds, long value, ThrowsConsumer<Boolean> consumer) {
+    public void runWithWaitGreaterOrEqualThan(String path, long waitMilliseconds, long value, ThrowsConsumer<Boolean> consumer) {
         runWithWaitUntil(path, waitMilliseconds, aLong -> aLong >= value, consumer);
     }
 
@@ -147,7 +147,7 @@ public class CounterLock extends AbstractCounterLock implements DisposableBean {
      * @param value            小于指定值
      * @param consumer         执行逻辑(true: 满足条件触发  false: 超时触发)
      */
-    public void runWithWaitUntilLessOrEqualThan(String path, long waitMilliseconds, long value, ThrowsConsumer<Boolean> consumer) {
+    public void runWithWaitLessOrEqualThan(String path, long waitMilliseconds, long value, ThrowsConsumer<Boolean> consumer) {
         runWithWaitUntil(path, waitMilliseconds, aLong -> aLong <= value, consumer);
     }
 

@@ -15,6 +15,11 @@ import java.util.function.Predicate;
  * @date 2022/5/21
  */
 public abstract class AbstractCounterLock {
+
+    /**
+     * 计数器前缀
+     */
+    protected final static String COUNTER_PREFIX_PATH = "/counter/";
     /**
      * 重试间隔
      */
@@ -33,9 +38,9 @@ public abstract class AbstractCounterLock {
     protected DistributedAtomicLong createDistributedAtomicLong(String path) {
         DistributedAtomicLong distributedAtomicLong = new DistributedAtomicLong(
                 client,
-                "/counter/" + path,
+                COUNTER_PREFIX_PATH + path,
                 new ExponentialBackoffRetry(baseSleepTimeMs, maxRetries),
-                PromotedToLock.builder().lockPath("/counter/lock/" + path).build()
+                PromotedToLock.builder().lockPath(COUNTER_PREFIX_PATH + "lock/" + path).build()
         );
         return distributedAtomicLong;
     }
@@ -86,7 +91,9 @@ public abstract class AbstractCounterLock {
                 if (!result.succeeded()) {
                     throw new LockException("[" + path + "] 计数器获取结果失败!");
                 }
-                if (predicate.test(result.postValue().longValue())) {
+                // 当前计数器记录的值
+                long value = result.postValue().longValue();
+                if (predicate.test(value)) {
                     consumer.accept(true);
                     break;
                 }

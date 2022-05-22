@@ -45,7 +45,7 @@ public class CounterLockTest {
         CountDownLatch countDownLatch = new CountDownLatch(1);
         new Thread(() -> {
             while (!finish.get()) {
-                counterLock.runWithWaitUntilGreaterThan(path, 10000, 1000, (predicateStatus) -> {
+                counterLock.runWithWaitGreaterThan(path, 10000, 1000, (predicateStatus) -> {
                     if (predicateStatus) {
                         System.out.println("=======================够了1000");
                         System.out.println("=======================够了1000");
