@@ -48,6 +48,9 @@ public abstract class AbstractCounterLock {
 
     protected <T> T runWith(String path, ThrowsFunction<DistributedAtomicLong, T> function) {
         try {
+            if (path == null || "".equals(path)) {
+                return null;
+            }
             DistributedAtomicLong distributedAtomicLong = createDistributedAtomicLong(path);
             return function.apply(distributedAtomicLong);
         } catch (Exception e) {

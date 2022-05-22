@@ -6,6 +6,7 @@ import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.atomic.AtomicValue;
 import org.springframework.beans.factory.DisposableBean;
 
+import javax.annotation.Nullable;
 import java.util.function.Predicate;
 
 /**
@@ -51,6 +52,7 @@ public class CounterLock extends AbstractCounterLock implements DisposableBean {
      *
      * @param path 业务path
      */
+    @Nullable
     public AtomicValue<Long> increment(String path) {
         return runWith(path, distributedAtomicLong -> {
             AtomicValue<Long> result = distributedAtomicLong.increment();
@@ -66,6 +68,7 @@ public class CounterLock extends AbstractCounterLock implements DisposableBean {
      *
      * @param path 业务path
      */
+    @Nullable
     public AtomicValue<Long> add(String path, Long delta) {
         return runWith(path, distributedAtomicLong -> {
             AtomicValue<Long> result = distributedAtomicLong.add(delta);
@@ -81,6 +84,7 @@ public class CounterLock extends AbstractCounterLock implements DisposableBean {
      *
      * @param path 业务path
      */
+    @Nullable
     public AtomicValue<Long> decrement(String path) {
         return runWith(path, distributedAtomicLong -> {
             AtomicValue<Long> result = distributedAtomicLong.decrement();
@@ -96,6 +100,7 @@ public class CounterLock extends AbstractCounterLock implements DisposableBean {
      *
      * @param path 业务path
      */
+    @Nullable
     public AtomicValue<Long> subtract(String path, Long delta) {
         return runWith(path, distributedAtomicLong -> {
             AtomicValue<Long> result = distributedAtomicLong.subtract(delta);
