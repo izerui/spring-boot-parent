@@ -43,7 +43,8 @@ public class CounterLockTest {
             thread.start();
         }
         CountDownLatch countDownLatch = new CountDownLatch(1);
-        counterLock.runWithAsyncUntil(path, 10000, aLong -> aLong > 1000, (predicateStatus) -> {
+        // 等待10秒
+        counterLock.runWithAsyncUntil(path, 10, aLong -> aLong > 1000, (predicateStatus) -> {
             if (predicateStatus) {
                 System.out.println("=======================够了1000");
                 System.out.println("=======================够了1000");

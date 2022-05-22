@@ -109,13 +109,13 @@ public class CounterLock extends AbstractCounterLock implements DisposableBean {
     /**
      * 开启一个异步线程等待计数器直到满足条件触发true，否则等待达到超时时长触发false
      *
-     * @param path             bk
-     * @param waitMilliseconds 等待时长(毫秒)
-     * @param predicate        条件
-     * @param consumer         执行逻辑(true: 满足条件触发  false: 超时触发)
+     * @param path        bk
+     * @param waitseconds 等待时长(秒)
+     * @param predicate   条件
+     * @param consumer    执行逻辑(true: 满足条件触发  false: 超时触发)
      */
-    public void runWithAsyncUntil(String path, long waitMilliseconds, Predicate<Long> predicate, ThrowsConsumer<Boolean> consumer) {
-        new Thread(() -> runWithUntil(path, waitMilliseconds, predicate, consumer)).start();
+    public void runWithAsyncUntil(String path, long waitseconds, Predicate<Long> predicate, ThrowsConsumer<Boolean> consumer) {
+        new Thread(() -> runWithUntil(path, waitseconds, predicate, consumer)).start();
     }
 
 
