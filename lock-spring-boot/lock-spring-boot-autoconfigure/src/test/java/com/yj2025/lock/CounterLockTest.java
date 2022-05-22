@@ -43,23 +43,19 @@ public class CounterLockTest {
             thread.start();
         }
         CountDownLatch countDownLatch = new CountDownLatch(1);
-        new Thread(() -> {
-            while (!finish.get()) {
-                counterLock.runWithWaitGreaterThan(path, 10000, 1000, (predicateStatus) -> {
-                    if (predicateStatus) {
-                        System.out.println("=======================够了1000");
-                        System.out.println("=======================够了1000");
-                        System.out.println("=======================够了1000");
-                    } else {
-                        System.out.println("=======================等了这么久，还是不到1000，算了退出");
-                        System.out.println("=======================等了这么久，还是不到1000，算了退出");
-                        System.out.println("=======================等了这么久，还是不到1000，算了退出");
-                    }
-                    countDownLatch.countDown();
-                    finish.set(true);
-                });
+        counterLock.runWithAsyncUntilGreaterThan(path, 10000, 1000, (predicateStatus) -> {
+            if (predicateStatus) {
+                System.out.println("=======================够了1000");
+                System.out.println("=======================够了1000");
+                System.out.println("=======================够了1000");
+            } else {
+                System.out.println("=======================等了这么久，还是不到1000，算了退出");
+                System.out.println("=======================等了这么久，还是不到1000，算了退出");
+                System.out.println("=======================等了这么久，还是不到1000，算了退出");
             }
-        }).start();
+            countDownLatch.countDown();
+            finish.set(true);
+        });
         countDownLatch.await();
 
     }

@@ -111,8 +111,8 @@ public class CounterLock extends AbstractCounterLock implements DisposableBean {
      * @param value            大于指定值
      * @param consumer         执行逻辑(true: 满足条件触发  false: 超时触发)
      */
-    public void runWithWaitGreaterThan(String path, long waitMilliseconds, long value, ThrowsConsumer<Boolean> consumer) {
-        runWithWaitUntil(path, waitMilliseconds, aLong -> aLong > value, consumer);
+    public void runWithAsyncUntilGreaterThan(String path, long waitMilliseconds, long value, ThrowsConsumer<Boolean> consumer) {
+        runWithAsyncUntil(path, waitMilliseconds, aLong -> aLong > value, consumer);
     }
 
     /**
@@ -123,8 +123,8 @@ public class CounterLock extends AbstractCounterLock implements DisposableBean {
      * @param value            小于指定值
      * @param consumer         执行逻辑(true: 满足条件触发  false: 超时触发)
      */
-    public void runWithWaitLessThan(String path, long waitMilliseconds, long value, ThrowsConsumer<Boolean> consumer) {
-        runWithWaitUntil(path, waitMilliseconds, aLong -> aLong < value, consumer);
+    public void runWithAsyncUntilLessThan(String path, long waitMilliseconds, long value, ThrowsConsumer<Boolean> consumer) {
+        runWithAsyncUntil(path, waitMilliseconds, aLong -> aLong < value, consumer);
     }
 
     /**
@@ -135,8 +135,8 @@ public class CounterLock extends AbstractCounterLock implements DisposableBean {
      * @param value            大于指定值
      * @param consumer         执行逻辑(true: 满足条件触发  false: 超时触发)
      */
-    public void runWithWaitGreaterOrEqualThan(String path, long waitMilliseconds, long value, ThrowsConsumer<Boolean> consumer) {
-        runWithWaitUntil(path, waitMilliseconds, aLong -> aLong >= value, consumer);
+    public void runWithAsyncUntilGreaterOrEqualThan(String path, long waitMilliseconds, long value, ThrowsConsumer<Boolean> consumer) {
+        runWithAsyncUntil(path, waitMilliseconds, aLong -> aLong >= value, consumer);
     }
 
     /**
@@ -147,8 +147,8 @@ public class CounterLock extends AbstractCounterLock implements DisposableBean {
      * @param value            小于指定值
      * @param consumer         执行逻辑(true: 满足条件触发  false: 超时触发)
      */
-    public void runWithWaitLessOrEqualThan(String path, long waitMilliseconds, long value, ThrowsConsumer<Boolean> consumer) {
-        runWithWaitUntil(path, waitMilliseconds, aLong -> aLong <= value, consumer);
+    public void runWithAsyncUntilLessOrEqualThan(String path, long waitMilliseconds, long value, ThrowsConsumer<Boolean> consumer) {
+        runWithAsyncUntil(path, waitMilliseconds, aLong -> aLong <= value, consumer);
     }
 
     @Override

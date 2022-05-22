@@ -70,15 +70,15 @@ public abstract class AbstractCounterLock {
     }
 
     /**
-     * 等待计数器直到满足条件触发true，否则等待达到超时时长触发false
+     * 开启一个异步线程来等待计数器直到满足条件触发true，否则等待达到超时时长触发false
      *
      * @param path             bk
      * @param waitMilliseconds 等待时长(毫秒)
      * @param predicate        条件
      * @param consumer         执行逻辑(true: 满足条件触发  false: 超时触发)
      */
-    public void runWithWaitUntil(String path, long waitMilliseconds, Predicate<Long> predicate, ThrowsConsumer<Boolean> consumer) {
-        runWith(path, distributedAtomicLong -> {
+    public void runWithAsyncUntil(String path, long waitMilliseconds, Predicate<Long> predicate, ThrowsConsumer<Boolean> consumer) {
+        Runnable runnable = () -> runWith(path, distributedAtomicLong -> {
             long beginTimeMillis = System.currentTimeMillis();
             long expirationTimeMillis = beginTimeMillis + waitMilliseconds;
             while (true) {
@@ -100,6 +100,7 @@ public abstract class AbstractCounterLock {
                 Thread.sleep(baseSleepTimeMs / 2);
             }
         });
+        new Thread(runnable).start();
     }
 
 }
