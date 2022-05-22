@@ -24,24 +24,20 @@ public class ThreadPoolTests {
             // 线程工厂
             Executors.defaultThreadFactory(),
             // 都满了的情况下打印警告，并直接丢弃
-            (r, executor) -> {
-                System.out.println("audit 操作审计被丢弃,线程池处理不过来! Task " + r.toString() +
-                        " rejected from " +
-                        executor.toString());
-            });
+            new ThreadPoolExecutor.DiscardPolicy());
 
     public static void main(String[] args) {
         long l = System.currentTimeMillis();
         AtomicInteger atomicLong = new AtomicInteger(1);
         while ((l + 10000) > System.currentTimeMillis()) { // 10秒
-            final long andIncrement = atomicLong.getAndIncrement();
             POOL_EXECUTOR.execute(() -> {
                 try {
                     Thread.sleep(10);
+                    long andIncrement = atomicLong.getAndIncrement();
+                    System.out.println(Thread.currentThread().getName() + " -- " + andIncrement);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                System.out.println(Thread.currentThread().getName() + " -- " + andIncrement);
             });
         }
         POOL_EXECUTOR.shutdown();
