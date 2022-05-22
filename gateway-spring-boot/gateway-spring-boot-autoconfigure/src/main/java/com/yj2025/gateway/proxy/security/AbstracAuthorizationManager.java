@@ -35,7 +35,7 @@ public abstract class AbstracAuthorizationManager implements ReactiveAuthorizati
      * 初始化全局权限对应关系,后续考虑动态读取redis中的值
      */
     public void initGlobAuthorizations() {
-        this.pathMatcherAuthoritiesMap = pathMatcherAuthoritiesLoader.getPathMatcherAuthoritiesMap();
+        this.pathMatcherAuthoritiesMap = pathMatcherAuthoritiesLoader.getInitializePathMatcherAuthoritiesMap();
         if (this.pathMatcherAuthoritiesMap == null) {
             this.pathMatcherAuthoritiesMap = new HashMap<>();
         }

@@ -11,9 +11,9 @@ import java.util.Set;
 @Component
 public class DefaultPathMatcherAuthoritiesLoader implements PathMatcherAuthoritiesLoader {
     @Override
-    public Map<String, Set<String>> getPathMatcherAuthoritiesMap() {
+    public Map<String, Set<String>> getInitializePathMatcherAuthoritiesMap() {
         Map<String, Set<String>> authorities = new HashMap<>();
-        authorities.put("GET:/test", Sets.newHashSet("postCode001", "postCode003"));
+        authorities.put("GET:/authenrity", Sets.newHashSet("postCode001", "postCode003"));
         return authorities;
     }
 }

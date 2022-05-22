@@ -34,7 +34,6 @@ public class SequenceService {
                 numberStorage.recycleNumber(groupId, period, number);
                 throw ex;
             }
-            return null;
         });
     }
 

@@ -3,7 +3,6 @@ package com.yj2025.oauth2.server.security;
 import com.yj2025.oauth2.server.Oauth2Properties;
 import com.yj2025.oauth2.server.security.jwt.JwtTokenConfiguration;
 import com.yj2025.oauth2.server.security.opaque.OpaqueTokenConfiguration;
-import com.yj2025.oauth2.server.security.provider.RefreshAuthServiceWrapper;
 import com.yj2025.oauth2.server.utils.ExceptionUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +13,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.builders.InMemoryClientDetailsServiceBuilder;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
@@ -24,10 +21,6 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore;
-import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider;
-import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
-
-import java.util.Arrays;
 
 /**
  * 认证服务器配置
@@ -50,7 +43,7 @@ public class Oauth2Configuration extends AuthorizationServerConfigurerAdapter {
     private UserDetailsServiceAdapter userDetailsServiceAdapter;
     @Autowired
     private ObjectProvider<ExpandEndpointsConfigurer> expandEndpointsConfigurers;
-    @Value("${spring.application.name:''}")
+    @Value("${spring.application.name:'oauth2'}")
     private String applicationName;
 
     @Bean
@@ -60,10 +53,6 @@ public class Oauth2Configuration extends AuthorizationServerConfigurerAdapter {
         return redisTokenStore;
     }
 
-    @Bean
-    public TokenInfoEnhancer tokenInfoEnhancer() {
-        return new TokenInfoEnhancer();
-    }
 
     @Bean
     public ClientDetailsService clientDetailsService() {
@@ -81,32 +70,14 @@ public class Oauth2Configuration extends AuthorizationServerConfigurerAdapter {
         }
     }
 
-    @Bean
-    public TokenSerivces tokenSerivces() {
-        TokenSerivces tokenSerivces = new TokenSerivces() {{
-            this.setTokenStore(redisTokenStore());
-            this.setSupportRefreshToken(true);
-            this.setReuseRefreshToken(false);
-            this.setClientDetailsService(clientDetailsService());
-            this.setTokenEnhancer(tokenInfoEnhancer());
-            PreAuthenticatedAuthenticationProvider provider = new PreAuthenticatedAuthenticationProvider();
-            provider.setPreAuthenticatedUserDetailsService(new RefreshAuthServiceWrapper<PreAuthenticatedAuthenticationToken>(
-                    userDetailsServiceAdapter));
-            this.setAuthenticationManager(new ProviderManager(Arrays.<AuthenticationProvider>asList(provider)));
-        }};
-        return tokenSerivces;
-    }
-
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
+        endpoints.authenticationManager(authenticationManager)
+                .tokenStore(redisTokenStore())
+                .userDetailsService(userDetailsServiceAdapter);
         expandEndpointsConfigurers.ifAvailable(expandEndpointsConfigurer -> {
             ExceptionUtils.wrapExceptions(() -> expandEndpointsConfigurer.configure(endpoints));
         });
-        endpoints.authenticationManager(authenticationManager)
-                .tokenStore(redisTokenStore())
-                .userDetailsService(userDetailsServiceAdapter)
-                .reuseRefreshTokens(false) // 无用，标记下
-                .tokenServices(tokenSerivces()); // 不重复使用refreshToken， 每次刷新accessToken的时候，同时返回新的刷新token
     }
 
     @Override

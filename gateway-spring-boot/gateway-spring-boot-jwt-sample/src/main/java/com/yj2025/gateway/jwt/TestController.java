@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class TestController {
 
-    @GetMapping({"/ignore", "/authenrity"})
+    @GetMapping({"/ignore", "/authenrity", "/test"})
     public String test(@RequestHeader(value = "accountName", required = false) String accountName) {
         System.out.println(accountName);
         return "success" + accountName;

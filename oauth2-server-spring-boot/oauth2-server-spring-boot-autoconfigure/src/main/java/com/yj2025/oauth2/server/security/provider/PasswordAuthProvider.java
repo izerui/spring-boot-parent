@@ -20,18 +20,18 @@ import java.util.Optional;
 public class PasswordAuthProvider extends AbstractAuthenticationProvider implements UserSelector {
 
     private UserDetailsServiceAdapter userDetailsServiceAdapter;
-    private PasswordEncoderMatchor passwordEncoderMatchor;
+    private ObjectProvider<PasswordEncoderMatchor> passwordEncoderMatchorObjectProvider;
 
-    public PasswordAuthProvider(UserDetailsServiceAdapter userDetailsServiceAdapter, ObjectProvider<PasswordEncoderMatchor> passwordCheckMatchorProvider) {
+    public PasswordAuthProvider(UserDetailsServiceAdapter userDetailsServiceAdapter, ObjectProvider<PasswordEncoderMatchor> passwordEncoderMatchorObjectProvider) {
         this.userDetailsServiceAdapter = userDetailsServiceAdapter;
-        this.passwordEncoderMatchor = passwordCheckMatchorProvider.getObject();
+        this.passwordEncoderMatchorObjectProvider = passwordEncoderMatchorObjectProvider;
     }
 
     @Override
     protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
         User user = (User) userDetails;
         String inputPassword = authentication.getCredentials().toString();
-        if (!passwordEncoderMatchor.matches(inputPassword, user.getPassword(), user.getAdditionalSalt())) {
+        if (!passwordEncoderMatchorObjectProvider.getIfAvailable().matches(inputPassword, user.getPassword(), user.getAdditionalSalt())) {
             throwCredentialsExpiredExceptionBlock("用户名或密码错误!");
         }
         if (!user.isEnabled()) {

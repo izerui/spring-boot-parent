@@ -6,12 +6,14 @@ public interface UserSelector {
 
     /**
      * 加载用户的时候，可选的指定选择项，比如指定usercode、entcode
+     *
      * @return
      */
     Optional<String> getSelector();
 
     /**
      * 选择器类型
+     *
      * @return
      */
     SelectorType getSelectorType();

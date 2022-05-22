@@ -6,16 +6,12 @@ import com.yj2025.gateway.proxy.security.rest.OpaqueRestAuthorizationManager;
 import com.yj2025.oauth2.security.support.MappingUrls;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authorization.ReactiveAuthorizationManager;
 import org.springframework.security.web.server.authorization.AuthorizationContext;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 @Data
-@Configuration
 @ConfigurationProperties(prefix = "gateway")
 public class GatewayProxyProperties {
 
