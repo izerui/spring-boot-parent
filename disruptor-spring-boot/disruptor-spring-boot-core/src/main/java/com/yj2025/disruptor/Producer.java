@@ -36,7 +36,8 @@ public class Producer<T> {
                 producerType,
                 waitStrategy);
         // 设置EventHandler
-        EventHandlerGroup<T> tEventHandlerGroup = disruptor.handleEventsWithWorkerPool(consumers);
+        EventHandlerGroup<T> tEventHandlerGroup = disruptor.handleEventsWithWorkerPool(consumers)
+                .then(new ClearEventHandler<>());
         disruptor.start();
     }
 

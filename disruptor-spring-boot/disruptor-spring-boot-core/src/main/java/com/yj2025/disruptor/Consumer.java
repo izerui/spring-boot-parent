@@ -11,15 +11,18 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public abstract class Consumer<T> implements WorkHandler<T>, Cloneable {
 
-    protected abstract void handlerEvent(T event) throws Exception ;
+    protected abstract void handlerEvent(T event) throws Exception;
 
     public final void onEvent(T event) throws Exception {
+        beforeEvent(event);
         handlerEvent(event);
-        clearEvent(event);
+        postEvent(event);
     }
 
-    protected void clearEvent(T event) {
-        event = null;
+    protected void beforeEvent(T event) {
+    }
+
+    protected void postEvent(T event) {
     }
 
     /**
