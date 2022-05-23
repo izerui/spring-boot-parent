@@ -3,6 +3,8 @@ package com.yj2025.audit;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.yj2025.disruptor.Consumer;
+import com.yj2025.disruptor.Producer;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -22,10 +24,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import java.net.URLDecoder;
 import java.util.*;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -40,37 +38,31 @@ public class AuditWebMethodAspect implements DisposableBean {
     private String application;
 
     private final static ObjectMapper OBJECT_MAPPER;
-    private final static ThreadPoolExecutor POOL_EXECUTOR;
+    private final Producer<Record> recordProducer;
 
     static {
         OBJECT_MAPPER = new ObjectMapper();
         OBJECT_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         OBJECT_MAPPER.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        // audit 操作日志消息处理线程池
-        POOL_EXECUTOR = new ThreadPoolExecutor(
-                // 核心线程数
-                8,
-                // 最大线程数
-                30,
-                // 大于核心线程数量的空闲线程于30毫秒后销毁
-                0,
-                // 空闲超时的单位毫秒
-                TimeUnit.MILLISECONDS,
-                // 有界的任务队列缓冲区 大小为1000个等待任务 (当核心线程空闲后，放入核心线程，缓冲区满了后，新任务直接以最大线程限制内去执行。如果最大线程也满了，缓冲区也满了，则执行相应的拒绝策略)
-                new ArrayBlockingQueue<Runnable>(1000),
-                // 线程工厂
-                Executors.defaultThreadFactory(),
-                // 都满了的情况下打印警告，并直接丢弃
-                (r, executor) -> {
-                    log.warn("audit 操作审计被丢弃,线程池处理不过来! Task " + r.toString() +
-                            " rejected from " +
-                            executor.toString());
-                });
     }
 
     public AuditWebMethodAspect(ObjectProvider<AuditContext> auditContextProvider, String application) {
         this.auditContextProvider = auditContextProvider;
         this.application = application;
+        Consumer[] consumers = new Consumer<Record>() {
+            @Override
+            public void onEvent(Record event) throws Exception {
+                auditContextProvider.forEach(auditContext -> {
+                    log.info(event.getName());
+                    auditContext.record(event);
+                });
+            }
+        }.cloneSelfToMulti(8);
+        this.recordProducer = Producer.builder()
+                .ringBufferSize(1024)
+                .dataType(Record.class)
+                .consumers(consumers)
+                .build();
     }
 
 
@@ -93,109 +85,108 @@ public class AuditWebMethodAspect implements DisposableBean {
                 return point.proceed();
             }
             Api api = point.getTarget().getClass().getDeclaredAnnotation(Api.class);
-
-            Record record = new Record();
-            record.setGroupType("WEB请求审计日志");
-            if (api != null) {
-                if (api.description() != null && !"".equals(api.description())) {
-                    record.setGroupType(api.description());
-                } else if (api.value() != null && !"".equals(api.value())) {
-                    record.setGroupType(api.value());
-                } else if (api.tags() != null && api.tags().length > 0) {
-                    record.setGroupType(String.join(",", api.tags()));
-                }
-            }
-            record.setApplication(application);
-            record.setBegin(new Date());
-            record.setSignature(point.getSignature().toString());
-
-            record.setIp(getIpAddress(request));
-            record.setUrl(request.getRequestURL().toString());
-
-            Map<String, Object> map = new HashMap();
-            List<String> params = null;
-            if (point.getArgs() != null && point.getArgs().length > 0) {
-                params = Arrays.stream(point.getArgs()).map(o -> {
-                    try {
-                        if (o == null) {
-                            return "null";
-                        }
-                        if (o instanceof MultipartFile
-                                || o instanceof HttpServletRequest
-                                || o instanceof HttpServletResponse) {
-                            return o.toString();
-                        }
-                        return OBJECT_MAPPER.writeValueAsString(o);
-                    } catch (Exception e) {
-                        log.warn(o.getClass() + " to json error!");
-                    }
-                    return o.getClass() + " to json error! value is:" + o.toString();
-                }).collect(Collectors.toList());
-            }
-            map.put("params", params);
-            Map<String, String> headerMap = new HashMap<>();
-            Enumeration<String> headerNames = request.getHeaderNames();
-            while (headerNames.hasMoreElements()) {
-                String headerName = headerNames.nextElement();
-                String headerValue = request.getHeader(headerName);
-                headerMap.put(headerName, headerValue);
-            }
-            map.put("heads", headerMap);
-            map.put("query", request.getQueryString());
-            record.setInfo(map);
-
-            record.setAccountCode(request.getHeader("accountCode"));
-            if (request.getHeader("accountName") != null) {
-                record.setAccountName(URLDecoder.decode(request.getHeader("accountName"), "UTF-8"));
-            }
-            record.setEntCode(request.getHeader("entCode"));
-            if (request.getHeader("entName") != null) {
-                record.setEntName(URLDecoder.decode(request.getHeader("entName"), "UTF-8"));
-            }
-            record.setUserCode(request.getHeader("userCode"));
-            if (request.getHeader("userName") != null) {
-                record.setUserName(URLDecoder.decode(request.getHeader("userName"), "UTF-8"));
-            }
-
-            record.setName(recordAudit.value());
-
-            Object reaultValue = null;
-
+            Date begin = new Date();
+            boolean success = false;
+            String exception = null;
+            String exceptionClassType = null;
+            Object reaultValue;
             try {
                 reaultValue = point.proceed();
                 //执行成功状态
-                record.setSuccess(true);
+                success = true;
             } catch (Throwable e) {
-                //执行成功状态
-                record.setSuccess(false);
                 //错误信息
-                try {
-                    if (e != null) {
-                        record.setException(e.getMessage());
-                        record.setExceptionClassType(e.getClass().getName());
-                    }
-                } catch (Exception ex) {
-                    ;
+                if (e != null && e.getClass() != null) {
+                    exception = e.getMessage();
+                    exceptionClassType = e.getClass().getName();
                 }
                 throw e;
             } finally {
-                //操作结束时间
-                record.setEnd(new Date());
                 try {
-                    auditContextProvider.forEach(auditContext -> {
-//                        auditContext.record(record);
-                        POOL_EXECUTOR.execute(() -> auditContext.record(record));
+                    boolean finalSuccess = success;
+                    String finalException = exception;
+                    String finalExceptionClassType = exceptionClassType;
+                    recordProducer.sendData(record -> {
+                        try {
+                            record.setSuccess(finalSuccess);
+                            record.setBegin(begin);
+                            record.setException(finalException);
+                            record.setExceptionClassType(finalExceptionClassType);
+                            //操作结束时间
+                            record.setEnd(new Date());
+                            record.setGroupType("WEB请求审计日志");
+                            if (api != null) {
+                                if (api.description() != null && !"".equals(api.description())) {
+                                    record.setGroupType(api.description());
+                                } else if (api.value() != null && !"".equals(api.value())) {
+                                    record.setGroupType(api.value());
+                                } else if (api.tags() != null && api.tags().length > 0) {
+                                    record.setGroupType(String.join(",", api.tags()));
+                                }
+                            }
+                            record.setApplication(application);
+                            record.setBegin(new Date());
+                            record.setSignature(point.getSignature().toString());
+
+                            record.setIp(getIpAddress(request));
+                            record.setUrl(request.getRequestURL().toString());
+
+                            Map<String, Object> map = new HashMap();
+                            List<String> params = null;
+                            if (point.getArgs() != null && point.getArgs().length > 0) {
+                                params = Arrays.stream(point.getArgs()).map(o -> {
+                                    try {
+                                        if (o == null) {
+                                            return "null";
+                                        }
+                                        if (o instanceof MultipartFile
+                                                || o instanceof HttpServletRequest
+                                                || o instanceof HttpServletResponse) {
+                                            return o.toString();
+                                        }
+                                        return OBJECT_MAPPER.writeValueAsString(o);
+                                    } catch (Exception e) {
+                                        log.warn(o.getClass() + " to json error!");
+                                    }
+                                    return o.getClass() + " to json error! value is:" + o.toString();
+                                }).collect(Collectors.toList());
+                            }
+                            map.put("params", params);
+                            Map<String, String> headerMap = new HashMap<>();
+                            Enumeration<String> headerNames = request.getHeaderNames();
+                            while (headerNames.hasMoreElements()) {
+                                String headerName = headerNames.nextElement();
+                                String headerValue = request.getHeader(headerName);
+                                headerMap.put(headerName, headerValue);
+                            }
+                            map.put("heads", headerMap);
+                            map.put("query", request.getQueryString());
+                            record.setInfo(map);
+
+                            record.setAccountCode(request.getHeader("accountCode"));
+                            if (request.getHeader("accountName") != null) {
+                                record.setAccountName(URLDecoder.decode(request.getHeader("accountName"), "UTF-8"));
+                            }
+                            record.setEntCode(request.getHeader("entCode"));
+                            if (request.getHeader("entName") != null) {
+                                record.setEntName(URLDecoder.decode(request.getHeader("entName"), "UTF-8"));
+                            }
+                            record.setUserCode(request.getHeader("userCode"));
+                            if (request.getHeader("userName") != null) {
+                                record.setUserName(URLDecoder.decode(request.getHeader("userName"), "UTF-8"));
+                            }
+
+                            record.setName(recordAudit.value());
+                        } catch (Exception e) {
+                            log.warn("audit记录日志出错:" + e.getMessage());
+                        }
                     });
                 } catch (Exception ex) {
-                    log.warn(ex.getMessage());
+                    log.warn("audit记录日志出错:" + ex.getMessage());
                 }
             }
             return reaultValue;
-
         } catch (Exception e) {
-//            if (e != null) {
-//                log.error("audit-error:" + e.getMessage(), e);
-//            }
             throw e;
         }
 
@@ -232,6 +223,6 @@ public class AuditWebMethodAspect implements DisposableBean {
 
     @Override
     public void destroy() throws Exception {
-        POOL_EXECUTOR.shutdown();
+        recordProducer.shutdown();
     }
 }
