@@ -12,9 +12,7 @@
     <artifactId>disruptor-spring-boot</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>disruptor-spring-boot-autoconfiguration</module>
-        <module>disruptor-spring-boot-starter</module>
-        <module>disruptor-spring-boot-sample</module>
+        <module>disruptor-spring-boot-core</module>
     </modules>
 
     <properties>
