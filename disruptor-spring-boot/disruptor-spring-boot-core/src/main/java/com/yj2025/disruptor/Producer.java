@@ -34,7 +34,7 @@ public class Producer<T> {
                 waitStrategy);
         // 设置EventHandler
         EventHandlerGroup<T> tEventHandlerGroup = disruptor.handleEventsWithWorkerPool(consumers)
-                // https://lmax-exchange.github.io/disruptor/user-guide/index.html#_using_the_disruptor
+                // https://lmax-exchange.github.io/disruptor/user-guide/index.html#_batch_rewind
 //                .and(new BatchEventProcessor<T>(null, null, null))
                 .then(new ClearEventHandler<>());
         disruptor.start();
