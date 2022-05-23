@@ -48,9 +48,9 @@ public abstract class Consumer<T> implements WorkHandler<T>, Cloneable {
             SecurityManager s = System.getSecurityManager();
             group = (s != null) ? s.getThreadGroup() :
                     Thread.currentThread().getThreadGroup();
-            namePrefix = "disruptor-consumer-" +
+            namePrefix = "disruptor-" +
                     poolNumber.getAndIncrement() +
-                    "-thread-";
+                    "-consumer-";
         }
 
         @Override
