@@ -7,10 +7,8 @@ import com.lmax.disruptor.YieldingWaitStrategy;
 import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.dsl.ProducerType;
 import lombok.Data;
-import org.springframework.util.Assert;
 
 import java.util.Collection;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
 /**
@@ -56,6 +54,10 @@ public class Producer<T> {
         return new Builder();
     }
 
+    public void shutdown() {
+        disruptor.shutdown();
+    }
+
     @Data
     public static class Builder {
         /**
@@ -64,7 +66,7 @@ public class Producer<T> {
         private int ringBufferSize = 1024 * 1024;
         public Class dataType;
         private ProducerType producerType = ProducerType.MULTI;
-        private ThreadFactory threadFactory = Executors.defaultThreadFactory();
+        private ThreadFactory threadFactory = new Consumer.ConsumerThreadFactory();
         private WaitStrategy waitStrategy = new YieldingWaitStrategy();
         private Consumer[] consumers;
 
@@ -104,7 +106,9 @@ public class Producer<T> {
         }
 
         public Producer build() {
-            Assert.notNull(consumers, "请添加consumers处理器");
+            if (consumers == null) {
+                throw new RuntimeException("请添加consumers处理器");
+            }
             EventFactory eventFactory = () -> {
                 try {
                     return dataType.getDeclaredConstructor().newInstance();

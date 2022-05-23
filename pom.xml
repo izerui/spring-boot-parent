@@ -353,6 +353,12 @@
                 <artifactId>gateway-spring-boot-starter</artifactId>
                 <version>${base-starter.version}</version>
             </dependency>
+            <!-- disruptor -->
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>disruptor-spring-boot-core</artifactId>
+                <version>${base-starter.version}</version>
+            </dependency>
 
         </dependencies>
     </dependencyManagement>
