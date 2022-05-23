@@ -17,7 +17,7 @@ public class ProducerTest {
     public void test01() {
         Consumer[] consumers = new Consumer<MyTask>() {
             @Override
-            public void onEvent(MyTask event) throws Exception {
+            protected void handlerEvent(MyTask event) throws Exception {
                 log.info("{}", event.getValue());
                 Thread.sleep(10);
             }

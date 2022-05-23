@@ -11,6 +11,17 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public abstract class Consumer<T> implements WorkHandler<T>, Cloneable {
 
+    protected abstract void handlerEvent(T event) throws Exception ;
+
+    public final void onEvent(T event) throws Exception {
+        handlerEvent(event);
+        clearEvent(event);
+    }
+
+    protected void clearEvent(T event) {
+        event = null;
+    }
+
     /**
      * 复制消费者变成多个
      *

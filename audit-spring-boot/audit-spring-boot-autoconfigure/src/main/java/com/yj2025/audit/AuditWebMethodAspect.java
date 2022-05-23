@@ -51,7 +51,7 @@ public class AuditWebMethodAspect implements DisposableBean {
         this.application = application;
         Consumer[] consumers = new Consumer<Record>() {
             @Override
-            public void onEvent(Record event) throws Exception {
+            protected void handlerEvent(Record event) throws Exception {
                 auditContextProvider.forEach(auditContext -> {
                     log.info(event.getName());
                     auditContext.record(event);
