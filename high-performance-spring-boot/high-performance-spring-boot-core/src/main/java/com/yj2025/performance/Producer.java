@@ -1,21 +1,21 @@
-package com.yj2025.disruptor;
+package com.yj2025.performance;
 
 import com.lmax.disruptor.*;
 import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.dsl.EventHandlerGroup;
 import com.lmax.disruptor.dsl.ProducerType;
+import org.springframework.beans.factory.DisposableBean;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.concurrent.ThreadFactory;
 
 /**
- * 线程安全的生产者
+ * 数据生产者
  *
  * @author liuyuhua
  * @date 2022/5/23
  */
-public class Producer<T> {
+public class Producer<T> implements DisposableBean {
 
     private final Disruptor<T> disruptor;
     /**
@@ -42,16 +42,13 @@ public class Producer<T> {
                 builder.producerType,
                 builder.waitStrategy);
         // https://lmax-exchange.github.io/disruptor/user-guide/index.html#_batch_rewind
-        // 设置EventHandler
-        EventHandlerGroup<T> tEventHandlerGroup = disruptor.handleEventsWithWorkerPool(builder.consumers) // 同一事件会被一组消费者其中之一消费
-                .and(new BatchEventProcessor<T>(disruptor.getRingBuffer(), disruptor.getRingBuffer().newBarrier(), new EventHandler<T>() {
-                    @Override
-                    public void onEvent(T event, long sequence, boolean endOfBatch) throws Exception {
-                        if(endOfBatch){
-                            System.out.println("批量: sequence: " + sequence + " endOfBatch:" + endOfBatch);
-                        }
-                    }
-                }));
+        // 设置EventHandler 同一事件会被一组消费者其中之一消费
+        if(builder.consumers != null){
+            disruptor.handleEventsWithWorkerPool(builder.consumers);
+        }
+        if(builder.batchConsumer != null) {
+            disruptor.handleEventsWith(builder.batchConsumer);
+        }
         disruptor.start();
     }
 
@@ -88,6 +85,11 @@ public class Producer<T> {
         return new Builder();
     }
 
+    @Override
+    public void destroy() throws Exception {
+        this.shutdown();
+    }
+
     public static class Builder {
         /**
          * 指定RingBuffer的大小
@@ -98,7 +100,7 @@ public class Producer<T> {
         private ThreadFactory threadFactory = new Consumer.ConsumerThreadFactory();
         private WaitStrategy waitStrategy = new YieldingWaitStrategy();
         private Consumer[] consumers;
-        private int autoCloseOnCompleteSize;
+        private BatchConsumer batchConsumer;
 
         /**
          * 环形缓冲区大小
@@ -178,16 +180,27 @@ public class Producer<T> {
         }
 
         /**
+         * 独占批量消费者
+         *
+         * @param batchConsumer
+         * @return
+         */
+        public <T> Builder requiredConsumers(BatchConsumer<T> batchConsumer) {
+            this.batchConsumer = batchConsumer;
+            return this;
+        }
+
+        /**
          * 开始创建生产者
          *
          * @return
          */
         public Producer build() {
-            if (consumers == null) {
-                throw new DisruptorException("请添加consumers处理器");
-            }
             if (dataType == null) {
                 throw new DisruptorException("dataType数据类型不能为空");
+            }
+            if(consumers == null && batchConsumer == null) {
+                throw new DisruptorException("请至少设置一种消费者处理器");
             }
             return new Producer(
                     this

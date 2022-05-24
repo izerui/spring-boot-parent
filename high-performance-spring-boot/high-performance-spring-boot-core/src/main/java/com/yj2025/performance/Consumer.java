@@ -1,4 +1,4 @@
-package com.yj2025.disruptor;
+package com.yj2025.performance;
 
 import com.lmax.disruptor.WorkHandler;
 
@@ -6,6 +6,8 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
+ * 多线程消费者，每个消费者独占一个线程
+ *
  * @author liuyuhua
  * @date 2022/5/23
  */
@@ -15,18 +17,11 @@ public abstract class Consumer<T> implements WorkHandler<T>, Cloneable {
 
     @Override
     public final void onEvent(T event) throws Exception {
-        beforeEvent(event);
         handlerEvent(event);
-        postEvent(event);
         // 释放对象
         event = null;
     }
 
-    protected void beforeEvent(T event) {
-    }
-
-    protected void postEvent(T event) {
-    }
 
     /**
      * 复制消费者变成多个

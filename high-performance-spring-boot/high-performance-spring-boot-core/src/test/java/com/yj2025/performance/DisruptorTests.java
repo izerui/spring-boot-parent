@@ -1,4 +1,4 @@
-package com.yj2025.disruptor;
+package com.yj2025.performance;
 /**
  * @description disruptor代码样例。每10ms向disruptor中插入一个元素，消费者读取数据，并打印到终端
  */
