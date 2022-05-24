@@ -94,7 +94,7 @@ public class Producer<T> implements DisposableBean {
         /**
          * 指定RingBuffer的大小
          */
-        private int ringBufferSize = 1024 * 1024;
+        private int ringBufferSize = 1024 * 8;
         private Class dataType;
         private ProducerType producerType = ProducerType.MULTI;
         private ThreadFactory threadFactory = new Consumer.ConsumerThreadFactory();
