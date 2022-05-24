@@ -11,7 +11,7 @@ import java.util.concurrent.ThreadFactory;
 
 /**
  * 数据生产者
- *
+ * https://lmax-exchange.github.io/disruptor/user-guide/index.html#_batch_rewind
  * @author liuyuhua
  * @date 2022/5/23
  */
@@ -31,7 +31,6 @@ public class Producer<T> implements DisposableBean {
                 throw new RuntimeException(e.getMessage(), e);
             }
         };
-        // https://www.jianshu.com/p/f4021e8141ad
         // 创建disruptor，采用单生产者模式
         disruptor = new Disruptor(
                 // RingBuffer生产工厂,初始化RingBuffer的时候使用
@@ -41,11 +40,12 @@ public class Producer<T> implements DisposableBean {
                 builder.threadFactory,
                 builder.producerType,
                 builder.waitStrategy);
-        // https://lmax-exchange.github.io/disruptor/user-guide/index.html#_batch_rewind
-        // 设置EventHandler 同一事件会被一组消费者其中之一消费
+        // 设置WorkHandler 同一事件会被一组消费者其中之一消费
         if (builder.consumers != null) {
             disruptor.handleEventsWithWorkerPool(builder.consumers);
         }
+        // 设置EventHandler 被一个批量处理消费者消费
+        // https://www.jianshu.com/p/f4021e8141ad
         if (builder.batchConsumer != null) {
             disruptor.handleEventsWith(builder.batchConsumer);
         }
