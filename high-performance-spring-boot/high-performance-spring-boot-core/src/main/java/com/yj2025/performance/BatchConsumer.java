@@ -28,7 +28,7 @@ public abstract class BatchConsumer<T> implements EventHandler<T> {
     /**
      * 积累的批次数据
      */
-    private final List<T> batchDatas = new ArrayList<>();
+    private final List<T> correlationData = new ArrayList<>();
 
     public BatchConsumer(long batchLimitSize) {
         if (batchLimitSize <= 0) {
@@ -43,11 +43,11 @@ public abstract class BatchConsumer<T> implements EventHandler<T> {
     /**
      * 批量处理当前积累的批次数据
      *
-     * @param accumulationDatas 积累的数据
+     * @param correlationData 积累的数据
      * @param sequence          最后处理的序列
      * @throws Exception
      */
-    protected abstract void handlerEvent(List<T> accumulationDatas, long sequence) throws Exception;
+    protected abstract void handlerEvent(List<T> correlationData, long sequence) throws Exception;
 
     @Override
     public final void onEvent(T event, final long sequence, boolean endOfBatch) throws Exception {
@@ -70,17 +70,17 @@ public abstract class BatchConsumer<T> implements EventHandler<T> {
      */
     private void handlerBatchEvents(T event, long sequence, boolean endOfBatch) throws Exception {
         // 添加到批次
-        batchDatas.add(event);
+        correlationData.add(event);
         if ((sequence + 1) % batchLimitSize == 0) {
-            handlerEvent(batchDatas, sequence);
+            handlerEvent(correlationData, sequence);
             // 重用数组
-            batchDatas.clear();
+            correlationData.clear();
         }
         if (endOfBatch) {
             if ((sequence + 1) % RING_BATCH_SIZE != 0) {
-                handlerEvent(batchDatas, sequence);
+                handlerEvent(correlationData, sequence);
                 // 重用数组
-                batchDatas.clear();
+                correlationData.clear();
             }
         }
     }

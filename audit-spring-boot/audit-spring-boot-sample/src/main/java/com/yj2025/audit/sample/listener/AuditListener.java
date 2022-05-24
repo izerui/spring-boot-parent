@@ -20,7 +20,7 @@ public class AuditListener {
     }
 
     @RabbitListener(queues = "test.audit")
-    public void audit(String message) {
-        log.info("{} , tx: {}", atomicInteger.getAndIncrement(), TransactionSynchronizationManager.isActualTransactionActive());
+    public void audit(String messages) {
+        log.info("messages: {} , tx: {}", atomicInteger.getAndIncrement(), TransactionSynchronizationManager.isActualTransactionActive());
     }
 }
