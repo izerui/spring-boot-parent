@@ -1,9 +1,6 @@
 package com.yj2025.performance;
 
-import com.google.common.util.concurrent.Futures;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.RandomUtils;
-import org.assertj.core.api.CompletableFutureAssert;
 import org.junit.Test;
 
 import java.util.List;
@@ -18,7 +15,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 public class ProducerTest {
 
-
     @Test
     public void test01() throws InterruptedException, ExecutionException {
         Consumer[] consumers = new Consumer<MyTask>() {
@@ -28,6 +24,16 @@ public class ProducerTest {
                 Thread.sleep(2);
             }
         }.cloneSelfToMulti(5);
+        Producer<MyTask> producer = Producer.builder()
+                .requiredRingBufferSize(1024 * 8)
+                .requiredDataType(MyTask.class)
+                .requiredConsumers(consumers)
+                .build();
+        execute(producer);
+    }
+
+    @Test
+    public void test02() throws InterruptedException, ExecutionException {
 
         BatchConsumer<MyTask> batchConsumer = new BatchConsumer<MyTask>(100) {
 
@@ -38,13 +44,15 @@ public class ProducerTest {
                 Thread.sleep(10);
             }
         };
-
         Producer<MyTask> producer = Producer.builder()
                 .requiredRingBufferSize(1024 * 8)
                 .requiredDataType(MyTask.class)
-                .requiredConsumers(consumers)
-//                .requiredConsumers(batchConsumer)
+                .requiredConsumers(batchConsumer)
                 .build();
+        execute(producer);
+    }
+
+    private void execute(Producer<MyTask> producer) throws ExecutionException, InterruptedException {
         // 3个生产者，每个生产3秒过程
         AtomicInteger atomicInteger = new AtomicInteger(0);
         long l = System.currentTimeMillis();
