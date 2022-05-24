@@ -13,10 +13,13 @@ public abstract class Consumer<T> implements WorkHandler<T>, Cloneable {
 
     protected abstract void handlerEvent(T event) throws Exception;
 
+    @Override
     public final void onEvent(T event) throws Exception {
         beforeEvent(event);
         handlerEvent(event);
         postEvent(event);
+        // 释放对象
+        event = null;
     }
 
     protected void beforeEvent(T event) {
@@ -28,18 +31,18 @@ public abstract class Consumer<T> implements WorkHandler<T>, Cloneable {
     /**
      * 复制消费者变成多个
      *
-     * @param poolSize
+     * @param multiNum
      * @return
      */
-    public Consumer[] cloneSelfToMulti(int poolSize) {
+    public Consumer[] cloneSelfToMulti(int multiNum) {
         try {
-            Consumer[] consumers = new Consumer[poolSize];
-            for (int i = 0; i < poolSize; i++) {
+            Consumer[] consumers = new Consumer[multiNum];
+            for (int i = 0; i < multiNum; i++) {
                 consumers[i] = this.clone();
             }
             return consumers;
         } catch (CloneNotSupportedException e) {
-            throw new RuntimeException(e.getMessage(), e);
+            throw new DisruptorException(e.getMessage(), e);
         }
     }
 

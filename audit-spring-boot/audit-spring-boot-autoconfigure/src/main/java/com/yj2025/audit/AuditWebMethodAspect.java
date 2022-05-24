@@ -59,9 +59,9 @@ public class AuditWebMethodAspect implements DisposableBean {
             }
         }.cloneSelfToMulti(8);
         this.recordProducer = Producer.builder()
-                .ringBufferSize(1024)
-                .dataType(Record.class)
-                .consumers(consumers)
+                .requiredRingBufferSize(1024)
+                .requiredDataType(Record.class)
+                .requiredConsumers(consumers)
                 .build();
     }
 
