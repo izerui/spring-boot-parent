@@ -13,7 +13,6 @@ import java.util.Collections;
 @SpringBootApplication
 public class Application {
 
-
     @Bean
     public Queue queue() {
         Queue queue = new Queue("test.audit", true, false, false, Collections.EMPTY_MAP);

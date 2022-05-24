@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -20,6 +21,6 @@ public class AuditListener {
 
     @RabbitListener(queues = "test.audit")
     public void audit(String message) {
-        log.info("{}", atomicInteger.getAndIncrement());
+        log.info("{} , tx: {}", atomicInteger.getAndIncrement(), TransactionSynchronizationManager.isActualTransactionActive());
     }
 }

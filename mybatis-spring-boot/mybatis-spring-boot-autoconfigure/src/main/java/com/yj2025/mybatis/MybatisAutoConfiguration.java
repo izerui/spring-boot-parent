@@ -18,11 +18,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.util.List;
 
 @Configuration
 @EnableConfigurationProperties(TenantConfig.class)
+@EnableTransactionManagement
 public class MybatisAutoConfiguration {
 
     @Autowired
