@@ -158,6 +158,17 @@ public class Producer<T> implements DisposableBean {
         }
 
         /**
+         * 批量消费者(优先使用)
+         *
+         * @param batchConsumer
+         * @return
+         */
+        public <T> Builder requiredConsumers(BatchConsumer<T> batchConsumer) {
+            this.batchConsumer = batchConsumer;
+            return this;
+        }
+
+        /**
          * 并行工作消费者
          *
          * @param consumers
@@ -176,17 +187,6 @@ public class Producer<T> implements DisposableBean {
          */
         public <T> Builder requiredConsumers(Collection<Consumer<T>> consumers) {
             this.consumers = consumers.toArray(new Consumer[consumers.size()]);
-            return this;
-        }
-
-        /**
-         * 独占批量消费者
-         *
-         * @param batchConsumer
-         * @return
-         */
-        public <T> Builder requiredConsumers(BatchConsumer<T> batchConsumer) {
-            this.batchConsumer = batchConsumer;
             return this;
         }
 

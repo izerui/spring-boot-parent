@@ -3,6 +3,7 @@ package com.yj2025.audit;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.yj2025.performance.BatchConsumer;
 import com.yj2025.performance.Consumer;
 import com.yj2025.performance.Producer;
 import io.swagger.annotations.Api;
@@ -58,6 +59,17 @@ public class AuditWebMethodAspect implements DisposableBean {
                 });
             }
         }.cloneSelfToMulti(8);
+//        BatchConsumer<Record> batchConsumer = new BatchConsumer<Record>(100) {
+//            @Override
+//            protected void handlerEvent(List<Record> batchDatas, long sequence) throws Exception {
+//                for (Record event : batchDatas) {
+//                    auditContextProvider.forEach(auditContext -> {
+//                        log.info(event.getName());
+//                        auditContext.record(event);
+//                    });
+//                }
+//            }
+//        };
         this.recordProducer = Producer.builder()
                 .requiredRingBufferSize(1024 * 8)
                 .requiredDataType(Record.class)

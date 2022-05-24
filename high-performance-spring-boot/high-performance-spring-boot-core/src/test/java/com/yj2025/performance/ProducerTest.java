@@ -24,10 +24,10 @@ public class ProducerTest {
         Consumer[] consumers = new Consumer<MyTask>() {
             @Override
             protected void handlerEvent(MyTask event) throws Exception {
-                log.info("{}", event.getValue());
-                Thread.sleep(10);
+                log.info("{}", event.getValue() + 1);
+                Thread.sleep(2);
             }
-        }.cloneSelfToMulti(6);
+        }.cloneSelfToMulti(5);
 
         BatchConsumer<MyTask> batchConsumer = new BatchConsumer<MyTask>(100) {
 
@@ -35,15 +35,15 @@ public class ProducerTest {
             protected void handlerEvent(List<MyTask> correlationData, long sequence) throws Exception {
 //                len.getAndAdd(accumulationDatas.size());
                 log.info("当前处理 {} 条记录 已处理: {} 条", correlationData.size(), sequence + 1);
-                Thread.sleep(RandomUtils.nextInt(500, 1000));
+                Thread.sleep(10);
             }
         };
 
         Producer<MyTask> producer = Producer.builder()
                 .requiredRingBufferSize(1024 * 8)
                 .requiredDataType(MyTask.class)
-//                .requiredConsumers(consumers)
-                .requiredConsumers(batchConsumer)
+                .requiredConsumers(consumers)
+//                .requiredConsumers(batchConsumer)
                 .build();
         // 3个生产者，每个生产3秒过程
         AtomicInteger atomicInteger = new AtomicInteger(0);
