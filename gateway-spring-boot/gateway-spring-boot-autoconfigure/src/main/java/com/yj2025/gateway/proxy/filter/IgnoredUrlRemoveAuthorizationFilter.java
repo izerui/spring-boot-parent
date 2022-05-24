@@ -14,11 +14,11 @@ import java.net.URI;
 /**
  * 白名单路径移除附带的用户身份请求信息
  */
-public class RemoveAuthorizationFilter implements WebFilter {
+public class IgnoredUrlRemoveAuthorizationFilter implements WebFilter {
 
     private GatewayProxyProperties gatewayProxyProperties;
 
-    public RemoveAuthorizationFilter(GatewayProxyProperties proxyProperties) {
+    public IgnoredUrlRemoveAuthorizationFilter(GatewayProxyProperties proxyProperties) {
         this.gatewayProxyProperties = proxyProperties;
     }
 

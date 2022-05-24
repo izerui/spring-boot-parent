@@ -2,6 +2,7 @@ package com.yj2025.gateway.proxy;
 
 import com.yj2025.gateway.proxy.controller.ProxyQrcodeController;
 import com.yj2025.gateway.proxy.controller.ProxyTokenKeyController;
+import com.yj2025.gateway.proxy.filter.ProxyRemoveAuthorizationGatewayGlobalFilter;
 import com.yj2025.gateway.proxy.filter.RelaxedQueryCharsWebServerCustomize;
 import com.yj2025.gateway.proxy.security.SecurityConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -48,5 +49,10 @@ public class GatewayProxyConfiguration {
     @Bean
     public RelaxedQueryCharsWebServerCustomize relaxedQueryCharsWebServerCustomize() {
         return new RelaxedQueryCharsWebServerCustomize();
+    }
+
+    @Bean
+    public ProxyRemoveAuthorizationGatewayGlobalFilter proxyRemoveAuthorizationGatewayFilterFactory() {
+        return new ProxyRemoveAuthorizationGatewayGlobalFilter();
     }
 }

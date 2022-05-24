@@ -16,6 +16,10 @@ public class SampleUserDetailsService implements UserDetailsRemoteLoader {
     @Override
     public User loadUserByUsername(String username, UserSelector selector) {
         User defaultDemoUser = new User("test", passwordEncoderMatchor.encode("123456", null), "postCode005", "postCode006");
+        defaultDemoUser.setEntCode("entCode001");
+        defaultDemoUser.setEntName("测试账套");
+        defaultDemoUser.setUserCode("userCode001");
+        defaultDemoUser.setUserName("唐三张");
         switch (selector.getSelectorType()) {
             case USER_CODE_SELECTOR:
                 if (selector.getSelector().isPresent()) {
