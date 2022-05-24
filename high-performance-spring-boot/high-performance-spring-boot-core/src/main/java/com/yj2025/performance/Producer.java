@@ -43,10 +43,10 @@ public class Producer<T> implements DisposableBean {
                 builder.waitStrategy);
         // https://lmax-exchange.github.io/disruptor/user-guide/index.html#_batch_rewind
         // 设置EventHandler 同一事件会被一组消费者其中之一消费
-        if(builder.consumers != null){
+        if (builder.consumers != null) {
             disruptor.handleEventsWithWorkerPool(builder.consumers);
         }
-        if(builder.batchConsumer != null) {
+        if (builder.batchConsumer != null) {
             disruptor.handleEventsWith(builder.batchConsumer);
         }
         disruptor.start();
@@ -197,10 +197,12 @@ public class Producer<T> implements DisposableBean {
          */
         public Producer build() {
             if (dataType == null) {
-                throw new DisruptorException("dataType数据类型不能为空");
+                throw new DisruptorException("dataType数据类型不能为空!");
             }
-            if(consumers == null && batchConsumer == null) {
-                throw new DisruptorException("请至少设置一种消费者处理器");
+            if (consumers == null && batchConsumer == null) {
+                throw new DisruptorException("请至少设置一种消费者处理器!");
+            } else if (consumers != null && batchConsumer != null) {
+                throw new DisruptorException("最多只能设置一种消费处理器,要么批量消费,要么分别消费!");
             }
             return new Producer(
                     this

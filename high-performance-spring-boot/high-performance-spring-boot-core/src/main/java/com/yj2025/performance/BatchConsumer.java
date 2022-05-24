@@ -1,38 +1,34 @@
 package com.yj2025.performance;
 
 import com.lmax.disruptor.EventHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * 单线程批量消费者
+ * 参考： https://www.icode9.com/content-4-1313516.html
  *
  * @author liuyuhua
  * @date 2022/5/24
  */
 public abstract class BatchConsumer<T> implements EventHandler<T> {
 
+    private Logger log = LoggerFactory.getLogger(BatchConsumer.class);
+
     /**
      * 每批次最多处理的数量
      */
     private final long batchLimitSize;
 
-    /**
-     * 批处理等待批次增加时间2秒，到期无条件执行批处理
-     */
-    private final static long delayedWaitTimeMillis = 2000;
-    /**
-     * 最后一次批处理时间
-     */
-    private transient long lastHandlerTimeMillis = 0L;
-//    private final transient Thread daemonThread;
+    private final static int RING_BATCH_SIZE = 1024 * 1024;
 
     /**
      * 积累的批次数据
      */
     private final List<T> batchDatas = new ArrayList<>();
-    private transient long batchDatasNum = 0;
 
     public BatchConsumer(long batchLimitSize) {
         if (batchLimitSize <= 0) {
@@ -42,78 +38,51 @@ public abstract class BatchConsumer<T> implements EventHandler<T> {
             throw new DisruptorException("请设置批次消费数量为2的倍数");
         }
         this.batchLimitSize = batchLimitSize;
-//        this.daemonThread = new Thread(() -> {
-//            try {
-//                while (true) {
-//                    // 最后一次触发批量处理已经是2秒前了
-//                    if (lastHandlerTimeMillis + 2000 <= System.currentTimeMillis()) {
-//                        onEvent(null, 0, true);
-//                    }
-//                    Thread.sleep(delayedWaitTimeMillis);
-//                }
-//            } catch (Exception e) {
-//                throw new RuntimeException(e.getMessage(), e);
-//            }
-//        });
-//        this.daemonThread.setDaemon(true);
-//        this.daemonThread.setName("Daemon-" + Thread.currentThread().getName());
-//        this.daemonThread.start();
     }
 
     /**
      * 批量处理当前积累的批次数据
      *
      * @param accumulationDatas 积累的数据
+     * @param sequence          最后处理的序列
      * @throws Exception
      */
-    protected abstract void handlerEvent(List<T> accumulationDatas) throws Exception;
+    protected abstract void handlerEvent(List<T> accumulationDatas, long sequence) throws Exception;
 
     @Override
     public final void onEvent(T event, final long sequence, boolean endOfBatch) throws Exception {
-        // 批次数量满了或者溢出则触发批处理
-        if (!isBatchEventsOverflow()) {
-            // 添加到批次
-            addBatchEvents(event);
-            if (lastHandlerTimeMillis + 2000 <= System.currentTimeMillis()) {
-                Thread.sleep(500);
-            }
-        } else {
-            handlerBatchEvents();
+        try {
+            handlerBatchEvents(event, sequence, endOfBatch);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
         }
-        lastHandlerTimeMillis = System.currentTimeMillis();
         // 释放对象
         event = null;
     }
 
-    private boolean isBatchEventsOverflow() {
-        return batchDatasNum >= batchLimitSize;
-    }
-
     /**
-     * 添加到批次
+     * 积累待处理，并批量处理
      *
-     * @param event
-     */
-    private void addBatchEvents(T event) {
-        if (event != null) {
-            batchDatas.add(event);
-            batchDatasNum++;
-        }
-    }
-
-    /**
-     * 执行批次处理
-     *
+     * @param event      当前要处理的对象
+     * @param sequence   当前消费到的队列位置
+     * @param endOfBatch 是否为RingBuffer内存片中的最后一块
      * @throws Exception
      */
-    private void handlerBatchEvents() throws Exception {
-        if (batchDatasNum == 0) {
-            return;
+    private void handlerBatchEvents(T event, long sequence, boolean endOfBatch) throws Exception {
+        // 添加到批次
+        batchDatas.add(event);
+        if ((sequence + 1) % batchLimitSize == 0) {
+            handlerEvent(batchDatas, sequence);
+            // 重用数组
+            batchDatas.clear();
         }
-        handlerEvent(batchDatas);
-        // 重用数组
-        batchDatas.clear();
-        batchDatasNum = 0;
+        if (endOfBatch) {
+            if ((sequence + 1) % RING_BATCH_SIZE != 0) {
+                handlerEvent(batchDatas, sequence);
+                // 重用数组
+                batchDatas.clear();
+            }
+        }
     }
 
 
