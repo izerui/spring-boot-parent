@@ -24,7 +24,7 @@
         <module>sequence-number-spring-boot</module>
         <module>oauth2-server-spring-boot</module>
         <module>gateway-spring-boot</module>
-        <module>disruptor-spring-boot</module>
+        <module>high-performance-spring-boot</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -36,14 +36,14 @@
     <groupId>com.yj2025</groupId>
     <artifactId>yj2025-spring-boot-parent</artifactId>
 
-    <version>1.4.0-SNAPSHOT</version>
+    <version>1.4.1-SNAPSHOT</version>
 
     <properties>
         <java.version>11</java.version>
         <spring-cloud.version>Hoxton.SR12</spring-cloud.version>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
-        <base-starter.version>1.4.0-SNAPSHOT</base-starter.version>
+        <base-starter.version>1.4.1-SNAPSHOT</base-starter.version>
     </properties>
 
 
@@ -356,7 +356,7 @@
             <!-- disruptor -->
             <dependency>
                 <groupId>com.yj2025</groupId>
-                <artifactId>disruptor-spring-boot-core</artifactId>
+                <artifactId>high-performance-spring-boot-core</artifactId>
                 <version>${base-starter.version}</version>
             </dependency>
 

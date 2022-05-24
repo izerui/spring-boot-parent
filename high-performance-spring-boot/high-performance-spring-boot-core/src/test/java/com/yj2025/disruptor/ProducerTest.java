@@ -34,10 +34,11 @@ public class ProducerTest {
         while ((l + 10000L) > System.currentTimeMillis()) { // 10秒
             producer.sendData(o -> o.setValue(atomicInteger.getAndIncrement()));
         }
-        log.info("执行完毕------总生产: {}", atomicInteger.get());
+        log.info("执行完毕, 消费者还在继续执行...");
         producer.shutdown();
+        log.info("消费完成,关闭处理器,总生产: {}", atomicInteger.get());
         log.info("再发一条测试关闭后还能不能发");
-        producer.sendData(o -> o.setValue(atomicInteger.getAndIncrement()));
+//        producer.sendData(o -> o.setValue(atomicInteger.getAndIncrement()));
 //        System.exit(1);
     }
 

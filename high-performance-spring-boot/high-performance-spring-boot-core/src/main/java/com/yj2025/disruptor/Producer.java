@@ -1,9 +1,6 @@
 package com.yj2025.disruptor;
 
-import com.lmax.disruptor.EventFactory;
-import com.lmax.disruptor.RingBuffer;
-import com.lmax.disruptor.WaitStrategy;
-import com.lmax.disruptor.YieldingWaitStrategy;
+import com.lmax.disruptor.*;
 import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.dsl.EventHandlerGroup;
 import com.lmax.disruptor.dsl.ProducerType;
@@ -34,6 +31,7 @@ public class Producer<T> {
                 throw new RuntimeException(e.getMessage(), e);
             }
         };
+        // https://www.jianshu.com/p/f4021e8141ad
         // 创建disruptor，采用单生产者模式
         disruptor = new Disruptor(
                 // RingBuffer生产工厂,初始化RingBuffer的时候使用
@@ -45,8 +43,15 @@ public class Producer<T> {
                 builder.waitStrategy);
         // https://lmax-exchange.github.io/disruptor/user-guide/index.html#_batch_rewind
         // 设置EventHandler
-        EventHandlerGroup<T> tEventHandlerGroup = disruptor.handleEventsWithWorkerPool(builder.consumers);
-//                .and(new BatchEventProcessor<T>(null, null, null))
+        EventHandlerGroup<T> tEventHandlerGroup = disruptor.handleEventsWithWorkerPool(builder.consumers) // 同一事件会被一组消费者其中之一消费
+                .and(new BatchEventProcessor<T>(disruptor.getRingBuffer(), disruptor.getRingBuffer().newBarrier(), new EventHandler<T>() {
+                    @Override
+                    public void onEvent(T event, long sequence, boolean endOfBatch) throws Exception {
+                        if(endOfBatch){
+                            System.out.println("批量: sequence: " + sequence + " endOfBatch:" + endOfBatch);
+                        }
+                    }
+                }));
         disruptor.start();
     }
 
