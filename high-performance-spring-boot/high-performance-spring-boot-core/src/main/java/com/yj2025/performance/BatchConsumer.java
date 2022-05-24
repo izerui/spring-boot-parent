@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 单线程批量消费者
+ * 单线程批量消费者(如果支持批量尽量使用当前消费者模式)
  * 参考： https://www.icode9.com/content-4-1313516.html
  *
  * @author liuyuhua
