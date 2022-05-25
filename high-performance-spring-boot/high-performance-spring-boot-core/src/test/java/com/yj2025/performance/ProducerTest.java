@@ -23,14 +23,17 @@ public class ProducerTest {
                 Thread.sleep(2);
             }
         }.cloneSelfToMulti(5);
-        Producer<MyTask> producer = new Producer(MyTask.class, consumers);
+        Producer<MyTask> producer = Producer.builder()
+                .requiredDataType(MyTask.class)
+                .requiredConsumers(consumers)
+                .build();
         execute(producer);
     }
 
     @Test
     public void test02() throws Exception {
 
-        BatchConsumer<MyTask> batchConsumer = new BatchConsumer<MyTask>() {
+        BatchConsumer<MyTask> batchConsumer = new BatchConsumer<MyTask>(100) {
 
             @Override
             protected void handlerEvent(List<MyTask> correlationData, long sequence) throws Exception {
@@ -39,9 +42,10 @@ public class ProducerTest {
                 Thread.sleep(10);
             }
         };
-        batchConsumer.setBatchLimitSize(100);
-        Producer<MyTask> producer = new Producer(MyTask.class, batchConsumer);
-        producer.afterPropertiesSet();
+        Producer<MyTask> producer = Producer.builder()
+                .requiredDataType(MyTask.class)
+                .requiredConsumers(batchConsumer)
+                .build();
         execute(producer);
     }
 
@@ -65,7 +69,7 @@ public class ProducerTest {
             future.get();
         }
         log.info("执行完毕, 消费者还在继续执行...");
-        producer.destroy();
+        producer.shutdown();
         log.info("消费完成,关闭处理器,总生产: {}", atomicInteger.get());
         log.info("再发一条测试关闭后还能不能发");
         producer.sendData(o -> o.setValue(atomicInteger.getAndIncrement()));

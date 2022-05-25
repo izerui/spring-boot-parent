@@ -7,8 +7,6 @@ import com.lmax.disruptor.YieldingWaitStrategy;
 import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.dsl.ProducerType;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.InitializingBean;
 
 import java.util.Collection;
 import java.util.concurrent.ThreadFactory;
@@ -21,42 +19,17 @@ import java.util.concurrent.ThreadFactory;
  * @date 2022/5/23
  */
 @Slf4j
-public class Producer<T> implements DisposableBean, InitializingBean {
+public final class Producer<T> {
 
     private final Builder builder;
     private transient Disruptor<T> disruptor;
 
-    public Producer(Class<T> dataType, Consumer<T>... consumers) {
-        this(dataType, null, consumers);
+    Producer(final Builder builder) {
+        this.builder = builder;
+        initDisruptor();
     }
 
-    public Producer(Class<T> dataType, BatchConsumer<T> batchConsumer) {
-        this(dataType, batchConsumer, null);
-    }
-
-    private Producer(Class<T> dataType, BatchConsumer<T> batchConsumer, Consumer<T>[] consumers) {
-        this.builder = new Builder();
-        this.builder.dataType = dataType;
-        this.builder.batchConsumer = batchConsumer;
-        this.builder.consumers = consumers;
-        Customizer<Builder> customizer = Customizer.withDefaults();
-        customizer.customize(this.builder);
-        customize(customizer);
-    }
-
-    protected void customize(Customizer<Builder> customizer) {
-    }
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        if (this.builder.dataType == null) {
-            throw new DisruptorException("dataType数据类型不能为空!");
-        }
-        if (this.builder.consumers == null && this.builder.batchConsumer == null) {
-            throw new DisruptorException("请至少设置一种消费者处理器!");
-        } else if (this.builder.consumers != null && this.builder.batchConsumer != null) {
-            throw new DisruptorException("最多只能设置一种消费处理器,要么批量消费,要么分别消费!");
-        }
+    private void initDisruptor() {
         EventFactory eventFactory = () -> {
             try {
                 return builder.dataType.getDeclaredConstructor().newInstance();
@@ -87,6 +60,7 @@ public class Producer<T> implements DisposableBean, InitializingBean {
         disruptor.start();
     }
 
+
     /**
      * 发送补全的数据到待处理缓冲区
      *
@@ -94,8 +68,8 @@ public class Producer<T> implements DisposableBean, InitializingBean {
      */
     public void sendData(ThrowsConsumer<T> consumer) throws Exception {
         if (disruptor == null) {
-            log.warn("线程池未初始化,通过afterPropertiesSet初始化...");
-            afterPropertiesSet();
+            log.warn("线程池未初始化,重新初始化...");
+            initDisruptor();
         }
         RingBuffer<T> ringBuffer = disruptor.getRingBuffer();
         long sequence = ringBuffer.next();
@@ -110,11 +84,15 @@ public class Producer<T> implements DisposableBean, InitializingBean {
 
     /**
      * 等待所有发送的数据执行完后，停止处理器。<br/>
+     * 调用此方法后，请不要再发送数据，否则可能永远无法停止。
      */
-    @Override
-    public void destroy() throws Exception {
+    public void shutdown() {
         this.disruptor.shutdown();
         this.disruptor = null;
+    }
+
+    public static Builder builder() {
+        return new Builder();
     }
 
     public static class Builder {
@@ -215,6 +193,25 @@ public class Producer<T> implements DisposableBean, InitializingBean {
         public <T> Builder requiredConsumers(Collection<Consumer<T>> consumers) {
             this.consumers = consumers.toArray(new Consumer[consumers.size()]);
             return this;
+        }
+
+        /**
+         * 开始创建生产者
+         *
+         * @return
+         */
+        public Producer build() {
+            if (dataType == null) {
+                throw new DisruptorException("dataType数据类型不能为空!");
+            }
+            if (consumers == null && batchConsumer == null) {
+                throw new DisruptorException("请至少设置一种消费者处理器!");
+            } else if (consumers != null && batchConsumer != null) {
+                throw new DisruptorException("最多只能设置一种消费处理器,要么批量消费,要么分别消费!");
+            }
+            return new Producer(
+                    this
+            );
         }
 
     }

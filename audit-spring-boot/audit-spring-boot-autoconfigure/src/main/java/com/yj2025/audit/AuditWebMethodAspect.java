@@ -68,8 +68,10 @@ public class AuditWebMethodAspect implements DisposableBean {
 //                }
 //            }
 //        };
-        this.recordProducer = new Producer<>(Record.class, consumers);
-        this.recordProducer.afterPropertiesSet();
+        this.recordProducer = Producer.builder()
+                .requiredDataType(Record.class)
+                .requiredConsumers(consumers)
+                .build();
     }
 
 
@@ -230,6 +232,6 @@ public class AuditWebMethodAspect implements DisposableBean {
 
     @Override
     public void destroy() throws Exception {
-        recordProducer.destroy();
+        recordProducer.shutdown();
     }
 }
