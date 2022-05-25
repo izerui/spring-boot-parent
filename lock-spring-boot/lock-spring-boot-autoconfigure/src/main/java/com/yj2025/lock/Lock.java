@@ -43,7 +43,7 @@ public class Lock implements DisposableBean {
                     semaphoreMutex.release();
                 }
             } catch (Exception e) {
-                throw new LockException(e.getMessage());
+                throw new LockException(e.getMessage() + " lockId: " + lockPath);
             }
         }
     }
