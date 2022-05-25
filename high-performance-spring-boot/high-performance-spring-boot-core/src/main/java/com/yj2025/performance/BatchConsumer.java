@@ -35,6 +35,10 @@ public abstract class BatchConsumer<T> implements EventHandler<T> {
         this.batchLimitSize = batchLimitSize;
     }
 
+    public long getBatchLimitSize() {
+        return batchLimitSize;
+    }
+
     /**
      * 批量处理当前积累的批次数据
      *
