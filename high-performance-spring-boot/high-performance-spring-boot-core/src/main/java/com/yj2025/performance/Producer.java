@@ -1,10 +1,14 @@
 package com.yj2025.performance;
 
-import com.lmax.disruptor.*;
+import com.lmax.disruptor.EventFactory;
+import com.lmax.disruptor.RingBuffer;
+import com.lmax.disruptor.WaitStrategy;
+import com.lmax.disruptor.YieldingWaitStrategy;
 import com.lmax.disruptor.dsl.Disruptor;
-import com.lmax.disruptor.dsl.EventHandlerGroup;
 import com.lmax.disruptor.dsl.ProducerType;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
 
 import java.util.Collection;
 import java.util.concurrent.ThreadFactory;
@@ -12,18 +16,47 @@ import java.util.concurrent.ThreadFactory;
 /**
  * 数据生产者
  * https://lmax-exchange.github.io/disruptor/user-guide/index.html#_batch_rewind
+ *
  * @author liuyuhua
  * @date 2022/5/23
  */
-public class Producer<T> implements DisposableBean {
+@Slf4j
+public class Producer<T> implements DisposableBean, InitializingBean {
 
-    private final Disruptor<T> disruptor;
-    /**
-     * 处理器关闭前记录的游标值，再发送数据则判断异常。
-     */
-    private transient Long shutdownCursor;
+    private final Builder builder;
+    private transient Disruptor<T> disruptor;
 
-    Producer(final Builder builder) {
+    public Producer(Class<T> dataType, Consumer<T>... consumers) {
+        this(dataType, null, consumers);
+    }
+
+    public Producer(Class<T> dataType, BatchConsumer<T> batchConsumer) {
+        this(dataType, batchConsumer, null);
+    }
+
+    private Producer(Class<T> dataType, BatchConsumer<T> batchConsumer, Consumer<T>[] consumers) {
+        this.builder = new Builder();
+        this.builder.dataType = dataType;
+        this.builder.batchConsumer = batchConsumer;
+        this.builder.consumers = consumers;
+        Customizer<Builder> customizer = Customizer.withDefaults();
+        customizer.customize(this.builder);
+        customize(customizer);
+    }
+
+    protected void customize(Customizer<Builder> customizer) {
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        if (this.builder.dataType == null) {
+            throw new DisruptorException("dataType数据类型不能为空!");
+        }
+        if (this.builder.consumers == null && this.builder.batchConsumer == null) {
+            throw new DisruptorException("请至少设置一种消费者处理器!");
+        } else if (this.builder.consumers != null && this.builder.batchConsumer != null) {
+            throw new DisruptorException("最多只能设置一种消费处理器,要么批量消费,要么分别消费!");
+        }
         EventFactory eventFactory = () -> {
             try {
                 return builder.dataType.getDeclaredConstructor().newInstance();
@@ -57,12 +90,13 @@ public class Producer<T> implements DisposableBean {
      *
      * @param consumer
      */
-    public void sendData(java.util.function.Consumer<T> consumer) {
+    public void sendData(ThrowsConsumer<T> consumer) throws Exception {
+        if (disruptor == null) {
+            log.warn("线程池未初始化,通过afterPropertiesSet初始化...");
+            afterPropertiesSet();
+        }
         RingBuffer<T> ringBuffer = disruptor.getRingBuffer();
         long sequence = ringBuffer.next();
-        if (this.shutdownCursor != null && sequence > shutdownCursor) {
-            throw new DisruptorException("生产者已经关闭,不再接收新的数据产生!");
-        }
         try {
             T obj = ringBuffer.get(sequence);
             consumer.accept(obj);
@@ -71,23 +105,14 @@ public class Producer<T> implements DisposableBean {
         }
     }
 
+
     /**
      * 等待所有发送的数据执行完后，停止处理器。<br/>
-     * 调用此方法后，请不要再发送数据，否则可能永远无法停止。
      */
-    public void shutdown() {
-        // 关闭前记录当前游标
-        this.shutdownCursor = disruptor.getCursor();
-        this.disruptor.shutdown();
-    }
-
-    public static Builder builder() {
-        return new Builder();
-    }
-
     @Override
     public void destroy() throws Exception {
-        this.shutdown();
+        this.disruptor.shutdown();
+        this.disruptor = null;
     }
 
     public static class Builder {
@@ -188,25 +213,6 @@ public class Producer<T> implements DisposableBean {
         public <T> Builder requiredConsumers(Collection<Consumer<T>> consumers) {
             this.consumers = consumers.toArray(new Consumer[consumers.size()]);
             return this;
-        }
-
-        /**
-         * 开始创建生产者
-         *
-         * @return
-         */
-        public Producer build() {
-            if (dataType == null) {
-                throw new DisruptorException("dataType数据类型不能为空!");
-            }
-            if (consumers == null && batchConsumer == null) {
-                throw new DisruptorException("请至少设置一种消费者处理器!");
-            } else if (consumers != null && batchConsumer != null) {
-                throw new DisruptorException("最多只能设置一种消费处理器,要么批量消费,要么分别消费!");
-            }
-            return new Producer(
-                    this
-            );
         }
 
     }

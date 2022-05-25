@@ -3,7 +3,6 @@ package com.yj2025.audit;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.yj2025.performance.BatchConsumer;
 import com.yj2025.performance.Consumer;
 import com.yj2025.performance.Producer;
 import io.swagger.annotations.Api;
@@ -70,11 +69,7 @@ public class AuditWebMethodAspect implements DisposableBean {
 //                }
 //            }
 //        };
-        this.recordProducer = Producer.builder()
-                .requiredRingBufferSize(1024 * 8)
-                .requiredDataType(Record.class)
-                .requiredConsumers(consumers)
-                .build();
+        this.recordProducer = new Producer<>(Record.class, consumers);
     }
 
 
@@ -235,6 +230,6 @@ public class AuditWebMethodAspect implements DisposableBean {
 
     @Override
     public void destroy() throws Exception {
-        recordProducer.shutdown();
+        recordProducer.destroy();
     }
 }

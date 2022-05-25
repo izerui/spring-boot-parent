@@ -5,7 +5,6 @@ import org.junit.Test;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -16,7 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ProducerTest {
 
     @Test
-    public void test01() throws InterruptedException, ExecutionException {
+    public void test01() throws Exception {
         Consumer[] consumers = new Consumer<MyTask>() {
             @Override
             protected void handlerEvent(MyTask event) throws Exception {
@@ -24,16 +23,12 @@ public class ProducerTest {
                 Thread.sleep(2);
             }
         }.cloneSelfToMulti(5);
-        Producer<MyTask> producer = Producer.builder()
-                .requiredRingBufferSize(1024 * 8)
-                .requiredDataType(MyTask.class)
-                .requiredConsumers(consumers)
-                .build();
+        Producer<MyTask> producer = new Producer(MyTask.class, consumers);
         execute(producer);
     }
 
     @Test
-    public void test02() throws InterruptedException, ExecutionException {
+    public void test02() throws Exception {
 
         BatchConsumer<MyTask> batchConsumer = new BatchConsumer<MyTask>(100) {
 
@@ -44,15 +39,12 @@ public class ProducerTest {
                 Thread.sleep(10);
             }
         };
-        Producer<MyTask> producer = Producer.builder()
-                .requiredRingBufferSize(1024 * 8)
-                .requiredDataType(MyTask.class)
-                .requiredConsumers(batchConsumer)
-                .build();
+        Producer<MyTask> producer = new Producer(MyTask.class, batchConsumer);
+        producer.afterPropertiesSet();
         execute(producer);
     }
 
-    private void execute(Producer<MyTask> producer) throws ExecutionException, InterruptedException {
+    private void execute(Producer<MyTask> producer) throws Exception {
         // 3个生产者，每个生产3秒过程
         AtomicInteger atomicInteger = new AtomicInteger(0);
         long l = System.currentTimeMillis();
@@ -60,7 +52,11 @@ public class ProducerTest {
         for (int i = 0; i < 3; i++) {
             futures[i] = CompletableFuture.runAsync(() -> {
                 while ((l + 3000L) > System.currentTimeMillis()) { // 3秒
-                    producer.sendData(o -> o.setValue(atomicInteger.getAndIncrement()));
+                    try {
+                        producer.sendData(o -> o.setValue(atomicInteger.getAndIncrement()));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             });
         }
@@ -68,10 +64,10 @@ public class ProducerTest {
             future.get();
         }
         log.info("执行完毕, 消费者还在继续执行...");
-        producer.shutdown();
+        producer.destroy();
         log.info("消费完成,关闭处理器,总生产: {}", atomicInteger.get());
         log.info("再发一条测试关闭后还能不能发");
-//        producer.sendData(o -> o.setValue(atomicInteger.getAndIncrement()));
+        producer.sendData(o -> o.setValue(atomicInteger.getAndIncrement()));
 //        System.exit(1);
     }
 
