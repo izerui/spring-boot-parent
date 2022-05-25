@@ -32,9 +32,6 @@ public abstract class BatchConsumer<T> implements EventHandler<T> {
         if (batchLimitSize <= 0) {
             throw new DisruptorException("请设置大于0的每批次消费数量限制");
         }
-        if (batchLimitSize % 2 != 0) {
-            throw new DisruptorException("请设置批次消费数量为2的倍数");
-        }
         this.batchLimitSize = batchLimitSize;
     }
 
