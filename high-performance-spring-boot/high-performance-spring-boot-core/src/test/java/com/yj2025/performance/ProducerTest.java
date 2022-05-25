@@ -30,7 +30,7 @@ public class ProducerTest {
     @Test
     public void test02() throws Exception {
 
-        BatchConsumer<MyTask> batchConsumer = new BatchConsumer<MyTask>(100) {
+        BatchConsumer<MyTask> batchConsumer = new BatchConsumer<MyTask>() {
 
             @Override
             protected void handlerEvent(List<MyTask> correlationData, long sequence) throws Exception {
@@ -39,6 +39,7 @@ public class ProducerTest {
                 Thread.sleep(10);
             }
         };
+        batchConsumer.setBatchLimitSize(100);
         Producer<MyTask> producer = new Producer(MyTask.class, batchConsumer);
         producer.afterPropertiesSet();
         execute(producer);

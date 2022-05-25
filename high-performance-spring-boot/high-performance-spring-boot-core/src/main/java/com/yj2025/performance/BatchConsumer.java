@@ -2,6 +2,7 @@ package com.yj2025.performance;
 
 import com.lmax.disruptor.EventHandler;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.InitializingBean;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +20,7 @@ public abstract class BatchConsumer<T> implements EventHandler<T> {
     /**
      * 每批次最多处理的数量
      */
-    private final long batchLimitSize;
+    private long batchLimitSize = 500;
 
     private final static int RING_BATCH_SIZE = 1024 * 1024;
 
@@ -28,14 +29,14 @@ public abstract class BatchConsumer<T> implements EventHandler<T> {
      */
     private final List<T> correlationData = new ArrayList<>();
 
-    public BatchConsumer(long batchLimitSize) {
-        if (batchLimitSize <= 0) {
+    protected void setBatchLimitSize(long batchLimitSize) {
+        this.batchLimitSize = batchLimitSize;
+        if (this.batchLimitSize <= 0) {
             throw new DisruptorException("请设置大于0的每批次消费数量限制");
         }
-        if (batchLimitSize % 2 != 0) {
+        if (this.batchLimitSize % 2 != 0) {
             throw new DisruptorException("请设置批次消费数量为2的倍数");
         }
-        this.batchLimitSize = batchLimitSize;
     }
 
     /**
