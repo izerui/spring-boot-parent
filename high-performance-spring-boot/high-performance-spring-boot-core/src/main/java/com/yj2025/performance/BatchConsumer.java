@@ -1,8 +1,7 @@
 package com.yj2025.performance;
 
 import com.lmax.disruptor.EventHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,9 +13,8 @@ import java.util.List;
  * @author liuyuhua
  * @date 2022/5/24
  */
+@Slf4j
 public abstract class BatchConsumer<T> implements EventHandler<T> {
-
-    private Logger log = LoggerFactory.getLogger(BatchConsumer.class);
 
     /**
      * 每批次最多处理的数量
@@ -44,7 +42,7 @@ public abstract class BatchConsumer<T> implements EventHandler<T> {
      * 批量处理当前积累的批次数据
      *
      * @param correlationData 积累的数据
-     * @param sequence          最后处理的序列
+     * @param sequence        最后处理的序列
      * @throws Exception
      */
     protected abstract void handlerEvent(List<T> correlationData, long sequence) throws Exception;
