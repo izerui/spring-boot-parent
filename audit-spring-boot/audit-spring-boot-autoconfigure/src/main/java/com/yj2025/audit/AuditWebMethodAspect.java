@@ -46,7 +46,7 @@ public class AuditWebMethodAspect implements DisposableBean {
         OBJECT_MAPPER.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
     }
 
-    public AuditWebMethodAspect(ObjectProvider<AuditContext> auditContextProvider, String application) {
+    public AuditWebMethodAspect(ObjectProvider<AuditContext> auditContextProvider, String application) throws Exception {
         this.auditContextProvider = auditContextProvider;
         this.application = application;
         Consumer[] consumers = new Consumer<Record>() {
@@ -70,6 +70,7 @@ public class AuditWebMethodAspect implements DisposableBean {
 //            }
 //        };
         this.recordProducer = new Producer<>(Record.class, consumers);
+        this.recordProducer.afterPropertiesSet();
     }
 
 
