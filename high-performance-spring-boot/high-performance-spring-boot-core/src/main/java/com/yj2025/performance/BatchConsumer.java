@@ -17,11 +17,14 @@ import java.util.List;
 public abstract class BatchConsumer<T> implements EventHandler<T> {
 
     /**
-     * 每批次最多处理的数量
+     * 每批次最多处理的数量不能大于2000
      */
     private final long batchLimitSize;
 
-    private final static int RING_BATCH_SIZE = 1024 * 1024;
+    /**
+     * 最大等待毫秒时间
+     */
+    private final static int maxWaitTimeMillis = 2000;
 
     /**
      * 积累的批次数据
@@ -31,6 +34,9 @@ public abstract class BatchConsumer<T> implements EventHandler<T> {
     public BatchConsumer(long batchLimitSize) {
         if (batchLimitSize <= 0) {
             throw new DisruptorException("请设置大于0的每批次消费数量限制");
+        }
+        if (batchLimitSize > maxWaitTimeMillis) {
+            throw new DisruptorException("批处理数量不能大于" + maxWaitTimeMillis + "个");
         }
         this.batchLimitSize = batchLimitSize;
     }
@@ -69,19 +75,39 @@ public abstract class BatchConsumer<T> implements EventHandler<T> {
     private void handlerBatchEvents(T event, long sequence, boolean endOfBatch) throws Exception {
         // 添加到批次
         correlationData.add(event);
-        if ((sequence + 1) % batchLimitSize == 0) {
+        int batchNum = correlationData.size();
+        if (batchNum >= batchLimitSize) {
             handlerEvent(correlationData, sequence);
             // 重用数组
             correlationData.clear();
+            log.debug("队列已满,快速开始下一个...");
+            return;
         }
+        // 当前指示最后序列, 后续未收到数据,则执行后,等待一段时间
         if (endOfBatch) {
-            if ((sequence + 1) % RING_BATCH_SIZE != 0) {
-                handlerEvent(correlationData, sequence);
-                // 重用数组
-                correlationData.clear();
+            handlerEvent(correlationData, sequence);
+            // 重用数组
+            correlationData.clear();
+            // 等待当前批次缺少的数量(1个按1毫秒等待)
+            long waitTimeMillis = batchLimitSize - batchNum;
+            // 如果等待时间超出预订最大时间，则按预订最大等待时间
+            if (waitTimeMillis > maxWaitTimeMillis) {
+                waitTimeMillis = maxWaitTimeMillis;
             }
+            log.debug("缺 " + waitTimeMillis + "个, 等待 " + waitTimeMillis + "毫秒,争取下个批次打满");
+            Thread.sleep(Math.abs(waitTimeMillis));
         }
     }
+
+//    public static void main(String[] args) {
+//        for (int i = 0; i < 1029; i++) {
+//            int next = (i + 1) % RING_BATCH_SIZE;
+//            System.out.println(i + " - " + next);
+//            if (next != 0) {
+//                System.out.println("等待 " + (RING_BATCH_SIZE - next) + "毫秒");
+//            }
+//        }
+//    }
 
 
 }

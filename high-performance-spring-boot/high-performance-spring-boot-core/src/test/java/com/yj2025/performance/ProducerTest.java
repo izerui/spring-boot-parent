@@ -39,8 +39,8 @@ public class ProducerTest {
             @Override
             protected void handlerEvent(List<MyTask> correlationData, long sequence) throws Exception {
 //                len.getAndAdd(accumulationDatas.size());
+                Thread.sleep(RandomUtils.nextInt(1,3) * 100);
                 log.info("当前处理: {} 条", correlationData.size());
-                Thread.sleep(10);
             }
         };
         Producer<MyTask> producer = Producer.builder()
@@ -72,7 +72,7 @@ public class ProducerTest {
 
         while ((l + 100000L) > System.currentTimeMillis()) { // 3秒
             producer.sendData(o -> o.setValue(atomicInteger.getAndIncrement()));
-//            Thread.sleep(RandomUtils.nextInt(10, 20));
+            Thread.sleep(RandomUtils.nextInt(10, 20));
         }
         log.info("执行完毕, 消费者还在继续执行...");
         producer.shutdown();
