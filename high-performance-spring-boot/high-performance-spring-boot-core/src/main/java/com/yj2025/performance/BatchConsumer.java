@@ -48,7 +48,7 @@ public abstract class BatchConsumer<T> implements EventHandler<T> {
     protected abstract void handlerEvent(List<T> correlationData, long sequence) throws Exception;
 
     @Override
-    public final void onEvent(T event, final long sequence, boolean endOfBatch) throws Exception {
+    public final void onEvent(T event, final long sequence, boolean endOfBatch) {
         try {
             handlerBatchEvents(event, sequence, endOfBatch);
         } catch (Exception e) {
@@ -64,7 +64,6 @@ public abstract class BatchConsumer<T> implements EventHandler<T> {
      * @param event      当前要处理的对象
      * @param sequence   当前消费到的队列位置
      * @param endOfBatch 是否为RingBuffer内存片中的最后一块
-     * @throws Exception
      */
     private void handlerBatchEvents(T event, long sequence, boolean endOfBatch) throws Exception {
         // 添加到批次
