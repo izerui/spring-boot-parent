@@ -1,6 +1,7 @@
 package com.yj2025.performance;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomUtils;
 import org.junit.Test;
 
 import java.util.List;
@@ -33,12 +34,12 @@ public class ProducerTest {
     @Test
     public void test02() throws Exception {
 
-        BatchConsumer<MyTask> batchConsumer = new BatchConsumer<MyTask>(100) {
+        BatchConsumer<MyTask> batchConsumer = new BatchConsumer<MyTask>(1000) {
 
             @Override
             protected void handlerEvent(List<MyTask> correlationData, long sequence) throws Exception {
 //                len.getAndAdd(accumulationDatas.size());
-                log.info("当前处理 {} 条记录 已处理: {} 条", correlationData.size(), sequence + 1);
+                log.info("当前处理: {} 条", correlationData.size());
                 Thread.sleep(10);
             }
         };
@@ -54,19 +55,24 @@ public class ProducerTest {
         AtomicInteger atomicInteger = new AtomicInteger(0);
         long l = System.currentTimeMillis();
         CompletableFuture[] futures = new CompletableFuture[3];
-        for (int i = 0; i < 3; i++) {
-            futures[i] = CompletableFuture.runAsync(() -> {
-                while ((l + 3000L) > System.currentTimeMillis()) { // 3秒
-                    try {
-                        producer.sendData(o -> o.setValue(atomicInteger.getAndIncrement()));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-        }
-        for (CompletableFuture future : futures) {
-            future.get();
+//        for (int i = 0; i < 3; i++) {
+//            futures[i] = CompletableFuture.runAsync(() -> {
+//                while ((l + 3000L) > System.currentTimeMillis()) { // 3秒
+//                    try {
+//                        producer.sendData(o -> o.setValue(atomicInteger.getAndIncrement()));
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            });
+//        }
+//        for (CompletableFuture future : futures) {
+//            future.get();
+//        }
+
+        while ((l + 100000L) > System.currentTimeMillis()) { // 3秒
+            producer.sendData(o -> o.setValue(atomicInteger.getAndIncrement()));
+//            Thread.sleep(RandomUtils.nextInt(10, 20));
         }
         log.info("执行完毕, 消费者还在继续执行...");
         producer.shutdown();
