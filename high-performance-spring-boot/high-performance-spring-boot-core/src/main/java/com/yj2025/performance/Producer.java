@@ -75,11 +75,13 @@ public class Producer<T> implements DisposableBean, InitializingBean {
                 builder.waitStrategy);
         // 设置WorkHandler 同一事件会被一组消费者其中之一消费
         if (builder.consumers != null) {
+            log.info("{} 并行处理器启动成功", this.builder.dataType.getName());
             disruptor.handleEventsWithWorkerPool(builder.consumers);
         }
         // 设置EventHandler 被一个批量处理消费者消费
         // https://www.jianshu.com/p/f4021e8141ad
         if (builder.batchConsumer != null) {
+            log.info("{} 批处理器启动成功", this.builder.dataType.getName());
             disruptor.handleEventsWith(builder.batchConsumer);
         }
         disruptor.start();
