@@ -53,7 +53,6 @@ public class AuditWebMethodAspect implements DisposableBean {
             @Override
             protected void handlerEvent(Record event) throws Exception {
                 auditContextProvider.forEach(auditContext -> {
-                    log.info(event.getName());
                     auditContext.record(event);
                 });
             }
