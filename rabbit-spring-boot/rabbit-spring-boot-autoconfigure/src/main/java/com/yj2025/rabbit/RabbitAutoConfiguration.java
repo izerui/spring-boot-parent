@@ -18,6 +18,9 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.transaction.TransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+/**
+ * https://zhuanlan.zhihu.com/p/167826668
+ */
 @Configuration
 @EnableTransactionManagement
 public class RabbitAutoConfiguration {
@@ -59,7 +62,7 @@ public class RabbitAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public TransactionManager transactionManager(ConnectionFactory connectionFactory) {
+    public RabbitTransactionManager transactionManager(ConnectionFactory connectionFactory) {
         return new RabbitTransactionManager(connectionFactory);
     }
 }
