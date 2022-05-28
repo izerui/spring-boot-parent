@@ -14,8 +14,13 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+/**
+ * https://zhuanlan.zhihu.com/p/167826668
+ */
 @Configuration
+@EnableTransactionManagement
 public class RabbitAutoConfiguration {
 
     @Bean

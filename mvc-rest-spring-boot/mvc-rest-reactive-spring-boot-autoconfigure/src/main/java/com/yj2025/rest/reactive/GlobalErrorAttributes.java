@@ -49,6 +49,7 @@ public class GlobalErrorAttributes extends DefaultErrorAttributes implements Con
             }
             errorResponseMap.put("errMsg", errMsg);
             errorResponseMap.put("exceptionType", throwable.getClass().getName());
+            log.error("请求: {} 出错: {}", request.path(), throwable.getMessage());
         }
 
         //feign 请求

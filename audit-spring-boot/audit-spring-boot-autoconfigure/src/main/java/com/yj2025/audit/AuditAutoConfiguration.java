@@ -40,7 +40,7 @@ public class AuditAutoConfiguration {
     @ConditionalOnWebApplication
     @ConditionalOnClass(ApiOperation.class)
     public AuditWebMethodAspect auditWebMethodAspect(@Autowired ObjectProvider<AuditContext> auditContextProvider,
-                                                     @Value("${spring.application.name:null}") String application) {
+                                                     @Value("${spring.application.name:null}") String application) throws Exception {
         return new AuditWebMethodAspect(auditContextProvider, application);
     }
 

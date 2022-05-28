@@ -25,4 +25,9 @@ public class LockConfiguration {
         return new Lock(curatorFramework);
     }
 
+    @Bean
+    public CounterLock counterLock(CuratorFramework curatorFramework) {
+        return new CounterLock(curatorFramework);
+    }
+
 }

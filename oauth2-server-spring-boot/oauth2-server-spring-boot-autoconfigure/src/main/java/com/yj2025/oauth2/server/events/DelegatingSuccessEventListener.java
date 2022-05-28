@@ -1,6 +1,6 @@
 package com.yj2025.oauth2.server.events;
 
-import com.yj2025.oauth2.security.User;
+import com.yj2025.oauth2.security.support.User;
 import com.yj2025.oauth2.server.LoginSuccessHandler;
 import org.springframework.context.ApplicationListener;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
