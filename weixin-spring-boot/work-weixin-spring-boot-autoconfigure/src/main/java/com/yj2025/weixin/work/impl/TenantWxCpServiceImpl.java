@@ -32,8 +32,10 @@ public class TenantWxCpServiceImpl extends WxCpServiceImpl implements TenantWxCp
         TenantWxCpConfigStorageAdpatder wxCpConfigStorage = (TenantWxCpConfigStorageAdpatder) getWxCpConfigStorage();
         WorkWeixinProperties properties = wxCpConfigStorage.getProperties();
         TenantConfigOperator configOperator = wxCpConfigStorage.getConfigOperator();
-        configOperator.setConfigs(
-                properties.getConfigs().toArray(new TenantConfig[properties.getConfigs().size()])
-        );
+        if (properties.getConfigs() != null) {
+            configOperator.setConfigs(
+                    properties.getConfigs().toArray(new TenantConfig[properties.getConfigs().size()])
+            );
+        }
     }
 }
