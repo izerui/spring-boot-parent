@@ -47,7 +47,7 @@ public class ProxyTokenKeyController {
         return webClientBuilder
                 .build()
                 .post()
-                .uri("http://" + oauth2Properties.getAppName() + MappingUrls.OAUTH_TOKEN_URL)
+                .uri("lb://" + oauth2Properties.getAppName() + MappingUrls.OAUTH_TOKEN_URL)
                 .body(BodyInserters.fromFormData(multiValueMap))
                 .accept(MediaType.APPLICATION_JSON)
                 .header("Content-Type", "application/json;charset=UTF-8")
@@ -67,7 +67,7 @@ public class ProxyTokenKeyController {
         return webClientBuilder
                 .build()
                 .post()
-                .uri("http://" + oauth2Properties.getAppName() + MappingUrls.OAUTH_TOKEN_URL)
+                .uri("lb://" + oauth2Properties.getAppName() + MappingUrls.OAUTH_TOKEN_URL)
                 .body(BodyInserters.fromFormData(multiValueMap))
                 .accept(MediaType.APPLICATION_JSON)
                 .header("Content-Type", "application/json;charset=UTF-8")
@@ -86,7 +86,7 @@ public class ProxyTokenKeyController {
                 }).flatMap(accessToken -> webClientBuilder
                         .build()
                         .get()
-                        .uri("http://" + properties.getOauth2().getAppName() + MappingUrls.OAUTH_REVOKE_URL + "?access_token=" + accessToken)
+                        .uri("lb://" + properties.getOauth2().getAppName() + MappingUrls.OAUTH_REVOKE_URL + "?access_token=" + accessToken)
                         .accept(MediaType.APPLICATION_JSON)
                         .header("Content-Type", "application/json;charset=UTF-8")
                         .retrieve()
@@ -99,7 +99,7 @@ public class ProxyTokenKeyController {
         return webClientBuilder
                 .build()
                 .get()
-                .uri("http://" + properties.getOauth2().getAppName() + MappingUrls.TOKEN_KEY_URL)
+                .uri("lb://" + properties.getOauth2().getAppName() + MappingUrls.TOKEN_KEY_URL)
                 .accept(MediaType.APPLICATION_JSON)
                 .header("Content-Type", "application/json;charset=UTF-8")
                 .retrieve()
