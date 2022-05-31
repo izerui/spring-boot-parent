@@ -1,6 +1,6 @@
 package com.yj2025.weixin.work;
 
-import com.yj2025.weixin.work.config.TenantWxCpConfigStorageAdpatder;
+import com.yj2025.weixin.work.config.adpatder.TenantWxCpConfigStorageAdpatder;
 import com.yj2025.weixin.work.config.TenantWxCpConfigStorageOperator;
 import com.yj2025.weixin.work.config.impl.memory.MemoryTenantOperator;
 import com.yj2025.weixin.work.config.impl.redis.RedisTenantOperator;

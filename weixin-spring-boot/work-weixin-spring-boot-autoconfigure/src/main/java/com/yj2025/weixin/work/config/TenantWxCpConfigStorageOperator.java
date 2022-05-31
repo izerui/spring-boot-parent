@@ -4,7 +4,7 @@ import me.chanjar.weixin.common.bean.WxAccessToken;
 
 import java.util.concurrent.locks.Lock;
 
-public interface TenantWxCpConfigStorageOperator {
+public interface TenantWxCpConfigStorageOperator extends BaseTenantConfigStorageOperator{
     /**
      * 设置租户的相关配置
      *

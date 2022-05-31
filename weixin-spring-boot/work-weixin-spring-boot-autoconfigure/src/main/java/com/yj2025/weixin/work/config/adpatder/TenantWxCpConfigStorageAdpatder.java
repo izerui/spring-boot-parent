@@ -1,6 +1,7 @@
-package com.yj2025.weixin.work.config;
+package com.yj2025.weixin.work.config.adpatder;
 
 import com.yj2025.weixin.work.WorkWeixinProperties;
+import com.yj2025.weixin.work.config.TenantWxCpConfigStorageOperator;
 import lombok.Getter;
 import me.chanjar.weixin.common.bean.WxAccessToken;
 import me.chanjar.weixin.common.util.http.apache.ApacheHttpClientBuilder;
@@ -17,48 +18,16 @@ import java.util.concurrent.locks.Lock;
  * @date 2022/4/18
  */
 @ThreadSafe
-public class TenantWxCpConfigStorageAdpatder implements WxCpConfigStorage {
+public class TenantWxCpConfigStorageAdpatder extends AbstractTenantConfigStorageAdpatder<TenantWxCpConfigStorageOperator> implements WxCpConfigStorage {
 
-    @Getter
-    private TenantWxCpConfigStorageOperator tenantOperator;
-    @Getter
-    private WorkWeixinProperties properties;
-    private ObjectProvider<ApacheHttpClientBuilder> apacheHttpClientBuilders;
 
     public TenantWxCpConfigStorageAdpatder(TenantWxCpConfigStorageOperator tenantOperator,
                                            WorkWeixinProperties properties,
                                            ObjectProvider<ApacheHttpClientBuilder> apacheHttpClientBuilders) {
-        this.tenantOperator = tenantOperator;
-        this.properties = properties;
-        this.apacheHttpClientBuilders = apacheHttpClientBuilders;
+        super(tenantOperator, properties, apacheHttpClientBuilders);
     }
 
-    // 当未指定租户ID的时候使用的默认的租户ID
-    public final static String DEFAULT_TENANT_ID = "default";
-
-    // 当前线程使用的tenantId(公司编号)
-    private final static InheritableThreadLocal<String> INHERITABLE_THREAD_ACTIVE_TENANT_ID;
-
-    static {
-        INHERITABLE_THREAD_ACTIVE_TENANT_ID = new InheritableThreadLocal<>();
-        INHERITABLE_THREAD_ACTIVE_TENANT_ID.set(DEFAULT_TENANT_ID);
-    }
-
-    /**
-     * 当前请求线程切换使用的租户配置
-     *
-     * @param tenantId
-     * @return
-     */
-    public TenantWxCpConfigStorageAdpatder tenant(String tenantId) {
-        INHERITABLE_THREAD_ACTIVE_TENANT_ID.set(tenantId);
-        return this;
-    }
-
-    public String tenantId() {
-        return INHERITABLE_THREAD_ACTIVE_TENANT_ID.get();
-    }
-
+    @Deprecated
     @Override
     public void setBaseApiUrl(String baseUrl) {
         throw new UnsupportedOperationException();

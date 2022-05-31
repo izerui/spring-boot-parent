@@ -1,22 +1,25 @@
-package com.yj2025.weixin.work.config;
+package com.yj2025.weixin.work.config.adpatder;
 
+import com.yj2025.weixin.work.WorkWeixinProperties;
+import com.yj2025.weixin.work.config.TenantWxCpConfigStorageOperator;
+import com.yj2025.weixin.work.config.TenantWxTpConfigStorageOperator;
+import lombok.Getter;
 import me.chanjar.weixin.common.bean.WxAccessToken;
 import me.chanjar.weixin.common.util.http.apache.ApacheHttpClientBuilder;
 import me.chanjar.weixin.cp.bean.WxCpProviderToken;
 import me.chanjar.weixin.cp.config.WxCpTpConfigStorage;
+import me.chanjar.weixin.cp.constant.WxCpApiPathConsts;
+import org.springframework.beans.factory.ObjectProvider;
 
 import java.io.File;
 import java.util.concurrent.locks.Lock;
 
-public class TenantWxCpTpConfigStorageAdpatder implements WxCpTpConfigStorage {
-    @Override
-    public void setBaseApiUrl(String baseUrl) {
+public class TenantWxTpConfigStorageAdpatder extends AbstractTenantConfigStorageAdpatder<TenantWxTpConfigStorageOperator> implements WxCpTpConfigStorage {
 
-    }
-
-    @Override
-    public String getApiUrl(String path) {
-        return null;
+    public TenantWxTpConfigStorageAdpatder(TenantWxTpConfigStorageOperator tenantOperator,
+                                           WorkWeixinProperties properties,
+                                           ObjectProvider<ApacheHttpClientBuilder> apacheHttpClientBuilders) {
+        super(tenantOperator, properties, apacheHttpClientBuilders);
     }
 
     @Override
