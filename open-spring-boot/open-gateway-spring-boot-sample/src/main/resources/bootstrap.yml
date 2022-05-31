@@ -1,0 +1,28 @@
+spring:
+  profiles:
+    active: default
+  application:
+    name: open-gateway-spring-boot-sample
+  cloud:
+    nacos:
+      config:
+        name: ${spring.application.name}
+        shared-configs:
+          - data-id: global.properties
+            refresh: true
+  main:
+    allow-bean-definition-overriding: true
+server:
+  port: 8088
+open:
+  gateway:
+    oauth-app: 'open-oauth-server-spring-boot-sample'
+    public-key: 'classpath:public.crt'
+---
+spring:
+  profiles: default
+  cloud:
+    nacos:
+      config:
+        server-addr: 10.96.55.103:8848
+        namespace: dev
