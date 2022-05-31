@@ -1,7 +1,7 @@
-package com.yj2025.weixin.work.impl.memory;
+package com.yj2025.weixin.work.config.impl.memory;
 
 import com.yj2025.weixin.work.WorkWeixinProperties;
-import com.yj2025.weixin.work.impl.AbstractBaseTenantOperator;
+import com.yj2025.weixin.work.config.impl.AbstractBaseTenantOperator;
 import org.springframework.util.Assert;
 
 import java.util.Map;

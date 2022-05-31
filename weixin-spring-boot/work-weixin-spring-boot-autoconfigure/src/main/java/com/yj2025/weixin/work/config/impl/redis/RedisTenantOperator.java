@@ -1,7 +1,7 @@
-package com.yj2025.weixin.work.impl.redis;
+package com.yj2025.weixin.work.config.impl.redis;
 
 import com.yj2025.weixin.work.WorkWeixinProperties;
-import com.yj2025.weixin.work.impl.AbstractBaseTenantOperator;
+import com.yj2025.weixin.work.config.impl.AbstractBaseTenantOperator;
 import me.chanjar.weixin.common.util.locks.RedisTemplateSimpleDistributedLock;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.util.Assert;

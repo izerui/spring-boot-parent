@@ -1,5 +1,6 @@
 package com.yj2025.weixin.work;
 
+import com.yj2025.weixin.work.config.TenantConfig;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

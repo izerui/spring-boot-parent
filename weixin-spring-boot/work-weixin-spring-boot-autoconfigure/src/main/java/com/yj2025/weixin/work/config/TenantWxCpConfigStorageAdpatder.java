@@ -1,5 +1,6 @@
-package com.yj2025.weixin.work;
+package com.yj2025.weixin.work.config;
 
+import com.yj2025.weixin.work.WorkWeixinProperties;
 import lombok.Getter;
 import me.chanjar.weixin.common.bean.WxAccessToken;
 import me.chanjar.weixin.common.util.http.apache.ApacheHttpClientBuilder;

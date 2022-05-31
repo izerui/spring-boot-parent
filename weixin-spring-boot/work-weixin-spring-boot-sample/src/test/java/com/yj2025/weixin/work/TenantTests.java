@@ -1,5 +1,7 @@
 package com.yj2025.weixin.work;
 
+import com.yj2025.weixin.work.config.TenantConfig;
+import com.yj2025.weixin.work.config.TenantConfigOperator;
 import me.chanjar.weixin.common.api.WxConsts;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.cp.bean.message.WxCpMessage;

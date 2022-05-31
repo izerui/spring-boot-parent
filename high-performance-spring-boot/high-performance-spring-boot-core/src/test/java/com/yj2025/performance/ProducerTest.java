@@ -39,7 +39,7 @@ public class ProducerTest {
             @Override
             protected void handlerEvent(List<MyTask> correlationData, long sequence) throws Exception {
 //                len.getAndAdd(accumulationDatas.size());
-                Thread.sleep(RandomUtils.nextInt(1,3) * 100);
+                Thread.sleep(RandomUtils.nextInt(1, 3) * 100);
                 log.info("当前处理: {} 条", correlationData.size());
             }
         };

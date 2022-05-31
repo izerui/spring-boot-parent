@@ -1,4 +1,4 @@
-package com.yj2025.weixin.work;
+package com.yj2025.weixin.work.config;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

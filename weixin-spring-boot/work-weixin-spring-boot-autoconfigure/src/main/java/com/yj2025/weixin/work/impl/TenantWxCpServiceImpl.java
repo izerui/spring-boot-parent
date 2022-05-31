@@ -1,6 +1,10 @@
 package com.yj2025.weixin.work.impl;
 
 import com.yj2025.weixin.work.*;
+import com.yj2025.weixin.work.config.TenantConfig;
+import com.yj2025.weixin.work.config.TenantConfigOperator;
+import com.yj2025.weixin.work.config.TenantRuntimeOperator;
+import com.yj2025.weixin.work.config.TenantWxCpConfigStorageAdpatder;
 import me.chanjar.weixin.cp.api.impl.WxCpServiceImpl;
 import org.springframework.beans.factory.InitializingBean;
 

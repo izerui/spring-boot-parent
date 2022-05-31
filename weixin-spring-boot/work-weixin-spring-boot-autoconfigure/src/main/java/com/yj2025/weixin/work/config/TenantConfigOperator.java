@@ -1,4 +1,4 @@
-package com.yj2025.weixin.work;
+package com.yj2025.weixin.work.config;
 
 /**
  * 租户相关配置的获取及更新操作类

@@ -1,5 +1,8 @@
 package com.yj2025.weixin.work;
 
+import com.yj2025.weixin.work.config.TenantConfigOperator;
+import com.yj2025.weixin.work.config.TenantRuntimeOperator;
+import com.yj2025.weixin.work.config.TenantWxCpConfigStorageAdpatder;
 import me.chanjar.weixin.cp.api.WxCpService;
 
 /**

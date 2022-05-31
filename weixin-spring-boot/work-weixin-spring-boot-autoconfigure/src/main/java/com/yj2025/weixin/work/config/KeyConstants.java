@@ -1,4 +1,4 @@
-package com.yj2025.weixin.work.impl;
+package com.yj2025.weixin.work.config;
 
 import java.util.function.Function;
 

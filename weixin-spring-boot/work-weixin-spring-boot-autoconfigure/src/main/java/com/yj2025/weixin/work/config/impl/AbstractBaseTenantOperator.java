@@ -1,9 +1,10 @@
-package com.yj2025.weixin.work.impl;
+package com.yj2025.weixin.work.config.impl;
 
-import com.yj2025.weixin.work.TenantConfig;
-import com.yj2025.weixin.work.TenantConfigOperator;
-import com.yj2025.weixin.work.TenantRuntimeOperator;
+import com.yj2025.weixin.work.config.TenantConfig;
 import com.yj2025.weixin.work.WorkWeixinProperties;
+import com.yj2025.weixin.work.config.KeyConstants;
+import com.yj2025.weixin.work.config.TenantConfigOperator;
+import com.yj2025.weixin.work.config.TenantRuntimeOperator;
 import me.chanjar.weixin.common.bean.WxAccessToken;
 
 /**
