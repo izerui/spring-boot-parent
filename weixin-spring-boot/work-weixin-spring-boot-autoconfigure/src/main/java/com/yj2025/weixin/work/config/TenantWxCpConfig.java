@@ -11,7 +11,7 @@ import javax.annotation.Nonnull;
 @NoArgsConstructor
 @Accessors(chain = true)
 @ToString
-public class TenantConfig {
+public class TenantWxCpConfig {
     @Nonnull
     private String tenantId;
     @Nonnull

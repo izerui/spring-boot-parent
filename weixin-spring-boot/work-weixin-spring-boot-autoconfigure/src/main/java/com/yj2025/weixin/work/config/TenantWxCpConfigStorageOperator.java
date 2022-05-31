@@ -1,19 +1,16 @@
 package com.yj2025.weixin.work.config;
 
-/**
- * 租户相关配置的获取及更新操作类
- *
- * @author liuyuhua
- * @date 2022/4/18
- */
-public interface TenantConfigOperator {
+import me.chanjar.weixin.common.bean.WxAccessToken;
 
+import java.util.concurrent.locks.Lock;
+
+public interface TenantWxCpConfigStorageOperator {
     /**
      * 设置租户的相关配置
      *
      * @param configs
      */
-    void setConfigs(TenantConfig... configs);
+    void setConfigs(TenantWxCpConfig... configs);
 
     /**
      * 根据租户ID获取对应的配置
@@ -21,7 +18,7 @@ public interface TenantConfigOperator {
      * @param tenantId
      * @return
      */
-    TenantConfig getConfig(String tenantId);
+    TenantWxCpConfig getConfig(String tenantId);
 
     /**
      * 微信企业号 corpId
@@ -93,4 +90,36 @@ public interface TenantConfigOperator {
     String getOauth2redirectUri(String tenantId);
 
     void setOauth2redirectUri(String tenantId, String oauth2redirectUri);
+
+    Lock getAccessTokenLock(String tenantId);
+
+    boolean isAccessTokenExpired(String tenantId);
+
+    void expireAccessToken(String tenantId);
+
+    Lock getJsapiTicketLock(String tenantId);
+
+    boolean isJsapiTicketExpired(String tenantId);
+
+    void expireJsapiTicket(String tenantId);
+
+    String getJsapiTicket(String tenantId);
+
+    void setJsapiTicket(String tenantId, String jsapiTicket, int expiresInSeconds);
+
+    String getAgentJsapiTicket(String tenantId);
+
+    Lock getAgentJsapiTicketLock(String tenantId);
+
+    boolean isAgentJsapiTicketExpired(String tenantId);
+
+    void expireAgentJsapiTicket(String tenantId);
+
+    void updateAgentJsapiTicket(String tenantId, String jsapiTicket, int expiresInSeconds);
+
+    void updateAccessToken(String tenantId, WxAccessToken accessToken);
+
+    String getAccessToken(String tenantId);
+
+    long getExpiresTime(String tenantId);
 }

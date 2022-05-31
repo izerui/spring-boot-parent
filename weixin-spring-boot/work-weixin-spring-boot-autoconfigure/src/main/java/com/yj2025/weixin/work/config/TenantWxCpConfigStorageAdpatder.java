@@ -20,19 +20,15 @@ import java.util.concurrent.locks.Lock;
 public class TenantWxCpConfigStorageAdpatder implements WxCpConfigStorage {
 
     @Getter
-    private TenantConfigOperator configOperator;
-    @Getter
-    private TenantRuntimeOperator runtimeOperator;
+    private TenantWxCpConfigStorageOperator tenantOperator;
     @Getter
     private WorkWeixinProperties properties;
     private ObjectProvider<ApacheHttpClientBuilder> apacheHttpClientBuilders;
 
-    public TenantWxCpConfigStorageAdpatder(TenantConfigOperator configOperator,
-                                           TenantRuntimeOperator runtimeOperator,
+    public TenantWxCpConfigStorageAdpatder(TenantWxCpConfigStorageOperator tenantOperator,
                                            WorkWeixinProperties properties,
                                            ObjectProvider<ApacheHttpClientBuilder> apacheHttpClientBuilders) {
-        this.configOperator = configOperator;
-        this.runtimeOperator = runtimeOperator;
+        this.tenantOperator = tenantOperator;
         this.properties = properties;
         this.apacheHttpClientBuilders = apacheHttpClientBuilders;
     }
@@ -75,27 +71,27 @@ public class TenantWxCpConfigStorageAdpatder implements WxCpConfigStorage {
 
     @Override
     public String getAccessToken() {
-        return runtimeOperator.getAccessToken(tenantId());
+        return tenantOperator.getAccessToken(tenantId());
     }
 
     @Override
     public Lock getAccessTokenLock() {
-        return runtimeOperator.getAccessTokenLock(tenantId());
+        return tenantOperator.getAccessTokenLock(tenantId());
     }
 
     @Override
     public boolean isAccessTokenExpired() {
-        return runtimeOperator.isAccessTokenExpired(tenantId());
+        return tenantOperator.isAccessTokenExpired(tenantId());
     }
 
     @Override
     public void expireAccessToken() {
-        runtimeOperator.expireAccessToken(tenantId());
+        tenantOperator.expireAccessToken(tenantId());
     }
 
     @Override
     public void updateAccessToken(WxAccessToken accessToken) {
-        runtimeOperator.updateAccessToken(tenantId(), accessToken);
+        tenantOperator.updateAccessToken(tenantId(), accessToken);
     }
 
     @Override
@@ -103,97 +99,97 @@ public class TenantWxCpConfigStorageAdpatder implements WxCpConfigStorage {
         WxAccessToken wat = new WxAccessToken();
         wat.setAccessToken(accessToken);
         wat.setExpiresIn(expiresIn);
-        runtimeOperator.updateAccessToken(tenantId(), wat);
+        tenantOperator.updateAccessToken(tenantId(), wat);
     }
 
     @Override
     public String getJsapiTicket() {
-        return runtimeOperator.getJsapiTicket(tenantId());
+        return tenantOperator.getJsapiTicket(tenantId());
     }
 
     @Override
     public Lock getJsapiTicketLock() {
-        return runtimeOperator.getJsapiTicketLock(tenantId());
+        return tenantOperator.getJsapiTicketLock(tenantId());
     }
 
     @Override
     public boolean isJsapiTicketExpired() {
-        return runtimeOperator.isJsapiTicketExpired(tenantId());
+        return tenantOperator.isJsapiTicketExpired(tenantId());
     }
 
     @Override
     public void expireJsapiTicket() {
-        runtimeOperator.expireJsapiTicket(tenantId());
+        tenantOperator.expireJsapiTicket(tenantId());
     }
 
     @Override
     public void updateJsapiTicket(String jsapiTicket, int expiresInSeconds) {
-        runtimeOperator.setJsapiTicket(tenantId(), jsapiTicket, expiresInSeconds);
+        tenantOperator.setJsapiTicket(tenantId(), jsapiTicket, expiresInSeconds);
     }
 
     @Override
     public String getAgentJsapiTicket() {
-        return runtimeOperator.getAgentJsapiTicket(tenantId());
+        return tenantOperator.getAgentJsapiTicket(tenantId());
     }
 
     @Override
     public Lock getAgentJsapiTicketLock() {
-        return runtimeOperator.getAgentJsapiTicketLock(tenantId());
+        return tenantOperator.getAgentJsapiTicketLock(tenantId());
     }
 
     @Override
     public boolean isAgentJsapiTicketExpired() {
-        return runtimeOperator.isAgentJsapiTicketExpired(tenantId());
+        return tenantOperator.isAgentJsapiTicketExpired(tenantId());
     }
 
     @Override
     public void expireAgentJsapiTicket() {
-        runtimeOperator.expireAgentJsapiTicket(tenantId());
+        tenantOperator.expireAgentJsapiTicket(tenantId());
     }
 
     @Override
     public void updateAgentJsapiTicket(String jsapiTicket, int expiresInSeconds) {
-        runtimeOperator.updateAgentJsapiTicket(tenantId(), jsapiTicket, expiresInSeconds);
+        tenantOperator.updateAgentJsapiTicket(tenantId(), jsapiTicket, expiresInSeconds);
     }
 
     @Override
     public String getCorpId() {
-        return configOperator.getCorpId(tenantId());
+        return tenantOperator.getCorpId(tenantId());
     }
 
     @Override
     public String getCorpSecret() {
-        return configOperator.getCorpSecret(tenantId());
+        return tenantOperator.getCorpSecret(tenantId());
     }
 
     @Override
     public Integer getAgentId() {
-        return configOperator.getAgentId(tenantId());
+        return tenantOperator.getAgentId(tenantId());
     }
 
     @Override
     public String getToken() {
-        return configOperator.getToken(tenantId());
+        return tenantOperator.getToken(tenantId());
     }
 
     @Override
     public String getAesKey() {
-        return configOperator.getAesKey(tenantId());
+        return tenantOperator.getAesKey(tenantId());
     }
 
     @Override
     public String getMsgAuditLibPath() {
-        return configOperator.getMsgAuditLibPath(tenantId());
+        return tenantOperator.getMsgAuditLibPath(tenantId());
     }
 
     @Override
     public long getExpiresTime() {
-        return runtimeOperator.getExpiresTime(tenantId());
+        return tenantOperator.getExpiresTime(tenantId());
     }
 
     @Override
     public String getOauth2redirectUri() {
-        return configOperator.getOauth2redirectUri(tenantId());
+        return tenantOperator.getOauth2redirectUri(tenantId());
     }
 
     @Override
@@ -233,6 +229,6 @@ public class TenantWxCpConfigStorageAdpatder implements WxCpConfigStorage {
 
     @Override
     public String getWebhookKey() {
-        return configOperator.getWebhookKey(tenantId());
+        return tenantOperator.getWebhookKey(tenantId());
     }
 }

@@ -1,17 +1,16 @@
 package com.yj2025.weixin.work.config.impl;
 
-import com.yj2025.weixin.work.config.TenantConfig;
+import com.yj2025.weixin.work.config.TenantWxCpConfig;
 import com.yj2025.weixin.work.WorkWeixinProperties;
 import com.yj2025.weixin.work.config.KeyConstants;
-import com.yj2025.weixin.work.config.TenantConfigOperator;
-import com.yj2025.weixin.work.config.TenantRuntimeOperator;
+import com.yj2025.weixin.work.config.TenantWxCpConfigStorageOperator;
 import me.chanjar.weixin.common.bean.WxAccessToken;
 
 /**
  * @author liuyuhua
  * @date 2022/4/19
  */
-public abstract class AbstractBaseTenantOperator implements TenantConfigOperator, TenantRuntimeOperator, KeyConstants {
+public abstract class AbstractBaseTenantOperator implements TenantWxCpConfigStorageOperator, KeyConstants {
 
     protected WorkWeixinProperties properties;
 
@@ -69,8 +68,8 @@ public abstract class AbstractBaseTenantOperator implements TenantConfigOperator
 
     // config
     @Override
-    public void setConfigs(TenantConfig... configs) {
-        for (TenantConfig config : configs) {
+    public void setConfigs(TenantWxCpConfig... configs) {
+        for (TenantWxCpConfig config : configs) {
             this.setCorpId(config.getTenantId(), config.getCorpId());
             this.setCorpSecret(config.getTenantId(), config.getCorpSecret());
             this.setToken(config.getTenantId(), config.getToken());
@@ -83,8 +82,8 @@ public abstract class AbstractBaseTenantOperator implements TenantConfigOperator
     }
 
     @Override
-    public TenantConfig getConfig(String tenantId) {
-        return new TenantConfig()
+    public TenantWxCpConfig getConfig(String tenantId) {
+        return new TenantWxCpConfig()
                 .setTenantId(tenantId)
                 .setCorpId(getCorpId(tenantId))
                 .setCorpSecret(getCorpSecret(tenantId))
