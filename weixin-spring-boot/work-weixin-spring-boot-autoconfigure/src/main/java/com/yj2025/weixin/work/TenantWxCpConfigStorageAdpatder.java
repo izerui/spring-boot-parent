@@ -58,7 +58,7 @@ public class TenantWxCpConfigStorageAdpatder implements WxCpConfigStorage {
         return this;
     }
 
-    private String tenantId() {
+    public String tenantId() {
         return INHERITABLE_THREAD_ACTIVE_TENANT_ID.get();
     }
 

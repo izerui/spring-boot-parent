@@ -7,6 +7,12 @@ import me.chanjar.weixin.cp.api.WxCpService;
  * @date 2022/4/18
  */
 public interface TenantWxCpService extends WxCpService {
+
+    /**
+     * 获取当前tenantId
+     * @return
+     */
+    String tenantId();
     /**
      * 指定以某一个租户操作service请求
      *

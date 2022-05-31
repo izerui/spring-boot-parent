@@ -12,6 +12,11 @@ public class TenantWxCpServiceImpl extends WxCpServiceImpl implements TenantWxCp
     }
 
     @Override
+    public String tenantId() {
+        return getStorageAdpatder().tenantId();
+    }
+
+    @Override
     public TenantWxCpService tenant(String tenantId) {
         getStorageAdpatder().tenant(tenantId);
         return this;
