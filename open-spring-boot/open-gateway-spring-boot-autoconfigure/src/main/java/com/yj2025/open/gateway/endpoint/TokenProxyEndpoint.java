@@ -1,4 +1,4 @@
-package com.yj2025.open.gateway.controller;
+package com.yj2025.open.gateway.endpoint;
 
 import com.yj2025.open.commons.Constants;
 import com.yj2025.open.commons.RespVo;
@@ -23,7 +23,7 @@ import java.util.Map;
  */
 @Configuration
 @RestController
-public class TokenController {
+public class TokenProxyEndpoint {
 
     /**
      * https://docs.spring.io/spring-security/site/docs/5.1.1.RELEASE/reference/html/webclient.html
@@ -43,7 +43,7 @@ public class TokenController {
         paramMap.set(Constants.GRANT_TYPE_FIELDNAME, grantType);
         return webClientBuilder.build()
                 .post()
-                .uri("http://" + properties.getOauthApp() + "/oauth/token")
+                .uri("lb://" + properties.getOauthApp() + "/oauth/token")
                 .body(BodyInserters.fromFormData(paramMap))
                 .accept(MediaType.APPLICATION_JSON)
                 .header("Content-Type", "application/json;charset=UTF-8")

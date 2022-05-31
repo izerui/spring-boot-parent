@@ -2,10 +2,9 @@ package com.yj2025.open.gateway;
 
 import com.yj2025.open.commons.ClientStore;
 import com.yj2025.open.commons.RedisClientStore;
-import com.yj2025.open.gateway.controller.TokenController;
+import com.yj2025.open.gateway.endpoint.TokenProxyEndpoint;
 import com.yj2025.open.gateway.filter.HeaderFilter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
@@ -15,6 +14,7 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.oauth2.jwt.NimbusReactiveJwtDecoder;
 import org.springframework.security.oauth2.server.resource.web.server.ServerBearerTokenAuthenticationConverter;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
@@ -22,7 +22,6 @@ import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.pattern.PathPatternParser;
 
-import java.security.interfaces.RSAPublicKey;
 import java.time.Duration;
 
 import static com.yj2025.open.gateway.utils.ExchangeUtils.wirteErrorResponse;
@@ -31,7 +30,7 @@ import static com.yj2025.open.gateway.utils.ExchangeUtils.wirteErrorResponse;
  * @author liuyuhua
  */
 @Configuration
-@Import(TokenController.class)
+@Import(TokenProxyEndpoint.class)
 @EnableWebFluxSecurity
 @EnableConfigurationProperties(GatewayProperties.class)
 public class SecurityConfig {
@@ -72,7 +71,12 @@ public class SecurityConfig {
                         auth
                                 .bearerTokenConverter(tokenAuthenticationConverter())
                                 .jwt()
-                                .publicKey(properties.getPublicKey())
+                                .jwtDecoder(
+                                        NimbusReactiveJwtDecoder
+                                                .withJwkSetUri("lb://" + properties.getOauthApp() + "/rsa/key")
+                                                .webClient(webClientBuilder().build())
+                                                .build()
+                                )
                                 .and()
                                 .accessDeniedHandler((exchange, denied) -> wirteErrorResponse(exchange, "ACCESS_DENIED", "未授权!"))
                                 .authenticationEntryPoint((exchange, e) -> wirteErrorResponse(exchange, "AUTHORIZATION_ERROR", "authentication无效"))
@@ -91,5 +95,6 @@ public class SecurityConfig {
     public ClientStore clientStore() {
         return new RedisClientStore(redisConnectionFactory);
     }
+
 
 }

@@ -1,5 +1,7 @@
 package com.yj2025.open.oauth;
 
+import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.jwk.RSAKey;
 import com.yj2025.open.commons.ClientStore;
 import com.yj2025.open.commons.RedisClientStore;
 import com.yj2025.open.oauth.provider.ClientProvider;
@@ -18,7 +20,7 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
-import org.springframework.security.oauth2.provider.ClientDetailsService;
+import org.springframework.security.oauth2.provider.endpoint.FrameworkEndpoint;
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.TokenStore;
@@ -26,10 +28,14 @@ import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenCo
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 import org.springframework.security.rsa.crypto.KeyStoreKeyFactory;
 import org.springframework.util.Assert;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.security.KeyPair;
+import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * oauth2认证服务器配置
@@ -37,6 +43,7 @@ import java.util.List;
  * @author liuyuhua
  */
 @Configuration
+@FrameworkEndpoint
 @Import(SecurityConfig.class)
 @EnableAuthorizationServer
 @EnableConfigurationProperties(Oauth2ServerProperties.class)
@@ -49,9 +56,10 @@ public class Oauth2ServerConfig extends AuthorizationServerConfigurerAdapter {
     @Autowired
     private Oauth2ServerProperties properties;
 
-    @Bean
-    public ClientDetailsService clientDetailsService() {
-        return clientId -> {
+
+    @Override
+    public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
+        clients.withClientDetails(clientId -> {
             ClientProvider provider = clientProviders.getIfAvailable();
             Assert.notNull(provider, "必须存在一个类型为 com.yj2025.open.oauth.provider.ClientProvider 的Bean");
             String clientSecret = provider.getClientSecret(clientId);
@@ -59,12 +67,7 @@ public class Oauth2ServerConfig extends AuthorizationServerConfigurerAdapter {
             ClientDefination clientDefination = new ClientDefination(clientId, passwordEncoder.encode(clientSecret));
             clientDefination.setAccessTokenValiditySeconds(properties.getAccessTokenValiditySeconds());
             return clientDefination;
-        };
-    }
-
-    @Override
-    public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        clients.withClientDetails(clientDetailsService());
+        });
     }
 
     @Override
@@ -126,6 +129,14 @@ public class Oauth2ServerConfig extends AuthorizationServerConfigurerAdapter {
     @Bean
     public TokenStore jwtTokenStore() {
         return new JwtTokenStore(accessTokenConverter());
+    }
+
+    @ResponseBody
+    @GetMapping("/rsa/key")
+    public Map<String, Object> getKey() {
+        RSAPublicKey publicKey = (RSAPublicKey) keyPair().getPublic();
+        RSAKey key = new RSAKey.Builder(publicKey).build();
+        return new JWKSet(key).toJSONObject();
     }
 
 }
