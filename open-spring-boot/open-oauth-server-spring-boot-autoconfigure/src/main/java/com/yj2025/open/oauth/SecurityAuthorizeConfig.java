@@ -32,7 +32,7 @@ public class SecurityAuthorizeConfig extends WebSecurityConfigurerAdapter implem
                 .cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeRequests(a -> a.antMatchers(
-                                "/oauth/token", "/rsa/key")
+                                "/oauth/token", "/rsa/key", "/actuator/**")
                         .permitAll()
                         .anyRequest()
                         .denyAll()
