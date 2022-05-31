@@ -2,6 +2,7 @@ package com.yj2025.open.oauth;
 
 import com.yj2025.open.commons.ClientStore;
 import com.yj2025.open.commons.RedisClientStore;
+import com.yj2025.open.oauth.endpoint.KeyEndPoint;
 import com.yj2025.open.oauth.provider.ClientProvider;
 import com.yj2025.open.oauth.security.ClientDefination;
 import com.yj2025.open.oauth.security.JwtTokenEnhancer;
@@ -121,6 +122,11 @@ public class Oauth2ServerConfig extends AuthorizationServerConfigurerAdapter {
     @Bean
     public TokenStore jwtTokenStore() {
         return new JwtTokenStore(accessTokenConverter());
+    }
+
+    @Bean
+    public KeyEndPoint keyEndPoint() {
+        return new KeyEndPoint(keyPair());
     }
 
 }

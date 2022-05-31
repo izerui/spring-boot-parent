@@ -1,30 +1,16 @@
 package com.yj2025.open.oauth;
 
-import com.nimbusds.jose.jwk.JWKSet;
-import com.nimbusds.jose.jwk.RSAKey;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.oauth2.provider.endpoint.FrameworkEndpoint;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
-import java.security.KeyPair;
-import java.security.interfaces.RSAPublicKey;
-import java.util.Map;
 
 /**
  * @author liuyuhua
  */
 @Configuration
-@FrameworkEndpoint
 public class SecurityAuthorizeConfig extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
-
-    @Autowired
-    private KeyPair keyPair;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -40,13 +26,5 @@ public class SecurityAuthorizeConfig extends WebSecurityConfigurerAdapter implem
 
     }
 
-
-    @ResponseBody
-    @GetMapping("/rsa/key")
-    public Map<String, Object> getKey() {
-        RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
-        RSAKey key = new RSAKey.Builder(publicKey).build();
-        return new JWKSet(key).toJSONObject();
-    }
 
 }
