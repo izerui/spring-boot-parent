@@ -21,7 +21,7 @@ import java.util.Map;
  */
 @Configuration
 @FrameworkEndpoint
-public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
+public class SecurityAuthorizeConfig extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
 
     @Autowired
     private KeyPair keyPair;
