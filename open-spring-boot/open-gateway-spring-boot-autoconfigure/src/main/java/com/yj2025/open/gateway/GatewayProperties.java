@@ -10,6 +10,4 @@ import java.security.interfaces.RSAPublicKey;
 public class GatewayProperties {
 
     private String oauthApp;
-    private RSAPublicKey publicKey;
-
 }

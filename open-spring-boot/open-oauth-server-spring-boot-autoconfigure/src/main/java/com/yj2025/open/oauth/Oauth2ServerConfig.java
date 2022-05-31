@@ -43,7 +43,6 @@ import java.util.Map;
  * @author liuyuhua
  */
 @Configuration
-@FrameworkEndpoint
 @Import(SecurityConfig.class)
 @EnableAuthorizationServer
 @EnableConfigurationProperties(Oauth2ServerProperties.class)
@@ -129,14 +128,6 @@ public class Oauth2ServerConfig extends AuthorizationServerConfigurerAdapter {
     @Bean
     public TokenStore jwtTokenStore() {
         return new JwtTokenStore(accessTokenConverter());
-    }
-
-    @ResponseBody
-    @GetMapping("/rsa/key")
-    public Map<String, Object> getKey() {
-        RSAPublicKey publicKey = (RSAPublicKey) keyPair().getPublic();
-        RSAKey key = new RSAKey.Builder(publicKey).build();
-        return new JWKSet(key).toJSONObject();
     }
 
 }

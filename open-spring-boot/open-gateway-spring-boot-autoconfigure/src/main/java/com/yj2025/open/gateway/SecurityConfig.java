@@ -3,7 +3,7 @@ package com.yj2025.open.gateway;
 import com.yj2025.open.commons.ClientStore;
 import com.yj2025.open.commons.RedisClientStore;
 import com.yj2025.open.gateway.endpoint.TokenProxyEndpoint;
-import com.yj2025.open.gateway.filter.HeaderFilter;
+import com.yj2025.open.gateway.filter.CheckSignatureFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
@@ -23,8 +23,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.pattern.PathPatternParser;
 
 import java.time.Duration;
-
-import static com.yj2025.open.gateway.utils.ExchangeUtils.wirteErrorResponse;
 
 /**
  * @author liuyuhua
@@ -65,8 +63,8 @@ public class SecurityConfig {
         http.csrf(c -> c.disable())
                 .cors(s -> s.configurationSource(source))
                 .requestCache().disable()
-                // header 信息补充过滤器
-                .addFilterAfter(new HeaderFilter(clientStore()), SecurityWebFiltersOrder.AUTHORIZATION)
+                // 签证签名过滤器
+                .addFilterAfter(new CheckSignatureFilter(clientStore()), SecurityWebFiltersOrder.AUTHORIZATION)
                 .oauth2ResourceServer(auth ->
                         auth
                                 .bearerTokenConverter(tokenAuthenticationConverter())
@@ -78,8 +76,19 @@ public class SecurityConfig {
                                                 .build()
                                 )
                                 .and()
-                                .accessDeniedHandler((exchange, denied) -> wirteErrorResponse(exchange, "ACCESS_DENIED", "未授权!"))
-                                .authenticationEntryPoint((exchange, e) -> wirteErrorResponse(exchange, "AUTHORIZATION_ERROR", "authentication无效"))
+                                .accessDeniedHandler(new AccessDeniedHandler())
+                                .authenticationEntryPoint(new AuthenticationEntryPoint())
+                )
+                // 鉴权
+                .authorizeExchange(auth ->
+                        auth
+                                .pathMatchers("/oauth/token").permitAll()
+                                .anyExchange()
+                                .authenticated()
+                                .and()
+                                .exceptionHandling()
+                                .accessDeniedHandler(new AccessDeniedHandler())
+                                .authenticationEntryPoint(new AuthenticationEntryPoint())
                 );
         return http.build();
     }

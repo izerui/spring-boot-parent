@@ -13,11 +13,10 @@ spring:
   main:
     allow-bean-definition-overriding: true
 server:
-  port: 8088
+  port: 9998
 open:
   gateway:
     oauth-app: 'open-oauth-server-spring-boot-sample'
-    public-key: 'classpath:public.crt'
 ---
 spring:
   profiles: default

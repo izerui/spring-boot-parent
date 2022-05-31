@@ -14,6 +14,9 @@ spring:
     allow-bean-definition-overriding: true
 server:
   port: 9999
+open:
+  oauth:
+    access-token-validity-seconds: 30
 ---
 spring:
   profiles: default
