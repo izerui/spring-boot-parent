@@ -1,5 +1,8 @@
 package com.yj2025.weixin.work;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.yj2025.weixin.work.config.adpatder.TenantWxCpConfigStorageAdpatder;
 import com.yj2025.weixin.work.config.TenantWxCpConfigStorageOperator;
 import com.yj2025.weixin.work.config.impl.memory.MemoryTenantOperator;
@@ -9,6 +12,7 @@ import me.chanjar.weixin.common.util.http.apache.ApacheHttpClientBuilder;
 import me.chanjar.weixin.cp.config.WxCpConfigStorage;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -22,6 +26,15 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 @EnableConfigurationProperties(WorkWeixinProperties.class)
 @Configuration
 public class WorkWeixinAutoConfiguration {
+
+    @ConditionalOnMissingBean
+    @Bean
+    public ObjectMapper objectMapper() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        return objectMapper;
+    }
 
     @Bean
     public TenantWxCpConfigStorageAdpatder tenantWxCpConfigStorageAdpatder(TenantWxCpConfigStorageOperator tenantOperator,
