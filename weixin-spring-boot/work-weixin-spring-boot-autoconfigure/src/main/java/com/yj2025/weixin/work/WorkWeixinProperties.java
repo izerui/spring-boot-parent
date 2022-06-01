@@ -1,5 +1,6 @@
 package com.yj2025.weixin.work;
 
+import com.yj2025.weixin.work.config.TenantWxCpConfig;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -14,7 +15,7 @@ import java.util.List;
 @ConfigurationProperties(prefix = "work.weixin")
 public class WorkWeixinProperties {
 
-    private List<TenantConfig> configs;
+    private List<TenantWxCpConfig> configs;
 
     private StorageType storage = StorageType.memory;
     /**

@@ -1,8 +1,10 @@
 package com.yj2025.weixin.work;
 
+import com.yj2025.weixin.work.config.TenantWxCpConfigStorageOperator;
+import com.yj2025.weixin.work.config.adpatder.TenantWxCpConfigStorageAdpatder;
+import com.yj2025.weixin.work.config.impl.memory.MemoryTenantOperator;
+import com.yj2025.weixin.work.config.impl.redis.RedisTenantOperator;
 import com.yj2025.weixin.work.impl.TenantWxCpServiceImpl;
-import com.yj2025.weixin.work.impl.memory.MemoryTenantOperator;
-import com.yj2025.weixin.work.impl.redis.RedisTenantOperator;
 import me.chanjar.weixin.common.util.http.apache.ApacheHttpClientBuilder;
 import me.chanjar.weixin.cp.config.WxCpConfigStorage;
 import org.springframework.beans.factory.ObjectProvider;
@@ -22,11 +24,10 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 public class WorkWeixinAutoConfiguration {
 
     @Bean
-    public TenantWxCpConfigStorageAdpatder multiConfigStorage(TenantConfigOperator configOperator,
-                                                              TenantRuntimeOperator runtimeOperator,
-                                                              WorkWeixinProperties properties,
-                                                              ObjectProvider<ApacheHttpClientBuilder> apacheHttpClientBuilders) {
-        return new TenantWxCpConfigStorageAdpatder(configOperator, runtimeOperator, properties, apacheHttpClientBuilders);
+    public TenantWxCpConfigStorageAdpatder tenantWxCpConfigStorageAdpatder(TenantWxCpConfigStorageOperator tenantOperator,
+                                                                           WorkWeixinProperties properties,
+                                                                           ObjectProvider<ApacheHttpClientBuilder> apacheHttpClientBuilders) {
+        return new TenantWxCpConfigStorageAdpatder(tenantOperator, properties, apacheHttpClientBuilders);
     }
 
 

@@ -56,7 +56,8 @@ public class MappingUrls {
             OAUTH_CHECK_TOKEN_URL,
             JWT_RSA_KEY_URL,
             QRCODE_GENERATE_URL,
-            QRCODE_VALIDATE_URL
+            QRCODE_VALIDATE_URL,
+            "/actuator/**"
     };
 
 
@@ -69,7 +70,8 @@ public class MappingUrls {
             TOKEN_KEY_URL,
             QRCODE_GENERATE_URL,
             QRCODE_REDIRECT_URL,
-            QRCODE_VALIDATE_URL
+            QRCODE_VALIDATE_URL,
+            "/actuator/**"
     };
 
 
