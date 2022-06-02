@@ -1,9 +1,9 @@
 package com.yj2025.weixin.work;
 
 import com.yj2025.weixin.work.config.TenantWxCpConfigOperator;
-import com.yj2025.weixin.work.config.adpatder.TenantWxCpConfigStorageAdpatder;
-import com.yj2025.weixin.work.config.impl.memory.MemoryTenantCpConfigOperator;
-import com.yj2025.weixin.work.config.impl.redis.RedisTenantCpConfigOperator;
+import com.yj2025.weixin.work.config.TenantWxCpConfigStorageAdpatder;
+import com.yj2025.weixin.work.config.memory.MemoryTenantCpConfigOperator;
+import com.yj2025.weixin.work.config.redis.RedisTenantCpConfigOperator;
 import com.yj2025.weixin.work.impl.TenantWxCpServiceImpl;
 import me.chanjar.weixin.common.util.http.apache.ApacheHttpClientBuilder;
 import org.springframework.beans.factory.ObjectProvider;

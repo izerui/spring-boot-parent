@@ -1,9 +1,7 @@
-package com.yj2025.weixin.work.config.adpatder;
+package com.yj2025.weixin.work.config;
 
 import com.yj2025.weixin.work.TenantWxCpConfigLoader;
 import com.yj2025.weixin.work.WorkWeixinProperties;
-import com.yj2025.weixin.work.config.TenantWxCpConfig;
-import com.yj2025.weixin.work.config.TenantWxCpConfigOperator;
 import lombok.Getter;
 import me.chanjar.weixin.common.bean.WxAccessToken;
 import me.chanjar.weixin.common.util.http.apache.ApacheHttpClientBuilder;

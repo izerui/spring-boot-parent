@@ -1,21 +1,21 @@
-package com.yj2025.weixin.work.config.impl;
+package com.yj2025.weixin.work.config;
 
 import com.yj2025.weixin.work.WorkWeixinProperties;
-import com.yj2025.weixin.work.config.KeyConstants;
-import com.yj2025.weixin.work.config.TenantWxCpConfig;
-import com.yj2025.weixin.work.config.TenantWxCpConfigOperator;
 import me.chanjar.weixin.common.bean.WxAccessToken;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Function;
+
+import static com.yj2025.weixin.work.config.AbstractTenantCpConfigOperator.KeyConstants.*;
 
 /**
  * @author liuyuhua
  * @date 2022/4/19
  */
-public abstract class AbstractTenantCpConfigOperator implements TenantWxCpConfigOperator, KeyConstants {
+public abstract class AbstractTenantCpConfigOperator implements TenantWxCpConfigOperator {
 
     protected WorkWeixinProperties properties;
 
@@ -286,4 +286,22 @@ public abstract class AbstractTenantCpConfigOperator implements TenantWxCpConfig
         return getLockIfAvailable(tenantId, tenantAgentJsapiTicketLock);
     }
 
+    /**
+     * @author liuyuhua
+     * @date 2022/4/18
+     */
+    public final static class KeyConstants {
+        public final static Function<String, String> CORPID_KEY = s -> String.format("work:weixin:corpId:%s", s);
+        public final static Function<String, String> CORPSECRET_KEY = s -> String.format("work:weixin:corpSecret:%s", s);
+        public final static Function<String, String> TOKEN_KEY = s -> String.format("work:weixin:token:%s", s);
+        public final static Function<String, String> ENCODINGAESKEY_KEY = s -> String.format("work:weixin:encodingAESKey:%s", s);
+        public final static Function<String, String> AGENTID_KEY = s -> String.format("work:weixin:agentId:%s", s);
+        public final static Function<String, String> REPLACE_AGENTID_KEY = s -> s.replace("work:weixin:agentId:", "");
+        public final static Function<String, String> MSGAUDITLIBPATH_KEY = s -> String.format("work:weixin:msgAuditLibPath:%s", s);
+        public final static Function<String, String> JSAPITICKET_KEY = s -> String.format("work:weixin:jsapiTicket:%s", s);
+        public final static Function<String, String> AGENTJSAPITICKET_KEY = s -> String.format("work:weixin:agentJsapiTicket:%s", s);
+        public final static Function<String, String> ACCESSTOKEN_KEY = s -> String.format("work:weixin:accessToken:%s", s);
+        public final static Function<String, String> OAUTH2REDIRECTURI_KEY = s -> String.format("work:weixin:oauth2redirectUri:%s", s);
+        public final static Function<String, String> WEBHOOKKEY_KEY = s -> String.format("work:weixin:webhookKey:%s", s);
+    }
 }
