@@ -9,9 +9,12 @@ import com.yj2025.weixin.work.config.memory.MemoryTenantCpConfigOperator;
 import com.yj2025.weixin.work.config.redis.RedisTenantCpConfigOperator;
 import com.yj2025.weixin.work.impl.TenantWxCpServiceImpl;
 import com.yj2025.weixin.work.listener.WeixinListenerConfiguration;
+import me.chanjar.weixin.common.redis.RedisTemplateWxRedisOps;
+import me.chanjar.weixin.common.redis.RedissonWxRedisOps;
 import me.chanjar.weixin.common.util.http.apache.ApacheHttpClientBuilder;
 import me.chanjar.weixin.cp.config.WxCpTpConfigStorage;
 import me.chanjar.weixin.cp.config.impl.WxCpTpDefaultConfigImpl;
+import me.chanjar.weixin.cp.config.impl.WxCpTpRedissonConfigImpl;
 import me.chanjar.weixin.cp.tp.service.WxCpTpService;
 import me.chanjar.weixin.cp.tp.service.impl.WxCpTpServiceImpl;
 import org.springframework.beans.factory.ObjectProvider;
@@ -113,13 +116,29 @@ public class WorkWeixinAutoConfiguration {
 
     @ConditionalOnProperty(value = "work.weixin.storage", havingValue = "redis")
     @Configuration
-    public class RedisOperator {
+    public static class RedisOperator {
 
 
         @Bean
         public RedisTenantCpConfigOperator redisTenantOperator(StringRedisTemplate redisTemplate,
                                                                WorkWeixinProperties properties) {
             return new RedisTenantCpConfigOperator(properties, redisTemplate);
+        }
+
+        @Bean
+        public WxCpTpConfigStorage wxCpTpConfigStorage(StringRedisTemplate redisTemplate,
+                                                       WorkWeixinProperties properties) {
+            WxTpConfig tpConfig = properties.getTpConfig();
+            WxCpTpRedissonConfigImpl config = WxCpTpRedissonConfigImpl.builder()
+                    .suiteId(tpConfig.getSuiteId())
+                    .suiteSecret(tpConfig.getSuiteSecret())
+                    .token(tpConfig.getToken())
+                    .aesKey(tpConfig.getAesKey())
+                    .corpId(tpConfig.getCorpId())
+                    .corpSecret(tpConfig.getCorpSecret())
+                    .providerSecret(tpConfig.getProviderSecret())
+                    .wxRedisOps(new RedisTemplateWxRedisOps(redisTemplate)).build();
+            return config;
         }
 
     }
