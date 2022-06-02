@@ -86,7 +86,7 @@ public class WorkWeixinAutoConfiguration {
 
     @ConditionalOnProperty(value = "work.weixin.storage", matchIfMissing = true, havingValue = "memory")
     @Configuration
-    public class MemoryOperator {
+    public static class MemoryOperator {
 
 
         @Bean
