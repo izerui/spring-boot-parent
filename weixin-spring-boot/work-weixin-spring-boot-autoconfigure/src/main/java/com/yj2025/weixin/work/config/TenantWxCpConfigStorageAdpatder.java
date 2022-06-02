@@ -60,6 +60,9 @@ public class TenantWxCpConfigStorageAdpatder implements WxCpConfigStorage {
         INHERITABLE_THREAD_ACTIVE_TENANT_ID.set(tenantId);
         if (!tenantOperator.isExistConfig(tenantId)) {
             TenantWxCpConfig t = getIfNotExists(tenantId);
+            if (t == null) {
+                throw new RuntimeException("无法获取tenantId:[" + tenantId + "]相应的配置");
+            }
             tenantOperator.setConfigs(t);
         }
         return this;
