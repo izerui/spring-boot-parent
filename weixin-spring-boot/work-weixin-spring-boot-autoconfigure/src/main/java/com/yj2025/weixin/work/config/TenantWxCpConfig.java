@@ -6,12 +6,13 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 
 import javax.annotation.Nonnull;
+import java.io.Serializable;
 
 @Data
 @NoArgsConstructor
 @Accessors(chain = true)
 @ToString
-public class TenantWxCpConfig {
+public class TenantWxCpConfig implements Serializable {
     @Nonnull
     private String tenantId;
     @Nonnull

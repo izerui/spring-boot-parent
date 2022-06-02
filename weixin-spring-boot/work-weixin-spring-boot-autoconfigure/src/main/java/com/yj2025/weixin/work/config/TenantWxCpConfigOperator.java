@@ -4,7 +4,8 @@ import me.chanjar.weixin.common.bean.WxAccessToken;
 
 import java.util.concurrent.locks.Lock;
 
-public interface TenantWxCpConfigStorageOperator extends BaseTenantConfigStorageOperator{
+public interface TenantWxCpConfigOperator {
+
     /**
      * 设置租户的相关配置
      *
@@ -19,6 +20,14 @@ public interface TenantWxCpConfigStorageOperator extends BaseTenantConfigStorage
      * @return
      */
     TenantWxCpConfig getConfig(String tenantId);
+
+    /**
+     * 是否存在当前租户对应的配置
+     *
+     * @param tenantId
+     * @return
+     */
+    boolean isExistConfig(String tenantId);
 
     /**
      * 微信企业号 corpId

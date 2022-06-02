@@ -1,7 +1,7 @@
 package com.yj2025.weixin.work;
 
 import com.yj2025.weixin.work.config.TenantWxCpConfig;
-import com.yj2025.weixin.work.config.TenantWxCpConfigStorageOperator;
+import com.yj2025.weixin.work.config.TenantWxCpConfigOperator;
 import me.chanjar.weixin.common.api.WxConsts;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.cp.bean.message.WxCpMessage;
@@ -90,7 +90,7 @@ public class TenantTests {
      */
     @Test
     public void testManualInitConfig() throws WxErrorException {
-        TenantWxCpConfigStorageOperator configOperator = tenantWxCpService.getTenantOperator();
+        TenantWxCpConfigOperator configOperator = tenantWxCpService.getTenantOperator();
         configOperator.setConfigs(
                 new TenantWxCpConfig()
                         .setTenantId("feike")
@@ -110,7 +110,7 @@ public class TenantTests {
      */
     @Test
     public void testUpdateConfig() throws WxErrorException {
-        TenantWxCpConfigStorageOperator tenantOperator = tenantWxCpService.getTenantOperator();
+        TenantWxCpConfigOperator tenantOperator = tenantWxCpService.getTenantOperator();
         tenantOperator.setCorpSecret("k8s-local", "f4QXoH0x5KJgMnLBxoAik6NmKrcYA26ZEZCkz_f94uQ");
         this.sendDemoMessage("k8s-local");
     }

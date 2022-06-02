@@ -1,14 +1,12 @@
 package com.yj2025.weixin.work;
 
-import com.yj2025.weixin.work.config.TenantWxCpConfigStorageOperator;
+import com.yj2025.weixin.work.config.TenantWxCpConfigOperator;
 import com.yj2025.weixin.work.config.adpatder.TenantWxCpConfigStorageAdpatder;
-import com.yj2025.weixin.work.config.impl.memory.MemoryTenantOperator;
-import com.yj2025.weixin.work.config.impl.redis.RedisTenantOperator;
+import com.yj2025.weixin.work.config.impl.memory.MemoryTenantCpConfigOperator;
+import com.yj2025.weixin.work.config.impl.redis.RedisTenantCpConfigOperator;
 import com.yj2025.weixin.work.impl.TenantWxCpServiceImpl;
 import me.chanjar.weixin.common.util.http.apache.ApacheHttpClientBuilder;
-import me.chanjar.weixin.cp.config.WxCpConfigStorage;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -23,19 +21,28 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 @Configuration
 public class WorkWeixinAutoConfiguration {
 
+    /**
+     * 企业微信自建应用配置适配器
+     *
+     * @param tenantOperator
+     * @param properties
+     * @param apacheHttpClientBuilders
+     * @param tenantWxCpConfigLoaders
+     * @return
+     */
     @Bean
-    public TenantWxCpConfigStorageAdpatder tenantWxCpConfigStorageAdpatder(TenantWxCpConfigStorageOperator tenantOperator,
-                                                                           WorkWeixinProperties properties,
-                                                                           ObjectProvider<ApacheHttpClientBuilder> apacheHttpClientBuilders) {
-        return new TenantWxCpConfigStorageAdpatder(tenantOperator, properties, apacheHttpClientBuilders);
+    public TenantWxCpConfigStorageAdpatder cpConfigStorageAdpatder(TenantWxCpConfigOperator tenantOperator,
+                                                                   WorkWeixinProperties properties,
+                                                                   ObjectProvider<ApacheHttpClientBuilder> apacheHttpClientBuilders,
+                                                                   ObjectProvider<TenantWxCpConfigLoader> tenantWxCpConfigLoaders) {
+        return new TenantWxCpConfigStorageAdpatder(tenantOperator, properties, apacheHttpClientBuilders, tenantWxCpConfigLoaders);
     }
 
 
     @Bean
-    @ConditionalOnBean(WxCpConfigStorage.class)
-    public TenantWxCpService wxCpService(WxCpConfigStorage wxCpConfigStorage, WorkWeixinProperties properties) {
+    public TenantWxCpService wxCpService(TenantWxCpConfigStorageAdpatder cpConfigStorageAdpatder, WorkWeixinProperties properties) {
         TenantWxCpService wxCpService = new TenantWxCpServiceImpl();
-        wxCpService.setWxCpConfigStorage(wxCpConfigStorage);
+        wxCpService.setWxCpConfigStorage(cpConfigStorageAdpatder);
         int maxRetryTimes = properties.getMaxRetryTimes();
         if (maxRetryTimes < 0) {
             maxRetryTimes = 0;
@@ -56,8 +63,8 @@ public class WorkWeixinAutoConfiguration {
 
 
         @Bean
-        public MemoryTenantOperator memoryTenantOperator(WorkWeixinProperties properties) {
-            return new MemoryTenantOperator(properties);
+        public MemoryTenantCpConfigOperator memoryTenantOperator(ObjectProvider<TenantWxCpConfigLoader> wxCpConfigLoaders, WorkWeixinProperties properties) {
+            return new MemoryTenantCpConfigOperator(properties);
         }
 
     }
@@ -68,9 +75,9 @@ public class WorkWeixinAutoConfiguration {
 
 
         @Bean
-        public RedisTenantOperator redisTenantOperator(StringRedisTemplate redisTemplate,
-                                                       WorkWeixinProperties properties) {
-            return new RedisTenantOperator(properties, redisTemplate);
+        public RedisTenantCpConfigOperator redisTenantOperator(StringRedisTemplate redisTemplate,
+                                                               WorkWeixinProperties properties) {
+            return new RedisTenantCpConfigOperator(properties, redisTemplate);
         }
 
     }

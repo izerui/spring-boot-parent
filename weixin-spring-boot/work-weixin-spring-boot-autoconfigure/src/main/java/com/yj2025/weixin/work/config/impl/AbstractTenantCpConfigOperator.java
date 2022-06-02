@@ -1,20 +1,29 @@
 package com.yj2025.weixin.work.config.impl;
 
-import com.yj2025.weixin.work.config.TenantWxCpConfig;
 import com.yj2025.weixin.work.WorkWeixinProperties;
 import com.yj2025.weixin.work.config.KeyConstants;
-import com.yj2025.weixin.work.config.TenantWxCpConfigStorageOperator;
+import com.yj2025.weixin.work.config.TenantWxCpConfig;
+import com.yj2025.weixin.work.config.TenantWxCpConfigOperator;
 import me.chanjar.weixin.common.bean.WxAccessToken;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @author liuyuhua
  * @date 2022/4/19
  */
-public abstract class AbstractBaseTenantOperator implements TenantWxCpConfigStorageOperator, KeyConstants {
+public abstract class AbstractTenantCpConfigOperator implements TenantWxCpConfigOperator, KeyConstants {
 
     protected WorkWeixinProperties properties;
 
-    public AbstractBaseTenantOperator(WorkWeixinProperties properties) {
+    protected transient Map<String, Lock> tenantAccessTokenLock = new HashMap<>();
+    protected transient Map<String, Lock> tenantJsapiTicketLock = new HashMap<>();
+    protected transient Map<String, Lock> tenantAgentJsapiTicketLock = new HashMap<>();
+
+    public AbstractTenantCpConfigOperator(WorkWeixinProperties properties) {
         this.properties = properties;
     }
 
@@ -92,6 +101,12 @@ public abstract class AbstractBaseTenantOperator implements TenantWxCpConfigStor
                 .setAgentId(getAgentId(tenantId))
                 .setMsgAuditLibPath(getMsgAuditLibPath(tenantId))
                 .setWebhookKey(getWebhookKey(tenantId));
+    }
+
+    @Override
+    public boolean isExistConfig(String tenantId) {
+        String corpId = getCorpId(tenantId);
+        return corpId != null;
     }
 
     @Override
@@ -243,6 +258,32 @@ public abstract class AbstractBaseTenantOperator implements TenantWxCpConfigStor
     @Override
     public void expireAccessToken(String tenantId) {
         remove(ACCESSTOKEN_KEY.apply(tenantId));
+    }
+
+    private Lock getLockIfAvailable(String tenantId, Map<String, Lock> map) {
+        Lock lock = map.get(tenantId);
+        if (lock == null) {
+            lock = new ReentrantLock();
+            map.put(tenantId, lock);
+        }
+        return lock;
+    }
+
+
+    @Override
+    public Lock getAccessTokenLock(String tenantId) {
+        return getLockIfAvailable(tenantId, tenantAccessTokenLock);
+    }
+
+    @Override
+    public Lock getJsapiTicketLock(String tenantId) {
+        return getLockIfAvailable(tenantId, tenantJsapiTicketLock);
+    }
+
+
+    @Override
+    public Lock getAgentJsapiTicketLock(String tenantId) {
+        return getLockIfAvailable(tenantId, tenantAgentJsapiTicketLock);
     }
 
 }

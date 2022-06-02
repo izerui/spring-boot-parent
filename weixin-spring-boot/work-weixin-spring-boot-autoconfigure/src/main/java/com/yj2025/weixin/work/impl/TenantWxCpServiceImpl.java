@@ -4,7 +4,7 @@ import com.yj2025.weixin.work.TenantWxCpService;
 import com.yj2025.weixin.work.WorkWeixinProperties;
 import com.yj2025.weixin.work.config.TenantWxCpConfig;
 import com.yj2025.weixin.work.config.adpatder.TenantWxCpConfigStorageAdpatder;
-import com.yj2025.weixin.work.config.TenantWxCpConfigStorageOperator;
+import com.yj2025.weixin.work.config.TenantWxCpConfigOperator;
 import me.chanjar.weixin.cp.api.impl.WxCpServiceImpl;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -16,7 +16,7 @@ public class TenantWxCpServiceImpl extends WxCpServiceImpl implements TenantWxCp
     }
 
     @Override
-    public String tenantId() {
+    public String getTenantId() {
         return getStorageAdpatder().tenantId();
     }
 
@@ -27,7 +27,7 @@ public class TenantWxCpServiceImpl extends WxCpServiceImpl implements TenantWxCp
     }
 
     @Override
-    public TenantWxCpConfigStorageOperator getTenantOperator() {
+    public TenantWxCpConfigOperator getTenantOperator() {
         return getStorageAdpatder().getTenantOperator();
     }
 
@@ -35,7 +35,7 @@ public class TenantWxCpServiceImpl extends WxCpServiceImpl implements TenantWxCp
     public void afterPropertiesSet() throws Exception {
         TenantWxCpConfigStorageAdpatder wxCpConfigStorage = (TenantWxCpConfigStorageAdpatder) getWxCpConfigStorage();
         WorkWeixinProperties properties = wxCpConfigStorage.getProperties();
-        TenantWxCpConfigStorageOperator tenantOperator = wxCpConfigStorage.getTenantOperator();
+        TenantWxCpConfigOperator tenantOperator = wxCpConfigStorage.getTenantOperator();
         if (properties.getConfigs() != null) {
             tenantOperator.setConfigs(
                     properties.getConfigs().toArray(new TenantWxCpConfig[properties.getConfigs().size()])

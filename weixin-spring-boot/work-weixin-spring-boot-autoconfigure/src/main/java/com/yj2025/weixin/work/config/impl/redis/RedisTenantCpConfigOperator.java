@@ -1,7 +1,8 @@
 package com.yj2025.weixin.work.config.impl.redis;
 
 import com.yj2025.weixin.work.WorkWeixinProperties;
-import com.yj2025.weixin.work.config.impl.AbstractBaseTenantOperator;
+import com.yj2025.weixin.work.config.TenantWxCpConfig;
+import com.yj2025.weixin.work.config.impl.AbstractTenantCpConfigOperator;
 import me.chanjar.weixin.common.util.locks.RedisTemplateSimpleDistributedLock;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.util.Assert;
@@ -13,11 +14,12 @@ import java.util.concurrent.locks.Lock;
  * @author liuyuhua
  * @date 2022/4/19
  */
-public class RedisTenantOperator extends AbstractBaseTenantOperator {
+public class RedisTenantCpConfigOperator extends AbstractTenantCpConfigOperator {
 
     protected StringRedisTemplate redisTemplate;
 
-    public RedisTenantOperator(WorkWeixinProperties properties, StringRedisTemplate redisTemplate) {
+    public RedisTenantCpConfigOperator(WorkWeixinProperties properties,
+                                       StringRedisTemplate redisTemplate) {
         super(properties);
         this.redisTemplate = redisTemplate;
     }
@@ -59,6 +61,35 @@ public class RedisTenantOperator extends AbstractBaseTenantOperator {
     @Override
     protected long getExpiredSeconds(String key) {
         return redisTemplate.boundValueOps(key).getExpire();
+    }
+
+
+    // config
+    @Override
+    public void setConfigs(TenantWxCpConfig... configs) {
+        for (TenantWxCpConfig config : configs) {
+            this.setCorpId(config.getTenantId(), config.getCorpId());
+            this.setCorpSecret(config.getTenantId(), config.getCorpSecret());
+            this.setToken(config.getTenantId(), config.getToken());
+            this.setAesKey(config.getTenantId(), config.getAesKey());
+            this.setAgentId(config.getTenantId(), config.getAgentId());
+            this.setMsgAuditLibPath(config.getTenantId(), config.getMsgAuditLibPath());
+            this.setWebhookKey(config.getTenantId(), config.getWebhookKey());
+            this.setOauth2redirectUri(config.getTenantId(), config.getOauth2redirectUri());
+        }
+    }
+
+    @Override
+    public TenantWxCpConfig getConfig(String tenantId) {
+        return new TenantWxCpConfig()
+                .setTenantId(tenantId)
+                .setCorpId(getCorpId(tenantId))
+                .setCorpSecret(getCorpSecret(tenantId))
+                .setToken(getToken(tenantId))
+                .setAesKey(getAesKey(tenantId))
+                .setAgentId(getAgentId(tenantId))
+                .setMsgAuditLibPath(getMsgAuditLibPath(tenantId))
+                .setWebhookKey(getWebhookKey(tenantId));
     }
 
     @Override

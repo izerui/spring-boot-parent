@@ -1,30 +1,25 @@
 package com.yj2025.weixin.work.config.impl.memory;
 
 import com.yj2025.weixin.work.WorkWeixinProperties;
-import com.yj2025.weixin.work.config.impl.AbstractBaseTenantOperator;
+import com.yj2025.weixin.work.config.impl.AbstractTenantCpConfigOperator;
 import org.springframework.util.Assert;
 
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @author liuyuhua
  * @date 2022/4/19
  */
-public class MemoryTenantOperator extends AbstractBaseTenantOperator {
+public class MemoryTenantCpConfigOperator extends AbstractTenantCpConfigOperator {
 
     protected final Map<String, String> configRuntimeKeyValues;
     protected final Map<String, Integer> configRuntimeKeyExpireds;
     private final Timer timer;
-    protected transient Lock accessTokenLock = new ReentrantLock();
-    protected transient Lock jsapiTicketLock = new ReentrantLock();
-    protected transient Lock agentJsapiTicketLock = new ReentrantLock();
 
-    public MemoryTenantOperator(WorkWeixinProperties properties) {
+    public MemoryTenantCpConfigOperator(WorkWeixinProperties properties) {
         super(properties);
         this.configRuntimeKeyValues = new ConcurrentHashMap<>();
         this.configRuntimeKeyExpireds = new ConcurrentHashMap<>();
@@ -72,6 +67,7 @@ public class MemoryTenantOperator extends AbstractBaseTenantOperator {
         return configRuntimeKeyValues.containsKey(key);
     }
 
+
     @Override
     protected long getExpiredSeconds(String key) {
         Integer integer = configRuntimeKeyExpireds.get(key);
@@ -96,23 +92,6 @@ public class MemoryTenantOperator extends AbstractBaseTenantOperator {
                 configRuntimeKeyExpireds.put(key, integer);
             }
         }
-    }
-
-
-    @Override
-    public Lock getAccessTokenLock(String tenantId) {
-        return accessTokenLock;
-    }
-
-    @Override
-    public Lock getJsapiTicketLock(String tenantId) {
-        return jsapiTicketLock;
-    }
-
-
-    @Override
-    public Lock getAgentJsapiTicketLock(String tenantId) {
-        return agentJsapiTicketLock;
     }
 
 }
