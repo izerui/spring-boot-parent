@@ -1,16 +1,25 @@
 package com.yj2025.weixin.work;
 
+import java.io.File;
+
 import com.yj2025.weixin.work.config.TenantWxCpConfigOperator;
 import com.yj2025.weixin.work.config.TenantWxCpConfigStorageAdpatder;
+import com.yj2025.weixin.work.config.WxTpConfig;
 import com.yj2025.weixin.work.config.memory.MemoryTenantCpConfigOperator;
 import com.yj2025.weixin.work.config.redis.RedisTenantCpConfigOperator;
 import com.yj2025.weixin.work.impl.TenantWxCpServiceImpl;
+import com.yj2025.weixin.work.listener.WeixinListenerConfiguration;
 import me.chanjar.weixin.common.util.http.apache.ApacheHttpClientBuilder;
+import me.chanjar.weixin.cp.config.WxCpTpConfigStorage;
+import me.chanjar.weixin.cp.config.impl.WxCpTpDefaultConfigImpl;
+import me.chanjar.weixin.cp.tp.service.WxCpTpService;
+import me.chanjar.weixin.cp.tp.service.impl.WxCpTpServiceImpl;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 /**
@@ -19,6 +28,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
  */
 @EnableConfigurationProperties(WorkWeixinProperties.class)
 @Configuration
+@Import(WeixinListenerConfiguration.class)
 public class WorkWeixinAutoConfiguration {
 
     /**
@@ -56,6 +66,23 @@ public class WorkWeixinAutoConfiguration {
         return wxCpService;
     }
 
+    @Bean
+    public WxCpTpService wxCpTpService(WxCpTpConfigStorage tpConfigStorage, WorkWeixinProperties properties) {
+        WxCpTpService wxCpTpService = new WxCpTpServiceImpl();
+        wxCpTpService.setWxCpTpConfigStorage(tpConfigStorage);
+        int maxRetryTimes = properties.getMaxRetryTimes();
+        if (maxRetryTimes < 0) {
+            maxRetryTimes = 0;
+        }
+        int retrySleepMillis = properties.getRetrySleepMillis();
+        if (retrySleepMillis < 0) {
+            retrySleepMillis = 1000;
+        }
+        wxCpTpService.setRetrySleepMillis(retrySleepMillis);
+        wxCpTpService.setMaxRetryTimes(maxRetryTimes);
+        return wxCpTpService;
+    }
+
 
     @ConditionalOnProperty(value = "work.weixin.storage", matchIfMissing = true, havingValue = "memory")
     @Configuration
@@ -63,8 +90,23 @@ public class WorkWeixinAutoConfiguration {
 
 
         @Bean
-        public MemoryTenantCpConfigOperator memoryTenantOperator(ObjectProvider<TenantWxCpConfigLoader> wxCpConfigLoaders, WorkWeixinProperties properties) {
+        public MemoryTenantCpConfigOperator memoryTenantOperator(WorkWeixinProperties properties) {
             return new MemoryTenantCpConfigOperator(properties);
+        }
+
+        @Bean
+        public WxCpTpConfigStorage wxCpTpConfigStorage(WorkWeixinProperties properties) {
+            WxTpConfig tpConfig = properties.getTpConfig();
+            WxCpTpDefaultConfigImpl config = new WxCpTpDefaultConfigImpl();
+            config.setSuiteAccessTokenExpiresTime(tpConfig.getSuiteAccessTokenExpiresTime());
+            config.setSuiteTicketExpiresTime(tpConfig.getSuiteTicketExpiresTime());
+            config.setSuiteId(tpConfig.getSuiteId());
+            config.setSuiteSecret(tpConfig.getSuiteSecret());
+            config.setToken(tpConfig.getToken());
+            config.setAesKey(tpConfig.getAesKey());
+            config.setOauth2redirectUri(tpConfig.getOauth2redirectUri());
+            config.setTmpDirFile(properties.getTmpDirFile());
+            return config;
         }
 
     }

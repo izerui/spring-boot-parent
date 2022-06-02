@@ -10,6 +10,8 @@ import org.springframework.util.Assert;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
+import static com.yj2025.weixin.work.config.KeyConstants.*;
+
 /**
  * @author liuyuhua
  * @date 2022/4/19

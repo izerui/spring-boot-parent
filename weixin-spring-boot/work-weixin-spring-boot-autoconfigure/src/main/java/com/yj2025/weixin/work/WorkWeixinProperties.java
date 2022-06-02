@@ -1,6 +1,7 @@
 package com.yj2025.weixin.work;
 
 import com.yj2025.weixin.work.config.TenantWxCpConfig;
+import com.yj2025.weixin.work.config.WxTpConfig;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -15,8 +16,24 @@ import java.util.List;
 @ConfigurationProperties(prefix = "work.weixin")
 public class WorkWeixinProperties {
 
+    /**
+     * 自建应用配置(支持多应用)
+     */
     private List<TenantWxCpConfig> configs;
 
+    /**
+     * 第三方平台应用配置(服务商配置)
+     */
+    private WxTpConfig tpConfig = new WxTpConfig();
+
+    /**
+     * 是否开启监听回调
+     */
+    private boolean listenerEnabled = false;
+
+    /**
+     * 缓存类型
+     */
     private StorageType storage = StorageType.memory;
     /**
      * 代理服务器配置

@@ -12,9 +12,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Accessors(chain = true)
 @ToString
-public class TenantWxTpConfig implements Serializable {
-    private String tenantId;
-
+public class WxTpConfig implements Serializable {
     /**
      * 第三方应用ID
      */
@@ -26,13 +24,6 @@ public class TenantWxTpConfig implements Serializable {
     @Nonnull
     private String suiteSecret;
     /**
-     * 企业ID
-     */
-    @Nonnull
-    private String corpId;
-    @Nonnull
-    private String corpSecret;
-    /**
      * 回调配置 token
      */
     private String token;
@@ -40,11 +31,8 @@ public class TenantWxTpConfig implements Serializable {
      * 回调配置 aeskey
      */
     private String aesKey;
-    private String providerSecret;
-    private String providerToken;
     private long providerTokenExpiresTime;
     private long suiteAccessTokenExpiresTime;
-    private String suiteTicket;
     private long suiteTicketExpiresTime;
     private String oauth2redirectUri;
 }
