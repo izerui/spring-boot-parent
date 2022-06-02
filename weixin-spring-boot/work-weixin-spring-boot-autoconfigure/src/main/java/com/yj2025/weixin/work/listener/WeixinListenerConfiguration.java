@@ -11,11 +11,13 @@ import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
 @Slf4j
 @Configuration
 @ConditionalOnWebApplication
 @ConditionalOnProperty(name = "work.weixin.listener-enabled", havingValue = "true")
+@Import(WxCpListenerController.class)
 public class WeixinListenerConfiguration {
 
 
@@ -32,12 +34,5 @@ public class WeixinListenerConfiguration {
         return wxCpMessageRouter;
     }
 
-    @Bean
-    public WxCpListenerController wxCpListenerController(TenantWxCpService service,
-                                                         WxCpMessageRouter router,
-                                                         ServerProperties serverProperties,
-                                                         ApplicationContext applicationContext) {
-        return new WxCpListenerController(service, router, applicationContext);
-    }
 
 }

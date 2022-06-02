@@ -8,13 +8,11 @@ import me.chanjar.weixin.cp.config.WxCpConfigStorage;
 import me.chanjar.weixin.cp.message.WxCpMessageRouter;
 import me.chanjar.weixin.cp.util.crypto.WxCpCryptUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -24,21 +22,22 @@ import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
+@RestController
 public class WxCpListenerController implements CommandLineRunner {
 
+    @Autowired
     private TenantWxCpService tenantWxCpService;
+    @Autowired
     private WxCpMessageRouter wxCpMessageRouter;
+    @Autowired
     private ApplicationContext applicationContext;
 
-    public WxCpListenerController(TenantWxCpService tenantWxCpService,
-                                  WxCpMessageRouter wxCpMessageRouter,
-                                  ApplicationContext applicationContext) {
-        this.tenantWxCpService = tenantWxCpService;
-        this.wxCpMessageRouter = wxCpMessageRouter;
-        this.applicationContext = applicationContext;
+
+    @GetMapping("/get")
+    public String messge2() {
+        return "success";
     }
 
-    @ResponseBody
     @RequestMapping(value = "/message/{tenantId}", produces = "text/html;charset=utf-8")
     public String message(@PathVariable("tenantId") String tenantId,
                           @RequestParam("msg_signature") String msgSignature,
