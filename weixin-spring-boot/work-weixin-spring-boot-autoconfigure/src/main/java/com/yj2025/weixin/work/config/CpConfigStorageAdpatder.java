@@ -1,7 +1,8 @@
 package com.yj2025.weixin.work.config;
 
-import com.yj2025.weixin.work.provider.CpConfigLoader;
 import com.yj2025.weixin.work.WxProperties;
+import com.yj2025.weixin.work.provider.CpConfigLoader;
+import com.yj2025.weixin.work.provider.TpAuthConfigLoader;
 import lombok.Getter;
 import me.chanjar.weixin.common.bean.WxAccessToken;
 import me.chanjar.weixin.common.util.http.apache.ApacheHttpClientBuilder;
@@ -27,10 +28,15 @@ public class CpConfigStorageAdpatder implements WxCpConfigStorage {
 
     // 当前线程使用的tenantId(公司编号)
     protected final static InheritableThreadLocal<String> INHERITABLE_THREAD_ACTIVE_TENANT_ID;
+    // 当前tenantId对应的是否是第三方app
+    protected final static InheritableThreadLocal<Boolean> INHERITABLE_THREAD_ACTIVE_TENANT_TYPE;
 
     static {
         INHERITABLE_THREAD_ACTIVE_TENANT_ID = new InheritableThreadLocal<>();
         INHERITABLE_THREAD_ACTIVE_TENANT_ID.set(DEFAULT_TENANT_ID);
+
+        INHERITABLE_THREAD_ACTIVE_TENANT_TYPE = new InheritableThreadLocal<>();
+        INHERITABLE_THREAD_ACTIVE_TENANT_TYPE.set(false);
     }
 
     @Getter
@@ -38,34 +44,48 @@ public class CpConfigStorageAdpatder implements WxCpConfigStorage {
     @Getter
     protected WxProperties properties;
     protected ObjectProvider<ApacheHttpClientBuilder> apacheHttpClientBuilders;
-    private ObjectProvider<CpConfigLoader> tenantWxCpConfigLoaders;
+    private ObjectProvider<CpConfigLoader> cpConfigLoaders;
+    private ObjectProvider<TpAuthConfigLoader> tpAuthConfigLoaders;
 
     public CpConfigStorageAdpatder(CpConfigOperator tenantOperator,
                                    WxProperties properties,
                                    ObjectProvider<ApacheHttpClientBuilder> apacheHttpClientBuilders,
-                                   ObjectProvider<CpConfigLoader> tenantWxCpConfigLoaders) {
+                                   ObjectProvider<CpConfigLoader> cpConfigLoaders,
+                                   ObjectProvider<TpAuthConfigLoader> tpAuthConfigLoaders) {
         this.tenantOperator = tenantOperator;
         this.properties = properties;
         this.apacheHttpClientBuilders = apacheHttpClientBuilders;
-        this.tenantWxCpConfigLoaders = tenantWxCpConfigLoaders;
+        this.cpConfigLoaders = cpConfigLoaders;
+        this.tpAuthConfigLoaders = tpAuthConfigLoaders;
     }
 
     /**
      * 当前请求线程切换使用的租户配置
      *
      * @param tenantId
+     * @param isThirdApp
      * @return
      */
-    public CpConfigStorageAdpatder tenant(String tenantId) {
+    public CpConfigStorageAdpatder tenant(String tenantId, boolean isThirdApp) {
         INHERITABLE_THREAD_ACTIVE_TENANT_ID.set(tenantId);
+        INHERITABLE_THREAD_ACTIVE_TENANT_TYPE.set(isThirdApp);
         if (!tenantOperator.isExistConfig(tenantId)) {
-            WxProperties.CpConfig t = getIfNotExists(tenantId);
+            WxProperties.CpConfig t = getIfNotExists(tenantId, isThirdApp);
             if (t == null) {
                 throw new RuntimeException("无法获取tenantId:[" + tenantId + "]相应的配置");
             }
             tenantOperator.setConfigs(t);
         }
         return this;
+    }
+
+    /**
+     * 当前请求的tenantId对应的是否是第三方应用
+     *
+     * @return
+     */
+    public boolean isThirdApp() {
+        return INHERITABLE_THREAD_ACTIVE_TENANT_TYPE.get();
     }
 
     public String tenantId() {
@@ -81,11 +101,21 @@ public class CpConfigStorageAdpatder implements WxCpConfigStorage {
         return WxCpApiPathConsts.DEFAULT_CP_BASE_URL + path;
     }
 
-    private WxProperties.CpConfig getIfNotExists(String tenantId) {
+    private WxProperties.CpConfig getIfNotExists(String tenantId, boolean isThirdApp) {
         AtomicReference<WxProperties.CpConfig> config = new AtomicReference<>();
-        tenantWxCpConfigLoaders.ifAvailable(loader -> {
-            config.set(loader.getConfig(tenantId));
-        });
+        if (isThirdApp) {
+            tpAuthConfigLoaders.ifAvailable(loader -> {
+                WxProperties.TpAuthConfig tpAuthConfig = loader.getConfig(tenantId);
+                config.set(new WxProperties.CpConfig()
+                        .setCorpId(tpAuthConfig.getCorpId())
+                        .setAgentId(tpAuthConfig.getPermanentCode())
+                        .setTenantId(tenantId));
+            });
+        } else {
+            cpConfigLoaders.ifAvailable(loader -> {
+                config.set(loader.getConfig(tenantId));
+            });
+        }
         return config.get();
     }
 
@@ -184,7 +214,11 @@ public class CpConfigStorageAdpatder implements WxCpConfigStorage {
 
     @Override
     public Integer getAgentId() {
-        return tenantOperator.getAgentId(tenantId());
+        String agentId = tenantOperator.getAgentId(tenantId());
+        if (agentId != null) {
+            return Integer.valueOf(agentId);
+        }
+        return null;
     }
 
     @Override

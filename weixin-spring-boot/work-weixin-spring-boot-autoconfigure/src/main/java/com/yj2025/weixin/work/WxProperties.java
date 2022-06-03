@@ -136,7 +136,7 @@ public class WxProperties {
          * 应用id 我的应用页面查看
          */
         @Nonnull
-        private Integer agentId;
+        private String agentId;
         /**
          * 回调token 启用api接收页面查看
          */
@@ -148,5 +148,24 @@ public class WxProperties {
         private String msgAuditLibPath;
         private String oauth2redirectUri;
         private String webhookKey;
+    }
+
+    @Data
+    @NoArgsConstructor
+    @Accessors(chain = true)
+    @ToString
+    public static class TpAuthConfig implements Serializable {
+        @Nonnull
+        private String tenantId;
+        /**
+         * 授权企业的id
+         */
+        @Nonnull
+        private String corpId;
+        /**
+         * 授权企业的永久授权码
+         */
+        @Nonnull
+        private String permanentCode;
     }
 }

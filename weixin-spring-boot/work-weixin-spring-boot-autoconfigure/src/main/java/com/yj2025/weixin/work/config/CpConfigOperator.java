@@ -56,7 +56,7 @@ public interface CpConfigOperator {
     /**
      * 微信企业号应用 ID
      */
-    Integer getAgentId(String tenantId);
+    String getAgentId(String tenantId);
 
     /**
      * 微信企业号应用 会话存档类库路径
@@ -86,7 +86,7 @@ public interface CpConfigOperator {
     /**
      * 微信企业号应用 ID
      */
-    void setAgentId(String tenantId, Integer agentId);
+    void setAgentId(String tenantId, String agentId);
 
     /**
      * 微信企业号应用 会话存档类库路径

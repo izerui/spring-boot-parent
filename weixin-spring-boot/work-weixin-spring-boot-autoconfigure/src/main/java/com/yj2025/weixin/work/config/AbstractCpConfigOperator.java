@@ -105,7 +105,8 @@ public abstract class AbstractCpConfigOperator implements CpConfigOperator {
     @Override
     public boolean isExistConfig(String tenantId) {
         String corpId = getCorpId(tenantId);
-        return corpId != null;
+        String agentId = getAgentId(tenantId);
+        return corpId != null && agentId != null;
     }
 
     @Override
@@ -129,12 +130,12 @@ public abstract class AbstractCpConfigOperator implements CpConfigOperator {
     }
 
     @Override
-    public Integer getAgentId(String tenantId) {
+    public String getAgentId(String tenantId) {
         String s = get(AGENTID_KEY.apply(tenantId));
         if (s == null) {
             return null;
         }
-        return Integer.valueOf(s);
+        return s;
     }
 
     @Override
@@ -163,8 +164,8 @@ public abstract class AbstractCpConfigOperator implements CpConfigOperator {
     }
 
     @Override
-    public void setAgentId(String tenantId, Integer agentId) {
-        set(AGENTID_KEY.apply(tenantId), String.valueOf(agentId));
+    public void setAgentId(String tenantId, String agentId) {
+        set(AGENTID_KEY.apply(tenantId), agentId);
     }
 
     @Override

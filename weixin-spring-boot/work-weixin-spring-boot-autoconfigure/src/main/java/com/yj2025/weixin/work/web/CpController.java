@@ -38,7 +38,7 @@ public class CpController implements CommandLineRunner {
                           HttpServletRequest request) throws IOException {
         try {
             // 必要: 切换配置
-            cpService.tenant(tenantId);
+            cpService.tenant(tenantId, false);
             // 获取切换后的配置存储对象
             WxCpConfigStorage wxCpConfigStorage = cpService.getWxCpConfigStorage();
             if (StringUtils.isNotBlank(echostr)) {

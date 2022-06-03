@@ -34,7 +34,7 @@ public class TenantTests {
         message.setMsgType(WxConsts.KefuMsgType.TEXT);
         message.setToUser("serv");
         message.setContent("11111欢迎欢迎，热烈欢迎\n换行测试\n超链接:<a href=\"http://www.baidu.com\">Hello World</a>");
-        WxCpMessageSendResult messageSendResult = cpService.tenant(tenantId).getMessageService().send(message);
+        WxCpMessageSendResult messageSendResult = cpService.tenant(tenantId, false).getMessageService().send(message);
         System.out.println(messageSendResult.toString());
     }
 
@@ -79,7 +79,7 @@ public class TenantTests {
                 .cardActionType(1)
                 .cardActionUrl("https://yj2025.com")
                 .build();
-        WxCpMessageSendResult yunji = cpService.tenant("k8s-local").getMessageService().send(reply);
+        WxCpMessageSendResult yunji = cpService.tenant("k8s-local", false).getMessageService().send(reply);
         System.out.println(yunji.toString());
     }
 
@@ -99,7 +99,7 @@ public class TenantTests {
                         .setCorpSecret("f4Q3KJgMnLBxoAik6NmKrcYA26ZEZCkz_f94uQ")
                         .setListenerToken("6HFXyimVN37E5f")
                         .setListenerAesKey("oHhKlG1x37YXFkwg9Ncglm2wfIANxFAGn9")
-                        .setAgentId(1000003)
+                        .setAgentId("1000003")
         );
         this.sendDemoMessage("feike");
     }

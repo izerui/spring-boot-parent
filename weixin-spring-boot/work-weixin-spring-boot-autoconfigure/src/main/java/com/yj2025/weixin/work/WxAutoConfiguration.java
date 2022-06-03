@@ -6,6 +6,7 @@ import com.yj2025.weixin.work.config.memory.MemoryCpConfigOperator;
 import com.yj2025.weixin.work.config.redis.RedisCpConfigOperator;
 import com.yj2025.weixin.work.impl.CpServiceImpl;
 import com.yj2025.weixin.work.provider.CpConfigLoader;
+import com.yj2025.weixin.work.provider.TpAuthConfigLoader;
 import com.yj2025.weixin.work.web.WxWebConfiguration;
 import me.chanjar.weixin.common.redis.RedisTemplateWxRedisOps;
 import me.chanjar.weixin.common.util.http.apache.ApacheHttpClientBuilder;
@@ -37,21 +38,26 @@ public class WxAutoConfiguration {
      * @param tenantOperator
      * @param properties
      * @param apacheHttpClientBuilders
-     * @param tenantWxCpConfigLoaders
+     * @param cpConfigLoaders
+     * @param authConfigLoaders
      * @return
      */
     @Bean
     public CpConfigStorageAdpatder cpConfigStorageAdpatder(CpConfigOperator tenantOperator,
                                                            WxProperties properties,
                                                            ObjectProvider<ApacheHttpClientBuilder> apacheHttpClientBuilders,
-                                                           ObjectProvider<CpConfigLoader> tenantWxCpConfigLoaders) {
-        return new CpConfigStorageAdpatder(tenantOperator, properties, apacheHttpClientBuilders, tenantWxCpConfigLoaders);
+                                                           ObjectProvider<CpConfigLoader> cpConfigLoaders,
+                                                           ObjectProvider<TpAuthConfigLoader> authConfigLoaders) {
+        return new CpConfigStorageAdpatder(tenantOperator, properties, apacheHttpClientBuilders, cpConfigLoaders, authConfigLoaders);
     }
 
 
     @Bean
-    public CpService wxCpService(CpConfigStorageAdpatder cpConfigStorageAdpatder, WxProperties properties) {
-        CpService wxCpService = new CpServiceImpl();
+    public CpService wxCpService(CpConfigStorageAdpatder cpConfigStorageAdpatder,
+                                 WxCpTpService tpService,
+                                 WxProperties properties) {
+        CpServiceImpl wxCpService = new CpServiceImpl();
+        wxCpService.setTpService(tpService);
         wxCpService.setWxCpConfigStorage(cpConfigStorageAdpatder);
         int maxRetryTimes = properties.getMaxRetryTimes();
         if (maxRetryTimes < 0) {

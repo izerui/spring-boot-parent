@@ -13,10 +13,11 @@ public interface CpService extends WxCpService {
     /**
      * 指定以某一个租户操作service请求
      *
-     * @param tenantId
+     * @param tenantId 租户ID
+     * @param isThirdApp 是否是第三方应用
      * @return
      */
-    CpService tenant(String tenantId);
+    CpService tenant(String tenantId, boolean isThirdApp);
 
     /**
      * 获取配置操作对象
