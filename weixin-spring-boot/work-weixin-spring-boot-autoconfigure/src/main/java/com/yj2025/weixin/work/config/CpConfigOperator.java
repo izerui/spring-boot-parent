@@ -4,14 +4,14 @@ import me.chanjar.weixin.common.bean.WxAccessToken;
 
 import java.util.concurrent.locks.Lock;
 
-public interface TenantWxCpConfigOperator {
+public interface CpConfigOperator {
 
     /**
      * 设置租户的相关配置
      *
      * @param configs
      */
-    void setConfigs(TenantWxCpConfig... configs);
+    void setConfigs(CpConfig... configs);
 
     /**
      * 根据租户ID获取对应的配置
@@ -19,7 +19,7 @@ public interface TenantWxCpConfigOperator {
      * @param tenantId
      * @return
      */
-    TenantWxCpConfig getConfig(String tenantId);
+    CpConfig getConfig(String tenantId);
 
     /**
      * 是否存在当前租户对应的配置

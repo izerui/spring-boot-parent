@@ -12,7 +12,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Accessors(chain = true)
 @ToString
-public class WxTpConfig implements Serializable {
+public class TpConfig implements Serializable {
     /**
      * 第三方应用ID 来自于企微配置
      */

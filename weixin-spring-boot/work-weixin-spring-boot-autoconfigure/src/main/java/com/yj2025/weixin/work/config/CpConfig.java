@@ -12,7 +12,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Accessors(chain = true)
 @ToString
-public class TenantWxCpConfig implements Serializable {
+public class CpConfig implements Serializable {
     @Nonnull
     private String tenantId;
     @Nonnull

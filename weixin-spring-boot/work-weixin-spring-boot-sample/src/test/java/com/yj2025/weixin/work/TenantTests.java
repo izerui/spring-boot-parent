@@ -1,7 +1,7 @@
 package com.yj2025.weixin.work;
 
-import com.yj2025.weixin.work.config.TenantWxCpConfig;
-import com.yj2025.weixin.work.config.TenantWxCpConfigOperator;
+import com.yj2025.weixin.work.config.CpConfig;
+import com.yj2025.weixin.work.config.CpConfigOperator;
 import me.chanjar.weixin.common.api.WxConsts;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.cp.bean.message.WxCpMessage;
@@ -24,7 +24,7 @@ import java.util.List;
 public class TenantTests {
 
     @Autowired
-    private TenantWxCpService tenantWxCpService;
+    private CpService cpService;
 
 
     private void sendDemoMessage(String tenantId) throws WxErrorException {
@@ -33,7 +33,7 @@ public class TenantTests {
         message.setMsgType(WxConsts.KefuMsgType.TEXT);
         message.setToUser("serv");
         message.setContent("11111欢迎欢迎，热烈欢迎\n换行测试\n超链接:<a href=\"http://www.baidu.com\">Hello World</a>");
-        WxCpMessageSendResult messageSendResult = tenantWxCpService.tenant(tenantId).getMessageService().send(message);
+        WxCpMessageSendResult messageSendResult = cpService.tenant(tenantId).getMessageService().send(message);
         System.out.println(messageSendResult.toString());
     }
 
@@ -78,7 +78,7 @@ public class TenantTests {
                 .cardActionType(1)
                 .cardActionUrl("https://yj2025.com")
                 .build();
-        WxCpMessageSendResult yunji = tenantWxCpService.tenant("k8s-local").getMessageService().send(reply);
+        WxCpMessageSendResult yunji = cpService.tenant("k8s-local").getMessageService().send(reply);
         System.out.println(yunji.toString());
     }
 
@@ -90,9 +90,9 @@ public class TenantTests {
      */
     @Test
     public void testManualInitConfig() throws WxErrorException {
-        TenantWxCpConfigOperator configOperator = tenantWxCpService.getTenantOperator();
+        CpConfigOperator configOperator = cpService.getTenantOperator();
         configOperator.setConfigs(
-                new TenantWxCpConfig()
+                new CpConfig()
                         .setTenantId("feike")
                         .setCorpId("wx7003aae3ac")
                         .setCorpSecret("f4Q3KJgMnLBxoAik6NmKrcYA26ZEZCkz_f94uQ")
@@ -110,7 +110,7 @@ public class TenantTests {
      */
     @Test
     public void testUpdateConfig() throws WxErrorException {
-        TenantWxCpConfigOperator tenantOperator = tenantWxCpService.getTenantOperator();
+        CpConfigOperator tenantOperator = cpService.getTenantOperator();
         tenantOperator.setCorpSecret("k8s-local", "f4QXoH0x5KJgMnLBxoAik6NmKrcYA26ZEZCkz_f94uQ");
         this.sendDemoMessage("k8s-local");
     }

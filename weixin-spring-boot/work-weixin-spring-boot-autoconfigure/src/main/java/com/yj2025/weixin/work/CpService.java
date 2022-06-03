@@ -1,14 +1,14 @@
 package com.yj2025.weixin.work;
 
-import com.yj2025.weixin.work.config.TenantWxCpConfigStorageAdpatder;
-import com.yj2025.weixin.work.config.TenantWxCpConfigOperator;
+import com.yj2025.weixin.work.config.CpConfigStorageAdpatder;
+import com.yj2025.weixin.work.config.CpConfigOperator;
 import me.chanjar.weixin.cp.api.WxCpService;
 
 /**
  * @author liuyuhua
  * @date 2022/4/18
  */
-public interface TenantWxCpService extends WxCpService {
+public interface CpService extends WxCpService {
 
     /**
      * 获取当前tenantId
@@ -21,19 +21,19 @@ public interface TenantWxCpService extends WxCpService {
      * @param tenantId
      * @return
      */
-    TenantWxCpService tenant(String tenantId);
+    CpService tenant(String tenantId);
 
     /**
      * 获取配置操作对象
      *
      * @return
      */
-    TenantWxCpConfigOperator getTenantOperator();
+    CpConfigOperator getTenantOperator();
 
     /**
      * 获取桥接的存储适配器
      *
      * @return
      */
-    TenantWxCpConfigStorageAdpatder getStorageAdpatder();
+    CpConfigStorageAdpatder getStorageAdpatder();
 }

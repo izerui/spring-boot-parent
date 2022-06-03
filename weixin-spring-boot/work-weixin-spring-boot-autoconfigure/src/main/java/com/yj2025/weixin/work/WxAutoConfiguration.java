@@ -1,16 +1,13 @@
 package com.yj2025.weixin.work;
 
-import java.io.File;
-
-import com.yj2025.weixin.work.config.TenantWxCpConfigOperator;
-import com.yj2025.weixin.work.config.TenantWxCpConfigStorageAdpatder;
-import com.yj2025.weixin.work.config.WxTpConfig;
-import com.yj2025.weixin.work.config.memory.MemoryTenantCpConfigOperator;
-import com.yj2025.weixin.work.config.redis.RedisTenantCpConfigOperator;
-import com.yj2025.weixin.work.impl.TenantWxCpServiceImpl;
-import com.yj2025.weixin.work.listener.WeixinListenerConfiguration;
+import com.yj2025.weixin.work.config.CpConfigOperator;
+import com.yj2025.weixin.work.config.CpConfigStorageAdpatder;
+import com.yj2025.weixin.work.config.TpConfig;
+import com.yj2025.weixin.work.config.memory.MemoryCpConfigOperator;
+import com.yj2025.weixin.work.config.redis.RedisCpConfigOperator;
+import com.yj2025.weixin.work.impl.CpServiceImpl;
+import com.yj2025.weixin.work.listener.WxListenerConfiguration;
 import me.chanjar.weixin.common.redis.RedisTemplateWxRedisOps;
-import me.chanjar.weixin.common.redis.RedissonWxRedisOps;
 import me.chanjar.weixin.common.util.http.apache.ApacheHttpClientBuilder;
 import me.chanjar.weixin.cp.config.WxCpTpConfigStorage;
 import me.chanjar.weixin.cp.config.impl.WxCpTpDefaultConfigImpl;
@@ -29,10 +26,10 @@ import org.springframework.data.redis.core.StringRedisTemplate;
  * @author liuyuhua
  * @date 2022/4/18
  */
-@EnableConfigurationProperties(WorkWeixinProperties.class)
+@EnableConfigurationProperties(WxProperties.class)
 @Configuration
-@Import(WeixinListenerConfiguration.class)
-public class WorkWeixinAutoConfiguration {
+@Import(WxListenerConfiguration.class)
+public class WxAutoConfiguration {
 
     /**
      * 企业微信自建应用配置适配器
@@ -44,17 +41,17 @@ public class WorkWeixinAutoConfiguration {
      * @return
      */
     @Bean
-    public TenantWxCpConfigStorageAdpatder cpConfigStorageAdpatder(TenantWxCpConfigOperator tenantOperator,
-                                                                   WorkWeixinProperties properties,
-                                                                   ObjectProvider<ApacheHttpClientBuilder> apacheHttpClientBuilders,
-                                                                   ObjectProvider<TenantWxCpConfigLoader> tenantWxCpConfigLoaders) {
-        return new TenantWxCpConfigStorageAdpatder(tenantOperator, properties, apacheHttpClientBuilders, tenantWxCpConfigLoaders);
+    public CpConfigStorageAdpatder cpConfigStorageAdpatder(CpConfigOperator tenantOperator,
+                                                           WxProperties properties,
+                                                           ObjectProvider<ApacheHttpClientBuilder> apacheHttpClientBuilders,
+                                                           ObjectProvider<CpConfigLoader> tenantWxCpConfigLoaders) {
+        return new CpConfigStorageAdpatder(tenantOperator, properties, apacheHttpClientBuilders, tenantWxCpConfigLoaders);
     }
 
 
     @Bean
-    public TenantWxCpService wxCpService(TenantWxCpConfigStorageAdpatder cpConfigStorageAdpatder, WorkWeixinProperties properties) {
-        TenantWxCpService wxCpService = new TenantWxCpServiceImpl();
+    public CpService wxCpService(CpConfigStorageAdpatder cpConfigStorageAdpatder, WxProperties properties) {
+        CpService wxCpService = new CpServiceImpl();
         wxCpService.setWxCpConfigStorage(cpConfigStorageAdpatder);
         int maxRetryTimes = properties.getMaxRetryTimes();
         if (maxRetryTimes < 0) {
@@ -70,7 +67,7 @@ public class WorkWeixinAutoConfiguration {
     }
 
     @Bean
-    public WxCpTpService wxCpTpService(WxCpTpConfigStorage tpConfigStorage, WorkWeixinProperties properties) {
+    public WxCpTpService wxCpTpService(WxCpTpConfigStorage tpConfigStorage, WxProperties properties) {
         WxCpTpService wxCpTpService = new WxCpTpServiceImpl();
         wxCpTpService.setWxCpTpConfigStorage(tpConfigStorage);
         int maxRetryTimes = properties.getMaxRetryTimes();
@@ -93,13 +90,13 @@ public class WorkWeixinAutoConfiguration {
 
 
         @Bean
-        public MemoryTenantCpConfigOperator memoryTenantOperator(WorkWeixinProperties properties) {
-            return new MemoryTenantCpConfigOperator(properties);
+        public MemoryCpConfigOperator memoryTenantOperator(WxProperties properties) {
+            return new MemoryCpConfigOperator(properties);
         }
 
         @Bean
-        public WxCpTpConfigStorage wxCpTpConfigStorage(WorkWeixinProperties properties) {
-            WxTpConfig tpConfig = properties.getTpConfig();
+        public WxCpTpConfigStorage wxCpTpConfigStorage(WxProperties properties) {
+            TpConfig tpConfig = properties.getTpConfig();
             WxCpTpDefaultConfigImpl config = new WxCpTpDefaultConfigImpl();
             config.setSuiteAccessTokenExpiresTime(tpConfig.getSuiteAccessTokenExpiresTime());
             config.setSuiteTicketExpiresTime(tpConfig.getSuiteTicketExpiresTime());
@@ -120,15 +117,15 @@ public class WorkWeixinAutoConfiguration {
 
 
         @Bean
-        public RedisTenantCpConfigOperator redisTenantOperator(StringRedisTemplate redisTemplate,
-                                                               WorkWeixinProperties properties) {
-            return new RedisTenantCpConfigOperator(properties, redisTemplate);
+        public RedisCpConfigOperator redisTenantOperator(StringRedisTemplate redisTemplate,
+                                                         WxProperties properties) {
+            return new RedisCpConfigOperator(properties, redisTemplate);
         }
 
         @Bean
         public WxCpTpConfigStorage wxCpTpConfigStorage(StringRedisTemplate redisTemplate,
-                                                       WorkWeixinProperties properties) {
-            WxTpConfig tpConfig = properties.getTpConfig();
+                                                       WxProperties properties) {
+            TpConfig tpConfig = properties.getTpConfig();
             WxCpTpRedissonConfigImpl config = WxCpTpRedissonConfigImpl.builder()
                     .suiteId(tpConfig.getSuiteId())
                     .suiteSecret(tpConfig.getSuiteSecret())

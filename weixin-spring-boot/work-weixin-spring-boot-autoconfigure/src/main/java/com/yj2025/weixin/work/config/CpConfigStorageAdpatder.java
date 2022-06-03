@@ -1,7 +1,7 @@
 package com.yj2025.weixin.work.config;
 
-import com.yj2025.weixin.work.TenantWxCpConfigLoader;
-import com.yj2025.weixin.work.WorkWeixinProperties;
+import com.yj2025.weixin.work.CpConfigLoader;
+import com.yj2025.weixin.work.WxProperties;
 import lombok.Getter;
 import me.chanjar.weixin.common.bean.WxAccessToken;
 import me.chanjar.weixin.common.util.http.apache.ApacheHttpClientBuilder;
@@ -21,7 +21,7 @@ import java.util.concurrent.locks.Lock;
  * @date 2022/4/18
  */
 @ThreadSafe
-public class TenantWxCpConfigStorageAdpatder implements WxCpConfigStorage {
+public class CpConfigStorageAdpatder implements WxCpConfigStorage {
     // 当未指定租户ID的时候使用的默认的租户ID
     private final static String DEFAULT_TENANT_ID = "default";
 
@@ -34,16 +34,16 @@ public class TenantWxCpConfigStorageAdpatder implements WxCpConfigStorage {
     }
 
     @Getter
-    protected TenantWxCpConfigOperator tenantOperator;
+    protected CpConfigOperator tenantOperator;
     @Getter
-    protected WorkWeixinProperties properties;
+    protected WxProperties properties;
     protected ObjectProvider<ApacheHttpClientBuilder> apacheHttpClientBuilders;
-    private ObjectProvider<TenantWxCpConfigLoader> tenantWxCpConfigLoaders;
+    private ObjectProvider<CpConfigLoader> tenantWxCpConfigLoaders;
 
-    public TenantWxCpConfigStorageAdpatder(TenantWxCpConfigOperator tenantOperator,
-                                           WorkWeixinProperties properties,
-                                           ObjectProvider<ApacheHttpClientBuilder> apacheHttpClientBuilders,
-                                           ObjectProvider<TenantWxCpConfigLoader> tenantWxCpConfigLoaders) {
+    public CpConfigStorageAdpatder(CpConfigOperator tenantOperator,
+                                   WxProperties properties,
+                                   ObjectProvider<ApacheHttpClientBuilder> apacheHttpClientBuilders,
+                                   ObjectProvider<CpConfigLoader> tenantWxCpConfigLoaders) {
         this.tenantOperator = tenantOperator;
         this.properties = properties;
         this.apacheHttpClientBuilders = apacheHttpClientBuilders;
@@ -56,10 +56,10 @@ public class TenantWxCpConfigStorageAdpatder implements WxCpConfigStorage {
      * @param tenantId
      * @return
      */
-    public TenantWxCpConfigStorageAdpatder tenant(String tenantId) {
+    public CpConfigStorageAdpatder tenant(String tenantId) {
         INHERITABLE_THREAD_ACTIVE_TENANT_ID.set(tenantId);
         if (!tenantOperator.isExistConfig(tenantId)) {
-            TenantWxCpConfig t = getIfNotExists(tenantId);
+            CpConfig t = getIfNotExists(tenantId);
             if (t == null) {
                 throw new RuntimeException("无法获取tenantId:[" + tenantId + "]相应的配置");
             }
@@ -81,8 +81,8 @@ public class TenantWxCpConfigStorageAdpatder implements WxCpConfigStorage {
         return WxCpApiPathConsts.DEFAULT_CP_BASE_URL + path;
     }
 
-    private TenantWxCpConfig getIfNotExists(String tenantId) {
-        AtomicReference<TenantWxCpConfig> config = new AtomicReference<>();
+    private CpConfig getIfNotExists(String tenantId) {
+        AtomicReference<CpConfig> config = new AtomicReference<>();
         tenantWxCpConfigLoaders.ifAvailable(loader -> {
             config.set(loader.getConfig(tenantId));
         });

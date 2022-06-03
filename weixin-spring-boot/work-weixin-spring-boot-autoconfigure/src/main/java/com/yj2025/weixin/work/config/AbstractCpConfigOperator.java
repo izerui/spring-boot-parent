@@ -1,13 +1,12 @@
 package com.yj2025.weixin.work.config;
 
-import com.yj2025.weixin.work.WorkWeixinProperties;
+import com.yj2025.weixin.work.WxProperties;
 import me.chanjar.weixin.common.bean.WxAccessToken;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.function.Function;
 
 import static com.yj2025.weixin.work.config.KeyConstants.*;
 
@@ -15,15 +14,15 @@ import static com.yj2025.weixin.work.config.KeyConstants.*;
  * @author liuyuhua
  * @date 2022/4/19
  */
-public abstract class AbstractTenantCpConfigOperator implements TenantWxCpConfigOperator {
+public abstract class AbstractCpConfigOperator implements CpConfigOperator {
 
-    protected WorkWeixinProperties properties;
+    protected WxProperties properties;
 
     protected transient Map<String, Lock> tenantAccessTokenLock = new HashMap<>();
     protected transient Map<String, Lock> tenantJsapiTicketLock = new HashMap<>();
     protected transient Map<String, Lock> tenantAgentJsapiTicketLock = new HashMap<>();
 
-    public AbstractTenantCpConfigOperator(WorkWeixinProperties properties) {
+    public AbstractCpConfigOperator(WxProperties properties) {
         this.properties = properties;
     }
 
@@ -77,8 +76,8 @@ public abstract class AbstractTenantCpConfigOperator implements TenantWxCpConfig
 
     // config
     @Override
-    public void setConfigs(TenantWxCpConfig... configs) {
-        for (TenantWxCpConfig config : configs) {
+    public void setConfigs(CpConfig... configs) {
+        for (CpConfig config : configs) {
             this.setCorpId(config.getTenantId(), config.getCorpId());
             this.setCorpSecret(config.getTenantId(), config.getCorpSecret());
             this.setToken(config.getTenantId(), config.getToken());
@@ -91,8 +90,8 @@ public abstract class AbstractTenantCpConfigOperator implements TenantWxCpConfig
     }
 
     @Override
-    public TenantWxCpConfig getConfig(String tenantId) {
-        return new TenantWxCpConfig()
+    public CpConfig getConfig(String tenantId) {
+        return new CpConfig()
                 .setTenantId(tenantId)
                 .setCorpId(getCorpId(tenantId))
                 .setCorpSecret(getCorpSecret(tenantId))

@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.yj2025.weixin.work.WorkWeixinAutoConfiguration
+com.yj2025.weixin.work.WxAutoConfiguration

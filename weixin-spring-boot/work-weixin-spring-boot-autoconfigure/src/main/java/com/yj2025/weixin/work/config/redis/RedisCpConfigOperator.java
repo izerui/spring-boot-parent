@@ -1,8 +1,8 @@
 package com.yj2025.weixin.work.config.redis;
 
-import com.yj2025.weixin.work.WorkWeixinProperties;
-import com.yj2025.weixin.work.config.TenantWxCpConfig;
-import com.yj2025.weixin.work.config.AbstractTenantCpConfigOperator;
+import com.yj2025.weixin.work.WxProperties;
+import com.yj2025.weixin.work.config.CpConfig;
+import com.yj2025.weixin.work.config.AbstractCpConfigOperator;
 import me.chanjar.weixin.common.util.locks.RedisTemplateSimpleDistributedLock;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.util.Assert;
@@ -16,12 +16,12 @@ import static com.yj2025.weixin.work.config.KeyConstants.*;
  * @author liuyuhua
  * @date 2022/4/19
  */
-public class RedisTenantCpConfigOperator extends AbstractTenantCpConfigOperator {
+public class RedisCpConfigOperator extends AbstractCpConfigOperator {
 
     protected StringRedisTemplate redisTemplate;
 
-    public RedisTenantCpConfigOperator(WorkWeixinProperties properties,
-                                       StringRedisTemplate redisTemplate) {
+    public RedisCpConfigOperator(WxProperties properties,
+                                 StringRedisTemplate redisTemplate) {
         super(properties);
         this.redisTemplate = redisTemplate;
     }
@@ -68,8 +68,8 @@ public class RedisTenantCpConfigOperator extends AbstractTenantCpConfigOperator 
 
     // config
     @Override
-    public void setConfigs(TenantWxCpConfig... configs) {
-        for (TenantWxCpConfig config : configs) {
+    public void setConfigs(CpConfig... configs) {
+        for (CpConfig config : configs) {
             this.setCorpId(config.getTenantId(), config.getCorpId());
             this.setCorpSecret(config.getTenantId(), config.getCorpSecret());
             this.setToken(config.getTenantId(), config.getToken());
@@ -82,8 +82,8 @@ public class RedisTenantCpConfigOperator extends AbstractTenantCpConfigOperator 
     }
 
     @Override
-    public TenantWxCpConfig getConfig(String tenantId) {
-        return new TenantWxCpConfig()
+    public CpConfig getConfig(String tenantId) {
+        return new CpConfig()
                 .setTenantId(tenantId)
                 .setCorpId(getCorpId(tenantId))
                 .setCorpSecret(getCorpSecret(tenantId))

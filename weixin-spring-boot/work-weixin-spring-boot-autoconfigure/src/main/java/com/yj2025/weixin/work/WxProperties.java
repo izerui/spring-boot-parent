@@ -1,7 +1,7 @@
 package com.yj2025.weixin.work;
 
-import com.yj2025.weixin.work.config.TenantWxCpConfig;
-import com.yj2025.weixin.work.config.WxTpConfig;
+import com.yj2025.weixin.work.config.CpConfig;
+import com.yj2025.weixin.work.config.TpConfig;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -14,17 +14,17 @@ import java.util.List;
  */
 @Data
 @ConfigurationProperties(prefix = "work.weixin")
-public class WorkWeixinProperties {
+public class WxProperties {
 
     /**
      * 自建应用配置(支持多应用)
      */
-    private List<TenantWxCpConfig> configs;
+    private List<CpConfig> configs;
 
     /**
      * 第三方平台应用配置(服务商配置)
      */
-    private WxTpConfig tpConfig = new WxTpConfig();
+    private TpConfig tpConfig = new TpConfig();
 
     /**
      * 是否开启监听回调
