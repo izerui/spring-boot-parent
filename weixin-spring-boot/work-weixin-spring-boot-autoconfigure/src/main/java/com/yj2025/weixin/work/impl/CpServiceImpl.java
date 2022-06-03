@@ -2,19 +2,19 @@ package com.yj2025.weixin.work.impl;
 
 import com.yj2025.weixin.work.ConfigStorageAdpatder;
 import com.yj2025.weixin.work.CpService;
+import com.yj2025.weixin.work.TpService;
 import com.yj2025.weixin.work.WxProperties;
 import com.yj2025.weixin.work.config.ConfigOperator;
 import me.chanjar.weixin.common.bean.WxAccessToken;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.cp.api.impl.WxCpServiceImpl;
-import me.chanjar.weixin.cp.tp.service.WxCpTpService;
 import org.springframework.beans.factory.InitializingBean;
 
 public class CpServiceImpl extends WxCpServiceImpl implements CpService, InitializingBean {
 
-    private WxCpTpService tpService;
+    private TpService tpService;
 
-    public void setTpService(WxCpTpService tpService) {
+    public void setTpService(TpService tpService) {
         this.tpService = tpService;
     }
 
@@ -24,7 +24,7 @@ public class CpServiceImpl extends WxCpServiceImpl implements CpService, Initial
     }
 
     @Override
-    public WxCpTpService getTpService() {
+    public TpService getTpService() {
         return tpService;
     }
 

@@ -24,6 +24,7 @@ public interface ConfigOperator {
 
     /**
      * 删除指定tenantId对应的配置
+     *
      * @param tenantId
      */
     void deleteConfig(String tenantId);
@@ -66,6 +67,7 @@ public interface ConfigOperator {
 
     /**
      * 获取第三方应用授权的永久授权码
+     *
      * @param tenantId
      * @return
      */
@@ -73,6 +75,7 @@ public interface ConfigOperator {
 
     /**
      * 设置第三方应用授权的永久授权码
+     *
      * @param tenantId
      * @param permanentCode
      */

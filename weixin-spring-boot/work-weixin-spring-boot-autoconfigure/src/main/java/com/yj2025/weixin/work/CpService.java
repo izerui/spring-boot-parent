@@ -2,7 +2,6 @@ package com.yj2025.weixin.work;
 
 import com.yj2025.weixin.work.config.ConfigOperator;
 import me.chanjar.weixin.cp.api.WxCpService;
-import me.chanjar.weixin.cp.tp.service.WxCpTpService;
 
 /**
  * @author liuyuhua
@@ -35,7 +34,8 @@ public interface CpService extends WxCpService {
 
     /**
      * 获取第三方应用service
+     *
      * @return
      */
-    WxCpTpService getTpService();
+    TpService getTpService();
 }

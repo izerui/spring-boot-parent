@@ -1,5 +1,6 @@
-package com.yj2025.weixin.work.web;
+package com.yj2025.weixin.work.callback;
 
+import com.yj2025.weixin.work.TpService;
 import com.yj2025.weixin.work.WxProperties;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
@@ -7,7 +8,6 @@ import me.chanjar.weixin.cp.bean.WxCpTpPermanentCodeInfo;
 import me.chanjar.weixin.cp.bean.message.WxCpTpXmlMessage;
 import me.chanjar.weixin.cp.config.WxCpTpConfigStorage;
 import me.chanjar.weixin.cp.tp.message.WxCpTpMessageRouter;
-import me.chanjar.weixin.cp.tp.service.WxCpTpService;
 import me.chanjar.weixin.cp.util.crypto.WxCpTpCryptUtil;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -24,14 +24,15 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.yj2025.weixin.work.support.ColorOutput.*;
+import static com.yj2025.weixin.work.support.ColorOutput.BLUE;
+import static com.yj2025.weixin.work.support.ColorOutput.GREEN;
 
 @Slf4j
 @RestController
-public class TpController implements CommandLineRunner {
+public class TpCallbackController implements CommandLineRunner {
 
     @Autowired
-    private WxCpTpService tpService;
+    private TpService tpService;
     @Autowired
     private WxCpTpMessageRouter tpMessageRouter;
     @Autowired
@@ -95,6 +96,7 @@ public class TpController implements CommandLineRunner {
                      @RequestParam("state") String state,
                      HttpServletResponse response) throws WxErrorException, IOException {
         WxCpTpPermanentCodeInfo info = tpService.getPermanentCodeInfo(authCode);
+        // TODO 开放外发接口
         log.info(info.toJson());
         log.info(GREEN("\n永久授权码: {} \n授权人: {} \ncorpid: {} \nagentid: {} \naccess_token: {}"), info.getPermanentCode(), info.getAuthUserInfo().getUserId(), info.getAuthCorpInfo().getCorpId(), info.getAuthInfo().getAgents().get(0).getAgentId(), info.getAccessToken());
         response.sendRedirect(properties.getTpConfig().getPermanentCodeRedirectUri());

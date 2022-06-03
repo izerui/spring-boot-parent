@@ -1,5 +1,6 @@
 package com.yj2025.weixin.work;
 
+import com.yj2025.weixin.work.callback.WxCallbackConfiguration;
 import com.yj2025.weixin.work.config.ConfigOperator;
 import com.yj2025.weixin.work.config.memory.MemoryConfigOperator;
 import com.yj2025.weixin.work.config.redis.RedisConfigOperator;
@@ -9,15 +10,12 @@ import com.yj2025.weixin.work.impl.TpServiceImpl;
 import com.yj2025.weixin.work.impl.WxErrorHandler;
 import com.yj2025.weixin.work.provider.CpConfigLoader;
 import com.yj2025.weixin.work.provider.TpAuthConfigLoader;
-import com.yj2025.weixin.work.web.WxWebConfiguration;
 import me.chanjar.weixin.common.redis.RedisTemplateWxRedisOps;
 import me.chanjar.weixin.common.util.http.apache.ApacheHttpClientBuilder;
 import me.chanjar.weixin.cp.config.WxCpConfigStorage;
 import me.chanjar.weixin.cp.config.WxCpTpConfigStorage;
 import me.chanjar.weixin.cp.config.impl.WxCpTpDefaultConfigImpl;
 import me.chanjar.weixin.cp.config.impl.WxCpTpRedissonConfigImpl;
-import me.chanjar.weixin.cp.tp.service.WxCpTpService;
-import me.chanjar.weixin.cp.tp.service.impl.WxCpTpServiceImpl;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -36,7 +34,7 @@ import java.lang.reflect.Proxy;
  */
 @EnableConfigurationProperties(WxProperties.class)
 @Configuration
-@Import(WxWebConfiguration.class)
+@Import(WxCallbackConfiguration.class)
 public class WxAutoConfiguration {
 
     @Autowired
@@ -64,7 +62,7 @@ public class WxAutoConfiguration {
 
     @Bean
     public CpService cpService(WxCpConfigStorage cpConfigStorageAdpatder,
-                               WxCpTpService tpService,
+                               TpService tpService,
                                WxProperties properties) {
         CpServiceImpl wxCpService = new CpServiceImpl();
         wxCpService.setTpService(tpService);

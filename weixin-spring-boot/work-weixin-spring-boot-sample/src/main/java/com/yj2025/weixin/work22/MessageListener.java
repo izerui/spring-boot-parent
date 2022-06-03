@@ -1,25 +1,24 @@
 package com.yj2025.weixin.work22;
 
 import com.google.gson.Gson;
-import com.yj2025.weixin.work.provider.CpListener;
 import com.yj2025.weixin.work.CpService;
-import com.yj2025.weixin.work.provider.TpListener;
+import com.yj2025.weixin.work.TpService;
 import com.yj2025.weixin.work.WxProperties;
+import com.yj2025.weixin.work.provider.CpListener;
+import com.yj2025.weixin.work.provider.TpListener;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.cp.bean.message.WxCpTpXmlMessage;
 import me.chanjar.weixin.cp.bean.message.WxCpXmlMessage;
-import me.chanjar.weixin.cp.tp.service.WxCpTpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static com.yj2025.weixin.work.support.ColorOutput.*;
+import static com.yj2025.weixin.work.support.ColorOutput.BLUE;
+import static com.yj2025.weixin.work.support.ColorOutput.MAGENTA;
 
 @Slf4j
 @Component
 public class MessageListener implements CpListener, TpListener {
 
-    @Autowired
-    private WxCpTpService tpService;
     @Autowired
     private WxProperties properties;
 
@@ -33,7 +32,7 @@ public class MessageListener implements CpListener, TpListener {
     }
 
     @Override
-    public void listener(WxCpTpXmlMessage wxMessage, WxCpTpService wxCpTpService) {
+    public void listener(WxCpTpXmlMessage wxMessage, TpService tpService) {
         log.info("wxMessage: \n{}", MAGENTA(gson.toJson(wxMessage)));
 
         if (wxMessage.getInfoType() != null) {

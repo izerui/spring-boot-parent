@@ -1,4 +1,4 @@
-package com.yj2025.weixin.work.web;
+package com.yj2025.weixin.work.callback;
 
 import com.yj2025.weixin.work.CpService;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,7 @@ import java.util.Map;
 
 @Slf4j
 @RestController
-public class CpController implements CommandLineRunner {
+public class CpCallbackController implements CommandLineRunner {
 
     @Autowired
     private CpService cpService;

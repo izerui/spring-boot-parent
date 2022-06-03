@@ -1,30 +1,27 @@
 package com.yj2025.weixin.work22;
 
 import com.yj2025.weixin.work.CpService;
+import com.yj2025.weixin.work.TpService;
 import me.chanjar.weixin.common.api.WxConsts;
 import me.chanjar.weixin.common.bean.WxAccessToken;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.cp.api.WxCpUserService;
 import me.chanjar.weixin.cp.bean.WxCpTpAuthInfo;
-import me.chanjar.weixin.cp.bean.WxCpTpDepart;
 import me.chanjar.weixin.cp.bean.WxCpUser;
 import me.chanjar.weixin.cp.bean.message.WxCpMessage;
 import me.chanjar.weixin.cp.bean.message.WxCpMessageSendResult;
-import me.chanjar.weixin.cp.tp.service.WxCpTpService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.List;
-
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
 public class TpTests {
 
     @Autowired
-    private WxCpTpService wxCpTpService;
+    private TpService tpService;
 
     /**
      * https://developer.work.weixin.qq.com/document/path/91201
@@ -35,30 +32,30 @@ public class TpTests {
     @Deprecated
     public void test01() throws WxErrorException {
         // 获取第三方应用凭证: https://developer.work.weixin.qq.com/document/path/90600
-        String suiteAccessToken = wxCpTpService.getSuiteAccessToken();
+        String suiteAccessToken = tpService.getSuiteAccessToken();
         System.out.println("第三方应用凭证: " + suiteAccessToken);
 
         // 获取预授权链接(正式环境更换同名接口): https://developer.work.weixin.qq.com/document/path/90601
-        String preAuthUrl = wxCpTpService.getPreAuthUrl("https://local-dev.yj2025.com", "abc", 1);
+        String preAuthUrl = tpService.getPreAuthUrl("https://local-dev.yj2025.com", "abc", 1);
         System.out.println("安装第三方应用地址: " + preAuthUrl);
 
         String authCorpId = "ww7c4f40dafaee2f4c";
         String permanentCode = "k6QRaIefAYf3Y_gxy5c1S-83vw8xFi-ZoXgV9MjtuxQ";
-        WxCpTpAuthInfo info = wxCpTpService.getAuthInfo(authCorpId, permanentCode);
+        WxCpTpAuthInfo info = tpService.getAuthInfo(authCorpId, permanentCode);
         System.out.println("企业信息: " + info.toJson());
 
         // 调用业务之前需要先调用该接口
-        WxAccessToken corpToken = wxCpTpService.getCorpToken(authCorpId, permanentCode, true);
+        WxAccessToken corpToken = tpService.getCorpToken(authCorpId, permanentCode, true);
         System.out.println("企业token: " + corpToken.getAccessToken());
 
 
-        List<WxCpTpDepart> departs = wxCpTpService.getWxCpTpDepartmentService().list("ww7c4f40dafaee2f4c");
-        for (WxCpTpDepart depart : departs) {
-            System.out.println(depart.getName());
-        }
-
-        String userId = wxCpTpService.getWxCpTpUserService().getUserId("13911523134");
-        System.out.println(userId);
+//        List<WxCpTpDepart> departs = tpService.getWxCpTpDepartmentService().list("ww7c4f40dafaee2f4c");
+//        for (WxCpTpDepart depart : departs) {
+//            System.out.println(depart.getName());
+//        }
+//
+//        String userId = tpService.getWxCpTpUserService().getUserId("13911523134");
+//        System.out.println(userId);
 
     }
 
@@ -83,7 +80,6 @@ public class TpTests {
         WxCpMessageSendResult messageSendResult = cpService.tenant("yunji-wode", true).getMessageService().send(message);
         System.out.println(messageSendResult.toString());
     }
-
 
 
 }

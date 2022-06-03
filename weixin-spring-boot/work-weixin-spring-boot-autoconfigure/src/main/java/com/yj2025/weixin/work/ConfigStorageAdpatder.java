@@ -7,6 +7,7 @@ public interface ConfigStorageAdpatder extends WxCpConfigStorage {
 
     /**
      * 切换租户，并且声明是否是第三方应用
+     *
      * @param tenantId
      * @param isThirdApp
      * @return
@@ -15,30 +16,35 @@ public interface ConfigStorageAdpatder extends WxCpConfigStorage {
 
     /**
      * 当前请求是否是第三方应用
+     *
      * @return
      */
     boolean isThirdApp();
 
     /**
      * 当前请求指定的租户
+     *
      * @return
      */
     String tenantId();
 
     /**
      * 支持租户的配置操作对象
+     *
      * @return
      */
     ConfigOperator getConfigOperator();
 
     /**
      * 自动配置信息
+     *
      * @return
      */
     WxProperties getProperties();
 
     /**
      * 永久授权码
+     *
      * @return
      */
     String getPermanentCode();

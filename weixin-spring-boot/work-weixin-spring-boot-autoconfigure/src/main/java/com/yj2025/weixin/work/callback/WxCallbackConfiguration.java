@@ -1,13 +1,13 @@
-package com.yj2025.weixin.work.web;
+package com.yj2025.weixin.work.callback;
 
-import com.yj2025.weixin.work.provider.CpListener;
 import com.yj2025.weixin.work.CpService;
-import com.yj2025.weixin.work.provider.TpListener;
+import com.yj2025.weixin.work.TpService;
 import com.yj2025.weixin.work.WxProperties;
+import com.yj2025.weixin.work.provider.CpListener;
+import com.yj2025.weixin.work.provider.TpListener;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.cp.message.WxCpMessageRouter;
 import me.chanjar.weixin.cp.tp.message.WxCpTpMessageRouter;
-import me.chanjar.weixin.cp.tp.service.WxCpTpService;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -20,8 +20,8 @@ import org.springframework.context.annotation.Import;
 @Configuration
 @ConditionalOnWebApplication
 @ConditionalOnProperty(name = "work.weixin.listener-enabled", havingValue = "true")
-@Import({CpController.class, TpController.class})
-public class WxWebConfiguration {
+@Import({CpCallbackController.class, TpCallbackController.class})
+public class WxCallbackConfiguration {
 
     @Autowired
     private WxProperties properties;
@@ -31,8 +31,9 @@ public class WxWebConfiguration {
         WxCpMessageRouter router = new WxCpMessageRouter(cpService);
         router.rule()
                 .interceptor((message, map, service, sessionManager) -> {
-                    cpListeners.getIfAvailable(() -> CpListener.EMPTY)
-                            .listener((String) map.get("tenantId"), message, (CpService) service);
+                    cpListeners.forEach(cpListener -> {
+                        cpListener.listener((String) map.get("tenantId"), message, (CpService) service);
+                    });
                     return true;
                 })
                 .end();
@@ -40,12 +41,13 @@ public class WxWebConfiguration {
     }
 
     @Bean
-    public WxCpTpMessageRouter tpMessageRouter(WxCpTpService tpService, ObjectProvider<TpListener> tpListeners) {
+    public WxCpTpMessageRouter tpMessageRouter(TpService tpService, ObjectProvider<TpListener> tpListeners) {
         WxCpTpMessageRouter router = new WxCpTpMessageRouter(tpService);
         router.rule()
                 .interceptor((message, map, service, sessionManager) -> {
-                    tpListeners.getIfAvailable(() -> TpListener.EMPTY)
-                            .listener(message, (WxCpTpService) service);
+                    tpListeners.forEach(tpListener -> {
+                        tpListener.listener(message, tpService);
+                    });
                     return true;
                 })
                 .end();
