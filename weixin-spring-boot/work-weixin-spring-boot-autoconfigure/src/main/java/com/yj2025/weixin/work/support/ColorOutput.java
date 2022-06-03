@@ -1,4 +1,4 @@
-package com.yj2025.weixin.work22;
+package com.yj2025.weixin.work.support;
 
 import org.springframework.boot.ansi.AnsiColor;
 import org.springframework.boot.ansi.AnsiOutput;

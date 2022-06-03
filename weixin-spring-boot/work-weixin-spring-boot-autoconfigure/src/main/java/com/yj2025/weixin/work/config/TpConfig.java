@@ -48,6 +48,8 @@ public class TpConfig implements Serializable {
     private int suiteAccessTokenExpiresTime = 7200;
     private int suiteTicketExpiresTime = 1680; // 28分钟过期
     private String oauth2redirectUri;
+    // 获取到永久授权码并保存后的转向地址
+    private String permanentCodeRedirectUri = "https://yj2025.com";
 
     @Data
     public static class JsSdkVerify {

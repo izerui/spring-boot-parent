@@ -1,7 +1,11 @@
 package com.yj2025.weixin.work.web;
 
+import com.yj2025.weixin.work.WxProperties;
 import com.yj2025.weixin.work.config.TpConfig;
+import com.yj2025.weixin.work.support.ColorOutput;
 import lombok.extern.slf4j.Slf4j;
+import me.chanjar.weixin.common.error.WxErrorException;
+import me.chanjar.weixin.cp.bean.WxCpTpPermanentCodeInfo;
 import me.chanjar.weixin.cp.bean.message.WxCpTpXmlMessage;
 import me.chanjar.weixin.cp.config.WxCpTpConfigStorage;
 import me.chanjar.weixin.cp.tp.message.WxCpTpMessageRouter;
@@ -17,8 +21,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.yj2025.weixin.work.support.ColorOutput.*;
 
 @Slf4j
 @RestController
@@ -30,6 +38,8 @@ public class TpController implements CommandLineRunner {
     private WxCpTpMessageRouter tpMessageRouter;
     @Autowired
     private TpConfig.JsSdkVerify jsSdkVerify;
+    @Autowired
+    private WxProperties properties;
 
     /**
      * 读取配置暴露 可信域名配置地址
@@ -76,9 +86,26 @@ public class TpController implements CommandLineRunner {
         }
     }
 
+    /**
+     * 第三方应用安装完毕回调地址
+     *
+     * @return
+     */
+    @GetMapping("/")
+    public void home(@RequestParam("auth_code") String authCode,
+                     @RequestParam("expires_in") String expiresIn,
+                     @RequestParam("state") String state,
+                     HttpServletResponse response) throws WxErrorException, IOException {
+        WxCpTpPermanentCodeInfo info = tpService.getPermanentCodeInfo(authCode);
+        log.info(info.toJson());
+        log.info(GREEN("\n永久授权码: {} \n授权人: {} \ncorpid: {} \nagentid: {} \naccess_token: {}"), info.getPermanentCode(), info.getAuthUserInfo().getUserId(), info.getAuthCorpInfo().getCorpId(), info.getAuthInfo().getAgents().get(0).getAgentId(), info.getAccessToken());
+        response.sendRedirect(properties.getTpConfig().getPermanentCodeRedirectUri());
+    }
+
     @Override
     public void run(String... args) throws Exception {
-        log.info(":::: 第三方应用回调地址: /message");
-        log.info(":::: 第三方应用可信域名配置地址: " + jsSdkVerify.getVerifyTxtPath());
+        log.info(BLUE(":::: 第三方应用安装回调地址: /"));
+        log.info(BLUE(":::: 第三方应用回调地址: /message"));
+        log.info(BLUE(":::: 第三方应用可信域名配置地址: " + jsSdkVerify.getVerifyTxtPath()));
     }
 }

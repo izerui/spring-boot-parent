@@ -1,5 +1,6 @@
-package com.yj2025.weixin.work;
+package com.yj2025.weixin.work.provider;
 
+import com.yj2025.weixin.work.CpService;
 import me.chanjar.weixin.cp.bean.message.WxCpXmlMessage;
 
 public interface CpListener {

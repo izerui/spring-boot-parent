@@ -1,6 +1,6 @@
 package com.yj2025.weixin.work.config;
 
-import com.yj2025.weixin.work.CpConfigLoader;
+import com.yj2025.weixin.work.provider.CpConfigLoader;
 import com.yj2025.weixin.work.WxProperties;
 import lombok.Getter;
 import me.chanjar.weixin.common.bean.WxAccessToken;

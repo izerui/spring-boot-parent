@@ -6,6 +6,7 @@ import com.yj2025.weixin.work.config.TpConfig;
 import com.yj2025.weixin.work.config.memory.MemoryCpConfigOperator;
 import com.yj2025.weixin.work.config.redis.RedisCpConfigOperator;
 import com.yj2025.weixin.work.impl.CpServiceImpl;
+import com.yj2025.weixin.work.provider.CpConfigLoader;
 import com.yj2025.weixin.work.web.WxWebConfiguration;
 import me.chanjar.weixin.common.redis.RedisTemplateWxRedisOps;
 import me.chanjar.weixin.common.util.http.apache.ApacheHttpClientBuilder;

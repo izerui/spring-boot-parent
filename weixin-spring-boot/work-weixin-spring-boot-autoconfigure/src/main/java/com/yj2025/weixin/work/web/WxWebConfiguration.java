@@ -1,8 +1,8 @@
 package com.yj2025.weixin.work.web;
 
-import com.yj2025.weixin.work.CpListener;
+import com.yj2025.weixin.work.provider.CpListener;
 import com.yj2025.weixin.work.CpService;
-import com.yj2025.weixin.work.TpListener;
+import com.yj2025.weixin.work.provider.TpListener;
 import com.yj2025.weixin.work.WxProperties;
 import com.yj2025.weixin.work.config.TpConfig;
 import lombok.extern.slf4j.Slf4j;
