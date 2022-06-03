@@ -5,11 +5,11 @@ import com.yj2025.weixin.work.config.memory.MemoryConfigOperator;
 import com.yj2025.weixin.work.config.redis.RedisConfigOperator;
 import com.yj2025.weixin.work.impl.ConfigStorageAdpatderImpl;
 import com.yj2025.weixin.work.impl.CpServiceImpl;
+import com.yj2025.weixin.work.impl.TpServiceImpl;
 import com.yj2025.weixin.work.impl.WxErrorHandler;
 import com.yj2025.weixin.work.provider.CpConfigLoader;
 import com.yj2025.weixin.work.provider.TpAuthConfigLoader;
 import com.yj2025.weixin.work.web.WxWebConfiguration;
-import lombok.Builder;
 import me.chanjar.weixin.common.redis.RedisTemplateWxRedisOps;
 import me.chanjar.weixin.common.util.http.apache.ApacheHttpClientBuilder;
 import me.chanjar.weixin.cp.config.WxCpConfigStorage;
@@ -20,7 +20,6 @@ import me.chanjar.weixin.cp.tp.service.WxCpTpService;
 import me.chanjar.weixin.cp.tp.service.impl.WxCpTpServiceImpl;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
@@ -64,9 +63,9 @@ public class WxAutoConfiguration {
 
 
     @Bean
-    public CpService wxCpService(WxCpConfigStorage cpConfigStorageAdpatder,
-                                 WxCpTpService tpService,
-                                 WxProperties properties) {
+    public CpService cpService(WxCpConfigStorage cpConfigStorageAdpatder,
+                               WxCpTpService tpService,
+                               WxProperties properties) {
         CpServiceImpl wxCpService = new CpServiceImpl();
         wxCpService.setTpService(tpService);
         wxCpService.setWxCpConfigStorage(cpConfigStorageAdpatder);
@@ -86,9 +85,9 @@ public class WxAutoConfiguration {
     }
 
     @Bean
-    public WxCpTpService wxCpTpService(WxCpTpConfigStorage tpConfigStorage, WxProperties properties) {
-        WxCpTpService wxCpTpService = new WxCpTpServiceImpl();
-        wxCpTpService.setWxCpTpConfigStorage(tpConfigStorage);
+    public TpService tpService(WxCpTpConfigStorage tpConfigStorage, WxProperties properties) {
+        TpService tpService = new TpServiceImpl();
+        tpService.setWxCpTpConfigStorage(tpConfigStorage);
         int maxRetryTimes = properties.getMaxRetryTimes();
         if (maxRetryTimes < 0) {
             maxRetryTimes = 0;
@@ -97,11 +96,11 @@ public class WxAutoConfiguration {
         if (retrySleepMillis < 0) {
             retrySleepMillis = 1000;
         }
-        wxCpTpService.setRetrySleepMillis(retrySleepMillis);
-        wxCpTpService.setMaxRetryTimes(maxRetryTimes);
-        return (WxCpTpService) Proxy.newProxyInstance(wxCpTpService.getClass().getClassLoader(),
-                new Class[]{WxCpTpService.class},
-                new WxErrorHandler(wxCpTpService, applicationContext));
+        tpService.setRetrySleepMillis(retrySleepMillis);
+        tpService.setMaxRetryTimes(maxRetryTimes);
+        return (TpService) Proxy.newProxyInstance(tpService.getClass().getClassLoader(),
+                tpService.getClass().getInterfaces(),
+                new WxErrorHandler(tpService, applicationContext));
     }
 
 
@@ -111,12 +110,12 @@ public class WxAutoConfiguration {
 
 
         @Bean
-        public MemoryConfigOperator memoryTenantOperator(WxProperties properties) {
+        public MemoryConfigOperator memoryConfigOperator(WxProperties properties) {
             return new MemoryConfigOperator(properties);
         }
 
         @Bean
-        public WxCpTpConfigStorage wxCpTpConfigStorage(WxProperties properties) {
+        public WxCpTpConfigStorage tpConfigStorage(WxProperties properties) {
             WxProperties.TpConfig tpConfig = properties.getTpConfig();
             WxCpTpDefaultConfigImpl config = new WxCpTpDefaultConfigImpl();
             config.setSuiteAccessTokenExpiresTime(tpConfig.getSuiteAccessTokenExpiresTime());
@@ -137,7 +136,7 @@ public class WxAutoConfiguration {
     public static class RedisOperator {
 
         @Bean
-        public RedisConfigOperator redisTenantOperator(StringRedisTemplate redisTemplate,
+        public RedisConfigOperator redisConfigOperator(StringRedisTemplate redisTemplate,
                                                        WxProperties properties) {
             return new RedisConfigOperator(properties, redisTemplate);
         }
