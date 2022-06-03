@@ -72,6 +72,6 @@ public class CpController implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        log.info(":::: cp回调地址: /message/{tenantId}");
+        log.info(":::: 自建应用回调地址: /message/{tenantId}");
     }
 }

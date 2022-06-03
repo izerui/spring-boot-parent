@@ -78,7 +78,7 @@ public class TpController implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        log.info(":::: tp回调地址: /message");
-        log.info(":::: tp可信域名配置地址: " + jsSdkVerify.getVerifyTxtPath());
+        log.info(":::: 第三方应用回调地址: /message");
+        log.info(":::: 第三方应用可信域名配置地址: " + jsSdkVerify.getVerifyTxtPath());
     }
 }

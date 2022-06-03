@@ -1,5 +1,6 @@
-package com.yj2025.weixin.work;
+package com.yj2025.weixin.work22;
 
+import com.yj2025.weixin.work.CpService;
 import com.yj2025.weixin.work.config.CpConfig;
 import com.yj2025.weixin.work.config.CpConfigOperator;
 import me.chanjar.weixin.common.api.WxConsts;

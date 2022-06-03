@@ -1,4 +1,4 @@
-package com.yj2025.weixin.work;
+package com.yj2025.weixin.work22;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

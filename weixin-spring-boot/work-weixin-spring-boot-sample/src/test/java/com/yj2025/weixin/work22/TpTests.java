@@ -1,4 +1,4 @@
-package com.yj2025.weixin.work;
+package com.yj2025.weixin.work22;
 
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.cp.tp.service.WxCpTpService;
