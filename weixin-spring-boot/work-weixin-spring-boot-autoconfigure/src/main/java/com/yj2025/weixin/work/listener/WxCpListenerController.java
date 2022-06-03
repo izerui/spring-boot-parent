@@ -32,12 +32,6 @@ public class WxCpListenerController implements CommandLineRunner {
     @Autowired
     private ApplicationContext applicationContext;
 
-
-    @GetMapping("/get")
-    public String messge2() {
-        return "success";
-    }
-
     @RequestMapping(value = "/message/{tenantId}", produces = "text/html;charset=utf-8")
     public String message(@PathVariable("tenantId") String tenantId,
                           @RequestParam("msg_signature") String msgSignature,

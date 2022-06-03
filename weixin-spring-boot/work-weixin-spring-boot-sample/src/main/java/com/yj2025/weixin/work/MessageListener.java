@@ -15,8 +15,7 @@ public class MessageListener implements WorkWeixinCpListener {
 
     @Override
     public void listener(String tenantId, WxCpXmlMessage wxMessage, TenantWxCpService wxCpService) {
-        log.info("tenatnId: {}", tenantId);
-        log.info("wxMessage: {}", gson.toJson(wxMessage));
-        log.info("wxCpService: {}", wxCpService);
+        log.info("", tenantId);
+        log.info("tenatnId: {} wxMessage: \n{}", tenantId, gson.toJson(wxMessage));
     }
 }
