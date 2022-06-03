@@ -135,8 +135,11 @@ public class WxProperties {
         /**
          * 应用id 我的应用页面查看
          */
-        @Nonnull
-        private String agentId;
+        private Integer agentId;
+        /**
+         * 第三方应用的时候使用
+         */
+        private String permanentCode;
         /**
          * 回调token 启用api接收页面查看
          */
@@ -162,6 +165,10 @@ public class WxProperties {
          */
         @Nonnull
         private String corpId;
+        /**
+         * 添加的第三方应用在授权企业下的id
+         */
+        private Integer agentId;
         /**
          * 授权企业的永久授权码
          */

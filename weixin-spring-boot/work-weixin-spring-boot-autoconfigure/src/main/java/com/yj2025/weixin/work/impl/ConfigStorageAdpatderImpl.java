@@ -1,12 +1,13 @@
-package com.yj2025.weixin.work.config;
+package com.yj2025.weixin.work.impl;
 
+import com.yj2025.weixin.work.ConfigStorageAdpatder;
 import com.yj2025.weixin.work.WxProperties;
+import com.yj2025.weixin.work.config.ConfigOperator;
 import com.yj2025.weixin.work.provider.CpConfigLoader;
 import com.yj2025.weixin.work.provider.TpAuthConfigLoader;
 import lombok.Getter;
 import me.chanjar.weixin.common.bean.WxAccessToken;
 import me.chanjar.weixin.common.util.http.apache.ApacheHttpClientBuilder;
-import me.chanjar.weixin.cp.config.WxCpConfigStorage;
 import me.chanjar.weixin.cp.constant.WxCpApiPathConsts;
 import org.springframework.beans.factory.ObjectProvider;
 
@@ -22,7 +23,7 @@ import java.util.concurrent.locks.Lock;
  * @date 2022/4/18
  */
 @ThreadSafe
-public class CpConfigStorageAdpatder implements WxCpConfigStorage {
+public class ConfigStorageAdpatderImpl implements ConfigStorageAdpatder {
     // 当未指定租户ID的时候使用的默认的租户ID
     private final static String DEFAULT_TENANT_ID = "default";
 
@@ -40,19 +41,19 @@ public class CpConfigStorageAdpatder implements WxCpConfigStorage {
     }
 
     @Getter
-    protected CpConfigOperator tenantOperator;
+    protected ConfigOperator configOperator;
     @Getter
     protected WxProperties properties;
     protected ObjectProvider<ApacheHttpClientBuilder> apacheHttpClientBuilders;
     private ObjectProvider<CpConfigLoader> cpConfigLoaders;
     private ObjectProvider<TpAuthConfigLoader> tpAuthConfigLoaders;
 
-    public CpConfigStorageAdpatder(CpConfigOperator tenantOperator,
-                                   WxProperties properties,
-                                   ObjectProvider<ApacheHttpClientBuilder> apacheHttpClientBuilders,
-                                   ObjectProvider<CpConfigLoader> cpConfigLoaders,
-                                   ObjectProvider<TpAuthConfigLoader> tpAuthConfigLoaders) {
-        this.tenantOperator = tenantOperator;
+    public ConfigStorageAdpatderImpl(ConfigOperator configOperator,
+                                     WxProperties properties,
+                                     ObjectProvider<ApacheHttpClientBuilder> apacheHttpClientBuilders,
+                                     ObjectProvider<CpConfigLoader> cpConfigLoaders,
+                                     ObjectProvider<TpAuthConfigLoader> tpAuthConfigLoaders) {
+        this.configOperator = configOperator;
         this.properties = properties;
         this.apacheHttpClientBuilders = apacheHttpClientBuilders;
         this.cpConfigLoaders = cpConfigLoaders;
@@ -66,15 +67,15 @@ public class CpConfigStorageAdpatder implements WxCpConfigStorage {
      * @param isThirdApp
      * @return
      */
-    public CpConfigStorageAdpatder tenant(String tenantId, boolean isThirdApp) {
+    public ConfigStorageAdpatderImpl tenant(String tenantId, boolean isThirdApp) {
         INHERITABLE_THREAD_ACTIVE_TENANT_ID.set(tenantId);
         INHERITABLE_THREAD_ACTIVE_TENANT_TYPE.set(isThirdApp);
-        if (!tenantOperator.isExistConfig(tenantId)) {
+        if (!configOperator.isExistConfig(tenantId, isThirdApp)) {
             WxProperties.CpConfig t = getIfNotExists(tenantId, isThirdApp);
             if (t == null) {
                 throw new RuntimeException("无法获取tenantId:[" + tenantId + "]相应的配置");
             }
-            tenantOperator.setConfigs(t);
+            configOperator.setConfigs(t);
         }
         return this;
     }
@@ -90,6 +91,16 @@ public class CpConfigStorageAdpatder implements WxCpConfigStorage {
 
     public String tenantId() {
         return INHERITABLE_THREAD_ACTIVE_TENANT_ID.get();
+    }
+
+    @Override
+    public String getPermanentCode() {
+        return configOperator.getPermanentCode(tenantId());
+    }
+
+    @Override
+    public void deleteTenantConfig() {
+        configOperator.deleteConfig(tenantId());
     }
 
     @Deprecated
@@ -108,8 +119,9 @@ public class CpConfigStorageAdpatder implements WxCpConfigStorage {
                 WxProperties.TpAuthConfig tpAuthConfig = loader.getConfig(tenantId);
                 config.set(new WxProperties.CpConfig()
                         .setCorpId(tpAuthConfig.getCorpId())
-                        .setAgentId(tpAuthConfig.getPermanentCode())
-                        .setTenantId(tenantId));
+                        .setAgentId(tpAuthConfig.getAgentId())
+                        .setPermanentCode(tpAuthConfig.getPermanentCode())
+                        .setTenantId(tpAuthConfig.getTenantId()));
             });
         } else {
             cpConfigLoaders.ifAvailable(loader -> {
@@ -121,27 +133,27 @@ public class CpConfigStorageAdpatder implements WxCpConfigStorage {
 
     @Override
     public String getAccessToken() {
-        return tenantOperator.getAccessToken(tenantId());
+        return configOperator.getAccessToken(tenantId());
     }
 
     @Override
     public Lock getAccessTokenLock() {
-        return tenantOperator.getAccessTokenLock(tenantId());
+        return configOperator.getAccessTokenLock(tenantId());
     }
 
     @Override
     public boolean isAccessTokenExpired() {
-        return tenantOperator.isAccessTokenExpired(tenantId());
+        return configOperator.isAccessTokenExpired(tenantId());
     }
 
     @Override
     public void expireAccessToken() {
-        tenantOperator.expireAccessToken(tenantId());
+        configOperator.expireAccessToken(tenantId());
     }
 
     @Override
     public void updateAccessToken(WxAccessToken accessToken) {
-        tenantOperator.updateAccessToken(tenantId(), accessToken);
+        configOperator.updateAccessToken(tenantId(), accessToken);
     }
 
     @Override
@@ -149,72 +161,72 @@ public class CpConfigStorageAdpatder implements WxCpConfigStorage {
         WxAccessToken wat = new WxAccessToken();
         wat.setAccessToken(accessToken);
         wat.setExpiresIn(expiresIn);
-        tenantOperator.updateAccessToken(tenantId(), wat);
+        configOperator.updateAccessToken(tenantId(), wat);
     }
 
     @Override
     public String getJsapiTicket() {
-        return tenantOperator.getJsapiTicket(tenantId());
+        return configOperator.getJsapiTicket(tenantId());
     }
 
     @Override
     public Lock getJsapiTicketLock() {
-        return tenantOperator.getJsapiTicketLock(tenantId());
+        return configOperator.getJsapiTicketLock(tenantId());
     }
 
     @Override
     public boolean isJsapiTicketExpired() {
-        return tenantOperator.isJsapiTicketExpired(tenantId());
+        return configOperator.isJsapiTicketExpired(tenantId());
     }
 
     @Override
     public void expireJsapiTicket() {
-        tenantOperator.expireJsapiTicket(tenantId());
+        configOperator.expireJsapiTicket(tenantId());
     }
 
     @Override
     public void updateJsapiTicket(String jsapiTicket, int expiresInSeconds) {
-        tenantOperator.setJsapiTicket(tenantId(), jsapiTicket, expiresInSeconds);
+        configOperator.setJsapiTicket(tenantId(), jsapiTicket, expiresInSeconds);
     }
 
     @Override
     public String getAgentJsapiTicket() {
-        return tenantOperator.getAgentJsapiTicket(tenantId());
+        return configOperator.getAgentJsapiTicket(tenantId());
     }
 
     @Override
     public Lock getAgentJsapiTicketLock() {
-        return tenantOperator.getAgentJsapiTicketLock(tenantId());
+        return configOperator.getAgentJsapiTicketLock(tenantId());
     }
 
     @Override
     public boolean isAgentJsapiTicketExpired() {
-        return tenantOperator.isAgentJsapiTicketExpired(tenantId());
+        return configOperator.isAgentJsapiTicketExpired(tenantId());
     }
 
     @Override
     public void expireAgentJsapiTicket() {
-        tenantOperator.expireAgentJsapiTicket(tenantId());
+        configOperator.expireAgentJsapiTicket(tenantId());
     }
 
     @Override
     public void updateAgentJsapiTicket(String jsapiTicket, int expiresInSeconds) {
-        tenantOperator.updateAgentJsapiTicket(tenantId(), jsapiTicket, expiresInSeconds);
+        configOperator.updateAgentJsapiTicket(tenantId(), jsapiTicket, expiresInSeconds);
     }
 
     @Override
     public String getCorpId() {
-        return tenantOperator.getCorpId(tenantId());
+        return configOperator.getCorpId(tenantId());
     }
 
     @Override
     public String getCorpSecret() {
-        return tenantOperator.getCorpSecret(tenantId());
+        return configOperator.getCorpSecret(tenantId());
     }
 
     @Override
     public Integer getAgentId() {
-        String agentId = tenantOperator.getAgentId(tenantId());
+        Integer agentId = configOperator.getAgentId(tenantId());
         if (agentId != null) {
             return Integer.valueOf(agentId);
         }
@@ -223,27 +235,27 @@ public class CpConfigStorageAdpatder implements WxCpConfigStorage {
 
     @Override
     public String getToken() {
-        return tenantOperator.getToken(tenantId());
+        return configOperator.getToken(tenantId());
     }
 
     @Override
     public String getAesKey() {
-        return tenantOperator.getAesKey(tenantId());
+        return configOperator.getAesKey(tenantId());
     }
 
     @Override
     public String getMsgAuditLibPath() {
-        return tenantOperator.getMsgAuditLibPath(tenantId());
+        return configOperator.getMsgAuditLibPath(tenantId());
     }
 
     @Override
     public long getExpiresTime() {
-        return tenantOperator.getExpiresTime(tenantId());
+        return configOperator.getExpiresTime(tenantId());
     }
 
     @Override
     public String getOauth2redirectUri() {
-        return tenantOperator.getOauth2redirectUri(tenantId());
+        return configOperator.getOauth2redirectUri(tenantId());
     }
 
     @Override
@@ -283,6 +295,7 @@ public class CpConfigStorageAdpatder implements WxCpConfigStorage {
 
     @Override
     public String getWebhookKey() {
-        return tenantOperator.getWebhookKey(tenantId());
+        return configOperator.getWebhookKey(tenantId());
     }
+
 }

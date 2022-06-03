@@ -12,7 +12,7 @@ public final class KeyConstants {
     public final static Function<String, String> TOKEN_KEY = s -> String.format("work:weixin:token:%s", s);
     public final static Function<String, String> ENCODINGAESKEY_KEY = s -> String.format("work:weixin:encodingAESKey:%s", s);
     public final static Function<String, String> AGENTID_KEY = s -> String.format("work:weixin:agentId:%s", s);
-    public final static Function<String, String> REPLACE_AGENTID_KEY = s -> s.replace("work:weixin:agentId:", "");
+    public final static Function<String, String> PERMANENT_CODE_KEY = s -> String.format("work:weixin:permanentCode:%s", s);
     public final static Function<String, String> MSGAUDITLIBPATH_KEY = s -> String.format("work:weixin:msgAuditLibPath:%s", s);
     public final static Function<String, String> JSAPITICKET_KEY = s -> String.format("work:weixin:jsapiTicket:%s", s);
     public final static Function<String, String> AGENTJSAPITICKET_KEY = s -> String.format("work:weixin:agentJsapiTicket:%s", s);

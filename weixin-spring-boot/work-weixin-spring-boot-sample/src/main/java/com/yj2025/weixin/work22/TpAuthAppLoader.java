@@ -11,6 +11,7 @@ public class TpAuthAppLoader implements TpAuthConfigLoader {
         return new WxProperties.TpAuthConfig()
                 .setTenantId("yunji-wode")
                 .setCorpId("ww7c4f40dafaee2f4c")
-                .setPermanentCode("Axkfn5p6oE-Z0WiKY5CIQw2l3ZZZVmfAVnbtItorUWs");
+                .setAgentId(1000061)
+                .setPermanentCode("k6QRaIefAYf3Y_gxy5c1S-83vw8xFi-ZoXgV9MjtuxQ");
     }
 }

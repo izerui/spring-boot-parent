@@ -1,9 +1,9 @@
 package com.yj2025.weixin.work.impl;
 
+import com.yj2025.weixin.work.ConfigStorageAdpatder;
 import com.yj2025.weixin.work.CpService;
 import com.yj2025.weixin.work.WxProperties;
-import com.yj2025.weixin.work.config.CpConfigOperator;
-import com.yj2025.weixin.work.config.CpConfigStorageAdpatder;
+import com.yj2025.weixin.work.config.ConfigOperator;
 import me.chanjar.weixin.common.bean.WxAccessToken;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.cp.api.impl.WxCpServiceImpl;
@@ -19,8 +19,13 @@ public class CpServiceImpl extends WxCpServiceImpl implements CpService, Initial
     }
 
     @Override
-    public CpConfigStorageAdpatder getStorageAdpatder() {
-        return (CpConfigStorageAdpatder) getWxCpConfigStorage();
+    public ConfigStorageAdpatder getStorageAdpatder() {
+        return (ConfigStorageAdpatder) getWxCpConfigStorage();
+    }
+
+    @Override
+    public WxCpTpService getTpService() {
+        return tpService;
     }
 
     @Override
@@ -30,14 +35,14 @@ public class CpServiceImpl extends WxCpServiceImpl implements CpService, Initial
     }
 
     @Override
-    public CpConfigOperator getTenantOperator() {
-        return getStorageAdpatder().getTenantOperator();
+    public ConfigOperator getConfigOperator() {
+        return getStorageAdpatder().getConfigOperator();
     }
 
     @Override
     public String getAccessToken(boolean forceRefresh) throws WxErrorException {
-        CpConfigStorageAdpatder storageAdpatder = getStorageAdpatder();
-        if (storageAdpatder.isThirdApp()) {
+        ConfigStorageAdpatder storageAdpatder = getStorageAdpatder();
+        if (!storageAdpatder.isThirdApp()) {
             return super.getAccessToken(forceRefresh);
         } else {
             if (!storageAdpatder.isAccessTokenExpired() && !forceRefresh) {
@@ -45,7 +50,7 @@ public class CpServiceImpl extends WxCpServiceImpl implements CpService, Initial
             }
             //access token通过第三方应用service获取
             //corpSecret对应企业永久授权码
-            WxAccessToken accessToken = tpService.getCorpToken(this.configStorage.getCorpId(), this.configStorage.getCorpSecret());
+            WxAccessToken accessToken = tpService.getCorpToken(storageAdpatder.getCorpId(), storageAdpatder.getPermanentCode());
             storageAdpatder.updateAccessToken(accessToken.getAccessToken(), accessToken.getExpiresIn());
             return storageAdpatder.getAccessToken();
         }
@@ -58,9 +63,9 @@ public class CpServiceImpl extends WxCpServiceImpl implements CpService, Initial
      */
     @Override
     public void afterPropertiesSet() throws Exception {
-        CpConfigStorageAdpatder wxCpConfigStorage = (CpConfigStorageAdpatder) getWxCpConfigStorage();
+        ConfigStorageAdpatder wxCpConfigStorage = (ConfigStorageAdpatder) getWxCpConfigStorage();
         WxProperties properties = wxCpConfigStorage.getProperties();
-        CpConfigOperator tenantOperator = wxCpConfigStorage.getTenantOperator();
+        ConfigOperator tenantOperator = wxCpConfigStorage.getConfigOperator();
         if (properties.getConfigs() != null) {
             tenantOperator.setConfigs(
                     properties.getConfigs().toArray(new WxProperties.CpConfig[properties.getConfigs().size()])

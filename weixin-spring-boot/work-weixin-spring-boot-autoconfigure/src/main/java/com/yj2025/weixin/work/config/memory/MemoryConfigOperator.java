@@ -1,7 +1,7 @@
 package com.yj2025.weixin.work.config.memory;
 
 import com.yj2025.weixin.work.WxProperties;
-import com.yj2025.weixin.work.config.AbstractCpConfigOperator;
+import com.yj2025.weixin.work.config.AbstractConfigOperator;
 import org.springframework.util.Assert;
 
 import java.util.Map;
@@ -13,13 +13,13 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author liuyuhua
  * @date 2022/4/19
  */
-public class MemoryCpConfigOperator extends AbstractCpConfigOperator {
+public class MemoryConfigOperator extends AbstractConfigOperator {
 
     protected final Map<String, String> configRuntimeKeyValues;
     protected final Map<String, Integer> configRuntimeKeyExpireds;
     private final Timer timer;
 
-    public MemoryCpConfigOperator(WxProperties properties) {
+    public MemoryConfigOperator(WxProperties properties) {
         super(properties);
         this.configRuntimeKeyValues = new ConcurrentHashMap<>();
         this.configRuntimeKeyExpireds = new ConcurrentHashMap<>();

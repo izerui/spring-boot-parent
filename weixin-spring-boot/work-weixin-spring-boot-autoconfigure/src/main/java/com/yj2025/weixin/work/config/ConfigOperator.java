@@ -5,7 +5,7 @@ import me.chanjar.weixin.common.bean.WxAccessToken;
 
 import java.util.concurrent.locks.Lock;
 
-public interface CpConfigOperator {
+public interface ConfigOperator {
 
     /**
      * 设置租户的相关配置
@@ -23,12 +23,18 @@ public interface CpConfigOperator {
     WxProperties.CpConfig getConfig(String tenantId);
 
     /**
+     * 删除指定tenantId对应的配置
+     * @param tenantId
+     */
+    void deleteConfig(String tenantId);
+
+    /**
      * 是否存在当前租户对应的配置
      *
      * @param tenantId
      * @return
      */
-    boolean isExistConfig(String tenantId);
+    boolean isExistConfig(String tenantId, boolean isThirdApp);
 
     /**
      * 微信企业号 corpId
@@ -56,7 +62,21 @@ public interface CpConfigOperator {
     /**
      * 微信企业号应用 ID
      */
-    String getAgentId(String tenantId);
+    Integer getAgentId(String tenantId);
+
+    /**
+     * 获取第三方应用授权的永久授权码
+     * @param tenantId
+     * @return
+     */
+    String getPermanentCode(String tenantId);
+
+    /**
+     * 设置第三方应用授权的永久授权码
+     * @param tenantId
+     * @param permanentCode
+     */
+    void setPermanentCode(String tenantId, String permanentCode);
 
     /**
      * 微信企业号应用 会话存档类库路径
@@ -86,7 +106,7 @@ public interface CpConfigOperator {
     /**
      * 微信企业号应用 ID
      */
-    void setAgentId(String tenantId, String agentId);
+    void setAgentId(String tenantId, Integer agentId);
 
     /**
      * 微信企业号应用 会话存档类库路径
@@ -132,4 +152,5 @@ public interface CpConfigOperator {
     String getAccessToken(String tenantId);
 
     long getExpiresTime(String tenantId);
+
 }

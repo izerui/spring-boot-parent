@@ -2,7 +2,7 @@ package com.yj2025.weixin.work22;
 
 import com.yj2025.weixin.work.CpService;
 import com.yj2025.weixin.work.WxProperties;
-import com.yj2025.weixin.work.config.CpConfigOperator;
+import com.yj2025.weixin.work.config.ConfigOperator;
 import me.chanjar.weixin.common.api.WxConsts;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.cp.bean.message.WxCpMessage;
@@ -91,7 +91,7 @@ public class TenantTests {
      */
     @Test
     public void testManualInitConfig() throws WxErrorException {
-        CpConfigOperator configOperator = cpService.getTenantOperator();
+        ConfigOperator configOperator = cpService.getConfigOperator();
         configOperator.setConfigs(
                 new WxProperties.CpConfig()
                         .setTenantId("feike")
@@ -99,7 +99,7 @@ public class TenantTests {
                         .setCorpSecret("f4Q3KJgMnLBxoAik6NmKrcYA26ZEZCkz_f94uQ")
                         .setListenerToken("6HFXyimVN37E5f")
                         .setListenerAesKey("oHhKlG1x37YXFkwg9Ncglm2wfIANxFAGn9")
-                        .setAgentId("1000003")
+                        .setAgentId(1000003)
         );
         this.sendDemoMessage("feike");
     }
@@ -111,7 +111,7 @@ public class TenantTests {
      */
     @Test
     public void testUpdateConfig() throws WxErrorException {
-        CpConfigOperator tenantOperator = cpService.getTenantOperator();
+        ConfigOperator tenantOperator = cpService.getConfigOperator();
         tenantOperator.setCorpSecret("k8s-local", "f4QXoH0x5KJgMnLBxoAik6NmKrcYA26ZEZCkz_f94uQ");
         this.sendDemoMessage("k8s-local");
     }

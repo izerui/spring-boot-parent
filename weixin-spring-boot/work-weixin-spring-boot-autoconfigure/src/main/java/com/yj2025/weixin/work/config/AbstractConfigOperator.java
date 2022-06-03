@@ -14,7 +14,7 @@ import static com.yj2025.weixin.work.config.KeyConstants.*;
  * @author liuyuhua
  * @date 2022/4/19
  */
-public abstract class AbstractCpConfigOperator implements CpConfigOperator {
+public abstract class AbstractConfigOperator implements ConfigOperator {
 
     protected WxProperties properties;
 
@@ -22,7 +22,7 @@ public abstract class AbstractCpConfigOperator implements CpConfigOperator {
     protected transient Map<String, Lock> tenantJsapiTicketLock = new HashMap<>();
     protected transient Map<String, Lock> tenantAgentJsapiTicketLock = new HashMap<>();
 
-    public AbstractCpConfigOperator(WxProperties properties) {
+    public AbstractConfigOperator(WxProperties properties) {
         this.properties = properties;
     }
 
@@ -83,6 +83,7 @@ public abstract class AbstractCpConfigOperator implements CpConfigOperator {
             this.setToken(config.getTenantId(), config.getListenerToken());
             this.setAesKey(config.getTenantId(), config.getListenerAesKey());
             this.setAgentId(config.getTenantId(), config.getAgentId());
+            this.setPermanentCode(config.getTenantId(), config.getPermanentCode());
             this.setMsgAuditLibPath(config.getTenantId(), config.getMsgAuditLibPath());
             this.setWebhookKey(config.getTenantId(), config.getWebhookKey());
             this.setOauth2redirectUri(config.getTenantId(), config.getOauth2redirectUri());
@@ -98,15 +99,34 @@ public abstract class AbstractCpConfigOperator implements CpConfigOperator {
                 .setListenerToken(getToken(tenantId))
                 .setListenerAesKey(getAesKey(tenantId))
                 .setAgentId(getAgentId(tenantId))
+                .setPermanentCode(getPermanentCode(tenantId))
                 .setMsgAuditLibPath(getMsgAuditLibPath(tenantId))
                 .setWebhookKey(getWebhookKey(tenantId));
     }
 
     @Override
-    public boolean isExistConfig(String tenantId) {
+    public void deleteConfig(String tenantId) {
+        this.remove(CORPID_KEY.apply(tenantId));
+        this.remove(CORPSECRET_KEY.apply(tenantId));
+        this.remove(TOKEN_KEY.apply(tenantId));
+        this.remove(ENCODINGAESKEY_KEY.apply(tenantId));
+        this.remove(AGENTID_KEY.apply(tenantId));
+        this.remove(PERMANENT_CODE_KEY.apply(tenantId));
+        this.remove(MSGAUDITLIBPATH_KEY.apply(tenantId));
+        this.remove(WEBHOOKKEY_KEY.apply(tenantId));
+        this.remove(OAUTH2REDIRECTURI_KEY.apply(tenantId));
+    }
+
+    @Override
+    public boolean isExistConfig(String tenantId, boolean isThirdApp) {
         String corpId = getCorpId(tenantId);
-        String agentId = getAgentId(tenantId);
-        return corpId != null && agentId != null;
+        Integer agentId = getAgentId(tenantId);
+        if (isThirdApp) {
+            String permanentCode = getPermanentCode(tenantId);
+            return corpId != null && permanentCode != null && agentId != null;
+        }
+        String corpSecret = getCorpSecret(tenantId);
+        return corpId != null && corpSecret != null && agentId != null;
     }
 
     @Override
@@ -130,12 +150,22 @@ public abstract class AbstractCpConfigOperator implements CpConfigOperator {
     }
 
     @Override
-    public String getAgentId(String tenantId) {
+    public Integer getAgentId(String tenantId) {
         String s = get(AGENTID_KEY.apply(tenantId));
         if (s == null) {
             return null;
         }
-        return s;
+        return Integer.valueOf(s);
+    }
+
+    @Override
+    public String getPermanentCode(String tenantId) {
+        return get(PERMANENT_CODE_KEY.apply(tenantId));
+    }
+
+    @Override
+    public void setPermanentCode(String tenantId, String permanentCode) {
+        set(PERMANENT_CODE_KEY.apply(tenantId), permanentCode);
     }
 
     @Override
@@ -164,8 +194,8 @@ public abstract class AbstractCpConfigOperator implements CpConfigOperator {
     }
 
     @Override
-    public void setAgentId(String tenantId, String agentId) {
-        set(AGENTID_KEY.apply(tenantId), agentId);
+    public void setAgentId(String tenantId, Integer agentId) {
+        set(AGENTID_KEY.apply(tenantId), agentId == null ? null : String.valueOf(agentId));
     }
 
     @Override

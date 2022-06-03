@@ -1,27 +1,35 @@
 package com.yj2025.weixin.work;
 
-import com.yj2025.weixin.work.config.CpConfigOperator;
-import com.yj2025.weixin.work.config.CpConfigStorageAdpatder;
-import com.yj2025.weixin.work.config.memory.MemoryCpConfigOperator;
-import com.yj2025.weixin.work.config.redis.RedisCpConfigOperator;
+import com.yj2025.weixin.work.config.ConfigOperator;
+import com.yj2025.weixin.work.config.memory.MemoryConfigOperator;
+import com.yj2025.weixin.work.config.redis.RedisConfigOperator;
+import com.yj2025.weixin.work.impl.ConfigStorageAdpatderImpl;
 import com.yj2025.weixin.work.impl.CpServiceImpl;
+import com.yj2025.weixin.work.impl.WxErrorHandler;
 import com.yj2025.weixin.work.provider.CpConfigLoader;
 import com.yj2025.weixin.work.provider.TpAuthConfigLoader;
 import com.yj2025.weixin.work.web.WxWebConfiguration;
+import lombok.Builder;
 import me.chanjar.weixin.common.redis.RedisTemplateWxRedisOps;
 import me.chanjar.weixin.common.util.http.apache.ApacheHttpClientBuilder;
+import me.chanjar.weixin.cp.config.WxCpConfigStorage;
 import me.chanjar.weixin.cp.config.WxCpTpConfigStorage;
 import me.chanjar.weixin.cp.config.impl.WxCpTpDefaultConfigImpl;
 import me.chanjar.weixin.cp.config.impl.WxCpTpRedissonConfigImpl;
 import me.chanjar.weixin.cp.tp.service.WxCpTpService;
 import me.chanjar.weixin.cp.tp.service.impl.WxCpTpServiceImpl;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.core.StringRedisTemplate;
+
+import java.lang.reflect.Proxy;
 
 /**
  * @author liuyuhua
@@ -31,6 +39,9 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 @Configuration
 @Import(WxWebConfiguration.class)
 public class WxAutoConfiguration {
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     /**
      * 企业微信自建应用配置适配器
@@ -43,17 +54,17 @@ public class WxAutoConfiguration {
      * @return
      */
     @Bean
-    public CpConfigStorageAdpatder cpConfigStorageAdpatder(CpConfigOperator tenantOperator,
-                                                           WxProperties properties,
-                                                           ObjectProvider<ApacheHttpClientBuilder> apacheHttpClientBuilders,
-                                                           ObjectProvider<CpConfigLoader> cpConfigLoaders,
-                                                           ObjectProvider<TpAuthConfigLoader> authConfigLoaders) {
-        return new CpConfigStorageAdpatder(tenantOperator, properties, apacheHttpClientBuilders, cpConfigLoaders, authConfigLoaders);
+    public ConfigStorageAdpatder cpConfigStorageAdpatder(ConfigOperator tenantOperator,
+                                                         WxProperties properties,
+                                                         ObjectProvider<ApacheHttpClientBuilder> apacheHttpClientBuilders,
+                                                         ObjectProvider<CpConfigLoader> cpConfigLoaders,
+                                                         ObjectProvider<TpAuthConfigLoader> authConfigLoaders) {
+        return new ConfigStorageAdpatderImpl(tenantOperator, properties, apacheHttpClientBuilders, cpConfigLoaders, authConfigLoaders);
     }
 
 
     @Bean
-    public CpService wxCpService(CpConfigStorageAdpatder cpConfigStorageAdpatder,
+    public CpService wxCpService(WxCpConfigStorage cpConfigStorageAdpatder,
                                  WxCpTpService tpService,
                                  WxProperties properties) {
         CpServiceImpl wxCpService = new CpServiceImpl();
@@ -69,7 +80,9 @@ public class WxAutoConfiguration {
         }
         wxCpService.setRetrySleepMillis(retrySleepMillis);
         wxCpService.setMaxRetryTimes(maxRetryTimes);
-        return wxCpService;
+        return (CpService) Proxy.newProxyInstance(wxCpService.getClass().getClassLoader(),
+                wxCpService.getClass().getInterfaces(),
+                new WxErrorHandler(wxCpService, applicationContext));
     }
 
     @Bean
@@ -86,7 +99,9 @@ public class WxAutoConfiguration {
         }
         wxCpTpService.setRetrySleepMillis(retrySleepMillis);
         wxCpTpService.setMaxRetryTimes(maxRetryTimes);
-        return wxCpTpService;
+        return (WxCpTpService) Proxy.newProxyInstance(wxCpTpService.getClass().getClassLoader(),
+                new Class[]{WxCpTpService.class},
+                new WxErrorHandler(wxCpTpService, applicationContext));
     }
 
 
@@ -96,8 +111,8 @@ public class WxAutoConfiguration {
 
 
         @Bean
-        public MemoryCpConfigOperator memoryTenantOperator(WxProperties properties) {
-            return new MemoryCpConfigOperator(properties);
+        public MemoryConfigOperator memoryTenantOperator(WxProperties properties) {
+            return new MemoryConfigOperator(properties);
         }
 
         @Bean
@@ -121,11 +136,10 @@ public class WxAutoConfiguration {
     @Configuration
     public static class RedisOperator {
 
-
         @Bean
-        public RedisCpConfigOperator redisTenantOperator(StringRedisTemplate redisTemplate,
-                                                         WxProperties properties) {
-            return new RedisCpConfigOperator(properties, redisTemplate);
+        public RedisConfigOperator redisTenantOperator(StringRedisTemplate redisTemplate,
+                                                       WxProperties properties) {
+            return new RedisConfigOperator(properties, redisTemplate);
         }
 
         @Bean
@@ -140,9 +154,11 @@ public class WxAutoConfiguration {
                     .corpId(tpConfig.getCorpId())
                     .corpSecret(tpConfig.getCorpSecret())
                     .providerSecret(tpConfig.getProviderSecret())
+                    .keyPrefix("work:weixin-tp")
                     .wxRedisOps(new RedisTemplateWxRedisOps(redisTemplate)).build();
             return config;
         }
+
 
     }
 
