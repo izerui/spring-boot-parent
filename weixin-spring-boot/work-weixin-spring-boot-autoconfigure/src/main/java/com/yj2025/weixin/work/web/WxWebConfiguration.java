@@ -22,7 +22,7 @@ import org.springframework.context.annotation.Import;
 @ConditionalOnWebApplication
 @ConditionalOnProperty(name = "work.weixin.listener-enabled", havingValue = "true")
 @Import({CpController.class, TpController.class})
-public class WxListenerConfiguration {
+public class WxWebConfiguration {
 
     @Autowired
     private WxProperties properties;

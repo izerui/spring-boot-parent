@@ -6,7 +6,7 @@ import com.yj2025.weixin.work.config.TpConfig;
 import com.yj2025.weixin.work.config.memory.MemoryCpConfigOperator;
 import com.yj2025.weixin.work.config.redis.RedisCpConfigOperator;
 import com.yj2025.weixin.work.impl.CpServiceImpl;
-import com.yj2025.weixin.work.web.WxListenerConfiguration;
+import com.yj2025.weixin.work.web.WxWebConfiguration;
 import me.chanjar.weixin.common.redis.RedisTemplateWxRedisOps;
 import me.chanjar.weixin.common.util.http.apache.ApacheHttpClientBuilder;
 import me.chanjar.weixin.cp.config.WxCpTpConfigStorage;
@@ -28,7 +28,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
  */
 @EnableConfigurationProperties(WxProperties.class)
 @Configuration
-@Import(WxListenerConfiguration.class)
+@Import(WxWebConfiguration.class)
 public class WxAutoConfiguration {
 
     /**
