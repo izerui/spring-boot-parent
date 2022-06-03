@@ -1,11 +1,14 @@
 package com.yj2025.weixin.work;
 
-import com.yj2025.weixin.work.config.CpConfig;
-import com.yj2025.weixin.work.config.TpConfig;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import javax.annotation.Nonnull;
 import java.io.File;
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -17,12 +20,12 @@ import java.util.List;
 public class WxProperties {
 
     /**
-     * 自建应用配置(支持多应用)
+     * 自建应用配置(支持多应用) 与 tpConfig 二选一
      */
     private List<CpConfig> configs;
 
     /**
-     * 第三方平台应用配置(服务商配置)
+     * 第三方平台应用配置(服务商配置) 与 configs 二选一
      */
     private TpConfig tpConfig = new TpConfig();
 
@@ -60,5 +63,90 @@ public class WxProperties {
 
     public enum StorageType {
         memory, redis;
+    }
+
+    @Data
+    @NoArgsConstructor
+    @Accessors(chain = true)
+    @ToString
+    public static class TpConfig implements Serializable {
+        /**
+         * suiteId 服务商平台第三方应用页面查看
+         */
+        @Nonnull
+        private String suiteId;
+        /**
+         * 第三方应用密钥 服务商平台-应用管理页面查看
+         */
+        @Nonnull
+        private String suiteSecret;
+        /**
+         * 企微服务商企业ID 服务商平台-服务商信息页面查看
+         */
+        private String corpId;
+        /**
+         * 企微服务商 企业secret，来自于企微配置 (姑且可以获取)
+         */
+        private String corpSecret;
+        /**
+         * 第三方应用的token，用来检查应用的签名 服务商平台-应用管理页面-回调配置栏查看
+         */
+        private String listenerToken;
+        /**
+         * 第三方应用的EncodingAESKey，用来检查签名 服务商平台-应用管理页面-回调配置栏查看
+         */
+        private String listenerAesKey;
+        /**
+         * 服务商secret
+         */
+        private String providerSecret;
+        private JsSdkVerify jsSdkVerify = new JsSdkVerify();
+        private int providerTokenExpiresTime = 7200;
+        private int suiteAccessTokenExpiresTime = 7200;
+        private int suiteTicketExpiresTime = 1680; // 28分钟过期
+        private String oauth2redirectUri;
+        // 获取到永久授权码并保存后的转向地址
+        private String permanentCodeRedirectUri = "https://yj2025.com";
+
+        @Data
+        public static class JsSdkVerify {
+            private String verifyTxtPath = "/WW_verify_Rd0su22ZohsSXlGI.txt";
+            private String verifyContent = "Rd0su22ZohsSXlGI";
+        }
+    }
+
+    @Data
+    @NoArgsConstructor
+    @Accessors(chain = true)
+    @ToString
+    public static class CpConfig implements Serializable {
+        @Nonnull
+        private String tenantId;
+        /**
+         * 企业ID 我的企业页面查看
+         */
+        @Nonnull
+        private String corpId;
+        /**
+         * 应用密钥 我的应用页面查看
+         */
+        @Nonnull
+        private String corpSecret;
+        /**
+         * 应用id 我的应用页面查看
+         */
+        @Nonnull
+        private Integer agentId;
+        /**
+         * 回调token 启用api接收页面查看
+         */
+        private String listenerToken;
+        /**
+         * 回调aeskey 启用api接收页面查看
+         */
+        private String listenerAesKey;
+        private String msgAuditLibPath;
+        private String oauth2redirectUri;
+        private String webhookKey;
     }
 }

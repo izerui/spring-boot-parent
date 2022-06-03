@@ -1,7 +1,7 @@
 package com.yj2025.weixin.work22;
 
 import com.yj2025.weixin.work.CpService;
-import com.yj2025.weixin.work.config.CpConfig;
+import com.yj2025.weixin.work.WxProperties;
 import com.yj2025.weixin.work.config.CpConfigOperator;
 import me.chanjar.weixin.common.api.WxConsts;
 import me.chanjar.weixin.common.error.WxErrorException;
@@ -93,7 +93,7 @@ public class TenantTests {
     public void testManualInitConfig() throws WxErrorException {
         CpConfigOperator configOperator = cpService.getTenantOperator();
         configOperator.setConfigs(
-                new CpConfig()
+                new WxProperties.CpConfig()
                         .setTenantId("feike")
                         .setCorpId("wx7003aae3ac")
                         .setCorpSecret("f4Q3KJgMnLBxoAik6NmKrcYA26ZEZCkz_f94uQ")

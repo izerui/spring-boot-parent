@@ -1,8 +1,6 @@
 package com.yj2025.weixin.work.web;
 
 import com.yj2025.weixin.work.WxProperties;
-import com.yj2025.weixin.work.config.TpConfig;
-import com.yj2025.weixin.work.support.ColorOutput;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.cp.bean.WxCpTpPermanentCodeInfo;
@@ -37,7 +35,7 @@ public class TpController implements CommandLineRunner {
     @Autowired
     private WxCpTpMessageRouter tpMessageRouter;
     @Autowired
-    private TpConfig.JsSdkVerify jsSdkVerify;
+    private WxProperties.TpConfig.JsSdkVerify jsSdkVerify;
     @Autowired
     private WxProperties properties;
 

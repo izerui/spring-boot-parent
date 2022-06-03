@@ -2,7 +2,6 @@ package com.yj2025.weixin.work;
 
 import com.yj2025.weixin.work.config.CpConfigOperator;
 import com.yj2025.weixin.work.config.CpConfigStorageAdpatder;
-import com.yj2025.weixin.work.config.TpConfig;
 import com.yj2025.weixin.work.config.memory.MemoryCpConfigOperator;
 import com.yj2025.weixin.work.config.redis.RedisCpConfigOperator;
 import com.yj2025.weixin.work.impl.CpServiceImpl;
@@ -97,7 +96,7 @@ public class WxAutoConfiguration {
 
         @Bean
         public WxCpTpConfigStorage wxCpTpConfigStorage(WxProperties properties) {
-            TpConfig tpConfig = properties.getTpConfig();
+            WxProperties.TpConfig tpConfig = properties.getTpConfig();
             WxCpTpDefaultConfigImpl config = new WxCpTpDefaultConfigImpl();
             config.setSuiteAccessTokenExpiresTime(tpConfig.getSuiteAccessTokenExpiresTime());
             config.setSuiteTicketExpiresTime(tpConfig.getSuiteTicketExpiresTime());
@@ -126,7 +125,7 @@ public class WxAutoConfiguration {
         @Bean
         public WxCpTpConfigStorage wxCpTpConfigStorage(StringRedisTemplate redisTemplate,
                                                        WxProperties properties) {
-            TpConfig tpConfig = properties.getTpConfig();
+            WxProperties.TpConfig tpConfig = properties.getTpConfig();
             WxCpTpRedissonConfigImpl config = WxCpTpRedissonConfigImpl.builder()
                     .suiteId(tpConfig.getSuiteId())
                     .suiteSecret(tpConfig.getSuiteSecret())

@@ -59,7 +59,7 @@ public class CpConfigStorageAdpatder implements WxCpConfigStorage {
     public CpConfigStorageAdpatder tenant(String tenantId) {
         INHERITABLE_THREAD_ACTIVE_TENANT_ID.set(tenantId);
         if (!tenantOperator.isExistConfig(tenantId)) {
-            CpConfig t = getIfNotExists(tenantId);
+            WxProperties.CpConfig t = getIfNotExists(tenantId);
             if (t == null) {
                 throw new RuntimeException("无法获取tenantId:[" + tenantId + "]相应的配置");
             }
@@ -81,8 +81,8 @@ public class CpConfigStorageAdpatder implements WxCpConfigStorage {
         return WxCpApiPathConsts.DEFAULT_CP_BASE_URL + path;
     }
 
-    private CpConfig getIfNotExists(String tenantId) {
-        AtomicReference<CpConfig> config = new AtomicReference<>();
+    private WxProperties.CpConfig getIfNotExists(String tenantId) {
+        AtomicReference<WxProperties.CpConfig> config = new AtomicReference<>();
         tenantWxCpConfigLoaders.ifAvailable(loader -> {
             config.set(loader.getConfig(tenantId));
         });

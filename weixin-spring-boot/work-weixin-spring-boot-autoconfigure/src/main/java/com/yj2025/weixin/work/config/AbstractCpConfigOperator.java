@@ -76,8 +76,8 @@ public abstract class AbstractCpConfigOperator implements CpConfigOperator {
 
     // config
     @Override
-    public void setConfigs(CpConfig... configs) {
-        for (CpConfig config : configs) {
+    public void setConfigs(WxProperties.CpConfig... configs) {
+        for (WxProperties.CpConfig config : configs) {
             this.setCorpId(config.getTenantId(), config.getCorpId());
             this.setCorpSecret(config.getTenantId(), config.getCorpSecret());
             this.setToken(config.getTenantId(), config.getListenerToken());
@@ -90,8 +90,8 @@ public abstract class AbstractCpConfigOperator implements CpConfigOperator {
     }
 
     @Override
-    public CpConfig getConfig(String tenantId) {
-        return new CpConfig()
+    public WxProperties.CpConfig getConfig(String tenantId) {
+        return new WxProperties.CpConfig()
                 .setTenantId(tenantId)
                 .setCorpId(getCorpId(tenantId))
                 .setCorpSecret(getCorpSecret(tenantId))

@@ -1,6 +1,6 @@
 package com.yj2025.weixin.work.provider;
 
-import com.yj2025.weixin.work.config.CpConfig;
+import com.yj2025.weixin.work.WxProperties;
 
 @FunctionalInterface
 public interface CpConfigLoader {
@@ -9,5 +9,5 @@ public interface CpConfigLoader {
      * @param tenantId
      * @return
      */
-    CpConfig getConfig(String tenantId);
+    WxProperties.CpConfig getConfig(String tenantId);
 }

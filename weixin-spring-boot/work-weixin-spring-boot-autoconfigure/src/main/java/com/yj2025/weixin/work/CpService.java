@@ -11,11 +11,6 @@ import me.chanjar.weixin.cp.api.WxCpService;
 public interface CpService extends WxCpService {
 
     /**
-     * 获取当前tenantId
-     * @return
-     */
-    String getTenantId();
-    /**
      * 指定以某一个租户操作service请求
      *
      * @param tenantId

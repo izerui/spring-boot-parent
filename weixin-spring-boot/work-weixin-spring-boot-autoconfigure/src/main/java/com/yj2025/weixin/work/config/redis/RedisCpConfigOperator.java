@@ -1,7 +1,6 @@
 package com.yj2025.weixin.work.config.redis;
 
 import com.yj2025.weixin.work.WxProperties;
-import com.yj2025.weixin.work.config.CpConfig;
 import com.yj2025.weixin.work.config.AbstractCpConfigOperator;
 import me.chanjar.weixin.common.util.locks.RedisTemplateSimpleDistributedLock;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -68,8 +67,8 @@ public class RedisCpConfigOperator extends AbstractCpConfigOperator {
 
     // config
     @Override
-    public void setConfigs(CpConfig... configs) {
-        for (CpConfig config : configs) {
+    public void setConfigs(WxProperties.CpConfig... configs) {
+        for (WxProperties.CpConfig config : configs) {
             this.setCorpId(config.getTenantId(), config.getCorpId());
             this.setCorpSecret(config.getTenantId(), config.getCorpSecret());
             this.setToken(config.getTenantId(), config.getListenerToken());
@@ -82,8 +81,8 @@ public class RedisCpConfigOperator extends AbstractCpConfigOperator {
     }
 
     @Override
-    public CpConfig getConfig(String tenantId) {
-        return new CpConfig()
+    public WxProperties.CpConfig getConfig(String tenantId) {
+        return new WxProperties.CpConfig()
                 .setTenantId(tenantId)
                 .setCorpId(getCorpId(tenantId))
                 .setCorpSecret(getCorpSecret(tenantId))

@@ -2,7 +2,6 @@ package com.yj2025.weixin.work.impl;
 
 import com.yj2025.weixin.work.CpService;
 import com.yj2025.weixin.work.WxProperties;
-import com.yj2025.weixin.work.config.CpConfig;
 import com.yj2025.weixin.work.config.CpConfigStorageAdpatder;
 import com.yj2025.weixin.work.config.CpConfigOperator;
 import me.chanjar.weixin.cp.api.impl.WxCpServiceImpl;
@@ -13,11 +12,6 @@ public class CpServiceImpl extends WxCpServiceImpl implements CpService, Initial
     @Override
     public CpConfigStorageAdpatder getStorageAdpatder() {
         return (CpConfigStorageAdpatder) getWxCpConfigStorage();
-    }
-
-    @Override
-    public String getTenantId() {
-        return getStorageAdpatder().tenantId();
     }
 
     @Override
@@ -38,7 +32,7 @@ public class CpServiceImpl extends WxCpServiceImpl implements CpService, Initial
         CpConfigOperator tenantOperator = wxCpConfigStorage.getTenantOperator();
         if (properties.getConfigs() != null) {
             tenantOperator.setConfigs(
-                    properties.getConfigs().toArray(new CpConfig[properties.getConfigs().size()])
+                    properties.getConfigs().toArray(new WxProperties.CpConfig[properties.getConfigs().size()])
             );
         }
     }

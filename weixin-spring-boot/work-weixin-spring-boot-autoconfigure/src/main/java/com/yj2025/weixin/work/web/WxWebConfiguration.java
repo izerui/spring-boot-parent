@@ -4,7 +4,6 @@ import com.yj2025.weixin.work.provider.CpListener;
 import com.yj2025.weixin.work.CpService;
 import com.yj2025.weixin.work.provider.TpListener;
 import com.yj2025.weixin.work.WxProperties;
-import com.yj2025.weixin.work.config.TpConfig;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.cp.message.WxCpMessageRouter;
 import me.chanjar.weixin.cp.tp.message.WxCpTpMessageRouter;
@@ -54,7 +53,7 @@ public class WxWebConfiguration {
     }
 
     @Bean
-    public TpConfig.JsSdkVerify jsSdkVerify() {
+    public WxProperties.TpConfig.JsSdkVerify jsSdkVerify() {
         return properties.getTpConfig().getJsSdkVerify();
     }
 
