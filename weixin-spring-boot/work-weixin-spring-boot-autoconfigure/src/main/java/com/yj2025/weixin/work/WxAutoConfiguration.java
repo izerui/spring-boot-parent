@@ -6,7 +6,7 @@ import com.yj2025.weixin.work.config.TpConfig;
 import com.yj2025.weixin.work.config.memory.MemoryCpConfigOperator;
 import com.yj2025.weixin.work.config.redis.RedisCpConfigOperator;
 import com.yj2025.weixin.work.impl.CpServiceImpl;
-import com.yj2025.weixin.work.listener.WxListenerConfiguration;
+import com.yj2025.weixin.work.web.WxListenerConfiguration;
 import me.chanjar.weixin.common.redis.RedisTemplateWxRedisOps;
 import me.chanjar.weixin.common.util.http.apache.ApacheHttpClientBuilder;
 import me.chanjar.weixin.cp.config.WxCpTpConfigStorage;
@@ -102,8 +102,8 @@ public class WxAutoConfiguration {
             config.setSuiteTicketExpiresTime(tpConfig.getSuiteTicketExpiresTime());
             config.setSuiteId(tpConfig.getSuiteId());
             config.setSuiteSecret(tpConfig.getSuiteSecret());
-            config.setToken(tpConfig.getToken());
-            config.setAesKey(tpConfig.getAesKey());
+            config.setToken(tpConfig.getListenerToken());
+            config.setAesKey(tpConfig.getListenerAesKey());
             config.setOauth2redirectUri(tpConfig.getOauth2redirectUri());
             config.setTmpDirFile(properties.getTmpDirFile());
             return config;
@@ -129,8 +129,8 @@ public class WxAutoConfiguration {
             WxCpTpRedissonConfigImpl config = WxCpTpRedissonConfigImpl.builder()
                     .suiteId(tpConfig.getSuiteId())
                     .suiteSecret(tpConfig.getSuiteSecret())
-                    .token(tpConfig.getToken())
-                    .aesKey(tpConfig.getAesKey())
+                    .token(tpConfig.getListenerToken())
+                    .aesKey(tpConfig.getListenerAesKey())
                     .corpId(tpConfig.getCorpId())
                     .corpSecret(tpConfig.getCorpSecret())
                     .providerSecret(tpConfig.getProviderSecret())

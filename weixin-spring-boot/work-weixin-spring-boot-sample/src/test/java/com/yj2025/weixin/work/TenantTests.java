@@ -96,8 +96,8 @@ public class TenantTests {
                         .setTenantId("feike")
                         .setCorpId("wx7003aae3ac")
                         .setCorpSecret("f4Q3KJgMnLBxoAik6NmKrcYA26ZEZCkz_f94uQ")
-                        .setToken("6HFXyimVN37E5f")
-                        .setAesKey("oHhKlG1x37YXFkwg9Ncglm2wfIANxFAGn9")
+                        .setListenerToken("6HFXyimVN37E5f")
+                        .setListenerAesKey("oHhKlG1x37YXFkwg9Ncglm2wfIANxFAGn9")
                         .setAgentId(1000003)
         );
         this.sendDemoMessage("feike");

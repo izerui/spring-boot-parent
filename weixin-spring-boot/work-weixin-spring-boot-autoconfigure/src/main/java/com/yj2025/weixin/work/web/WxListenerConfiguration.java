@@ -1,13 +1,16 @@
-package com.yj2025.weixin.work.listener;
+package com.yj2025.weixin.work.web;
 
 import com.yj2025.weixin.work.CpListener;
 import com.yj2025.weixin.work.CpService;
 import com.yj2025.weixin.work.TpListener;
+import com.yj2025.weixin.work.WxProperties;
+import com.yj2025.weixin.work.config.TpConfig;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.cp.message.WxCpMessageRouter;
 import me.chanjar.weixin.cp.tp.message.WxCpTpMessageRouter;
 import me.chanjar.weixin.cp.tp.service.WxCpTpService;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
@@ -18,9 +21,11 @@ import org.springframework.context.annotation.Import;
 @Configuration
 @ConditionalOnWebApplication
 @ConditionalOnProperty(name = "work.weixin.listener-enabled", havingValue = "true")
-@Import({CpListenerController.class, TpListenerController.class})
+@Import({CpController.class, TpController.class})
 public class WxListenerConfiguration {
 
+    @Autowired
+    private WxProperties properties;
 
     @Bean
     public WxCpMessageRouter cpMessageRouter(CpService cpService, ObjectProvider<CpListener> cpListeners) {
@@ -46,6 +51,11 @@ public class WxListenerConfiguration {
                 })
                 .end();
         return router;
+    }
+
+    @Bean
+    public TpConfig.JsSdkVerify jsSdkVerify() {
+        return properties.getTpConfig().getJsSdkVerify();
     }
 
 

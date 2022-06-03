@@ -1,4 +1,4 @@
-package com.yj2025.weixin.work.listener;
+package com.yj2025.weixin.work.web;
 
 import com.yj2025.weixin.work.CpService;
 import lombok.extern.slf4j.Slf4j;
@@ -10,27 +10,24 @@ import me.chanjar.weixin.cp.util.crypto.WxCpCryptUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.ApplicationContext;
-import org.springframework.core.env.Environment;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 @Slf4j
 @RestController
-public class CpListenerController implements CommandLineRunner {
+public class CpController implements CommandLineRunner {
 
     @Autowired
     private CpService cpService;
     @Autowired
     private WxCpMessageRouter wxCpMessageRouter;
-    @Autowired
-    private ApplicationContext applicationContext;
 
     @RequestMapping(value = "/message/{tenantId}", produces = "text/html;charset=utf-8")
     public String message(@PathVariable("tenantId") String tenantId,
@@ -73,15 +70,8 @@ public class CpListenerController implements CommandLineRunner {
     }
 
 
-    private final static String LABEL_LINE_RUNNER = ":::: 开始监听企业微信自建应用消息回调,回调地址: http://{}:{}{}/message/{tenantId}";
-
     @Override
     public void run(String... args) throws Exception {
-        Environment env = applicationContext.getEnvironment();
-        log.info(LABEL_LINE_RUNNER,
-                InetAddress.getLocalHost().getHostAddress(),
-                Optional.ofNullable(env.getProperty("server.port")).orElse("8080"),
-                Optional.ofNullable(env.getProperty("server.servlet.context-path")).orElse("")
-        );
+        log.info(":::: cp回调地址: /message/{tenantId}");
     }
 }

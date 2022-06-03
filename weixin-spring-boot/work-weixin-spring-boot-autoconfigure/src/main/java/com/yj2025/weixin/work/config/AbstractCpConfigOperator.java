@@ -80,8 +80,8 @@ public abstract class AbstractCpConfigOperator implements CpConfigOperator {
         for (CpConfig config : configs) {
             this.setCorpId(config.getTenantId(), config.getCorpId());
             this.setCorpSecret(config.getTenantId(), config.getCorpSecret());
-            this.setToken(config.getTenantId(), config.getToken());
-            this.setAesKey(config.getTenantId(), config.getAesKey());
+            this.setToken(config.getTenantId(), config.getListenerToken());
+            this.setAesKey(config.getTenantId(), config.getListenerAesKey());
             this.setAgentId(config.getTenantId(), config.getAgentId());
             this.setMsgAuditLibPath(config.getTenantId(), config.getMsgAuditLibPath());
             this.setWebhookKey(config.getTenantId(), config.getWebhookKey());
@@ -95,8 +95,8 @@ public abstract class AbstractCpConfigOperator implements CpConfigOperator {
                 .setTenantId(tenantId)
                 .setCorpId(getCorpId(tenantId))
                 .setCorpSecret(getCorpSecret(tenantId))
-                .setToken(getToken(tenantId))
-                .setAesKey(getAesKey(tenantId))
+                .setListenerToken(getToken(tenantId))
+                .setListenerAesKey(getAesKey(tenantId))
                 .setAgentId(getAgentId(tenantId))
                 .setMsgAuditLibPath(getMsgAuditLibPath(tenantId))
                 .setWebhookKey(getWebhookKey(tenantId));

@@ -5,13 +5,20 @@ import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.cp.bean.message.WxCpTpXmlMessage;
 import me.chanjar.weixin.cp.bean.message.WxCpXmlMessage;
 import me.chanjar.weixin.cp.tp.service.WxCpTpService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static com.yj2025.weixin.work.ColorOutput.*;
+import static com.yj2025.weixin.work.ColorOutput.BLUE;
+import static com.yj2025.weixin.work.ColorOutput.MAGENTA;
 
 @Slf4j
 @Component
 public class MessageListener implements CpListener, TpListener {
+
+    @Autowired
+    private WxCpTpService tpService;
+    @Autowired
+    private WxProperties properties;
 
     private Gson gson = new Gson().newBuilder()
             .setPrettyPrinting()
@@ -25,5 +32,16 @@ public class MessageListener implements CpListener, TpListener {
     @Override
     public void listener(WxCpTpXmlMessage wxMessage, WxCpTpService wxCpTpService) {
         log.info("wxMessage: \n{}", MAGENTA(gson.toJson(wxMessage)));
+
+        if (wxMessage.getInfoType() != null) {
+            switch (wxMessage.getInfoType()) {
+                case "suite_ticket":
+                    // https://developer.work.weixin.qq.com/document/path/90628
+                    // https://developer.work.weixin.qq.com/document/path/90600
+                    tpService.setSuiteTicket(wxMessage.getSuiteTicket(), properties.getTpConfig().getSuiteTicketExpiresTime());
+                    break;
+            }
+        }
+
     }
 }

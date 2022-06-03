@@ -15,14 +15,29 @@ import java.io.Serializable;
 public class CpConfig implements Serializable {
     @Nonnull
     private String tenantId;
+    /**
+     * 企业ID 我的企业页面查看
+     */
     @Nonnull
     private String corpId;
+    /**
+     * 应用密钥 我的应用页面查看
+     */
     @Nonnull
     private String corpSecret;
-    private String token;
-    private String aesKey;
+    /**
+     * 应用id 我的应用页面查看
+     */
     @Nonnull
     private Integer agentId;
+    /**
+     * 回调token 启用api接收页面查看
+     */
+    private String listenerToken;
+    /**
+     * 回调aeskey 启用api接收页面查看
+     */
+    private String listenerAesKey;
     private String msgAuditLibPath;
     private String oauth2redirectUri;
     private String webhookKey;
