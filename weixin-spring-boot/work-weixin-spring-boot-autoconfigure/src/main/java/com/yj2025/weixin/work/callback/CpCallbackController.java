@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.yj2025.weixin.work.support.ColorOutput.BLUE;
+
 @Slf4j
 @RestController
 public class CpCallbackController implements CommandLineRunner {
@@ -72,6 +74,6 @@ public class CpCallbackController implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        log.info(":::: 自建应用回调地址: /message/{tenantId}");
+        log.info(BLUE(":::: 自建应用回调地址: /message/{tenantId}"));
     }
 }

@@ -7,9 +7,12 @@ import me.chanjar.weixin.common.bean.WxAccessToken;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.cp.api.WxCpUserService;
 import me.chanjar.weixin.cp.bean.WxCpTpAuthInfo;
+import me.chanjar.weixin.cp.bean.WxCpTpContactSearch;
+import me.chanjar.weixin.cp.bean.WxCpTpContactSearchResp;
 import me.chanjar.weixin.cp.bean.WxCpUser;
 import me.chanjar.weixin.cp.bean.message.WxCpMessage;
 import me.chanjar.weixin.cp.bean.message.WxCpMessageSendResult;
+import me.chanjar.weixin.cp.tp.service.WxCpTpContactService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,9 +47,14 @@ public class TpTests {
         WxCpTpAuthInfo info = tpService.getAuthInfo(authCorpId, permanentCode);
         System.out.println("企业信息: " + info.toJson());
 
-        // 调用业务之前需要先调用该接口
         WxAccessToken corpToken = tpService.getCorpToken(authCorpId, permanentCode, true);
         System.out.println("企业token: " + corpToken.getAccessToken());
+
+
+        // 激活码
+        String activeCode = "LA100000001000000629AF7D6";
+        String activeAccount = tpService.activeAccount(activeCode, authCorpId, "serv");
+        System.out.println(activeAccount);
 
 
 //        List<WxCpTpDepart> departs = tpService.getWxCpTpDepartmentService().list("ww7c4f40dafaee2f4c");

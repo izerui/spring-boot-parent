@@ -1,38 +1,24 @@
 package com.yj2025.weixin.work.impl;
 
+import com.google.gson.JsonObject;
 import com.yj2025.weixin.work.TpService;
+import me.chanjar.weixin.common.error.WxErrorException;
+import me.chanjar.weixin.cp.bean.WxTpLoginInfo;
 import me.chanjar.weixin.cp.tp.service.*;
 import me.chanjar.weixin.cp.tp.service.impl.WxCpTpServiceImpl;
 
+import static me.chanjar.weixin.cp.constant.WxCpApiPathConsts.Tp.GET_LOGIN_INFO;
+
 public class TpServiceImpl extends WxCpTpServiceImpl implements TpService {
 
-    @Deprecated
     @Override
-    public WxCpTpContactService getWxCpTpContactService() {
-        throw new UnsupportedOperationException("不建议用，wxjava-sdk封装不完善");
-    }
-
-    @Deprecated
-    @Override
-    public WxCpTpDepartmentService getWxCpTpDepartmentService() {
-        throw new UnsupportedOperationException("不建议用，wxjava-sdk封装不完善");
-    }
-
-    @Deprecated
-    @Override
-    public WxCpTpMediaService getWxCpTpMediaService() {
-        throw new UnsupportedOperationException("不建议用，wxjava-sdk封装不完善");
-    }
-
-    @Deprecated
-    @Override
-    public WxCpTpOAService getWxCpTpOAService() {
-        throw new UnsupportedOperationException("不建议用，wxjava-sdk封装不完善");
-    }
-
-    @Deprecated
-    @Override
-    public WxCpTpUserService getWxCpTpUserService() {
-        throw new UnsupportedOperationException("不建议用，wxjava-sdk封装不完善");
+    public String activeAccount(String activeCode, String authCorpId, String authUserId) throws WxErrorException {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("active_code", activeCode);
+        jsonObject.addProperty("corpid", authCorpId);
+        jsonObject.addProperty("userid", authUserId);
+        String access_token = getWxCpProviderToken();
+        String responseText = post(configStorage.getApiUrl("/cgi-bin/license/active_account") + "?provider_access_token=" + access_token, jsonObject.toString(), true);
+        return responseText;
     }
 }

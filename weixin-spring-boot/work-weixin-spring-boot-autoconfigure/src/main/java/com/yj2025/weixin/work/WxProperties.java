@@ -97,7 +97,7 @@ public class WxProperties {
          */
         private String listenerAesKey;
         /**
-         * 服务商secret
+         * 服务商secret 查看页面: https://open.work.weixin.qq.com/wwopen/developer#/sass/power/inter
          */
         private String providerSecret;
         private JsSdkVerify jsSdkVerify = new JsSdkVerify();

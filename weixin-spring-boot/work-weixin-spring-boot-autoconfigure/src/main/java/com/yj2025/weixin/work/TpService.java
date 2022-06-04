@@ -1,5 +1,6 @@
 package com.yj2025.weixin.work;
 
+import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.cp.tp.service.*;
 
 /**
@@ -7,23 +8,5 @@ import me.chanjar.weixin.cp.tp.service.*;
  */
 public interface TpService extends WxCpTpService {
 
-    @Deprecated
-    @Override
-    WxCpTpContactService getWxCpTpContactService();
-
-    @Deprecated
-    @Override
-    WxCpTpDepartmentService getWxCpTpDepartmentService();
-
-    @Deprecated
-    @Override
-    WxCpTpMediaService getWxCpTpMediaService();
-
-    @Deprecated
-    @Override
-    WxCpTpOAService getWxCpTpOAService();
-
-    @Deprecated
-    @Override
-    WxCpTpUserService getWxCpTpUserService();
+    String activeAccount(String activeCode, String authCorpId, String authUserId) throws WxErrorException;
 }
