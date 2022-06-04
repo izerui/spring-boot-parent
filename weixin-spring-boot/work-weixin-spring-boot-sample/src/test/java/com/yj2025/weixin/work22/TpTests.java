@@ -104,4 +104,15 @@ public class TpTests {
         System.out.println("安装第三方应用地址: " + preAuthUrl);
     }
 
+    @Test
+    public void sendFeike() throws WxErrorException {
+        WxCpMessage message = new WxCpMessage();
+//    message.setAgentId(configStorage.getAgentId());
+        message.setMsgType(WxConsts.KefuMsgType.TEXT);
+        message.setToUser("serv");
+        message.setContent("11111欢迎欢迎，热烈欢迎\n换行测试\n超链接:<a href=\"http://www.baidu.com\">Hello World</a>");
+        WxCpMessageSendResult messageSendResult = cpService.tenant("feike", true).getMessageService().send(message);
+        System.out.println(messageSendResult.toString());
+    }
+
 }
