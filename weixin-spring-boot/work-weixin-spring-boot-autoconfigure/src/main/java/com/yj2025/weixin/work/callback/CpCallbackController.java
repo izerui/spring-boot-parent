@@ -1,6 +1,7 @@
 package com.yj2025.weixin.work.callback;
 
 import com.yj2025.weixin.work.CpService;
+import com.yj2025.weixin.work.WxProperties;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.cp.bean.message.WxCpXmlMessage;
 import me.chanjar.weixin.cp.bean.message.WxCpXmlOutMessage;
@@ -30,6 +31,8 @@ public class CpCallbackController implements CommandLineRunner {
     private CpService cpService;
     @Autowired
     private WxCpMessageRouter wxCpMessageRouter;
+    @Autowired
+    private WxProperties properties;
 
     @RequestMapping(value = "/message/{tenantId}", produces = "text/html;charset=utf-8")
     public String message(@PathVariable("tenantId") String tenantId,
@@ -74,6 +77,6 @@ public class CpCallbackController implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        log.info(BLUE(":::: 自建应用回调地址: /message/{tenantId}"));
+        log.info(BLUE(":::: 自建应用回调地址: " + properties.getDomainName() + "/message/[tenantId]"));
     }
 }

@@ -20,6 +20,11 @@ import java.util.List;
 public class WxProperties {
 
     /**
+     * 微信回调的域名
+     */
+    private String domainName = "http://local-dev.yj2025.com";
+
+    /**
      * 自建应用配置(支持多应用) 与 tpConfig 二选一
      */
     private List<CpConfig> configs;
@@ -105,12 +110,10 @@ public class WxProperties {
         private int suiteAccessTokenExpiresTime = 7200;
         private int suiteTicketExpiresTime = 1680; // 28分钟过期
         private String oauth2redirectUri;
-        // 获取到永久授权码并保存后的转向地址
-        private String permanentCodeRedirectUri = "https://yj2025.com";
 
         @Data
         public static class JsSdkVerify {
-            private String verifyTxtPath = "/WW_verify_Rd0su22ZohsSXlGI.txt";
+            private String verifyTxtPath = "WW_verify_Rd0su22ZohsSXlGI.txt";
             private String verifyContent = "Rd0su22ZohsSXlGI";
         }
     }
@@ -174,5 +177,13 @@ public class WxProperties {
          */
         @Nonnull
         private String permanentCode;
+
+        public CpConfig toCpConfig() {
+            return new WxProperties.CpConfig()
+                    .setCorpId(getCorpId())
+                    .setAgentId(getAgentId())
+                    .setPermanentCode(getPermanentCode())
+                    .setTenantId(getTenantId());
+        }
     }
 }

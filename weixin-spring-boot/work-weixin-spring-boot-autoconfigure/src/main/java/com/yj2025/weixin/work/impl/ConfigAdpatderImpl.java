@@ -24,7 +24,7 @@ import java.util.concurrent.locks.Lock;
  * @date 2022/4/18
  */
 @ThreadSafe
-public class ConfigStorageAdpatderImpl implements ConfigStorageAdpatder {
+public class ConfigAdpatderImpl implements ConfigStorageAdpatder {
 
     // 当前线程使用的tenantId(公司编号)
     protected final static InheritableThreadLocal<String> INHERITABLE_THREAD_ACTIVE_TENANT_ID = new InheritableThreadLocal<String>();
@@ -39,11 +39,11 @@ public class ConfigStorageAdpatderImpl implements ConfigStorageAdpatder {
     private ObjectProvider<CpConfigLoader> cpConfigLoaders;
     private ObjectProvider<TpAuthConfigLoader> tpAuthConfigLoaders;
 
-    public ConfigStorageAdpatderImpl(ConfigOperator configOperator,
-                                     WxProperties properties,
-                                     ObjectProvider<ApacheHttpClientBuilder> apacheHttpClientBuilders,
-                                     ObjectProvider<CpConfigLoader> cpConfigLoaders,
-                                     ObjectProvider<TpAuthConfigLoader> tpAuthConfigLoaders) {
+    public ConfigAdpatderImpl(ConfigOperator configOperator,
+                              WxProperties properties,
+                              ObjectProvider<ApacheHttpClientBuilder> apacheHttpClientBuilders,
+                              ObjectProvider<CpConfigLoader> cpConfigLoaders,
+                              ObjectProvider<TpAuthConfigLoader> tpAuthConfigLoaders) {
         this.configOperator = configOperator;
         this.properties = properties;
         this.apacheHttpClientBuilders = apacheHttpClientBuilders;
@@ -58,7 +58,7 @@ public class ConfigStorageAdpatderImpl implements ConfigStorageAdpatder {
      * @param isThirdApp
      * @return
      */
-    public ConfigStorageAdpatderImpl tenant(String tenantId, boolean isThirdApp) {
+    public ConfigAdpatderImpl tenant(String tenantId, boolean isThirdApp) {
         INHERITABLE_THREAD_ACTIVE_TENANT_ID.set(tenantId);
         INHERITABLE_THREAD_ACTIVE_TENANT_TYPE.set(isThirdApp);
         if (!configOperator.isExistConfig(tenantId, isThirdApp)) {
@@ -112,11 +112,7 @@ public class ConfigStorageAdpatderImpl implements ConfigStorageAdpatder {
         if (isThirdApp) {
             tpAuthConfigLoaders.ifAvailable(loader -> {
                 WxProperties.TpAuthConfig tpAuthConfig = loader.getConfig(tenantId);
-                config.set(new WxProperties.CpConfig()
-                        .setCorpId(tpAuthConfig.getCorpId())
-                        .setAgentId(tpAuthConfig.getAgentId())
-                        .setPermanentCode(tpAuthConfig.getPermanentCode())
-                        .setTenantId(tpAuthConfig.getTenantId()));
+                config.set(tpAuthConfig.toCpConfig());
             });
         } else {
             cpConfigLoaders.ifAvailable(loader -> {

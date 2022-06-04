@@ -2,6 +2,8 @@ package com.yj2025.weixin.work.callback;
 
 import com.yj2025.weixin.work.TpService;
 import com.yj2025.weixin.work.WxProperties;
+import com.yj2025.weixin.work.provider.AuthBindingListener;
+import com.yj2025.weixin.work.support.ColorOutput;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.cp.bean.WxCpTpPermanentCodeInfo;
@@ -11,6 +13,7 @@ import me.chanjar.weixin.cp.tp.message.WxCpTpMessageRouter;
 import me.chanjar.weixin.cp.util.crypto.WxCpTpCryptUtil;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,7 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.yj2025.weixin.work.support.ColorOutput.BLUE;
-import static com.yj2025.weixin.work.support.ColorOutput.GREEN;
+import static com.yj2025.weixin.work.support.ColorOutput.YELLOW;
 
 @Slf4j
 @RestController
@@ -39,6 +42,8 @@ public class TpCallbackController implements CommandLineRunner {
     private WxProperties.TpConfig.JsSdkVerify jsSdkVerify;
     @Autowired
     private WxProperties properties;
+    @Autowired
+    private ObjectProvider<AuthBindingListener> authBindingListeners;
 
     /**
      * 读取配置暴露 可信域名配置地址
@@ -91,21 +96,44 @@ public class TpCallbackController implements CommandLineRunner {
      * @return
      */
     @GetMapping("/")
-    public void home(@RequestParam("auth_code") String authCode,
-                     @RequestParam("expires_in") String expiresIn,
-                     @RequestParam("state") String state,
-                     HttpServletResponse response) throws WxErrorException, IOException {
-        WxCpTpPermanentCodeInfo info = tpService.getPermanentCodeInfo(authCode);
-        // TODO 开放外发接口
-        log.info(info.toJson());
-        log.info(GREEN("\n永久授权码: {} \n授权人: {} \ncorpid: {} \nagentid: {} \naccess_token: {}"), info.getPermanentCode(), info.getAuthUserInfo().getUserId(), info.getAuthCorpInfo().getCorpId(), info.getAuthInfo().getAgents().get(0).getAgentId(), info.getAccessToken());
-        response.sendRedirect(properties.getTpConfig().getPermanentCodeRedirectUri());
+    public String home(@RequestParam("auth_code") String authCode,
+                       @RequestParam("expires_in") String expiresIn,
+                       @RequestParam("state") String state,
+                       HttpServletRequest request,
+                       HttpServletResponse response) throws WxErrorException, IOException {
+        String outputContent = "非法请求";
+        WxCpTpPermanentCodeInfo info = null;
+        try {
+            info = tpService.getPermanentCodeInfo(authCode);
+            request.getSession().setAttribute("WxCpTpPermanentCodeInfo", info);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        if (info == null) {
+            info = (WxCpTpPermanentCodeInfo) request.getSession().getAttribute("WxCpTpPermanentCodeInfo");
+        }
+        if(info != null) {
+            log.info(YELLOW("{}"), info.toJson());
+            outputContent = String.format("授权成功: 请保存以下内容(并提供给应用服务商)。</br> tenantId: %s </br> 永久授权码: %s </br> 授权人: %s </br> corpid: %s </br> agentid: %s </br>",
+                    state,
+                    info.getPermanentCode(),
+                    info.getAuthUserInfo().getUserId(),
+                    info.getAuthCorpInfo().getCorpId(),
+                    info.getAuthInfo().getAgents().get(0).getAgentId());
+            log.info(ColorOutput.BLUE(outputContent.replace("</br>", "\n")));
+            final WxCpTpPermanentCodeInfo finalInfo = info;
+            authBindingListeners.forEach(authBindingListener -> {
+                authBindingListener.listener(state, finalInfo);
+            });
+        }
+
+        return outputContent;
     }
 
     @Override
     public void run(String... args) throws Exception {
-        log.info(BLUE(":::: 第三方应用安装回调地址: /"));
-        log.info(BLUE(":::: 第三方应用回调地址: /message"));
-        log.info(BLUE(":::: 第三方应用可信域名配置地址: " + jsSdkVerify.getVerifyTxtPath()));
+        log.info(BLUE(":::: 第三方应用安装回调地址: " + properties.getDomainName()));
+        log.info(BLUE(":::: 第三方应用回调地址: " + properties.getDomainName() + "/message"));
+        log.info(BLUE(":::: 第三方应用可信域名配置地址: " + properties.getDomainName() + "/" + jsSdkVerify.getVerifyTxtPath()));
     }
 }

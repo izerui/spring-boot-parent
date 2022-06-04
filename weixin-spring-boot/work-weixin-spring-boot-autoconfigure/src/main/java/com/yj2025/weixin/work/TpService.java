@@ -1,10 +1,7 @@
 package com.yj2025.weixin.work;
 
 import me.chanjar.weixin.common.error.WxErrorException;
-import me.chanjar.weixin.cp.api.WxCpDepartmentService;
-import me.chanjar.weixin.cp.api.WxCpMediaService;
-import me.chanjar.weixin.cp.api.WxCpOaService;
-import me.chanjar.weixin.cp.api.WxCpUserService;
+import me.chanjar.weixin.cp.config.WxCpTpConfigStorage;
 import me.chanjar.weixin.cp.tp.service.*;
 
 /**
@@ -13,8 +10,15 @@ import me.chanjar.weixin.cp.tp.service.*;
 public interface TpService extends WxCpTpService {
 
     /**
+     * 获取企业微信配置存储对象
+     * @return
+     */
+    WxCpTpConfigStorage getWxCpTpConfigStorage();
+
+    /**
      * https://developer.work.weixin.qq.com/document/path/95553
      * 激活账号，以进一步可使第三方应用拥有接口的调用许可
+     *
      * @param activeCode
      * @param authCorpId
      * @param authUserId
@@ -26,6 +30,7 @@ public interface TpService extends WxCpTpService {
 
     /**
      * 获取指定租户的调用对象
+     *
      * @param tenantId
      * @return
      */
@@ -33,6 +38,7 @@ public interface TpService extends WxCpTpService {
 
     /**
      * 请使用 {@link #getCpService(String)}} 获取其相应的service操作对象
+     *
      * @return
      */
     @Deprecated
@@ -41,6 +47,7 @@ public interface TpService extends WxCpTpService {
 
     /**
      * 请使用 {@link #getCpService(String)}} 获取其相应的service操作对象
+     *
      * @return
      */
     @Deprecated
@@ -49,6 +56,7 @@ public interface TpService extends WxCpTpService {
 
     /**
      * 请使用 {@link #getCpService(String)}} 获取其相应的service操作对象
+     *
      * @return
      */
     @Deprecated
@@ -57,6 +65,7 @@ public interface TpService extends WxCpTpService {
 
     /**
      * 请使用 {@link #getCpService(String)}} 获取其相应的service操作对象
+     *
      * @return
      */
     @Deprecated

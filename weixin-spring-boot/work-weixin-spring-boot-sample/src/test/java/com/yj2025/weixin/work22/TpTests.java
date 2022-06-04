@@ -38,7 +38,7 @@ public class TpTests {
         System.out.println("第三方应用凭证: " + suiteAccessToken);
 
         // 获取预授权链接(正式环境更换同名接口): https://developer.work.weixin.qq.com/document/path/90601
-        String preAuthUrl = tpService.getPreAuthUrl("https://local-dev.yj2025.com", "abc", 1);
+        String preAuthUrl = tpService.getPreAuthUrl("https://local-dev.yj2025.com", "yunji-wode", 1);
         System.out.println("安装第三方应用地址: " + preAuthUrl);
 
         String authCorpId = "ww7c4f40dafaee2f4c";
@@ -96,5 +96,12 @@ public class TpTests {
         System.out.println(messageSendResult.toString());
     }
 
+
+    @Test
+    public void bindingFeike() throws WxErrorException {
+        // 获取预授权链接(正式环境更换同名接口): https://developer.work.weixin.qq.com/document/path/90601
+        String preAuthUrl = tpService.getPreAuthUrl("https://local-dev.yj2025.com", "feike", 1);
+        System.out.println("安装第三方应用地址: " + preAuthUrl);
+    }
 
 }

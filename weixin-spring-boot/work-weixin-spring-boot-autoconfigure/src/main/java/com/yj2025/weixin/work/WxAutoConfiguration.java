@@ -4,7 +4,7 @@ import com.yj2025.weixin.work.callback.WxCallbackConfiguration;
 import com.yj2025.weixin.work.config.ConfigOperator;
 import com.yj2025.weixin.work.config.memory.MemoryConfigOperator;
 import com.yj2025.weixin.work.config.redis.RedisConfigOperator;
-import com.yj2025.weixin.work.impl.ConfigStorageAdpatderImpl;
+import com.yj2025.weixin.work.impl.ConfigAdpatderImpl;
 import com.yj2025.weixin.work.impl.CpServiceImpl;
 import com.yj2025.weixin.work.impl.TpServiceImpl;
 import com.yj2025.weixin.work.impl.WxErrorHandler;
@@ -57,7 +57,7 @@ public class WxAutoConfiguration {
                                                          ObjectProvider<ApacheHttpClientBuilder> apacheHttpClientBuilders,
                                                          ObjectProvider<CpConfigLoader> cpConfigLoaders,
                                                          ObjectProvider<TpAuthConfigLoader> authConfigLoaders) {
-        return new ConfigStorageAdpatderImpl(tenantOperator, properties, apacheHttpClientBuilders, cpConfigLoaders, authConfigLoaders);
+        return new ConfigAdpatderImpl(tenantOperator, properties, apacheHttpClientBuilders, cpConfigLoaders, authConfigLoaders);
     }
 
 

@@ -59,5 +59,9 @@ public class WxCallbackConfiguration {
         return properties.getTpConfig().getJsSdkVerify();
     }
 
+    @Bean
+    public CacheAuthBindingListener cacheAuthBindingListener(CpService cpService) {
+        return new CacheAuthBindingListener(cpService);
+    }
 
 }
