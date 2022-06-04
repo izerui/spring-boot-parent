@@ -10,6 +10,7 @@ import me.chanjar.weixin.common.bean.WxAccessToken;
 import me.chanjar.weixin.common.util.http.apache.ApacheHttpClientBuilder;
 import me.chanjar.weixin.cp.constant.WxCpApiPathConsts;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.util.Assert;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.io.File;
@@ -24,21 +25,11 @@ import java.util.concurrent.locks.Lock;
  */
 @ThreadSafe
 public class ConfigStorageAdpatderImpl implements ConfigStorageAdpatder {
-    // 当未指定租户ID的时候使用的默认的租户ID
-    private final static String DEFAULT_TENANT_ID = "default";
 
     // 当前线程使用的tenantId(公司编号)
-    protected final static InheritableThreadLocal<String> INHERITABLE_THREAD_ACTIVE_TENANT_ID;
+    protected final static InheritableThreadLocal<String> INHERITABLE_THREAD_ACTIVE_TENANT_ID = new InheritableThreadLocal<String>();
     // 当前tenantId对应的是否是第三方app
-    protected final static InheritableThreadLocal<Boolean> INHERITABLE_THREAD_ACTIVE_TENANT_TYPE;
-
-    static {
-        INHERITABLE_THREAD_ACTIVE_TENANT_ID = new InheritableThreadLocal<>();
-        INHERITABLE_THREAD_ACTIVE_TENANT_ID.set(DEFAULT_TENANT_ID);
-
-        INHERITABLE_THREAD_ACTIVE_TENANT_TYPE = new InheritableThreadLocal<>();
-        INHERITABLE_THREAD_ACTIVE_TENANT_TYPE.set(false);
-    }
+    protected final static InheritableThreadLocal<Boolean> INHERITABLE_THREAD_ACTIVE_TENANT_TYPE = new InheritableThreadLocal<Boolean>();
 
     @Getter
     protected ConfigOperator configOperator;
@@ -86,11 +77,15 @@ public class ConfigStorageAdpatderImpl implements ConfigStorageAdpatder {
      * @return
      */
     public boolean isThirdApp() {
-        return INHERITABLE_THREAD_ACTIVE_TENANT_TYPE.get();
+        Boolean aBoolean = INHERITABLE_THREAD_ACTIVE_TENANT_TYPE.get();
+        Assert.notNull(aBoolean, "未指定租户信息,请调用 cpService.tenantId([租户ID], [是否是第三方应用])");
+        return aBoolean;
     }
 
     public String tenantId() {
-        return INHERITABLE_THREAD_ACTIVE_TENANT_ID.get();
+        String tenantId = INHERITABLE_THREAD_ACTIVE_TENANT_ID.get();
+        Assert.notNull(tenantId, "未指定租户信息,请调用 cpService.tenantId([租户ID], [是否是第三方应用])");
+        return tenantId;
     }
 
     @Override

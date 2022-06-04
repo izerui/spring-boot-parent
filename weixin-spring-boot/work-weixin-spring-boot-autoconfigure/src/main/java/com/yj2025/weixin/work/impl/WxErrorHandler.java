@@ -1,6 +1,8 @@
 package com.yj2025.weixin.work.impl;
 
 import com.yj2025.weixin.work.ConfigStorageAdpatder;
+import com.yj2025.weixin.work.support.ColorOutput;
+import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.cp.config.WxCpTpConfigStorage;
 import org.springframework.context.ApplicationContext;
@@ -9,6 +11,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+@Slf4j
 public class WxErrorHandler implements InvocationHandler {
 
     private Object object;
@@ -26,26 +29,28 @@ public class WxErrorHandler implements InvocationHandler {
             result = method.invoke(object, args);
         } catch (InvocationTargetException ex) {
             if (ex.getTargetException() instanceof WxErrorException) {
-                captureWxErrorException((WxErrorException) ex.getTargetException());
+                captureWxErrorExceptionAndThrow((WxErrorException) ex.getTargetException());
+            } else {
+                throw ex;
             }
-            throw ex;
         }
         return result;
     }
 
-    public void captureWxErrorException(WxErrorException ex) {
-        try {
-            //  处理微信特定异常码
-            switch (ex.getError().getErrorCode()) {
-                case 40084:
-                    getBean(ConfigStorageAdpatder.class).deleteTenantConfig();
-                    break;
-                case 40085:
-                    getBean(WxCpTpConfigStorage.class).expireSuiteTicket();
-                    break;
-            }
-        } catch (Exception e) {
-            ;
+    public void captureWxErrorExceptionAndThrow(WxErrorException e) throws WxErrorException {
+        //  处理微信特定异常码
+        switch (e.getError().getErrorCode()) {
+            case 40084:
+                getBean(ConfigStorageAdpatder.class).deleteTenantConfig();
+                throw e;
+            case 40085:
+                getBean(WxCpTpConfigStorage.class).expireSuiteTicket();
+                throw e;
+            case 701003:
+                log.warn(ColorOutput.YELLOW("忽略已经激活的账号"));
+                return;
+            default:
+                throw e;
         }
     }
 

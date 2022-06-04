@@ -1,6 +1,10 @@
 package com.yj2025.weixin.work;
 
 import me.chanjar.weixin.common.error.WxErrorException;
+import me.chanjar.weixin.cp.api.WxCpDepartmentService;
+import me.chanjar.weixin.cp.api.WxCpMediaService;
+import me.chanjar.weixin.cp.api.WxCpOaService;
+import me.chanjar.weixin.cp.api.WxCpUserService;
 import me.chanjar.weixin.cp.tp.service.*;
 
 /**
@@ -8,5 +12,55 @@ import me.chanjar.weixin.cp.tp.service.*;
  */
 public interface TpService extends WxCpTpService {
 
+    /**
+     * https://developer.work.weixin.qq.com/document/path/95553
+     * 激活账号，以进一步可使第三方应用拥有接口的调用许可
+     * @param activeCode
+     * @param authCorpId
+     * @param authUserId
+     * @return
+     * @throws WxErrorException
+     */
     String activeAccount(String activeCode, String authCorpId, String authUserId) throws WxErrorException;
+
+
+    /**
+     * 获取指定租户的调用对象
+     * @param tenantId
+     * @return
+     */
+    CpService getCpService(String tenantId);
+
+    /**
+     * 请使用 {@link #getCpService(String)}} 获取其相应的service操作对象
+     * @return
+     */
+    @Deprecated
+    @Override
+    WxCpTpUserService getWxCpTpUserService();
+
+    /**
+     * 请使用 {@link #getCpService(String)}} 获取其相应的service操作对象
+     * @return
+     */
+    @Deprecated
+    @Override
+    WxCpTpDepartmentService getWxCpTpDepartmentService();
+
+    /**
+     * 请使用 {@link #getCpService(String)}} 获取其相应的service操作对象
+     * @return
+     */
+    @Deprecated
+    @Override
+    WxCpTpOAService getWxCpTpOAService();
+
+    /**
+     * 请使用 {@link #getCpService(String)}} 获取其相应的service操作对象
+     * @return
+     */
+    @Deprecated
+    @Override
+    WxCpTpMediaService getWxCpTpMediaService();
+
 }

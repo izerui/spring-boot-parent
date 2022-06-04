@@ -6,10 +6,7 @@ import me.chanjar.weixin.common.api.WxConsts;
 import me.chanjar.weixin.common.bean.WxAccessToken;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.cp.api.WxCpUserService;
-import me.chanjar.weixin.cp.bean.WxCpTpAuthInfo;
-import me.chanjar.weixin.cp.bean.WxCpTpContactSearch;
-import me.chanjar.weixin.cp.bean.WxCpTpContactSearchResp;
-import me.chanjar.weixin.cp.bean.WxCpUser;
+import me.chanjar.weixin.cp.bean.*;
 import me.chanjar.weixin.cp.bean.message.WxCpMessage;
 import me.chanjar.weixin.cp.bean.message.WxCpMessageSendResult;
 import me.chanjar.weixin.cp.tp.service.WxCpTpContactService;
@@ -18,6 +15,8 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
@@ -57,13 +56,21 @@ public class TpTests {
         System.out.println(activeAccount);
 
 
-//        List<WxCpTpDepart> departs = tpService.getWxCpTpDepartmentService().list("ww7c4f40dafaee2f4c");
-//        for (WxCpTpDepart depart : departs) {
-//            System.out.println(depart.getName());
-//        }
-//
-//        String userId = tpService.getWxCpTpUserService().getUserId("13911523134");
-//        System.out.println(userId);
+        String userId = tpService.getCpService("yunji-wode").getUserService().getUserId("13911523134");
+        System.out.println("查询到手机号对应的userId: " + userId);
+
+        WxCpTpContactSearch search = new WxCpTpContactSearch();
+        search.setAuthCorpId(authCorpId)
+                        .setAgentId(1000061)
+                                .setLimit(50)
+                                        .setType(1)
+                                                .setQueryWord("s");
+        WxCpTpContactSearchResp searchResp = tpService.getWxCpTpContactService().contactSearch(search);
+        System.out.println(searchResp.toString());
+
+
+        List<WxCpDepart> departList = tpService.getCpService("yunji-wode").getDepartmentService().list(null);
+        System.out.println("查询到部门列表: " + departList);
 
     }
 

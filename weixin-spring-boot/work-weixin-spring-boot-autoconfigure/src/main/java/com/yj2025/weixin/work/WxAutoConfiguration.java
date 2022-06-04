@@ -24,6 +24,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 import java.lang.reflect.Proxy;
@@ -62,7 +63,7 @@ public class WxAutoConfiguration {
 
     @Bean
     public CpService cpService(WxCpConfigStorage cpConfigStorageAdpatder,
-                               TpService tpService,
+                               @Lazy TpService tpService,
                                WxProperties properties) {
         CpServiceImpl wxCpService = new CpServiceImpl();
         wxCpService.setTpService(tpService);
@@ -83,9 +84,10 @@ public class WxAutoConfiguration {
     }
 
     @Bean
-    public TpService tpService(WxCpTpConfigStorage tpConfigStorage, WxProperties properties) {
-        TpService tpService = new TpServiceImpl();
+    public TpService tpService(WxCpTpConfigStorage tpConfigStorage,@Lazy CpService cpService, WxProperties properties) {
+        TpServiceImpl tpService = new TpServiceImpl();
         tpService.setWxCpTpConfigStorage(tpConfigStorage);
+        tpService.setCpService(cpService);
         int maxRetryTimes = properties.getMaxRetryTimes();
         if (maxRetryTimes < 0) {
             maxRetryTimes = 0;
