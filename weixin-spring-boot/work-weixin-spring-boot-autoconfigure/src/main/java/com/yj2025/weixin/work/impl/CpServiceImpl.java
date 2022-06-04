@@ -11,6 +11,9 @@ import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.cp.api.impl.WxCpServiceImpl;
 import org.springframework.beans.factory.InitializingBean;
 
+import java.util.List;
+import java.util.Set;
+
 public class CpServiceImpl extends WxCpServiceImpl implements CpService, InitializingBean {
 
     private TpService tpService;
@@ -43,6 +46,11 @@ public class CpServiceImpl extends WxCpServiceImpl implements CpService, Initial
     @Override
     public WxProperties.CpConfig getConfig(String tenantId) {
         return getConfigOperator().getConfig(tenantId);
+    }
+
+    @Override
+    public List<WxProperties.CpConfig> getConfigs() {
+        return getConfigOperator().getConfigs();
     }
 
     @Override

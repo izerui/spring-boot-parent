@@ -6,8 +6,11 @@ import me.chanjar.weixin.common.util.locks.RedisTemplateSimpleDistributedLock;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.util.Assert;
 
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
+import java.util.stream.Collectors;
 
 import static com.yj2025.weixin.work.config.KeyConstants.*;
 
@@ -57,6 +60,12 @@ public class RedisConfigOperator extends AbstractConfigOperator {
     @Override
     protected boolean exist(String key) {
         return redisTemplate.hasKey(key);
+    }
+
+    @Override
+    public Set<String> getTenantIds() {
+        Set<String> keys = redisTemplate.keys(CORPID_KEY_PREFIX + "*");
+        return keys.stream().map(s -> s.replace(CORPID_KEY_PREFIX, "")).collect(Collectors.toSet());
     }
 
     @Override

@@ -133,11 +133,11 @@ public class WxProperties {
         /**
          * 应用密钥 我的应用页面查看
          */
-        @Nonnull
         private String corpSecret;
         /**
          * 应用id 我的应用页面查看
          */
+        @Nonnull
         private Integer agentId;
         /**
          * 第三方应用的时候使用
@@ -194,4 +194,5 @@ public class WxProperties {
                     .setAgentId(cpConfig.getAgentId());
         }
     }
+
 }

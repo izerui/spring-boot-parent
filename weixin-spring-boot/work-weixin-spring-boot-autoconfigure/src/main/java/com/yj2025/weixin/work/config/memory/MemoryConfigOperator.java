@@ -2,12 +2,15 @@ package com.yj2025.weixin.work.config.memory;
 
 import com.yj2025.weixin.work.WxProperties;
 import com.yj2025.weixin.work.config.AbstractConfigOperator;
+import com.yj2025.weixin.work.config.KeyConstants;
 import org.springframework.util.Assert;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * @author liuyuhua
@@ -67,6 +70,14 @@ public class MemoryConfigOperator extends AbstractConfigOperator {
         return configRuntimeKeyValues.containsKey(key);
     }
 
+
+    @Override
+    public Set<String> getTenantIds() {
+        return configRuntimeKeyValues.keySet().stream()
+                .filter(s -> s.startsWith(KeyConstants.CORPID_KEY_PREFIX))
+                .map(s -> s.replace(KeyConstants.CORPID_KEY_PREFIX, ""))
+                .collect(Collectors.toSet());
+    }
 
     @Override
     protected long getExpiredSeconds(String key) {

@@ -3,6 +3,8 @@ package com.yj2025.weixin.work.config;
 import com.yj2025.weixin.work.WxProperties;
 import me.chanjar.weixin.common.bean.WxAccessToken;
 
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.locks.Lock;
 
 public interface ConfigOperator {
@@ -156,4 +158,7 @@ public interface ConfigOperator {
 
     long getExpiresTime(String tenantId);
 
+    List<WxProperties.CpConfig> getConfigs();
+
+    Set<String> getTenantIds();
 }

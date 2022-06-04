@@ -7,7 +7,9 @@ import java.util.function.Function;
  * @date 2022/4/18
  */
 public final class KeyConstants {
-    public final static Function<String, String> CORPID_KEY = s -> String.format("work:weixin:corpId:%s", s);
+
+    public final static String CORPID_KEY_PREFIX = "work:weixin:corpId:";
+    public final static Function<String, String> CORPID_KEY = s -> String.format(CORPID_KEY_PREFIX + "%s", s);
     public final static Function<String, String> CORPSECRET_KEY = s -> String.format("work:weixin:corpSecret:%s", s);
     public final static Function<String, String> TOKEN_KEY = s -> String.format("work:weixin:token:%s", s);
     public final static Function<String, String> ENCODINGAESKEY_KEY = s -> String.format("work:weixin:encodingAESKey:%s", s);

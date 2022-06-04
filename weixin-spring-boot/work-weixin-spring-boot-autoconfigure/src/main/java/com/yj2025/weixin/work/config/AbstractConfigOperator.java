@@ -4,9 +4,12 @@ import com.yj2025.weixin.work.WxProperties;
 import me.chanjar.weixin.common.bean.WxAccessToken;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
 
 import static com.yj2025.weixin.work.config.KeyConstants.*;
 
@@ -103,6 +106,14 @@ public abstract class AbstractConfigOperator implements ConfigOperator {
                 .setMsgAuditLibPath(getMsgAuditLibPath(tenantId))
                 .setWebhookKey(getWebhookKey(tenantId));
     }
+
+    @Override
+    public List<WxProperties.CpConfig> getConfigs() {
+        return getTenantIds().stream().map(tenantId -> getConfig(tenantId)).collect(Collectors.toList());
+    }
+
+    @Override
+    public abstract Set<String> getTenantIds();
 
     @Override
     public void deleteConfig(String tenantId) {

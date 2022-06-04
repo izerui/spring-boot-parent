@@ -3,6 +3,9 @@ package com.yj2025.weixin.work;
 import com.yj2025.weixin.work.config.ConfigOperator;
 import me.chanjar.weixin.cp.api.WxCpService;
 
+import java.util.List;
+import java.util.Set;
+
 /**
  * @author liuyuhua
  * @date 2022/4/18
@@ -24,6 +27,12 @@ public interface CpService extends WxCpService {
      * @return
      */
     WxProperties.CpConfig getConfig(String tenantId);
+
+    /**
+     * 获取配置的租户信息列表
+     * @return
+     */
+    List<WxProperties.CpConfig> getConfigs();
 
     /**
      * 获取配置操作对象
