@@ -36,13 +36,6 @@ public interface ConfigStorageAdpatder extends WxCpConfigStorage {
     ConfigOperator getConfigOperator();
 
     /**
-     * 自动配置信息
-     *
-     * @return
-     */
-    WxProperties getProperties();
-
-    /**
      * 永久授权码
      *
      * @return

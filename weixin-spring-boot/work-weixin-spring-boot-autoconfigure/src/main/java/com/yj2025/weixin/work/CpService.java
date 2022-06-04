@@ -19,6 +19,13 @@ public interface CpService extends WxCpService {
     CpService tenant(String tenantId, boolean isThirdApp);
 
     /**
+     * 根据租户获取配置
+     * @param tenantId
+     * @return
+     */
+    WxProperties.CpConfig getConfig(String tenantId);
+
+    /**
      * 获取配置操作对象
      *
      * @return

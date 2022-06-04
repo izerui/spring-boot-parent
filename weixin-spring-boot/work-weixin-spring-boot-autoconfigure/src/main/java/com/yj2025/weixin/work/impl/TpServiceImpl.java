@@ -3,6 +3,7 @@ package com.yj2025.weixin.work.impl;
 import com.google.gson.JsonObject;
 import com.yj2025.weixin.work.CpService;
 import com.yj2025.weixin.work.TpService;
+import com.yj2025.weixin.work.WxProperties;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.cp.tp.service.WxCpTpDepartmentService;
 import me.chanjar.weixin.cp.tp.service.WxCpTpMediaService;
@@ -28,19 +29,24 @@ public class TpServiceImpl extends WxCpTpServiceImpl implements TpService {
      * @throws WxErrorException
      */
     @Override
-    public String activeAccount(String activeCode, String authCorpId, String authUserId) throws WxErrorException {
+    public void activeAccount(String activeCode, String authCorpId, String authUserId) throws WxErrorException {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("active_code", activeCode);
         jsonObject.addProperty("corpid", authCorpId);
         jsonObject.addProperty("userid", authUserId);
         String access_token = getWxCpProviderToken();
-        String responseText = post(configStorage.getApiUrl("/cgi-bin/license/active_account") + "?provider_access_token=" + access_token, jsonObject.toString(), true);
-        return responseText;
+        post(configStorage.getApiUrl("/cgi-bin/license/active_account") + "?provider_access_token=" + access_token, jsonObject.toString(), true);
     }
 
     @Override
     public CpService getCpService(String tenantId) {
         return cpService.tenant(tenantId, true);
+    }
+
+    @Override
+    public WxProperties.TpAuthConfig getAuthConfig(String tenantId) {
+        WxProperties.CpConfig cpConfig = cpService.tenant(tenantId, true).getConfig(tenantId);
+        return WxProperties.TpAuthConfig.fromCpConfig(cpConfig);
     }
 
     @Override

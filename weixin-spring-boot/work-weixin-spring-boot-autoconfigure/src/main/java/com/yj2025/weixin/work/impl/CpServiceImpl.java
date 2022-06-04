@@ -6,6 +6,7 @@ import com.yj2025.weixin.work.TpService;
 import com.yj2025.weixin.work.WxProperties;
 import com.yj2025.weixin.work.config.ConfigOperator;
 import me.chanjar.weixin.common.bean.WxAccessToken;
+import me.chanjar.weixin.common.bean.ocr.WxOcrPos;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.cp.api.impl.WxCpServiceImpl;
 import org.springframework.beans.factory.InitializingBean;
@@ -13,9 +14,14 @@ import org.springframework.beans.factory.InitializingBean;
 public class CpServiceImpl extends WxCpServiceImpl implements CpService, InitializingBean {
 
     private TpService tpService;
+    private WxProperties properties;
 
     public void setTpService(TpService tpService) {
         this.tpService = tpService;
+    }
+
+    public void setProperties(WxProperties properties) {
+        this.properties = properties;
     }
 
     @Override
@@ -32,6 +38,11 @@ public class CpServiceImpl extends WxCpServiceImpl implements CpService, Initial
     public CpService tenant(String tenantId, boolean isThirdApp) {
         getStorageAdpatder().tenant(tenantId, isThirdApp);
         return this;
+    }
+
+    @Override
+    public WxProperties.CpConfig getConfig(String tenantId) {
+        return getConfigOperator().getConfig(tenantId);
     }
 
     @Override
@@ -64,7 +75,6 @@ public class CpServiceImpl extends WxCpServiceImpl implements CpService, Initial
     @Override
     public void afterPropertiesSet() throws Exception {
         ConfigStorageAdpatder wxCpConfigStorage = (ConfigStorageAdpatder) getWxCpConfigStorage();
-        WxProperties properties = wxCpConfigStorage.getProperties();
         ConfigOperator tenantOperator = wxCpConfigStorage.getConfigOperator();
         if (properties.getConfigs() != null) {
             tenantOperator.setConfigs(

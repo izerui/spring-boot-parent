@@ -67,6 +67,7 @@ public class WxAutoConfiguration {
                                WxProperties properties) {
         CpServiceImpl wxCpService = new CpServiceImpl();
         wxCpService.setTpService(tpService);
+        wxCpService.setProperties(properties);
         wxCpService.setWxCpConfigStorage(cpConfigStorageAdpatder);
         int maxRetryTimes = properties.getMaxRetryTimes();
         if (maxRetryTimes < 0) {

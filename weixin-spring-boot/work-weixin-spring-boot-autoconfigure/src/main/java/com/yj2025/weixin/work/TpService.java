@@ -25,7 +25,7 @@ public interface TpService extends WxCpTpService {
      * @return
      * @throws WxErrorException
      */
-    String activeAccount(String activeCode, String authCorpId, String authUserId) throws WxErrorException;
+    void activeAccount(String activeCode, String authCorpId, String authUserId) throws WxErrorException;
 
 
     /**
@@ -35,6 +35,13 @@ public interface TpService extends WxCpTpService {
      * @return
      */
     CpService getCpService(String tenantId);
+
+    /**
+     * 根据tenantId获取授权企业的配置
+     * @param tenantId
+     * @return
+     */
+    WxProperties.TpAuthConfig getAuthConfig(String tenantId);
 
     /**
      * 请使用 {@link #getCpService(String)}} 获取其相应的service操作对象

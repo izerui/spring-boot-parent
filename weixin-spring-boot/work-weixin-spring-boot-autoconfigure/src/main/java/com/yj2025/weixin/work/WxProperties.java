@@ -185,5 +185,13 @@ public class WxProperties {
                     .setPermanentCode(getPermanentCode())
                     .setTenantId(getTenantId());
         }
+
+        public static TpAuthConfig fromCpConfig(CpConfig cpConfig) {
+            return new TpAuthConfig()
+                    .setTenantId(cpConfig.getTenantId())
+                    .setCorpId(cpConfig.getCorpId())
+                    .setPermanentCode(cpConfig.getPermanentCode())
+                    .setAgentId(cpConfig.getAgentId());
+        }
     }
 }
