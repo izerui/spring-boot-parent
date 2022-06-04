@@ -96,9 +96,9 @@ public class TpCallbackController implements CommandLineRunner {
      * @return
      */
     @GetMapping("/")
-    public String home(@RequestParam("auth_code") String authCode,
-                       @RequestParam("expires_in") String expiresIn,
-                       @RequestParam("state") String state,
+    public String home(@RequestParam(value = "auth_code", required = false) String authCode,
+                       @RequestParam(value = "expires_in", required = false) String expiresIn,
+                       @RequestParam(value = "state", required = false) String state,
                        HttpServletRequest request,
                        HttpServletResponse response) throws WxErrorException, IOException {
         String outputContent = "非法请求";
@@ -112,7 +112,7 @@ public class TpCallbackController implements CommandLineRunner {
         if (info == null) {
             info = (WxCpTpPermanentCodeInfo) request.getSession().getAttribute("WxCpTpPermanentCodeInfo");
         }
-        if(info != null) {
+        if (info != null) {
             log.info(YELLOW("{}"), info.toJson());
             outputContent = String.format("授权成功: 请保存以下内容(并提供给应用服务商)。</br> tenantId: %s </br> 永久授权码: %s </br> 授权人: %s </br> corpid: %s </br> agentid: %s </br>",
                     state,
