@@ -35,16 +35,15 @@ public class WxErrorHandler implements InvocationHandler {
 
     public void captureWxErrorException(WxErrorException ex) {
         try {
+            //  处理微信特定异常码
             switch (ex.getError().getErrorCode()) {
                 case 40084:
-                    ConfigStorageAdpatder adpatder = getBean(ConfigStorageAdpatder.class);
-                    adpatder.deleteTenantConfig();
+                    getBean(ConfigStorageAdpatder.class).deleteTenantConfig();
                     break;
                 case 40085:
                     getBean(WxCpTpConfigStorage.class).expireSuiteTicket();
                     break;
             }
-            // TODO 处理微信特定异常码
         } catch (Exception e) {
             ;
         }
