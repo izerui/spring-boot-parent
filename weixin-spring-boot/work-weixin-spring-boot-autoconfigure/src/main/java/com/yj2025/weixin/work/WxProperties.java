@@ -22,7 +22,7 @@ public class WxProperties {
     /**
      * 微信回调的域名
      */
-    private String domainName = "http://local-dev.yj2025.com";
+    private String domainName = "https://weixin-dev.yj2025.com";
 
     /**
      * 自建应用配置(支持多应用) 与 tpConfig 二选一
