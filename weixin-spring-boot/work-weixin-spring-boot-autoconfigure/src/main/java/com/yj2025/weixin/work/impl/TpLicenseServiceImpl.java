@@ -1,11 +1,19 @@
 package com.yj2025.weixin.work.impl;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.yj2025.weixin.work.TpLicenseService;
 import com.yj2025.weixin.work.TpService;
 import com.yj2025.weixin.work.WxProperties;
+import com.yj2025.weixin.work.impl.mapping.ListOrderAccountsResp;
+import com.yj2025.weixin.work.impl.mapping.RenewUserJobReq;
+import com.yj2025.weixin.work.impl.mapping.RenewUserJobResp;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.common.util.json.WxGsonBuilder;
+import me.chanjar.weixin.cp.bean.WxCpBaseResp;
+import me.chanjar.weixin.cp.util.json.WxCpGsonBuilder;
+
+import java.util.List;
 
 public class TpLicenseServiceImpl implements TpLicenseService {
 
@@ -45,6 +53,37 @@ public class TpLicenseServiceImpl implements TpLicenseService {
 
     }
 
+    @Override
+    public RenewUserJobResp renewOrderJob(String tenantId, List<RenewUserJobReq> authUserIds) throws WxErrorException {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("corpid", tpService.getConfigOperator().getCorpId(tenantId));
+        JsonArray jsonArray = new JsonArray();
+        authUserIds.stream().map(s -> {
+            JsonObject obj = new JsonObject();
+            obj.addProperty("userid", s.getUserId());
+            obj.addProperty("type", s.getType());
+            return obj;
+        }).forEach(jsonArray::add);
+        jsonObject.add("account_list", jsonArray);
+        String access_token = tpService.getWxCpProviderToken();
+        String respJson = tpService.post(tpService.getWxCpTpConfigStorage().getApiUrl("/cgi-bin/license/create_renew_order_job") + "?provider_access_token=" + access_token, jsonObject.toString(), true);
+        return RenewUserJobResp.fromJson(respJson);
+    }
+
+    @Override
+    public String submitOrderJob(String jobId, Integer months) throws WxErrorException {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("jobid", jobId);
+        jsonObject.addProperty("buyer_userid", properties.getTpConfig().getBuyUserId());
+
+        JsonObject monthObj = new JsonObject();
+        monthObj.addProperty("months", months);
+        jsonObject.add("account_duration", monthObj);
+        String access_token = tpService.getWxCpProviderToken();
+        String respJson = tpService.post(tpService.getWxCpTpConfigStorage().getApiUrl("/cgi-bin/license/submit_order_job") + "?provider_access_token=" + access_token, jsonObject.toString(), true);
+        return WxCpGsonBuilder.create().fromJson(respJson, JsonObject.class).get("order_id").getAsString();
+    }
+
     /**
      * 激活账号
      *
@@ -55,12 +94,24 @@ public class TpLicenseServiceImpl implements TpLicenseService {
      * @throws WxErrorException
      */
     @Override
-    public void activeAccount(String tenantId, String activeCode, String authUserId) throws WxErrorException {
+    public WxCpBaseResp activeAccount(String tenantId, String activeCode, String authUserId) throws WxErrorException {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("active_code", activeCode);
         jsonObject.addProperty("corpid", tpService.getConfigOperator().getCorpId(tenantId));
         jsonObject.addProperty("userid", authUserId);
         String access_token = tpService.getWxCpProviderToken();
-        tpService.post(tpService.getWxCpTpConfigStorage().getApiUrl("/cgi-bin/license/active_account") + "?provider_access_token=" + access_token, jsonObject.toString(), true);
+        String post = tpService.post(tpService.getWxCpTpConfigStorage().getApiUrl("/cgi-bin/license/active_account") + "?provider_access_token=" + access_token, jsonObject.toString(), true);
+        return WxCpBaseResp.fromJson(post);
+    }
+
+    @Override
+    public ListOrderAccountsResp listOrderAccounts(String orderId, Integer limit, String cursor) throws WxErrorException {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("order_id", orderId);
+        jsonObject.addProperty("limit", limit);
+        jsonObject.addProperty("cursor", cursor);
+        String access_token = tpService.getWxCpProviderToken();
+        String respJson = tpService.post(tpService.getWxCpTpConfigStorage().getApiUrl("/cgi-bin/license/list_order_account") + "?provider_access_token=" + access_token, jsonObject.toString(), true);
+        return ListOrderAccountsResp.fromJson(respJson);
     }
 }
