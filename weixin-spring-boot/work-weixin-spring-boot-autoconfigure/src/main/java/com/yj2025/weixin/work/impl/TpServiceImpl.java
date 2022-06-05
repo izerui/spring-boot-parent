@@ -4,7 +4,9 @@ import com.google.gson.JsonObject;
 import com.yj2025.weixin.work.CpService;
 import com.yj2025.weixin.work.TpService;
 import com.yj2025.weixin.work.WxProperties;
+import com.yj2025.weixin.work.config.ConfigOperator;
 import me.chanjar.weixin.common.error.WxErrorException;
+import me.chanjar.weixin.common.util.json.WxGsonBuilder;
 import me.chanjar.weixin.cp.tp.service.WxCpTpDepartmentService;
 import me.chanjar.weixin.cp.tp.service.WxCpTpMediaService;
 import me.chanjar.weixin.cp.tp.service.WxCpTpOAService;
@@ -14,28 +16,29 @@ import me.chanjar.weixin.cp.tp.service.impl.WxCpTpServiceImpl;
 public class TpServiceImpl extends WxCpTpServiceImpl implements TpService {
 
     private CpService cpService;
+    private WxProperties properties;
+
+    private TpLicenseService licenseService;
 
     public void setCpService(CpService cpService) {
         this.cpService = cpService;
     }
 
-    /**
-     * 激活账号
-     *
-     * @param activeCode
-     * @param authCorpId
-     * @param authUserId
-     * @return
-     * @throws WxErrorException
-     */
+    public void setProperties(WxProperties properties) {
+        this.properties = properties;
+    }
+
     @Override
-    public void activeAccount(String activeCode, String authCorpId, String authUserId) throws WxErrorException {
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("active_code", activeCode);
-        jsonObject.addProperty("corpid", authCorpId);
-        jsonObject.addProperty("userid", authUserId);
-        String access_token = getWxCpProviderToken();
-        post(configStorage.getApiUrl("/cgi-bin/license/active_account") + "?provider_access_token=" + access_token, jsonObject.toString(), true);
+    public ConfigOperator getConfigOperator() {
+        return cpService.getConfigOperator();
+    }
+
+    @Override
+    public TpLicenseService getLicenseService() {
+        if (licenseService == null) {
+            licenseService = new TpLicenseServiceImpl(this, properties);
+        }
+        return licenseService;
     }
 
     @Override

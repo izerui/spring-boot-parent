@@ -49,11 +49,12 @@ public class TpTests {
         WxAccessToken corpToken = tpService.getCorpToken(authCorpId, permanentCode, true);
         System.out.println("企业token: " + corpToken.getAccessToken());
 
+        String orderId = tpService.getLicenseService().createOrder("feike", 5, false, 1);
+        System.out.println(orderId);
 
-        // 激活码
+        // 激活账号
         String activeCode = "LA100000001000000629AF7D6";
-        String activeAccount = tpService.activeAccount(activeCode, authCorpId, "serv");
-        System.out.println(activeAccount);
+        tpService.getLicenseService().activeAccount("feike", activeCode, "serv");
 
 
         String userId = tpService.getCpService("yunji-wode").getUserService().getUserId("13911523134");

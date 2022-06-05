@@ -105,6 +105,10 @@ public class WxProperties {
          * 服务商secret 查看页面: https://open.work.weixin.qq.com/wwopen/developer#/sass/power/inter
          */
         private String providerSecret;
+        /**
+         * 下单人
+         */
+        private String buyUserId = "serv";
         private JsSdkVerify jsSdkVerify = new JsSdkVerify();
         private int providerTokenExpiresTime = 7200;
         private int suiteAccessTokenExpiresTime = 7200;

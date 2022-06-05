@@ -38,7 +38,7 @@ public class AdminController {
                                @ApiParam("账户ID") @RequestParam("authUserId") String authUserId) throws WxErrorException {
 
         WxProperties.TpAuthConfig authConfig = tpService.getAuthConfig(tenantId);
-        tpService.activeAccount(activeCode, authConfig.getCorpId(), authUserId);
+        tpService.getLicenseService().activeAccount(activeCode, authConfig.getCorpId(), authUserId);
         return "success";
     }
 
