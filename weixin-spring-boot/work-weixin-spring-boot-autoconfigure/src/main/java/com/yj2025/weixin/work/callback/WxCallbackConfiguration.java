@@ -54,6 +54,10 @@ public class WxCallbackConfiguration {
         return router;
     }
 
+    /**
+     * 通过配置对外暴露js-api可信域名验证接口
+     * @return
+     */
     @Bean
     public WxProperties.TpConfig.JsSdkVerify jsSdkVerify() {
         return properties.getTpConfig().getJsSdkVerify();
