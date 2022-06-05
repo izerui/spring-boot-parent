@@ -91,7 +91,7 @@ public class TpCallbackController implements CommandLineRunner {
     }
 
     /**
-     * 第三方应用安装完毕回调地址
+     * 第三方应用安装完毕回调地址(增加session存储回调信息,防止用户刷新页面丢失配置信息)
      *
      * @return
      */
