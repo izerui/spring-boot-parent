@@ -153,7 +153,6 @@ public class WxAutoConfiguration {
                     .token(tpConfig.getListenerToken())
                     .aesKey(tpConfig.getListenerAesKey())
                     .corpId(tpConfig.getCorpId())
-                    .corpSecret(tpConfig.getCorpSecret())
                     .providerSecret(tpConfig.getProviderSecret())
                     .keyPrefix("work:weixin-tp")
                     .wxRedisOps(new RedisTemplateWxRedisOps(redisTemplate)).build();

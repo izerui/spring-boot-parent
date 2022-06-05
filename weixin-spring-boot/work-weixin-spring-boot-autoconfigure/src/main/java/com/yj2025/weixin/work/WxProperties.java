@@ -90,10 +90,6 @@ public class WxProperties {
          */
         private String corpId;
         /**
-         * 企微服务商 企业secret，来自于企微配置 (姑且可以获取)
-         */
-        private String corpSecret;
-        /**
          * 第三方应用的token，用来检查应用的签名 服务商平台-应用管理页面-回调配置栏查看
          */
         private String listenerToken;
