@@ -1,12 +1,10 @@
 package com.yj2025.weixin.work.impl;
 
-import com.google.gson.JsonObject;
 import com.yj2025.weixin.work.CpService;
+import com.yj2025.weixin.work.TpLicenseService;
 import com.yj2025.weixin.work.TpService;
 import com.yj2025.weixin.work.WxProperties;
 import com.yj2025.weixin.work.config.ConfigOperator;
-import me.chanjar.weixin.common.error.WxErrorException;
-import me.chanjar.weixin.common.util.json.WxGsonBuilder;
 import me.chanjar.weixin.cp.tp.service.WxCpTpDepartmentService;
 import me.chanjar.weixin.cp.tp.service.WxCpTpMediaService;
 import me.chanjar.weixin.cp.tp.service.WxCpTpOAService;
