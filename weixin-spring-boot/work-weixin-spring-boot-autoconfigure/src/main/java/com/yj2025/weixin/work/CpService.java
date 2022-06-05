@@ -4,9 +4,9 @@ import com.yj2025.weixin.work.config.ConfigOperator;
 import me.chanjar.weixin.cp.api.WxCpService;
 
 import java.util.List;
-import java.util.Set;
 
 /**
+ * 应用平台servcie
  * @author liuyuhua
  * @date 2022/4/18
  */
@@ -23,6 +23,7 @@ public interface CpService extends WxCpService {
 
     /**
      * 根据租户获取配置
+     *
      * @param tenantId
      * @return
      */
@@ -30,6 +31,7 @@ public interface CpService extends WxCpService {
 
     /**
      * 获取配置的租户信息列表
+     *
      * @return
      */
     List<WxProperties.CpConfig> getConfigs();

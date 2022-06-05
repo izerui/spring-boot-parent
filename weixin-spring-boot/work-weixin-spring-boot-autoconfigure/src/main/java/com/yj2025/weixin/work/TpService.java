@@ -6,7 +6,7 @@ import me.chanjar.weixin.cp.config.WxCpTpConfigStorage;
 import me.chanjar.weixin.cp.tp.service.*;
 
 /**
- * 没别的用，就是不让你用这些方法，太垃圾了
+ * 第三方服务平台service
  */
 public interface TpService extends WxCpTpService {
 
