@@ -137,7 +137,7 @@ public class TpTests {
 
     @Test
     public void listOrderAccounts() throws WxErrorException {
-        ListOrderAccountsResp listOrderAccounts = tpService.getLicenseService().listOrderAccounts("OI0000083A8E09629B58B00D779A5T", 100, null);
+        ListOrderAccountsResp listOrderAccounts = tpService.getLicenseService().listOrderAccounts("OI0000083A8E09629AF7D642A917ET", 100, null);
         for (ListOrderAccountsResp.OrderAccount orderAccount : listOrderAccounts.getAccountList()) {
             System.out.println(orderAccount.getActiveCode() + " 已激活: " + orderAccount.getUserId());
         }

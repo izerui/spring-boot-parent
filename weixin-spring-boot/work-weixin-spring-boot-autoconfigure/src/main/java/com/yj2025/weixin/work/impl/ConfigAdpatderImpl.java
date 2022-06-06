@@ -112,11 +112,16 @@ public class ConfigAdpatderImpl implements ConfigStorageAdpatder {
         if (isThirdApp) {
             tpAuthConfigLoaders.ifAvailable(loader -> {
                 WxProperties.TpAuthConfig tpAuthConfig = loader.getConfig(tenantId);
-                config.set(tpAuthConfig.toCpConfig());
+                if (tpAuthConfig != null) {
+                    config.set(tpAuthConfig.toCpConfig());
+                }
             });
         } else {
             cpConfigLoaders.ifAvailable(loader -> {
-                config.set(loader.getConfig(tenantId));
+                WxProperties.CpConfig cpConfig = loader.getConfig(tenantId);
+                if (cpConfig != null) {
+                    config.set(cpConfig);
+                }
             });
         }
         return config.get();
