@@ -1,13 +1,13 @@
 echo;
 echo '开始提交变更'
-echo '添加变更：git add .'
+echo '添加变更'
 git add .
-echo -n "提交注释:"
+echo -n "请输入本次提交说明:"
 read  message
 git commit -m $message
-echo '更新远程代码：git pull'
+echo '更新远程代码'
 git pull
-echo '提交代码到远程：git push'
+echo '提交代码到远程'
 git push
 echo '提交完毕'
 echo;
