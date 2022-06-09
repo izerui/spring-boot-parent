@@ -382,6 +382,17 @@
                 <artifactId>open-oauth-server-spring-boot-starter</artifactId>
                 <version>${base-starter.version}</version>
             </dependency>
+            <!-- mongo -->
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>mongo-spring-boot-autoconfigure</artifactId>
+                <version>${base-starter.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>mongo-spring-boot-starter</artifactId>
+                <version>${base-starter.version}</version>
+            </dependency>
 
         </dependencies>
     </dependencyManagement>
