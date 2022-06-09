@@ -22,10 +22,10 @@
         <module>amazonaws-spring-boot</module>
         <module>weixin-spring-boot</module>
         <module>sequence-number-spring-boot</module>
-        <module>oauth2-server-spring-boot</module>
-        <module>gateway-spring-boot</module>
         <module>high-performance-spring-boot</module>
         <module>open-spring-boot</module>
+        <module>mongo-spring-boot</module>
+        <module>proxy-spring-boot</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -37,14 +37,14 @@
     <groupId>com.yj2025</groupId>
     <artifactId>yj2025-spring-boot-parent</artifactId>
 
-    <version>1.4.2-SNAPSHOT</version>
+    <version>1.5.0-SNAPSHOT</version>
 
     <properties>
         <java.version>11</java.version>
         <spring-cloud.version>Hoxton.SR12</spring-cloud.version>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
-        <base-starter.version>1.4.2-SNAPSHOT</base-starter.version>
+        <base-starter.version>1.5.0-SNAPSHOT</base-starter.version>
     </properties>
 
 
