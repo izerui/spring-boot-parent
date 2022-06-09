@@ -13,30 +13,15 @@ set /p declation=输入提交的commit信息:
 git commit -m "%declation%"
 echo;
 
-echo 将变更情况提交到远程自己分支：git push origin hlt
-git push origin hlt
+echo 更新远程代码：git pull
+git pull
 echo;
 
-echo 切换主分支：git checkout master
-git checkout master
-echo;
-
-echo 本地主分支拉取远程主分支：git pull origin master
-git pull origin master
-echo;
-
-echo 将变更情况提交到远程主分支：git push origin master
-git push origin master
-echo;
-
-echo 切换分支：git checkout hlt
-git checkout hlt
+echo 将变更情况提交到远程分支：git push
+git push
 echo;
 
 echo 执行完毕！
 echo;
 
 pause
-————————————————
-版权声明：本文为CSDN博主「仲夏宁叶香」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
-原文链接：https://blog.csdn.net/M82_A1/article/details/108350356
