@@ -1,7 +1,3 @@
-@echo off
-
-title GIT一键提交
-color 3
 echo 当前目录是：%cd%
 echo;
 
