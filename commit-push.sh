@@ -25,20 +25,12 @@ echo 本地主分支拉取远程主分支：git pull origin master
 git pull origin master
 echo;
 
-echo 主分支合并分支：git merge hlt
-git merge hlt
-echo;
-
 echo 将变更情况提交到远程主分支：git push origin master
 git push origin master
 echo;
 
 echo 切换分支：git checkout hlt
 git checkout hlt
-echo;
-
-echo 本地分支拉取远程主分支：git pull origin master
-git pull origin master
 echo;
 
 echo 执行完毕！
