@@ -24,7 +24,7 @@ import java.util.List;
 
 @Configuration
 @EnableConfigurationProperties(TenantConfig.class)
-@EnableTransactionManagement
+@EnableTransactionManagement(proxyTargetClass = true)
 public class MybatisAutoConfiguration {
 
     @Autowired

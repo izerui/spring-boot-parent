@@ -24,7 +24,7 @@
         <module>sequence-number-spring-boot</module>
         <module>high-performance-spring-boot</module>
         <module>open-spring-boot</module>
-        <module>mongo-spring-boot</module>
+        <module>mongo-transaction-spring-boot</module>
         <module>proxy-spring-boot</module>
     </modules>
     <parent>
@@ -385,12 +385,12 @@
             <!-- mongo -->
             <dependency>
                 <groupId>com.yj2025</groupId>
-                <artifactId>mongo-spring-boot-autoconfigure</artifactId>
+                <artifactId>mongo-transaction-spring-boot-autoconfigure</artifactId>
                 <version>${base-starter.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.yj2025</groupId>
-                <artifactId>mongo-spring-boot-starter</artifactId>
+                <artifactId>mongo-transaction-spring-boot-starter</artifactId>
                 <version>${base-starter.version}</version>
             </dependency>
 
@@ -473,6 +473,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
+                <version>${maven-resources-plugin.version}</version>
                 <configuration>
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>

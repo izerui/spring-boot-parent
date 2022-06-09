@@ -19,7 +19,7 @@
   > 分布式全局锁、延时器、计数器
 * metrics-spring-boot
   > 基于spring actuator 相关的状态监控暴露端点例如：prometheus
-* mongo-spring-boot
+* mongo-transaction-spring-boot
   > mongo数据库操作封装
 * mvc-rest-spring-boot
   > 全局异常处理：feign调用、web请求、异常封装
