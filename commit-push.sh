@@ -1,5 +1,4 @@
 echo;
-echo '开始提交变更'
 echo '添加变更'
 git add .
 echo -n "请输入本次提交说明:"
