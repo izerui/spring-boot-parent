@@ -18,6 +18,7 @@ import me.chanjar.weixin.cp.config.impl.WxCpTpDefaultConfigImpl;
 import me.chanjar.weixin.cp.config.impl.WxCpTpRedissonConfigImpl;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
@@ -134,6 +135,7 @@ public class WxAutoConfiguration {
     }
 
     @ConditionalOnProperty(value = "work.weixin.storage", havingValue = "redis")
+    @ConditionalOnClass(name = "org.springframework.data.redis.core.StringRedisTemplate")
     @Configuration
     public static class RedisOperator {
 

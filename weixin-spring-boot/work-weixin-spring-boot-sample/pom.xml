@@ -33,6 +33,10 @@
         </dependency>
         <dependency>
             <groupId>com.yj2025</groupId>
+            <artifactId>redis-spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.yj2025</groupId>
             <artifactId>doc-spring-boot-starter</artifactId>
         </dependency>
         <dependency>
