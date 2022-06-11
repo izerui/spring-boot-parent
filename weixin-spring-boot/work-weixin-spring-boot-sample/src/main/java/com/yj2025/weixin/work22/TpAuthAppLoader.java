@@ -1,7 +1,7 @@
 package com.yj2025.weixin.work22;
 
-import com.yj2025.weixin.work.WxProperties;
-import com.yj2025.weixin.work.provider.TpAuthConfigLoader;
+import com.github.izerui.weixin.WxProperties;
+import com.github.izerui.weixin.provider.TpAuthConfigLoader;
 import org.springframework.stereotype.Component;
 
 @Component

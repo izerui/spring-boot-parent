@@ -1,7 +1,7 @@
 package com.yj2025.weixin.work22.controller;
 
-import com.yj2025.weixin.work.TpService;
-import com.yj2025.weixin.work.WxProperties;
+import com.github.izerui.weixin.TpService;
+import com.github.izerui.weixin.WxProperties;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -26,7 +26,7 @@ public class AdminController {
     public String getPreAuthUrl(@ApiParam("租户ID") @RequestParam("tenantId") String tenantId,
                                 @ApiParam("0:正式、1:测试") @RequestParam("authType") Integer authType) throws WxErrorException {
 
-        String preAuthUrl = tpService.getPreAuthUrl(properties.getDomainName(), tenantId, 1);
+        String preAuthUrl = tpService.getPreAuthUrl(properties.getCallbackUrl(), tenantId, 1);
         return preAuthUrl;
     }
 

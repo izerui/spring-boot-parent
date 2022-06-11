@@ -1,7 +1,7 @@
 package com.yj2025.weixin.work22.ureport;
 
-import com.yj2025.weixin.work.CpService;
-import com.yj2025.weixin.work.WxProperties;
+import com.github.izerui.weixin.CpService;
+import com.github.izerui.weixin.WxProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

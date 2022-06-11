@@ -2,8 +2,8 @@ package com.yj2025.weixin.work22.ureport;
 
 import com.bstek.ureport.provider.report.ReportFile;
 import com.bstek.ureport.provider.report.ReportProvider;
+import com.github.izerui.weixin.WxProperties;
 import com.google.common.collect.Lists;
-import com.yj2025.weixin.work.WxProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -16,7 +16,8 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 
-import static com.yj2025.weixin.work.support.ColorOutput.BLUE;
+import static com.github.izerui.weixin.support.ColorOutput.BLUE;
+
 
 @Component
 @Slf4j
@@ -68,6 +69,6 @@ public class PathReportProvider implements ReportProvider , CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        log.info(BLUE(":::: 查看缓存的配置: " + properties.getDomainName() + "/ureport/preview?_u=classpath:template/template.ureport.xml&_t=1,6,9"));
+        log.info(BLUE(":::: 查看缓存的配置: " + properties.getCallbackUrl() + "/ureport/preview?_u=classpath:template/template.ureport.xml&_t=1,6,9"));
     }
 }

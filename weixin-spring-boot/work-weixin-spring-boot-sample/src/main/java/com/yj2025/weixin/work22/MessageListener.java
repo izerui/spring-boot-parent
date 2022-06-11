@@ -1,19 +1,19 @@
 package com.yj2025.weixin.work22;
 
+import com.github.izerui.weixin.CpService;
+import com.github.izerui.weixin.TpService;
+import com.github.izerui.weixin.WxProperties;
+import com.github.izerui.weixin.provider.CpListener;
+import com.github.izerui.weixin.provider.TpListener;
 import com.google.gson.Gson;
-import com.yj2025.weixin.work.CpService;
-import com.yj2025.weixin.work.TpService;
-import com.yj2025.weixin.work.WxProperties;
-import com.yj2025.weixin.work.provider.CpListener;
-import com.yj2025.weixin.work.provider.TpListener;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.cp.bean.message.WxCpTpXmlMessage;
 import me.chanjar.weixin.cp.bean.message.WxCpXmlMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static com.yj2025.weixin.work.support.ColorOutput.BLUE;
-import static com.yj2025.weixin.work.support.ColorOutput.MAGENTA;
+import static com.github.izerui.weixin.support.ColorOutput.*;
+
 
 @Slf4j
 @Component
