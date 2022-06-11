@@ -3,7 +3,6 @@ package com.yj2025.jpa.service;
 import com.yj2025.jpa.entity.User;
 import com.yj2025.jpa.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
@@ -14,8 +13,6 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
-    @Autowired
-    private MongoTemplate mongoTemplate;
 
     public void add() {
         System.out.println(TransactionSynchronizationManager.isActualTransactionActive());
@@ -26,10 +23,6 @@ public class UserService {
             user.setName("张三丰");
             user.setEmail("张三丰@qq.com");
             userRepository.save(user);
-            mongoTemplate.save(user,"test_user");
-            if(i == 15) {
-                throw new RuntimeException("15 异常");
-            }
         }
     }
 }
