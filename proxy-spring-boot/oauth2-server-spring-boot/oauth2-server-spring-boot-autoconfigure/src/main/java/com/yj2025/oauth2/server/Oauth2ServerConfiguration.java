@@ -33,7 +33,8 @@ public class Oauth2ServerConfiguration {
 
     private final static String[] ignoreWrapPathMatchers = {
             MappingUrls.OAUTH_CHECK_TOKEN_URL, // opaque token，通过rest请求方式进行token校验地址
-            MappingUrls.JWT_RSA_KEY_URL // jwt获取公钥用来校验token的地址
+            MappingUrls.JWT_RSA_KEY_URL, // jwt获取公钥用来校验token的地址
+            "/actuator/**"
     };
 
     @Bean
