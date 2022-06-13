@@ -1,8 +1,8 @@
 package com.yj2025.weixin.work22;
 
-import com.yj2025.weixin.work.CpService;
-import com.yj2025.weixin.work.WxProperties;
-import com.yj2025.weixin.work.config.ConfigOperator;
+import com.github.izerui.weixin.CpService;
+import com.github.izerui.weixin.WxProperties;
+import com.github.izerui.weixin.config.ConfigOperator;
 import me.chanjar.weixin.common.api.WxConsts;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.cp.bean.message.WxCpMessage;

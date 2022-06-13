@@ -1,10 +1,10 @@
 package com.yj2025.weixin.work22;
 
+import com.github.izerui.weixin.TpService;
+import com.github.izerui.weixin.impl.mapping.ListOrderAccountsResp;
+import com.github.izerui.weixin.impl.mapping.RenewUserJobReq;
+import com.github.izerui.weixin.impl.mapping.RenewUserJobResp;
 import com.google.common.collect.Lists;
-import com.yj2025.weixin.work.TpService;
-import com.yj2025.weixin.work.impl.mapping.ListOrderAccountsResp;
-import com.yj2025.weixin.work.impl.mapping.RenewUserJobReq;
-import com.yj2025.weixin.work.impl.mapping.RenewUserJobResp;
 import me.chanjar.weixin.common.api.WxConsts;
 import me.chanjar.weixin.common.bean.WxAccessToken;
 import me.chanjar.weixin.common.error.WxErrorException;
@@ -77,7 +77,7 @@ public class TpTests {
 
     @Test
     public void getUserId() throws WxErrorException {
-        String userId = tpService.getCpService("yunji-wode").getUserService().getUserId("13911523134");
+        String userId = tpService.getCpService("yunji-wode").getUserService().getUserId("18123689528");
         System.out.println("查询到手机号对应的userId: " + userId);
     }
 
