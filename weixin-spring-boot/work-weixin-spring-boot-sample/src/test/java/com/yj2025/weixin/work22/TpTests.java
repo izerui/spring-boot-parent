@@ -107,9 +107,9 @@ public class TpTests {
 
     @Test
     public void listUsers() throws WxErrorException {
-        List<WxCpUser> users = tpService.getCpService("yunji-wode").getUserService().listByDepartment(0L, true, 0);
+        List<WxCpUser> users = tpService.getCpService("yunji-wode").getUserService().listByDepartment(1L, true, 0);
         for (WxCpUser user : users) {
-            System.out.println("用户: " + user.getUserId());
+            System.out.println("用户: " + user.getName() + " - " + user.getUserId());
         }
     }
 
