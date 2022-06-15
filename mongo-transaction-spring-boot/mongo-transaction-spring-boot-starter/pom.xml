@@ -20,6 +20,7 @@
         <dependency>
             <groupId>com.yj2025</groupId>
             <artifactId>mongo-transaction-spring-boot-autoconfigure</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 

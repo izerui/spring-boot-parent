@@ -17,6 +17,7 @@
         <dependency>
             <groupId>com.yj2025</groupId>
             <artifactId>jpa-spring-boot-autoconfigure</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>mysql</groupId>

@@ -15,6 +15,7 @@
         <dependency>
             <groupId>com.yj2025</groupId>
             <artifactId>mvc-rest-reactive-spring-boot-autoconfigure</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 

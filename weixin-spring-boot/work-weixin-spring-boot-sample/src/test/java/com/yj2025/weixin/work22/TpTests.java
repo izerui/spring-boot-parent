@@ -36,7 +36,7 @@ public class TpTests {
 
     @Test
     public void createInstallUrl() throws WxErrorException {
-        String preAuthUrl = tpService.getPreAuthUrl("https://local-dev.yj2025.com", "feike", 1);
+        String preAuthUrl = tpService.getPreAuthUrl("https://weixin-dev.yj2025.com/installed", "feike", 1);
         System.out.println("安装第三方应用地址: " + preAuthUrl);
     }
 
