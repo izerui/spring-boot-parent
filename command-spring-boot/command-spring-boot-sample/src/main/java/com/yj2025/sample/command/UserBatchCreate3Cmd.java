@@ -1,0 +1,37 @@
+package com.yj2025.sample.command;
+
+import com.yj2025.command.AbstractCommand;
+import com.yj2025.command.Context;
+import com.yj2025.performance.Consumer;
+import com.yj2025.performance.Producer;
+import com.yj2025.sample.entity.User;
+import com.yj2025.sample.repository.UserRepository;
+
+public class UserBatchCreate3Cmd extends AbstractCommand<int[], Void> {
+
+    public UserBatchCreate3Cmd(int[] integers) {
+        super(integers);
+    }
+
+    @Override
+    protected Void doExecute(int[] parameter) throws Exception {
+        UserRepository userRepository = Context.getBean(UserRepository.class);
+        Producer<User> producer = Context.multi(User.class, 5, 4096, new Consumer<User>() {
+            @Override
+            protected void handlerEvent(User event) throws Exception {
+                userRepository.save(event);
+            }
+        });
+
+        for (Integer integer : parameter) {
+            producer.sendData(user -> {
+                user.setId(null);
+                user.setCode("code" + integer);
+                user.setName("张三丰");
+                user.setEmail("张三丰@qq.com");
+            });
+        }
+        producer.shutdown();
+        return null;
+    }
+}

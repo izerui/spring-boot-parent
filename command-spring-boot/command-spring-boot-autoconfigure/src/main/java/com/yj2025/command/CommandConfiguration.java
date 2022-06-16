@@ -1,14 +1,16 @@
 package com.yj2025.command;
 
-import org.springframework.context.annotation.Bean;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.event.ContextRefreshedEvent;
 
 @Configuration
-public class CommandConfiguration {
+public class CommandConfiguration implements ApplicationListener<ContextRefreshedEvent> {
 
-    @Bean
-    public Context context() {
-        return new Context();
+    @Override
+    public void onApplicationEvent(ContextRefreshedEvent event) {
+        if (event.getApplicationContext().getParent() == null) {
+            Context.applicationContext = event.getApplicationContext();
+        }
     }
-
 }
