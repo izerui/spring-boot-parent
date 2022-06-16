@@ -23,4 +23,3 @@
 * [业务][操作][固定包后缀]  例如： 
   * command: UserBatchDeleteCmd
   * service: UserManagerService
-  * 
