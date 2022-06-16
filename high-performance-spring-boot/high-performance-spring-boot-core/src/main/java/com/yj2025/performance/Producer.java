@@ -48,13 +48,13 @@ public final class Producer<T> {
                 builder.waitStrategy);
         // 设置WorkHandler 同一事件会被一组消费者其中之一消费
         if (builder.consumers != null) {
-            log.info("====== {} 并行处理器启动成功 ======", this.builder.dataType.getName());
+            log.info("====== {} 并行处理器启动成功 ======", builder.consumers[0].getClass().getName());
             disruptor.handleEventsWithWorkerPool(builder.consumers);
         }
         // 设置EventHandler 被一个批量处理消费者消费
         // https://www.jianshu.com/p/f4021e8141ad
         if (builder.batchConsumer != null) {
-            log.info("====== {} 批处理器启动成功 ======", this.builder.dataType.getName());
+            log.info("====== {} 批处理器启动成功 ======", builder.batchConsumer.getClass().getName());
             disruptor.handleEventsWith(builder.batchConsumer);
         }
         disruptor.start();
@@ -99,7 +99,7 @@ public final class Producer<T> {
         /**
          * 指定RingBuffer的大小
          */
-        private int ringBufferSize = 1024 * 8;
+        private int ringBufferSize = 1024 * 64;
         private Class dataType;
         private ProducerType producerType = ProducerType.MULTI;
         private ThreadFactory threadFactory = new Consumer.ConsumerThreadFactory();

@@ -57,7 +57,7 @@ public abstract class AbstractCommand<T, R> implements Command<R> {
             throw new RuntimeException(ex.getMessage(), ex);
         } finally {
             executeTimeMillis = System.currentTimeMillis() - startTime;
-            logger.debug("{} 耗时(ms): {}", this.getClass().getName(), executeTimeMillis);
+            logger.debug("{} 耗时: {}(ms)", this.getClass().getName(), executeTimeMillis);
         }
     }
 

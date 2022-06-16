@@ -16,7 +16,7 @@ public class UserBatchCreate3Cmd extends AbstractCommand<int[], Void> {
     @Override
     protected Void doExecute(int[] parameter) throws Exception {
         UserRepository userRepository = Context.getBean(UserRepository.class);
-        Producer<User> producer = Context.multi(User.class, 5, 4096, new Consumer<User>() {
+        Producer<User> producer = Context.multi(User.class, 5, new Consumer<User>() {
             @Override
             protected void handlerEvent(User event) throws Exception {
                 userRepository.save(event);

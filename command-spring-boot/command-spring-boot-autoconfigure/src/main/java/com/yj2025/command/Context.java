@@ -35,9 +35,10 @@ public final class Context {
 
     /**
      * 获取spring上下文中的bean对象
+     *
      * @param beanClass
-     * @return
      * @param <T>
+     * @return
      */
     public static <T> T getBean(Class<T> beanClass) {
         return Context.applicationContext.getBean(beanClass);
@@ -45,6 +46,7 @@ public final class Context {
 
     /**
      * 触发spring event事件
+     *
      * @param event
      */
     public static void dispatchEvent(ApplicationEvent event) {
@@ -53,18 +55,20 @@ public final class Context {
 
     /**
      * 开启手动事务执行
+     *
      * @param action
      */
-    public static void executeManualTransaction(java.util.function.Consumer<TransactionStatus> action) {
+    public static void executeTransaction(java.util.function.Consumer<TransactionStatus> action) {
         TransactionTemplate transactionTemplate = Context.getBean(TransactionTemplate.class);
         transactionTemplate.executeWithoutResult(action);
     }
 
     /**
      * 开启手动事务执行并返回结果
+     *
      * @param action
      */
-    public static <T> T executeManualTransaction(TransactionCallback<T> action) {
+    public static <T> T executeTransaction(TransactionCallback<T> action) {
         TransactionTemplate transactionTemplate = Context.getBean(TransactionTemplate.class);
         return transactionTemplate.execute(action);
     }
@@ -73,19 +77,18 @@ public final class Context {
     /**
      * 多线程异步消费发送到队列中的数据,当sendData调用完毕后，建议调用{@link Producer#shutdown()}关闭当前多线程处理器。
      *
-     * @param tClass     数据类型
-     * @param threadNum  线程数： 建议 5 / 10 / 20 / 30 ...
-     * @param bufferSize 环形缓冲区大小，建议 1024 / 2048 / 4096 ...
-     * @param consumer   消费者模型
-     * @param <T>        发送的数据
+     * @param tClass    数据类型
+     * @param threadNum 线程数： 建议 5 / 10 / 20 / 30 ...
+     * @param consumer  消费者模型
+     * @param <T>       发送的数据
      * @return 返回生产者
      */
-    public static <T> Producer<T> multi(Class<T> tClass, int threadNum, int bufferSize, Consumer<T> consumer) {
+    public static <T> Producer<T> multi(Class<T> tClass, int threadNum, Consumer<T> consumer) {
         Producer<T> producer = Producer.builder()
                 .optionnalProducerType(ProducerType.SINGLE)
                 .requiredDataType(tClass)
                 .requiredConsumers(consumer.cloneSelfToMulti(threadNum))
-                .requiredRingBufferSize(bufferSize)
+                .requiredRingBufferSize(1024 * 64)
                 .build();
         return producer;
     }
@@ -95,23 +98,23 @@ public final class Context {
      * 批量消费发送到队列中的数据, 当sendData调用完毕后，建议调用{@link Producer#shutdown()}关闭当前多线程处理器。
      *
      * @param tClass        发送到队列的数据类型
-     * @param bufferSize    环形缓冲区大小，建议 1024 / 2048 / 4096 ...
      * @param batchConsumer 批量消费者模型， 建议设置批量数量在 500 ~ 3000 范围内。
      * @param <T>           发送的数据
      * @return 返回生产者，
      */
-    public static <T> Producer<T> batch(Class<T> tClass, int bufferSize, BatchConsumer<T> batchConsumer) {
+    public static <T> Producer<T> batch(Class<T> tClass, BatchConsumer<T> batchConsumer) {
         Producer<T> producer = Producer.builder()
                 .optionnalProducerType(ProducerType.SINGLE)
                 .requiredDataType(tClass)
                 .requiredConsumers(batchConsumer)
-                .requiredRingBufferSize(bufferSize)
+                .requiredRingBufferSize(1024 * 64)
                 .build();
         return producer;
     }
 
     /**
      * json序列化
+     *
      * @param obj
      * @return
      */
@@ -121,10 +124,11 @@ public final class Context {
 
     /**
      * json反序列化
+     *
      * @param json
      * @param tClass
-     * @return
      * @param <T>
+     * @return
      */
     public static <T> T fromJson(String json, Class<T> tClass) {
         return wrapExceptions(() -> OBJECT_MAPPER.readValue(json, tClass));
@@ -132,6 +136,7 @@ public final class Context {
 
     /**
      * 捕获Exception异常,并抛出RuntimeException异常
+     *
      * @param runnable
      */
     public static void wrapExceptions(RunnableWrapper runnable) {
@@ -140,6 +145,7 @@ public final class Context {
 
     /**
      * 捕获Exception异常,并抛出RuntimeException异常,同时指定message
+     *
      * @param runnable
      * @param message
      */
@@ -159,6 +165,7 @@ public final class Context {
 
     /**
      * 捕获Exception异常,并抛出RuntimeException异常
+     *
      * @param runnable
      * @param throwE
      */
@@ -178,9 +185,10 @@ public final class Context {
 
     /**
      * 捕获Exception异常,并抛出RuntimeException异常,并返回结果
+     *
      * @param tSupplier
-     * @return
      * @param <T>
+     * @return
      */
     public static <T> T wrapExceptions(SupplierWrapper<T> tSupplier) {
         return wrapExceptions(tSupplier, Strings.EMPTY);
@@ -188,10 +196,11 @@ public final class Context {
 
     /**
      * 捕获Exception异常,并抛出RuntimeException异常,并返回结果
+     *
      * @param tSupplier
      * @param throwE
-     * @return
      * @param <T>
+     * @return
      */
     public static <T> T wrapExceptions(SupplierWrapper<T> tSupplier, RuntimeException throwE) {
         try {
@@ -209,10 +218,11 @@ public final class Context {
 
     /**
      * 捕获Exception异常,并且抛出RuntimeException和指定异常message,并返回结果
+     *
      * @param tSupplier
      * @param errMessage
-     * @return
      * @param <T>
+     * @return
      */
     public static <T> T wrapExceptions(SupplierWrapper<T> tSupplier, String errMessage) {
         try {
