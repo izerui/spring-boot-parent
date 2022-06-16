@@ -9,32 +9,28 @@ public final class CommandInvoker {
     private final List<Command> commandList = new ArrayList<>();
     private final List<Supplier<Boolean>> predicates = new ArrayList<>();
 
-    public CommandInvoker add(Command command) {
+    public void add(Command command) {
         commandList.add(command);
         predicates.add(() -> true);
-        return this;
     }
 
-    public CommandInvoker add(Command command, Supplier<Boolean> booleanSupplier) {
+    public void add(Command command, Supplier<Boolean> booleanSupplier) {
         commandList.add(command);
         predicates.add(booleanSupplier);
-        return this;
     }
 
 
-    public CommandInvoker clear() {
+    public void clear() {
         commandList.clear();
         predicates.clear();
-        return this;
     }
 
-    public CommandInvoker execute() {
+    public void execute() {
         for (int i = 0; i < commandList.size(); i++) {
             if (predicates.get(i).get()) {
                 commandList.get(i).execute();
             }
         }
-        return this;
     }
 
     public List<Command> getCommands() {
