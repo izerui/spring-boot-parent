@@ -1,5 +1,6 @@
 package com.yj2025.sample;
 
+import com.google.common.util.concurrent.FutureCallback;
 import com.yj2025.command.Context;
 import com.yj2025.performance.BatchConsumer;
 import com.yj2025.performance.Producer;
@@ -8,6 +9,7 @@ import com.yj2025.sample.service.UpdateBatchExecutor;
 import com.yj2025.sample.service.UserService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -205,7 +205,31 @@ public class UserTest {
 
     @Test
     public void testAsyncRun() throws ExecutionException, InterruptedException {
-        Context.submitAsyncWait(3,5, this::testBatchUpdate, this::testBatchUpdate2);
+        Context.submitAsyncWait(3, 5, this::testBatchUpdate, this::testBatchUpdate2);
         System.out.println("ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
+    }
+
+    @Test
+    public void testCallback() throws ExecutionException, InterruptedException {
+        Callable<String>[] callables = new Callable[20000];
+        for (int i = 0; i < 20000; i++) {
+            int finalI = i;
+            callables[i] = () -> "---" + finalI;
+        }
+        CountDownLatch countDownLatch = new CountDownLatch(20000);
+        Context.submitAsyncWait(3, 5, new FutureCallback<String>() {
+            @Override
+            public void onSuccess(@Nullable String result) {
+                System.out.println(result);
+                countDownLatch.countDown();
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                System.out.println(t.getMessage());
+                countDownLatch.countDown();
+            }
+        }, callables);
+        countDownLatch.await();
     }
 }
