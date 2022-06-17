@@ -3,23 +3,14 @@ package com.yj2025.command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractCommand<T, R> implements Command<R> {
+public abstract class AbstractCommand<R> implements Command<R> {
 
-    private T parameter;
     private R result;
 
     private boolean executed = false;
     private Long executeTimeMillis;
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
-
-    public AbstractCommand(T parameter) {
-        this.parameter = parameter;
-    }
-
-    public final T getParameter() {
-        return parameter;
-    }
 
     @Override
     public final R getResult() {
@@ -36,10 +27,9 @@ public abstract class AbstractCommand<T, R> implements Command<R> {
     /**
      * 前置校验器，需要自行throw exception
      *
-     * @param parameter 入参
      * @return
      */
-    protected void validatingBeforeExecute(T parameter) {
+    protected void beforeDoExecute() {
         /** no op */
     }
 
@@ -50,11 +40,11 @@ public abstract class AbstractCommand<T, R> implements Command<R> {
             throw new RuntimeException("command: " + this.getClass().getName() + " 已经执行过,不允许重复执行!");
         }
         long startTime = System.currentTimeMillis();
-        validatingBeforeExecute(getParameter());
+        beforeDoExecute();
         try {
-            R r = doExecute(getParameter());
+            R r = doExecute();
             setResult(r);
-            afterExecuted(getParameter(), getResult());
+            afterExecuted(getResult());
             executed = true;
         } catch (Exception ex) {
             throw new RuntimeException(ex.getMessage(), ex);
@@ -72,18 +62,17 @@ public abstract class AbstractCommand<T, R> implements Command<R> {
     /**
      * 执行器
      *
-     * @param parameter 入参
      * @return 返回结果
      * @throws Exception
      */
-    protected abstract R doExecute(T parameter) throws Exception;
+    protected abstract R doExecute() throws Exception;
 
     /**
      * 后置处理器，比如记录日志啥的
      *
      * @throws Exception
      */
-    protected void afterExecuted(T parameter, R result) throws Exception {
+    protected void afterExecuted(R result) throws Exception {
         /** no op */
     }
 }

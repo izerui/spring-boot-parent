@@ -9,14 +9,16 @@ import com.yj2025.sample.entity.User;
 import javax.persistence.EntityManager;
 import java.util.List;
 
-public class UserBatchCreate2Cmd extends AbstractCommand<int[], Void> {
+public class UserBatchCreate2Cmd extends AbstractCommand<Void> {
 
-    public UserBatchCreate2Cmd(int[] integers) {
-        super(integers);
+    private int[] integers;
+
+    public UserBatchCreate2Cmd(final int[] integers) {
+        this.integers = integers;
     }
 
     @Override
-    protected Void doExecute(int[] parameter) throws Exception {
+    protected Void doExecute() throws Exception {
         EntityManager entityManager = Context.getBean(EntityManager.class);
         Producer<User> producer = Context.batch(User.class, new BatchConsumer<User>(1000) {
             @Override
@@ -32,7 +34,7 @@ public class UserBatchCreate2Cmd extends AbstractCommand<int[], Void> {
             }
         });
 
-        for (Integer integer : parameter) {
+        for (Integer integer : integers) {
             producer.sendData(user -> {
                 user.setId(null);
                 user.setCode("code" + integer);
