@@ -144,7 +144,7 @@ public final class Context {
      * @throws ExecutionException
      * @throws InterruptedException
      */
-    public static void submitAsyncWait(int corePoolSize, int maximumPoolSize, Runnable... runnables) throws ExecutionException, InterruptedException {
+    public static void submitAsyncWait(int corePoolSize, int maximumPoolSize, Runnable... runnables) {
         ListeningExecutorService listeningExecutorService = MoreExecutors.listeningDecorator(
                 new ThreadPoolExecutor(corePoolSize, maximumPoolSize, 0, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<Runnable>(65536), new ThreadPoolExecutor.CallerRunsPolicy())
         );
@@ -154,7 +154,13 @@ public final class Context {
             futures.add(submit);
         }
         ListenableFuture<List<Object>> listListenableFuture = Futures.allAsList(futures);
-        listListenableFuture.get();
+        try {
+            listListenableFuture.get();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        }
         listeningExecutorService.shutdown();
     }
 
@@ -169,7 +175,7 @@ public final class Context {
      * @throws ExecutionException
      * @throws InterruptedException
      */
-    public static <T> void submitAsync(int corePoolSize, int maximumPoolSize, FutureCallback<T> callback, Callable<T>... callables) throws ExecutionException, InterruptedException {
+    public static <T> void submitAsync(int corePoolSize, int maximumPoolSize, FutureCallback<T> callback, Callable<T>... callables) {
         ListeningExecutorService listeningExecutorService = MoreExecutors.listeningDecorator(
                 new ThreadPoolExecutor(corePoolSize, maximumPoolSize, 0, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<Runnable>(65536), new ThreadPoolExecutor.CallerRunsPolicy())
         );
@@ -191,7 +197,7 @@ public final class Context {
      * @throws ExecutionException
      * @throws InterruptedException
      */
-    public static <T> void submitAsyncWait(int corePoolSize, int maximumPoolSize, FutureCallback<T> callback, Callable<T>... callables) throws ExecutionException, InterruptedException {
+    public static <T> void submitAsyncWait(int corePoolSize, int maximumPoolSize, FutureCallback<T> callback, Callable<T>... callables) {
         ListeningExecutorService listeningExecutorService = MoreExecutors.listeningDecorator(
                 new ThreadPoolExecutor(corePoolSize, maximumPoolSize, 0, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<Runnable>(65536), new ThreadPoolExecutor.CallerRunsPolicy())
         );
@@ -202,7 +208,13 @@ public final class Context {
             futures.add(submit);
         }
         ListenableFuture<List<T>> allAsList = Futures.allAsList(futures);
-        allAsList.get();
+        try {
+            allAsList.get();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        }
         listeningExecutorService.shutdown();
     }
 
