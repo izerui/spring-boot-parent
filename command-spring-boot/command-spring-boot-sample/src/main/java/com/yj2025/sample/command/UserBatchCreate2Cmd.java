@@ -20,7 +20,7 @@ public class UserBatchCreate2Cmd extends AbstractCommand<Void> {
     @Override
     protected Void doExecute() throws Exception {
         EntityManager entityManager = Context.getBean(EntityManager.class);
-        Producer<User> producer = Context.batch(User.class, new BatchConsumer<User>(1000) {
+        Producer<User> producer = Context.createProducerWithBatchConsumer(User.class, new BatchConsumer<User>(1000) {
             @Override
             protected void handlerEvent(List<User> correlationData, long sequence) throws Exception {
                 Context.executeTransaction(status -> {

@@ -3,6 +3,7 @@ package com.yj2025.command;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.google.common.util.concurrent.*;
 import com.lmax.disruptor.dsl.ProducerType;
 import com.yj2025.performance.BatchConsumer;
 import com.yj2025.performance.Consumer;
@@ -20,6 +21,9 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.*;
 
 public final class Context {
 
@@ -83,12 +87,12 @@ public final class Context {
      * @param <T>       发送的数据
      * @return 返回生产者
      */
-    public static <T> Producer<T> multi(Class<T> tClass, int threadNum, Consumer<T> consumer) {
+    public static <T> Producer<T> createProducerWithMultiConsumer(Class<T> tClass, int threadNum, Consumer<T> consumer) {
         Producer<T> producer = Producer.builder()
                 .optionnalProducerType(ProducerType.SINGLE)
                 .requiredDataType(tClass)
                 .requiredConsumers(consumer.cloneSelfToMulti(threadNum))
-                .requiredRingBufferSize(1024 * 64)
+                .requiredRingBufferSize(65536)
                 .build();
         return producer;
     }
@@ -102,14 +106,104 @@ public final class Context {
      * @param <T>           发送的数据
      * @return 返回生产者，
      */
-    public static <T> Producer<T> batch(Class<T> tClass, BatchConsumer<T> batchConsumer) {
+    public static <T> Producer<T> createProducerWithBatchConsumer(Class<T> tClass, BatchConsumer<T> batchConsumer) {
         Producer<T> producer = Producer.builder()
                 .optionnalProducerType(ProducerType.SINGLE)
                 .requiredDataType(tClass)
                 .requiredConsumers(batchConsumer)
-                .requiredRingBufferSize(1024 * 64)
+                .requiredRingBufferSize(65536)
                 .build();
         return producer;
+    }
+
+    /**
+     * 提交一批runnable方法到线程池,不等待所有执行完毕
+     *
+     * @param corePoolSize    核心线程数
+     * @param maximumPoolSize 最大线程数
+     * @param runnables       runnable方法集合
+     * @throws ExecutionException
+     * @throws InterruptedException
+     */
+    public static void submitAsync(int corePoolSize, int maximumPoolSize, Runnable... runnables) {
+        ListeningExecutorService listeningExecutorService = MoreExecutors.listeningDecorator(
+                new ThreadPoolExecutor(corePoolSize, maximumPoolSize, 0, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<Runnable>(65536), new ThreadPoolExecutor.CallerRunsPolicy())
+        );
+        for (Runnable runnable : runnables) {
+            listeningExecutorService.submit(runnable);
+        }
+        listeningExecutorService.shutdown();
+    }
+
+    /**
+     * 提交一批runnable方法到线程池,并等待所有执行完毕
+     *
+     * @param corePoolSize    核心线程数
+     * @param maximumPoolSize 最大线程数
+     * @param runnables       runnable方法集合
+     * @throws ExecutionException
+     * @throws InterruptedException
+     */
+    public static void submitAsyncWait(int corePoolSize, int maximumPoolSize, Runnable... runnables) throws ExecutionException, InterruptedException {
+        ListeningExecutorService listeningExecutorService = MoreExecutors.listeningDecorator(
+                new ThreadPoolExecutor(corePoolSize, maximumPoolSize, 0, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<Runnable>(65536), new ThreadPoolExecutor.CallerRunsPolicy())
+        );
+        List<ListenableFuture<?>> futures = new ArrayList<>();
+        for (Runnable runnable : runnables) {
+            ListenableFuture<?> submit = listeningExecutorService.submit(runnable);
+            futures.add(submit);
+        }
+        ListenableFuture<List<Object>> listListenableFuture = Futures.allAsList(futures);
+        listListenableFuture.get();
+        listeningExecutorService.shutdown();
+    }
+
+    /**
+     * 提交一批callable方法到线程池,每个处理完返调用callback,不等待任务全部执行完毕
+     *
+     * @param corePoolSize    核心线程数
+     * @param maximumPoolSize 最大线程数
+     * @param callback        回调
+     * @param callables       callable方法集合
+     * @param <T>             返回值类型
+     * @throws ExecutionException
+     * @throws InterruptedException
+     */
+    public static <T> void submitAsync(int corePoolSize, int maximumPoolSize, FutureCallback<T> callback, Callable<T>... callables) throws ExecutionException, InterruptedException {
+        ListeningExecutorService listeningExecutorService = MoreExecutors.listeningDecorator(
+                new ThreadPoolExecutor(corePoolSize, maximumPoolSize, 0, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<Runnable>(65536), new ThreadPoolExecutor.CallerRunsPolicy())
+        );
+        for (Callable<T> callable : callables) {
+            ListenableFuture<T> submit = listeningExecutorService.submit(callable);
+            Futures.addCallback(submit, callback, listeningExecutorService);
+        }
+        listeningExecutorService.shutdown();
+    }
+
+    /**
+     * 提交一批callable方法到线程池,每个处理完返调用callback,并等待所有执行完毕
+     *
+     * @param corePoolSize    核心线程数
+     * @param maximumPoolSize 最大线程数
+     * @param callback        回调
+     * @param callables       callable方法集合
+     * @param <T>             返回值类型
+     * @throws ExecutionException
+     * @throws InterruptedException
+     */
+    public static <T> void submitAsyncWait(int corePoolSize, int maximumPoolSize, FutureCallback<T> callback, Callable<T>... callables) throws ExecutionException, InterruptedException {
+        ListeningExecutorService listeningExecutorService = MoreExecutors.listeningDecorator(
+                new ThreadPoolExecutor(corePoolSize, maximumPoolSize, 0, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<Runnable>(65536), new ThreadPoolExecutor.CallerRunsPolicy())
+        );
+        List<ListenableFuture<T>> futures = new ArrayList<>();
+        for (Callable<T> callable : callables) {
+            ListenableFuture<T> submit = listeningExecutorService.submit(callable);
+            Futures.addCallback(submit, callback, listeningExecutorService);
+            futures.add(submit);
+        }
+        ListenableFuture<List<T>> allAsList = Futures.allAsList(futures);
+        allAsList.get();
+        listeningExecutorService.shutdown();
     }
 
     /**
