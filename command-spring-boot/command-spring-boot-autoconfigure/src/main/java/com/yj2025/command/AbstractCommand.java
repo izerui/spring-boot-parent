@@ -23,6 +23,9 @@ public abstract class AbstractCommand<T, R> implements Command<R> {
 
     @Override
     public final R getResult() {
+        if (!executed) {
+            throw new RuntimeException(getClass().getName() + " 为执行，无法获取结果");
+        }
         return result;
     }
 
@@ -57,7 +60,11 @@ public abstract class AbstractCommand<T, R> implements Command<R> {
             throw new RuntimeException(ex.getMessage(), ex);
         } finally {
             executeTimeMillis = System.currentTimeMillis() - startTime;
-            logger.debug("{} 耗时: {}(ms)", this.getClass().getName(), executeTimeMillis);
+            if (executeTimeMillis > 500) {
+                logger.warn("警告：{} 耗时: {}(ms)", this.getClass().getName(), executeTimeMillis);
+            } else {
+                logger.debug("{} 耗时: {}(ms)", this.getClass().getName(), executeTimeMillis);
+            }
         }
     }
 
