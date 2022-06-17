@@ -45,7 +45,7 @@ public abstract class AbstractCommand<T, R> implements Command<R> {
 
 
     @Override
-    public final void execute() {
+    public final Command<R> execute() {
         if (executed) {
             throw new RuntimeException("command: " + this.getClass().getName() + " 已经执行过,不允许重复执行!");
         }
@@ -66,6 +66,7 @@ public abstract class AbstractCommand<T, R> implements Command<R> {
                 logger.debug("{} 耗时: {}(ms)", this.getClass().getName(), executeTimeMillis);
             }
         }
+        return this;
     }
 
     /**

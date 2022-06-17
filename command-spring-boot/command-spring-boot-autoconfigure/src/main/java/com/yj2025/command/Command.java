@@ -8,7 +8,7 @@ public interface Command<R> {
      * @return
      * @throws Exception
      */
-    void execute();
+    Command<R> execute();
 
     /**
      * @return
