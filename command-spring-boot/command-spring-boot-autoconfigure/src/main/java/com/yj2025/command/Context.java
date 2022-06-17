@@ -87,7 +87,7 @@ public final class Context {
      * @param <T>       发送的数据
      * @return 返回生产者
      */
-    public static <T> Producer<T> createProducerWithMultiConsumer(Class<T> tClass, int threadNum, Consumer<T> consumer) {
+    public static <T> Producer<T> multiConsumer(Class<T> tClass, int threadNum, Consumer<T> consumer) {
         Producer<T> producer = Producer.builder()
                 .optionnalProducerType(ProducerType.SINGLE)
                 .requiredDataType(tClass)
@@ -106,7 +106,7 @@ public final class Context {
      * @param <T>           发送的数据
      * @return 返回生产者，
      */
-    public static <T> Producer<T> createProducerWithBatchConsumer(Class<T> tClass, BatchConsumer<T> batchConsumer) {
+    public static <T> Producer<T> batchConsumer(Class<T> tClass, BatchConsumer<T> batchConsumer) {
         Producer<T> producer = Producer.builder()
                 .optionnalProducerType(ProducerType.SINGLE)
                 .requiredDataType(tClass)

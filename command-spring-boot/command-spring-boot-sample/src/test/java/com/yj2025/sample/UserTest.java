@@ -95,7 +95,7 @@ public class UserTest {
         long a = System.currentTimeMillis();
         Map<String, Object> updates = new HashMap<>();
         updates.put("age", 10);
-        Producer<PageId> producer = Context.createProducerWithBatchConsumer(PageId.class, new BatchConsumer<PageId>(1000) {
+        Producer<PageId> producer = Context.batchConsumer(PageId.class, new BatchConsumer<PageId>(1000) {
             @Override
             protected void handlerEvent(List<PageId> correlationData, long sequence) throws Exception {
                 if (correlationData.isEmpty()) {
