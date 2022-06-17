@@ -43,22 +43,22 @@ public class UserTest {
     private DataSource dataSource;
 
     @Test
-    public void testCreate() {
+    public void testAdd() {
         userService.add();
     }
 
     @Test
-    public void testBatch() {
+    public void testBatchAdd() {
         userService.batchAdd();
     }
 
     @Test
-    public void testBatch2() {
+    public void testBatchAdd2() {
         userService.batchAdd2();
     }
 
     @Test
-    public void testBatch3() {
+    public void testBatchAdd3() {
         userService.batchAdd3();
     }
 
