@@ -7,25 +7,27 @@ import com.yj2025.sample.entity.User;
 import com.yj2025.sample.repository.UserRepository;
 import org.springframework.util.Assert;
 
-public class UserCreateCmd extends AbstractCommand<User, Long> {
+public class UserCreateCmd extends AbstractCommand<Long> {
 
-    public UserCreateCmd(User parameter) {
-        super(parameter);
+    private User user;
+
+    public UserCreateCmd(User user) {
+        this.user = user;
     }
 
     @Override
-    protected void validatingBeforeExecute(User parameter) {
-        if (parameter == null) {
+    protected void beforeDoExecute() {
+        if (user == null) {
             throw new RuntimeException("user对象不能为空");
         }
-        Assert.state(parameter.getId() == null, "新增用户，id必须为空");
+        Assert.state(user.getId() == null, "新增用户，id必须为空");
     }
 
     @Override
-    protected Long doExecute(User parameter) throws Exception {
+    protected Long doExecute() throws Exception {
         UserRepository userRepository = Context.getBean(UserRepository.class);
-        userRepository.save(parameter);
-        return parameter.getId();
+        userRepository.save(user);
+        return user.getId();
     }
 
 

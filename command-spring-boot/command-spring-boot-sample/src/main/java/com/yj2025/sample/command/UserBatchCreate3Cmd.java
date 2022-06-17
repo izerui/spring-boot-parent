@@ -7,14 +7,16 @@ import com.yj2025.performance.Producer;
 import com.yj2025.sample.entity.User;
 import com.yj2025.sample.repository.UserRepository;
 
-public class UserBatchCreate3Cmd extends AbstractCommand<int[], Void> {
+public class UserBatchCreate3Cmd extends AbstractCommand<Void> {
+
+    private int[] integers;
 
     public UserBatchCreate3Cmd(int[] integers) {
-        super(integers);
+        this.integers = integers;
     }
 
     @Override
-    protected Void doExecute(int[] parameter) throws Exception {
+    protected Void doExecute() throws Exception {
         UserRepository userRepository = Context.getBean(UserRepository.class);
         Producer<User> producer = Context.multi(User.class, 5, new Consumer<User>() {
             @Override
@@ -23,7 +25,7 @@ public class UserBatchCreate3Cmd extends AbstractCommand<int[], Void> {
             }
         });
 
-        for (Integer integer : parameter) {
+        for (Integer integer : integers) {
             producer.sendData(user -> {
                 user.setId(null);
                 user.setCode("code" + integer);

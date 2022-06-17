@@ -9,16 +9,18 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class UserBatchCreateCmd extends AbstractCommand<int[], Void> {
+public class UserBatchCreateCmd extends AbstractCommand<Void> {
+
+    private int[] integers;
 
     public UserBatchCreateCmd(int[] integers) {
-        super(integers);
+        this.integers = integers;
     }
 
     @Override
-    protected Void doExecute(int[] parameter) throws Exception {
+    protected Void doExecute() throws Exception {
         UserRepository userRepository = Context.getBean(UserRepository.class);
-        List<User> userlist = Arrays.stream(parameter).mapToObj(operand -> {
+        List<User> userlist = Arrays.stream(integers).mapToObj(operand -> {
             User user = new User();
             user.setCode("code" + operand);
             user.setName("张三丰");
