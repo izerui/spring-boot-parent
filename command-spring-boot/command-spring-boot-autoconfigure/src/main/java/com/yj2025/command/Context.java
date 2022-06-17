@@ -22,6 +22,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.*;
 
@@ -125,7 +127,7 @@ public final class Context {
      * @throws ExecutionException
      * @throws InterruptedException
      */
-    public static void submitAsync(int corePoolSize, int maximumPoolSize, Runnable... runnables) {
+    public static void submitAsync(int corePoolSize, int maximumPoolSize, Collection<Runnable> runnables) {
         ListeningExecutorService listeningExecutorService = MoreExecutors.listeningDecorator(
                 new ThreadPoolExecutor(corePoolSize, maximumPoolSize, 0, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<Runnable>(65536), new ThreadPoolExecutor.CallerRunsPolicy())
         );
@@ -133,6 +135,19 @@ public final class Context {
             listeningExecutorService.submit(runnable);
         }
         listeningExecutorService.shutdown();
+    }
+
+    /**
+     * 提交一批runnable方法到线程池,不等待所有执行完毕
+     *
+     * @param corePoolSize    核心线程数
+     * @param maximumPoolSize 最大线程数
+     * @param runnables       runnable方法集合
+     * @throws ExecutionException
+     * @throws InterruptedException
+     */
+    public static void submitAsync(int corePoolSize, int maximumPoolSize, Runnable... runnables) {
+        submitAsync(corePoolSize, maximumPoolSize, Arrays.asList(runnables));
     }
 
     /**
@@ -144,7 +159,7 @@ public final class Context {
      * @throws ExecutionException
      * @throws InterruptedException
      */
-    public static void submitAsyncWait(int corePoolSize, int maximumPoolSize, Runnable... runnables) {
+    public static void submitAsyncWait(int corePoolSize, int maximumPoolSize, Collection<Runnable> runnables) {
         ListeningExecutorService listeningExecutorService = MoreExecutors.listeningDecorator(
                 new ThreadPoolExecutor(corePoolSize, maximumPoolSize, 0, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<Runnable>(65536), new ThreadPoolExecutor.CallerRunsPolicy())
         );
@@ -165,6 +180,41 @@ public final class Context {
     }
 
     /**
+     * 提交一批runnable方法到线程池,并等待所有执行完毕
+     *
+     * @param corePoolSize    核心线程数
+     * @param maximumPoolSize 最大线程数
+     * @param runnables       runnable方法集合
+     * @throws ExecutionException
+     * @throws InterruptedException
+     */
+    public static void submitAsyncWait(int corePoolSize, int maximumPoolSize, Runnable... runnables) {
+        submitAsyncWait(corePoolSize, maximumPoolSize, Arrays.asList(runnables));
+    }
+
+    /**
+     * 提交一批callable方法到线程池,每个处理完返调用callback,不等待任务全部执行完毕
+     *
+     * @param corePoolSize    核心线程数
+     * @param maximumPoolSize 最大线程数
+     * @param callback        回调
+     * @param callables       callable方法集合
+     * @param <T>             返回值类型
+     * @throws ExecutionException
+     * @throws InterruptedException
+     */
+    public static <T> void submitAsync(int corePoolSize, int maximumPoolSize, FutureCallback<T> callback, Collection<Callable<T>> callables) {
+        ListeningExecutorService listeningExecutorService = MoreExecutors.listeningDecorator(
+                new ThreadPoolExecutor(corePoolSize, maximumPoolSize, 0, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<Runnable>(65536), new ThreadPoolExecutor.CallerRunsPolicy())
+        );
+        for (Callable<T> callable : callables) {
+            ListenableFuture<T> submit = listeningExecutorService.submit(callable);
+            Futures.addCallback(submit, callback, listeningExecutorService);
+        }
+        listeningExecutorService.shutdown();
+    }
+
+    /**
      * 提交一批callable方法到线程池,每个处理完返调用callback,不等待任务全部执行完毕
      *
      * @param corePoolSize    核心线程数
@@ -176,14 +226,7 @@ public final class Context {
      * @throws InterruptedException
      */
     public static <T> void submitAsync(int corePoolSize, int maximumPoolSize, FutureCallback<T> callback, Callable<T>... callables) {
-        ListeningExecutorService listeningExecutorService = MoreExecutors.listeningDecorator(
-                new ThreadPoolExecutor(corePoolSize, maximumPoolSize, 0, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<Runnable>(65536), new ThreadPoolExecutor.CallerRunsPolicy())
-        );
-        for (Callable<T> callable : callables) {
-            ListenableFuture<T> submit = listeningExecutorService.submit(callable);
-            Futures.addCallback(submit, callback, listeningExecutorService);
-        }
-        listeningExecutorService.shutdown();
+        submitAsync(corePoolSize, maximumPoolSize, callback, Arrays.asList(callables));
     }
 
     /**
@@ -197,7 +240,7 @@ public final class Context {
      * @throws ExecutionException
      * @throws InterruptedException
      */
-    public static <T> void submitAsyncWait(int corePoolSize, int maximumPoolSize, FutureCallback<T> callback, Callable<T>... callables) {
+    public static <T> void submitAsyncWait(int corePoolSize, int maximumPoolSize, FutureCallback<T> callback, Collection<Callable<T>> callables) {
         ListeningExecutorService listeningExecutorService = MoreExecutors.listeningDecorator(
                 new ThreadPoolExecutor(corePoolSize, maximumPoolSize, 0, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<Runnable>(65536), new ThreadPoolExecutor.CallerRunsPolicy())
         );
@@ -216,6 +259,21 @@ public final class Context {
             throw new RuntimeException(e);
         }
         listeningExecutorService.shutdown();
+    }
+
+    /**
+     * 提交一批callable方法到线程池,每个处理完返调用callback,并等待所有执行完毕
+     *
+     * @param corePoolSize    核心线程数
+     * @param maximumPoolSize 最大线程数
+     * @param callback        回调
+     * @param callables       callable方法集合
+     * @param <T>             返回值类型
+     * @throws ExecutionException
+     * @throws InterruptedException
+     */
+    public static <T> void submitAsyncWait(int corePoolSize, int maximumPoolSize, FutureCallback<T> callback, Callable<T>... callables) {
+        submitAsyncWait(corePoolSize, maximumPoolSize, callback, Arrays.asList(callables));
     }
 
     /**
