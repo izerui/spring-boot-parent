@@ -9,6 +9,7 @@ import com.yj2025.sample.service.UpdateBatchExecutor;
 import com.yj2025.sample.service.UserService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomUtils;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -214,7 +215,10 @@ public class UserTest {
         Callable<String>[] callables = new Callable[20000];
         for (int i = 0; i < 20000; i++) {
             int finalI = i;
-            callables[i] = () -> "---" + finalI;
+            callables[i] = () -> {
+//                Thread.sleep(RandomUtils.nextInt(50, 300));
+                return "---" + finalI;
+            };
         }
         CountDownLatch countDownLatch = new CountDownLatch(20000);
         Context.submitAsyncWait(3, 5, new FutureCallback<String>() {

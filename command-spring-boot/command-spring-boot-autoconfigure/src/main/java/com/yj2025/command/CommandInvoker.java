@@ -1,9 +1,11 @@
 package com.yj2025.command;
 
+import javax.annotation.concurrent.ThreadSafe;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
+@ThreadSafe
 public final class CommandInvoker {
 
     private final List<Command> commandList = new ArrayList<>();

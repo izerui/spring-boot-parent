@@ -4,6 +4,9 @@ import com.yj2025.command.AbstractCommand;
 import com.yj2025.command.Context;
 import com.yj2025.sample.repository.UserRepository;
 
+import javax.annotation.concurrent.ThreadSafe;
+
+@ThreadSafe
 public class UserDeleteCmd extends AbstractCommand<Void> {
 
     @Override
