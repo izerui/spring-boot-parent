@@ -5,24 +5,10 @@ import org.slf4j.LoggerFactory;
 
 public abstract class AbstractCommand<R> implements Command<R> {
 
-    private R result;
-
     private boolean executed = false;
     private Long executeTimeMillis;
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
-
-    @Override
-    public final R getResult() {
-        if (!executed) {
-            throw new RuntimeException(getClass().getName() + " 为执行，无法获取结果");
-        }
-        return result;
-    }
-
-    private void setResult(R r) {
-        this.result = r;
-    }
 
     /**
      * 前置校验器，需要自行throw exception
@@ -35,17 +21,17 @@ public abstract class AbstractCommand<R> implements Command<R> {
 
 
     @Override
-    public final Command<R> execute() {
+    public final R execute() {
         if (executed) {
             throw new RuntimeException("command: " + this.getClass().getName() + " 已经执行过,不允许重复执行!");
         }
         long startTime = System.currentTimeMillis();
         beforeDoExecute();
+        R r;
         try {
-            R r = doExecute();
-            setResult(r);
-            afterExecuted(getResult());
+            r = doExecute();
             executed = true;
+            afterExecuted(r);
         } catch (Exception ex) {
             throw new RuntimeException(ex.getMessage(), ex);
         } finally {
@@ -56,7 +42,7 @@ public abstract class AbstractCommand<R> implements Command<R> {
                 logger.debug("{} 耗时: {}(ms)", this.getClass().getName(), executeTimeMillis);
             }
         }
-        return this;
+        return r;
     }
 
     /**
@@ -74,5 +60,10 @@ public abstract class AbstractCommand<R> implements Command<R> {
      */
     protected void afterExecuted(R result) throws Exception {
         /** no op */
+    }
+
+    @Override
+    public boolean isExecuted() {
+        return executed;
     }
 }

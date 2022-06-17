@@ -8,11 +8,11 @@ public interface Command<R> {
      * @return
      * @throws Exception
      */
-    Command<R> execute();
+    R execute();
 
     /**
+     * 是否执行过
      * @return
      */
-    R getResult();
-
+    boolean isExecuted();
 }

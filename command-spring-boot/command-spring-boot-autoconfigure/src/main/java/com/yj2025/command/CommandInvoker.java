@@ -25,15 +25,15 @@ public final class CommandInvoker {
         predicates.clear();
     }
 
-    public void execute() {
+    public List execute() {
+        List results = new ArrayList();
         for (int i = 0; i < commandList.size(); i++) {
             if (predicates.get(i).get()) {
-                commandList.get(i).execute();
+                results.add(commandList.get(i).execute());
+            } else {
+                results.add(null);
             }
         }
-    }
-
-    public List<Command> getCommands() {
-        return commandList;
+        return results;
     }
 }
