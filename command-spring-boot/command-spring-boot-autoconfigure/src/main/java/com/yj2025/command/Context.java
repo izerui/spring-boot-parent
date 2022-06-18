@@ -130,13 +130,22 @@ public final class Context {
      */
     public static void submitAsync(int corePoolSize, int maximumPoolSize, Collection<Runnable> runnables) {
         ListeningExecutorService listeningExecutorService = null;
+        ListenableFuture<List<Object>> allAsList = null;
         try {
             listeningExecutorService = MoreExecutors.listeningDecorator(
                     new ThreadPoolExecutor(corePoolSize, maximumPoolSize, 0, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<Runnable>(65536), new ThreadPoolExecutor.CallerRunsPolicy())
             );
+            List<ListenableFuture<?>> futures = new ArrayList<>();
             for (Runnable runnable : runnables) {
-                listeningExecutorService.submit(runnable);
+                ListenableFuture<?> submit = listeningExecutorService.submit(runnable);
+                futures.add(submit);
             }
+            allAsList = Futures.allAsList(futures);
+        } catch (Exception ex) {
+            if (allAsList != null) {
+                allAsList.cancel(true);
+            }
+            throw new RuntimeException(ex);
         } finally {
             if (listeningExecutorService != null) {
                 listeningExecutorService.shutdown();
@@ -170,14 +179,23 @@ public final class Context {
      */
     public static <T> void submitAsync(int corePoolSize, int maximumPoolSize, FutureCallback<T> callback, Collection<Callable<T>> callables) {
         ListeningExecutorService listeningExecutorService = null;
+        ListenableFuture<List<T>> allAsList = null;
         try {
             listeningExecutorService = MoreExecutors.listeningDecorator(
                     new ThreadPoolExecutor(corePoolSize, maximumPoolSize, 0, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<Runnable>(65536), new ThreadPoolExecutor.CallerRunsPolicy())
             );
+            List<ListenableFuture<T>> futures = new ArrayList<>();
             for (Callable<T> callable : callables) {
                 ListenableFuture<T> submit = listeningExecutorService.submit(callable);
                 Futures.addCallback(submit, callback, listeningExecutorService);
+                futures.add(submit);
             }
+            allAsList = Futures.allAsList(futures);
+        } catch (Exception ex) {
+            if (allAsList != null) {
+                allAsList.cancel(true);
+            }
+            throw new RuntimeException(ex);
         } finally {
             if (listeningExecutorService != null) {
                 listeningExecutorService.shutdown();
@@ -244,14 +262,10 @@ public final class Context {
             } else {
                 allAsList.get();
             }
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             if (allAsList != null) {
                 allAsList.cancel(true);
             }
-            throw new RuntimeException(e);
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e);
-        } catch (TimeoutException e) {
             throw new RuntimeException(e);
         } finally {
             if (listeningExecutorService != null) {
@@ -310,14 +324,10 @@ public final class Context {
             } else {
                 allAsList.get();
             }
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             if (allAsList != null) {
                 allAsList.cancel(true);
             }
-            throw new RuntimeException(e);
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e);
-        } catch (TimeoutException e) {
             throw new RuntimeException(e);
         } finally {
             if (listeningExecutorService != null) {
