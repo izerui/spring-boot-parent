@@ -119,6 +119,118 @@ public final class Context {
     }
 
     /**
+     * 分别开启异步线程去执行
+     * @param runnables
+     */
+    public static void runAsync(Runnable... runnables) {
+        runAsync(Arrays.asList(runnables));
+    }
+
+    /**
+     * 分别开启异步线程去执行
+     * @param runnables
+     */
+    public static void runAsync(List<Runnable> runnables) {
+        for (Runnable runnable : runnables) {
+            CompletableFuture.runAsync(runnable);
+        }
+    }
+
+    /**
+     * 分别开启异步线程去执行,并等待完成
+     * @param runnables
+     */
+    public static void runAsyncWait(Runnable... runnables) {
+        runAsyncWait(Arrays.asList(runnables));
+    }
+
+    /**
+     * 分别开启异步线程去执行,并等待完成
+     * @param runnables
+     */
+    public static void runAsyncWait(List<Runnable> runnables) {
+        CompletableFuture<Void>[] futures = new CompletableFuture[runnables.size()];
+        for (int i = 0; i < runnables.size(); i++) {
+            Runnable runnable = runnables.get(i);
+            futures[i] = CompletableFuture.runAsync(runnable);
+        }
+        CompletableFuture<Void> completableFuture = CompletableFuture.allOf(futures);
+        try {
+            completableFuture.get();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 分别开启异步线程去执行, 并在每个执行完/异常后触发callback
+     * @param callback
+     * @param callables
+     * @param <T>
+     */
+    public static <T> void runAsync(FutureCallback<T> callback, Callable<T>... callables) {
+        runAsync(callback, Arrays.asList(callables));
+    }
+
+    /**
+     * 分别开启异步线程去执行, 并在每个执行完/异常后触发callback
+     * @param callback
+     * @param callables
+     * @param <T>
+     */
+    public static <T> void runAsync(FutureCallback<T> callback, List<Callable<T>> callables) {
+        for (Callable<T> callable : callables) {
+            CompletableFuture.runAsync(() -> {
+                try {
+                    callback.onSuccess(callable.call());
+                } catch (Exception e) {
+                    callback.onFailure(e);
+                }
+            });
+        }
+    }
+
+    /**
+     * 分别开启异步线程去执行,等待完成。 并在每个执行完/异常后触发callback
+     * @param callback
+     * @param callables
+     * @param <T>
+     */
+    public static <T> void runAsyncWait(FutureCallback<T> callback, Callable<T>... callables) {
+        runAsyncWait(callback, Arrays.asList(callables));
+    }
+
+    /**
+     * 分别开启异步线程去执行,等待完成。 并在每个执行完/异常后触发callback
+     * @param callback
+     * @param callables
+     * @param <T>
+     */
+    public static <T> void runAsyncWait(FutureCallback<T> callback, List<Callable<T>> callables) {
+        CompletableFuture<Void>[] futures = new CompletableFuture[callables.size()];
+        for (int i = 0; i < callables.size(); i++) {
+            Callable<T> callable = callables.get(i);
+            futures[i] = CompletableFuture.runAsync(() -> {
+                try {
+                    callback.onSuccess(callable.call());
+                } catch (Exception e) {
+                    callback.onFailure(e);
+                }
+            });
+        }
+        CompletableFuture<Void> completableFuture = CompletableFuture.allOf(futures);
+        try {
+            completableFuture.get();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
      * 提交一批runnable方法到线程池,不等待所有执行完毕
      *
      * @param corePoolSize    核心线程数
