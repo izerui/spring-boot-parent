@@ -236,4 +236,43 @@ public class UserTest {
         }, callables);
         countDownLatch.await();
     }
+
+    @Test
+    public void testRunAsync() {
+        Context.runAsyncWait(() -> {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            System.out.println("1");
+        }, () -> {
+            System.out.println("2");
+        });
+    }
+
+    @Test
+    public void testRunAsync2() {
+        Context.runAsyncWait(new FutureCallback<Object>() {
+            @Override
+            public void onSuccess(@Nullable Object result) {
+                System.out.println(result);
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                throw new RuntimeException(t.getMessage(), t);
+            }
+        }, new Callable<Object>() {
+            @Override
+            public Object call() throws Exception {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                return "0001";
+            }
+        });
+    }
 }
