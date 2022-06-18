@@ -256,9 +256,9 @@ public final class Context {
             }
             allAsList = Futures.allAsList(futures);
 
-            long timeoutNanos = timeout.toNanos();
-            if (timeoutNanos != 0) {
-                allAsList.get(timeoutNanos, TimeUnit.NANOSECONDS);
+            long seconds = timeout.toSeconds();
+            if (seconds != 0) {
+                allAsList.get(seconds, TimeUnit.SECONDS);
             } else {
                 allAsList.get();
             }
@@ -318,9 +318,9 @@ public final class Context {
                 futures.add(submit);
             }
             allAsList = Futures.allAsList(futures);
-            long timeoutNanos = timeout.toNanos();
-            if (timeoutNanos != 0) {
-                allAsList.get(timeoutNanos, TimeUnit.NANOSECONDS);
+            long seconds = timeout.toSeconds();
+            if (seconds != 0) {
+                allAsList.get(seconds, TimeUnit.SECONDS);
             } else {
                 allAsList.get();
             }
