@@ -23,6 +23,7 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -205,13 +206,13 @@ public class UserTest {
     }
 
     @Test
-    public void testAsyncRun() throws ExecutionException, InterruptedException {
-        Context.submitAsyncWait(3, 5, this::testBatchUpdate, this::testBatchUpdate2);
+    public void testAsyncRun() {
+        Context.submitAsyncWait(3, 5, Duration.ofSeconds(10), this::testBatchUpdate, this::testBatchUpdate2);
         System.out.println("ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
     }
 
     @Test
-    public void testCallback() throws ExecutionException, InterruptedException {
+    public void testCallback() throws InterruptedException {
         Callable<String>[] callables = new Callable[20000];
         for (int i = 0; i < 20000; i++) {
             int finalI = i;
@@ -221,7 +222,7 @@ public class UserTest {
             };
         }
         CountDownLatch countDownLatch = new CountDownLatch(20000);
-        Context.submitAsyncWait(3, 5, new FutureCallback<String>() {
+        Context.submitAsyncWait(3, 5, Duration.ZERO, new FutureCallback<String>() {
             @Override
             public void onSuccess(@Nullable String result) {
                 System.out.println(result);
@@ -237,42 +238,4 @@ public class UserTest {
         countDownLatch.await();
     }
 
-    @Test
-    public void testRunAsync() {
-        Context.runAsyncWait(() -> {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            System.out.println("1");
-        }, () -> {
-            System.out.println("2");
-        });
-    }
-
-    @Test
-    public void testRunAsync2() {
-        Context.runAsyncWait(new FutureCallback<Object>() {
-            @Override
-            public void onSuccess(@Nullable Object result) {
-                System.out.println(result);
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-                throw new RuntimeException(t.getMessage(), t);
-            }
-        }, new Callable<Object>() {
-            @Override
-            public Object call() throws Exception {
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-                return "0001";
-            }
-        });
-    }
 }
