@@ -255,13 +255,7 @@ public final class Context {
                 futures.add(submit);
             }
             allAsList = Futures.allAsList(futures);
-
-            long seconds = timeout.toSeconds();
-            if (seconds != 0) {
-                allAsList.get(seconds, TimeUnit.SECONDS);
-            } else {
-                allAsList.get();
-            }
+            allAsList.get(timeout.toSeconds(), TimeUnit.SECONDS);
         } catch (Exception e) {
             if (allAsList != null) {
                 allAsList.cancel(true);
@@ -318,12 +312,7 @@ public final class Context {
                 futures.add(submit);
             }
             allAsList = Futures.allAsList(futures);
-            long seconds = timeout.toSeconds();
-            if (seconds != 0) {
-                allAsList.get(seconds, TimeUnit.SECONDS);
-            } else {
-                allAsList.get();
-            }
+            allAsList.get(timeout.toSeconds(), TimeUnit.SECONDS);
         } catch (Exception e) {
             if (allAsList != null) {
                 allAsList.cancel(true);
