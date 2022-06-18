@@ -5,12 +5,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessagePropertiesBuilder;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Created by serv on 2016/12/8.
  */
-@Transactional
 class RabbitAuditContextImpl implements AuditContext {
 
     private Logger logger = LoggerFactory.getLogger(RabbitAuditContextImpl.class);
