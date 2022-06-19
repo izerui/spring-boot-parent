@@ -42,10 +42,6 @@ public final class Context {
 
     /**
      * 获取spring上下文中的bean对象
-     *
-     * @param beanClass
-     * @param <T>
-     * @return
      */
     public static <T> T getBean(Class<T> beanClass) {
         return Context.applicationContext.getBean(beanClass);
@@ -53,8 +49,6 @@ public final class Context {
 
     /**
      * 触发spring event事件
-     *
-     * @param event
      */
     public static void dispatchEvent(ApplicationEvent event) {
         Context.applicationContext.publishEvent(event);
@@ -63,7 +57,6 @@ public final class Context {
     /**
      * 开启手动事务执行
      *
-     * @param action
      */
     public static void executeTransaction(java.util.function.Consumer<TransactionStatus> action) {
         TransactionTemplate transactionTemplate = Context.getBean(TransactionTemplate.class);
@@ -72,8 +65,6 @@ public final class Context {
 
     /**
      * 开启手动事务执行并返回结果
-     *
-     * @param action
      */
     public static <T> T executeTransaction(TransactionCallback<T> action) {
         TransactionTemplate transactionTemplate = Context.getBean(TransactionTemplate.class);
@@ -91,8 +82,7 @@ public final class Context {
      * @return 返回生产者
      */
     public static <T> Producer<T> multiConsumer(Class<T> tClass, int threadNum, Consumer<T> consumer) {
-        Producer<T> producer = Producer.builder().optionnalProducerType(ProducerType.SINGLE).requiredDataType(tClass).requiredConsumers(consumer.cloneSelfToMulti(threadNum)).requiredRingBufferSize(65536).build();
-        return producer;
+        return (Producer<T>) Producer.builder().optionnalProducerType(ProducerType.SINGLE).requiredDataType(tClass).requiredConsumers(consumer.cloneSelfToMulti(threadNum)).requiredRingBufferSize(65536).build();
     }
 
 
@@ -105,8 +95,7 @@ public final class Context {
      * @return 返回生产者，
      */
     public static <T> Producer<T> batchConsumer(Class<T> tClass, BatchConsumer<T> batchConsumer) {
-        Producer<T> producer = Producer.builder().optionnalProducerType(ProducerType.SINGLE).requiredDataType(tClass).requiredConsumers(batchConsumer).requiredRingBufferSize(65536).build();
-        return producer;
+        return (Producer<T>) Producer.builder().optionnalProducerType(ProducerType.SINGLE).requiredDataType(tClass).requiredConsumers(batchConsumer).requiredRingBufferSize(65536).build();
     }
 
     /**
@@ -115,8 +104,6 @@ public final class Context {
      * @param corePoolSize    核心线程数
      * @param maximumPoolSize 最大线程数
      * @param runnables       runnable方法集合
-     * @throws ExecutionException
-     * @throws InterruptedException
      */
     public static void submitAsync(int corePoolSize, int maximumPoolSize, Runnable... runnables) {
         submitAsync(corePoolSize, maximumPoolSize, Arrays.asList(runnables));
@@ -128,8 +115,6 @@ public final class Context {
      * @param corePoolSize    核心线程数
      * @param maximumPoolSize 最大线程数
      * @param runnables       runnable方法集合
-     * @throws ExecutionException
-     * @throws InterruptedException
      */
     public static void submitAsync(int corePoolSize, int maximumPoolSize, Collection<Runnable> runnables) {
         submitAsync(corePoolSize, maximumPoolSize, false, null, runnables);
@@ -142,8 +127,6 @@ public final class Context {
      * @param maximumPoolSize 最大线程数
      * @param timeout         每个线程超时时间
      * @param runnables       runnable方法集合
-     * @throws ExecutionException
-     * @throws InterruptedException
      */
     public static void submitAsyncWait(int corePoolSize, int maximumPoolSize, Duration timeout, Runnable... runnables) {
         submitAsyncWait(corePoolSize, maximumPoolSize, timeout, Arrays.asList(runnables));
@@ -156,8 +139,6 @@ public final class Context {
      * @param maximumPoolSize 最大线程数
      * @param timeout         每个线程超时时间
      * @param runnables       runnable方法集合
-     * @throws ExecutionException
-     * @throws InterruptedException
      */
     public static void submitAsyncWait(int corePoolSize, int maximumPoolSize, Duration timeout, Collection<Runnable> runnables) {
         submitAsync(corePoolSize, maximumPoolSize, true, timeout, runnables);
@@ -165,18 +146,12 @@ public final class Context {
 
     /**
      * 提交一批runnable方法到线程池
-     *
-     * @param corePoolSize
-     * @param maximumPoolSize
-     * @param timeout
-     * @param wait
-     * @param runnables
      */
     private static void submitAsync(int corePoolSize, int maximumPoolSize, boolean wait, Duration timeout, Collection<Runnable> runnables) {
         ListeningExecutorService listeningExecutorService = null;
         ListenableFuture<List<Object>> allAsList = null;
         try {
-            listeningExecutorService = MoreExecutors.listeningDecorator(new ThreadPoolExecutor(corePoolSize, maximumPoolSize, 0, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<Runnable>(65536), new ThreadPoolExecutor.CallerRunsPolicy()));
+            listeningExecutorService = MoreExecutors.listeningDecorator(new ThreadPoolExecutor(corePoolSize, maximumPoolSize, 0, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(65536), new ThreadPoolExecutor.CallerRunsPolicy()));
             List<ListenableFuture<?>> futures = new ArrayList<>();
             for (Runnable runnable : runnables) {
                 ListenableFuture<?> submit = listeningExecutorService.submit(runnable);
@@ -207,9 +182,8 @@ public final class Context {
      * @param callback        回调
      * @param callables       callable方法集合
      * @param <T>             返回值类型
-     * @throws ExecutionException
-     * @throws InterruptedException
      */
+    @SafeVarargs
     public static <T> void submitAsync(int corePoolSize, int maximumPoolSize, FutureCallback<T> callback, Callable<T>... callables) {
         submitAsync(corePoolSize, maximumPoolSize, callback, Arrays.asList(callables));
     }
@@ -222,8 +196,6 @@ public final class Context {
      * @param callback        回调
      * @param callables       callable方法集合
      * @param <T>             返回值类型
-     * @throws ExecutionException
-     * @throws InterruptedException
      */
     public static <T> void submitAsync(int corePoolSize, int maximumPoolSize, FutureCallback<T> callback, Collection<Callable<T>> callables) {
         submitAsync(corePoolSize, maximumPoolSize, false, null, callback, callables);
@@ -238,9 +210,8 @@ public final class Context {
      * @param callback        回调
      * @param callables       callable方法集合
      * @param <T>             返回值类型
-     * @throws ExecutionException
-     * @throws InterruptedException
      */
+    @SafeVarargs
     public static <T> void submitAsyncWait(int corePoolSize, int maximumPoolSize, Duration timeout, FutureCallback<T> callback, Callable<T>... callables) {
         submitAsyncWait(corePoolSize, maximumPoolSize, timeout, callback, Arrays.asList(callables));
     }
@@ -255,8 +226,6 @@ public final class Context {
      * @param callback        回调
      * @param callables       callable方法集合
      * @param <T>             返回值类型
-     * @throws ExecutionException
-     * @throws InterruptedException
      */
     public static <T> void submitAsyncWait(int corePoolSize, int maximumPoolSize, Duration timeout, FutureCallback<T> callback, Collection<Callable<T>> callables) {
         submitAsync(corePoolSize, maximumPoolSize, true, timeout, callback, callables);
@@ -271,14 +240,12 @@ public final class Context {
      * @param callback        回调
      * @param callables       callable方法集合
      * @param <T>             返回值类型
-     * @throws ExecutionException
-     * @throws InterruptedException
      */
     private static <T> void submitAsync(int corePoolSize, int maximumPoolSize, boolean isBlock, Duration timeout, FutureCallback<T> callback, Collection<Callable<T>> callables) {
         ListeningExecutorService listeningExecutorService = null;
         ListenableFuture<List<T>> allAsList = null;
         try {
-            listeningExecutorService = MoreExecutors.listeningDecorator(new ThreadPoolExecutor(corePoolSize, maximumPoolSize, 0, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<Runnable>(65536), new ThreadPoolExecutor.CallerRunsPolicy()));
+            listeningExecutorService = MoreExecutors.listeningDecorator(new ThreadPoolExecutor(corePoolSize, maximumPoolSize, 0, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(65536), new ThreadPoolExecutor.CallerRunsPolicy()));
             List<ListenableFuture<T>> futures = new ArrayList<>();
             for (Callable<T> callable : callables) {
                 ListenableFuture<T> submit = listeningExecutorService.submit(callable);
@@ -303,9 +270,6 @@ public final class Context {
 
     /**
      * json序列化
-     *
-     * @param obj
-     * @return
      */
     public static String toJson(Object obj) {
         return wrapExceptions(() -> OBJECT_MAPPER.writeValueAsString(obj));
@@ -313,11 +277,6 @@ public final class Context {
 
     /**
      * json反序列化
-     *
-     * @param json
-     * @param tClass
-     * @param <T>
-     * @return
      */
     public static <T> T fromJson(String json, Class<T> tClass) {
         return wrapExceptions(() -> OBJECT_MAPPER.readValue(json, tClass));
@@ -325,8 +284,6 @@ public final class Context {
 
     /**
      * 捕获Exception异常,并抛出RuntimeException异常
-     *
-     * @param runnable
      */
     public static void wrapExceptions(RunnableWrapper runnable) {
         wrapExceptions(runnable, Strings.EMPTY);
@@ -334,9 +291,6 @@ public final class Context {
 
     /**
      * 捕获Exception异常,并抛出RuntimeException异常,同时指定message
-     *
-     * @param runnable
-     * @param message
      */
     public static void wrapExceptions(RunnableWrapper runnable, String message) {
         try {
@@ -354,9 +308,6 @@ public final class Context {
 
     /**
      * 捕获Exception异常,并抛出RuntimeException异常
-     *
-     * @param runnable
-     * @param throwE
      */
     public static void wrapExceptions(RunnableWrapper runnable, RuntimeException throwE) {
         try {
@@ -374,10 +325,6 @@ public final class Context {
 
     /**
      * 捕获Exception异常,并抛出RuntimeException异常,并返回结果
-     *
-     * @param tSupplier
-     * @param <T>
-     * @return
      */
     public static <T> T wrapExceptions(SupplierWrapper<T> tSupplier) {
         return wrapExceptions(tSupplier, Strings.EMPTY);
@@ -385,11 +332,6 @@ public final class Context {
 
     /**
      * 捕获Exception异常,并抛出RuntimeException异常,并返回结果
-     *
-     * @param tSupplier
-     * @param throwE
-     * @param <T>
-     * @return
      */
     public static <T> T wrapExceptions(SupplierWrapper<T> tSupplier, RuntimeException throwE) {
         try {
@@ -407,11 +349,6 @@ public final class Context {
 
     /**
      * 捕获Exception异常,并且抛出RuntimeException和指定异常message,并返回结果
-     *
-     * @param tSupplier
-     * @param errMessage
-     * @param <T>
-     * @return
      */
     public static <T> T wrapExceptions(SupplierWrapper<T> tSupplier, String errMessage) {
         try {
@@ -427,7 +364,9 @@ public final class Context {
         }
     }
 
-    /** 内部类区域 */
+    /**
+     * 内部类区域
+     */
 
     public interface SupplierWrapper<T> {
         T get() throws java.lang.Exception;

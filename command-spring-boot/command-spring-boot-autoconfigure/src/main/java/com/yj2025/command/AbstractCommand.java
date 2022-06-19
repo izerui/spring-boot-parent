@@ -49,14 +49,12 @@ public abstract class AbstractCommand<R> implements Command<R> {
      * 执行器
      *
      * @return 返回结果
-     * @throws Exception
      */
     protected abstract R doExecute() throws Exception;
 
     /**
      * 后置处理器，比如记录日志啥的
      *
-     * @throws Exception
      */
     protected void afterExecuted(R result) throws Exception {
         /** no op */
@@ -65,5 +63,10 @@ public abstract class AbstractCommand<R> implements Command<R> {
     @Override
     public boolean isExecuted() {
         return executed;
+    }
+
+    @Override
+    public Long getTimeMillis() {
+        return executeTimeMillis;
     }
 }
