@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 
-public class BasicController {
+public abstract class BasicController {
     private HttpServletRequest getRequest() {
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
         if (requestAttributes != null) {
