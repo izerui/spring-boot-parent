@@ -19,12 +19,23 @@ public final class CommandInvoker {
     public CommandInvoker() {
     }
 
+    /**
+     * 添加一个命名
+     * @param command
+     * @param <T>
+     */
     public <T> void add(Command<T> command) {
         Assert.notNull(command, "command不能为空");
         commandTable.put(command, o -> {
         }, () -> true);
     }
 
+    /**
+     * 添加一个命令，并指定运行的前置条件，满足则执行，否则忽略
+     * @param command
+     * @param predicate
+     * @param <T>
+     */
     public <T> void add(Command<T> command, Supplier<Boolean> predicate) {
         Assert.notNull(command, "command不能为空");
         Assert.notNull(predicate, "predicate不能为空");
@@ -32,12 +43,25 @@ public final class CommandInvoker {
         }, predicate);
     }
 
+    /**
+     * 添加一个命令，并声明该命令的返回值，触发consumer
+     * @param command
+     * @param consumer
+     * @param <T>
+     */
     public <T> void add(Command<T> command, Consumer<T> consumer) {
         Assert.notNull(command, "command不能为空");
         Assert.notNull(consumer, "consumer不能为空");
         commandTable.put(command, consumer, () -> true);
     }
 
+    /**
+     * 添加一个命令，并声明该命令的返回值，触发consumer， 并指定运行的前置条件，满足则执行，否则忽略
+     * @param command
+     * @param consumer
+     * @param predicate
+     * @param <T>
+     */
     public <T> void add(Command<T> command, Consumer<T> consumer, Supplier<Boolean> predicate) {
         Assert.notNull(command, "command不能为空");
         Assert.notNull(predicate, "predicate不能为空");
