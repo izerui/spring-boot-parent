@@ -4,15 +4,16 @@ public interface Command<R> {
 
     /**
      * 执行命令
-     *
-     * @return
-     * @throws Exception
      */
     R execute();
 
     /**
      * 是否执行过
-     * @return
      */
     boolean isExecuted();
+
+    /**
+     * 执行耗时
+     */
+    Long getTimeMillis();
 }
