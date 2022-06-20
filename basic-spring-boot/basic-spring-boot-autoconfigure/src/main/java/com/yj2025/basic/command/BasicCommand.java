@@ -3,6 +3,10 @@ package com.yj2025.basic.command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * 所有command命令集成该基类
+ * @param <R> 返回的结果类型
+ */
 public abstract class BasicCommand<R> implements Command<R> {
 
     private boolean executed = false;
@@ -19,7 +23,10 @@ public abstract class BasicCommand<R> implements Command<R> {
         /** no op */
     }
 
-
+    /**
+     * 执行
+     * @return
+     */
     @Override
     public final R execute() {
         if (executed) {
@@ -59,11 +66,19 @@ public abstract class BasicCommand<R> implements Command<R> {
         /** no op */
     }
 
+    /**
+     * 是否执行过
+     * @return
+     */
     @Override
     public boolean isExecuted() {
         return executed;
     }
 
+    /**
+     * 获取执行的耗时（毫秒）
+     * @return
+     */
     @Override
     public Long getTimeMillis() {
         return executeTimeMillis;
