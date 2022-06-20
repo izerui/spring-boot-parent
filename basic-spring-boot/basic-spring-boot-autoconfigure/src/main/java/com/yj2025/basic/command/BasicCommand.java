@@ -36,7 +36,7 @@ public abstract class BasicCommand<R> implements Command<R> {
             throw new RuntimeException(ex.getMessage(), ex);
         } finally {
             executeTimeMillis = System.currentTimeMillis() - startTime;
-            if (executeTimeMillis > 500) {
+            if (executeTimeMillis > getLimitWarnningTimeMillis()) {
                 logger.warn("警告：{} 耗时: {}(ms)", this.getClass().getName(), executeTimeMillis);
             } else {
                 logger.debug("{} 耗时: {}(ms)", this.getClass().getName(), executeTimeMillis);
@@ -67,6 +67,14 @@ public abstract class BasicCommand<R> implements Command<R> {
     @Override
     public Long getTimeMillis() {
         return executeTimeMillis;
+    }
+
+    /**
+     * 超过该阈值限制的时间会告警
+     * @return
+     */
+    protected long getLimitWarnningTimeMillis() {
+        return 500L;
     }
 
 }
