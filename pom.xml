@@ -254,7 +254,7 @@
                 <artifactId>mongo-transaction-spring-boot-starter</artifactId>
                 <version>${base-starter.version}</version>
             </dependency>
-            <!-- command -->
+            <!-- basic -->
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>basic-spring-boot-starter</artifactId>
