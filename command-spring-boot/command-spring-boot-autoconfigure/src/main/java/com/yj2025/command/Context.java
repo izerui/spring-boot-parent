@@ -26,7 +26,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 public final class Context {
 
@@ -56,7 +59,6 @@ public final class Context {
 
     /**
      * 开启手动事务执行
-     *
      */
     public static void executeTransaction(java.util.function.Consumer<TransactionStatus> action) {
         TransactionTemplate transactionTemplate = Context.getBean(TransactionTemplate.class);
@@ -117,7 +119,7 @@ public final class Context {
      * @param runnables       runnable方法集合
      */
     public static void submitAsync(int corePoolSize, int maximumPoolSize, Collection<Runnable> runnables) {
-        submitAsync(corePoolSize, maximumPoolSize, false, null, runnables);
+        submitAsync(corePoolSize, maximumPoolSize, Duration.ZERO, runnables);
     }
 
     /**
@@ -137,17 +139,17 @@ public final class Context {
      *
      * @param corePoolSize    核心线程数
      * @param maximumPoolSize 最大线程数
-     * @param timeout         每个线程超时时间
+     * @param timeout         每个线程超时时间 0:永不超时
      * @param runnables       runnable方法集合
      */
     public static void submitAsyncWait(int corePoolSize, int maximumPoolSize, Duration timeout, Collection<Runnable> runnables) {
-        submitAsync(corePoolSize, maximumPoolSize, true, timeout, runnables);
+        submitAsync(corePoolSize, maximumPoolSize, timeout, runnables);
     }
 
     /**
      * 提交一批runnable方法到线程池
      */
-    private static void submitAsync(int corePoolSize, int maximumPoolSize, boolean wait, Duration timeout, Collection<Runnable> runnables) {
+    private static void submitAsync(int corePoolSize, int maximumPoolSize, Duration timeout, Collection<Runnable> runnables) {
         ListeningExecutorService listeningExecutorService = null;
         ListenableFuture<List<Object>> allAsList = null;
         try {
@@ -158,14 +160,14 @@ public final class Context {
                 futures.add(submit);
             }
             allAsList = Futures.allAsList(futures);
-            if (wait) {
+            if (timeout.toSeconds() != 0L) {
                 allAsList.get(timeout.toSeconds(), TimeUnit.SECONDS);
             }
         } catch (Exception e) {
             if (allAsList != null) {
                 allAsList.cancel(true);
             }
-            throw new RuntimeException(e);
+            throw new RuntimeException(e.getMessage(), e);
         } finally {
             if (listeningExecutorService != null) {
                 listeningExecutorService.shutdown();
@@ -198,7 +200,7 @@ public final class Context {
      * @param <T>             返回值类型
      */
     public static <T> void submitAsync(int corePoolSize, int maximumPoolSize, FutureCallback<T> callback, Collection<Callable<T>> callables) {
-        submitAsync(corePoolSize, maximumPoolSize, false, null, callback, callables);
+        submitAsync(corePoolSize, maximumPoolSize, Duration.ZERO, callback, callables);
     }
 
     /**
@@ -206,7 +208,7 @@ public final class Context {
      *
      * @param corePoolSize    核心线程数
      * @param maximumPoolSize 最大线程数
-     * @param timeout         每个线程超时时间
+     * @param timeout         每个线程超时时间 0:永不超时
      * @param callback        回调
      * @param callables       callable方法集合
      * @param <T>             返回值类型
@@ -222,13 +224,13 @@ public final class Context {
      *
      * @param corePoolSize    核心线程数
      * @param maximumPoolSize 最大线程数
-     * @param timeout         每个线程超时时间
+     * @param timeout         每个线程超时时间 0:永不超时
      * @param callback        回调
      * @param callables       callable方法集合
      * @param <T>             返回值类型
      */
     public static <T> void submitAsyncWait(int corePoolSize, int maximumPoolSize, Duration timeout, FutureCallback<T> callback, Collection<Callable<T>> callables) {
-        submitAsync(corePoolSize, maximumPoolSize, true, timeout, callback, callables);
+        submitAsync(corePoolSize, maximumPoolSize, timeout, callback, callables);
     }
 
     /**
@@ -236,12 +238,12 @@ public final class Context {
      *
      * @param corePoolSize    核心线程数
      * @param maximumPoolSize 最大线程数
-     * @param timeout         每个线程超时时间
+     * @param timeout         每个线程超时时间 0:永不超时
      * @param callback        回调
      * @param callables       callable方法集合
      * @param <T>             返回值类型
      */
-    private static <T> void submitAsync(int corePoolSize, int maximumPoolSize, boolean isBlock, Duration timeout, FutureCallback<T> callback, Collection<Callable<T>> callables) {
+    private static <T> void submitAsync(int corePoolSize, int maximumPoolSize, Duration timeout, FutureCallback<T> callback, Collection<Callable<T>> callables) {
         ListeningExecutorService listeningExecutorService = null;
         ListenableFuture<List<T>> allAsList = null;
         try {
@@ -249,18 +251,20 @@ public final class Context {
             List<ListenableFuture<T>> futures = new ArrayList<>();
             for (Callable<T> callable : callables) {
                 ListenableFuture<T> submit = listeningExecutorService.submit(callable);
-                Futures.addCallback(submit, callback, listeningExecutorService);
+                if (callback != null) {
+                    Futures.addCallback(submit, callback, listeningExecutorService);
+                }
                 futures.add(submit);
             }
             allAsList = Futures.allAsList(futures);
-            if (isBlock) {
+            if (timeout.toSeconds() != 0L) {
                 allAsList.get(timeout.toSeconds(), TimeUnit.SECONDS);
             }
         } catch (Exception e) {
             if (allAsList != null) {
                 allAsList.cancel(true);
             }
-            throw new RuntimeException(e);
+            throw new RuntimeException(e.getMessage(), e);
         } finally {
             if (listeningExecutorService != null) {
                 listeningExecutorService.shutdown();

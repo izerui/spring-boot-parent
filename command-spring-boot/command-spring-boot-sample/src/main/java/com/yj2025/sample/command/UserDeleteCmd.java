@@ -10,8 +10,9 @@ import javax.annotation.concurrent.ThreadSafe;
 public class UserDeleteCmd extends AbstractCommand<Void> {
 
     @Override
-    protected Void doExecute() throws Exception {
+    protected Void doExecute() throws Exception{
         Context.getBean(UserRepository.class).deleteAll();
         return null;
     }
+
 }

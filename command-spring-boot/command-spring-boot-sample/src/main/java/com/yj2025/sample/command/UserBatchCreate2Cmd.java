@@ -18,7 +18,7 @@ public class UserBatchCreate2Cmd extends AbstractCommand<Void> {
     }
 
     @Override
-    protected Void doExecute() throws Exception {
+    protected Void doExecute() throws Exception{
         EntityManager entityManager = Context.getBean(EntityManager.class);
         Producer<User> producer = Context.batchConsumer(User.class, new BatchConsumer<User>(1000) {
             @Override

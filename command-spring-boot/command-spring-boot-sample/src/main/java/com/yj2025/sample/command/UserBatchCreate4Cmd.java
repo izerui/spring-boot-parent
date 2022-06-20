@@ -1,25 +1,25 @@
 package com.yj2025.sample.command;
 
+import com.google.common.collect.Lists;
 import com.yj2025.command.AbstractCommand;
 import com.yj2025.command.Context;
 import com.yj2025.sample.entity.User;
-import com.yj2025.sample.repository.UserRepository;
 
+import javax.persistence.EntityManager;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class UserBatchCreateCmd extends AbstractCommand<List<User>> {
+public class UserBatchCreate4Cmd extends AbstractCommand<List<User>> {
 
     private int[] integers;
 
-    public UserBatchCreateCmd(int[] integers) {
+    public UserBatchCreate4Cmd(int[] integers) {
         this.integers = integers;
     }
 
     @Override
     protected List<User> doExecute() throws Exception {
-        UserRepository userRepository = Context.getBean(UserRepository.class);
         List<User> userlist = Arrays.stream(integers).mapToObj(operand -> {
             User user = new User();
             user.setCode("code" + operand);
@@ -27,7 +27,15 @@ public class UserBatchCreateCmd extends AbstractCommand<List<User>> {
             user.setEmail("张三丰@qq.com");
             return user;
         }).collect(Collectors.toList());
-        userRepository.saveAll(userlist);
+        EntityManager entityManager = Context.getBean(EntityManager.class);
+        List<List<User>> partition = Lists.partition(userlist, 500);
+        for (List<User> users : partition) {
+            for (User user : users) {
+                entityManager.persist(user);
+            }
+            entityManager.flush();
+            entityManager.clear();
+        }
         return userlist;
     }
 }

@@ -16,7 +16,9 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.datasource.DataSourceUtils;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import javax.sql.DataSource;
@@ -36,6 +38,8 @@ import java.util.stream.IntStream;
 @Slf4j
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = SampleApplication.class)
+@Transactional
+@Rollback(value = false)
 public class UserTest {
 
     @Autowired
@@ -62,6 +66,11 @@ public class UserTest {
     @Test
     public void testBatchAdd3() {
         userService.batchAdd3();
+    }
+
+    @Test
+    public void testBatchAdd4() {
+        userService.batchAdd4();
     }
 
     @Test
@@ -118,7 +127,7 @@ public class UserTest {
                         pageId.setId(id);
                     });
                 } catch (Exception e) {
-                    throw new RuntimeException(e);
+                    throw new RuntimeException(e.getMessage(), e);
                 }
             });
         });

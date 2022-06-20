@@ -26,9 +26,9 @@ public abstract class AbstractCommand<R> implements Command<R> {
             throw new RuntimeException("command: " + this.getClass().getName() + " 已经执行过,不允许重复执行!");
         }
         long startTime = System.currentTimeMillis();
-        beforeDoExecute();
         R r;
         try {
+            beforeDoExecute();
             r = doExecute();
             executed = true;
             afterExecuted(r);
@@ -54,7 +54,6 @@ public abstract class AbstractCommand<R> implements Command<R> {
 
     /**
      * 后置处理器，比如记录日志啥的
-     *
      */
     protected void afterExecuted(R result) throws Exception {
         /** no op */
@@ -69,4 +68,5 @@ public abstract class AbstractCommand<R> implements Command<R> {
     public Long getTimeMillis() {
         return executeTimeMillis;
     }
+
 }
