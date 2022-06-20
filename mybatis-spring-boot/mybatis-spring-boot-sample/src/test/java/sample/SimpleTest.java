@@ -12,9 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Map;
+import java.util.stream.IntStream;
 
 @Slf4j
 @RunWith(SpringRunner.class)
@@ -25,8 +27,20 @@ public class SimpleTest {
     private SimpleMapper simpleMapper;
 
     @Test
+    public void insertBatchs() {
+        simpleMapper.delete(Wrappers.lambdaQuery(Simple.class).gt(Simple::getId, 0));
+        IntStream.range(0, 1000).forEach(value -> {
+            Simple simple = new Simple();
+            simple.setWord("word" + value);
+            simple.setSimple("smp" + value);
+            simple.setType("type" + value);
+            simpleMapper.insert(simple);
+        });
+    }
+
+    @Test
     public void selectPage() {
-        Page<Simple> simples = simpleMapper.selectPage(PageRequest.of(1, 15), Wrappers.emptyWrapper());
+        Page<Simple> simples = simpleMapper.selectPage(PageRequest.of(1, 15, Sort.Direction.DESC,"word"), Wrappers.emptyWrapper());
         System.out.println(simples.getTotalElements());
     }
 
@@ -45,7 +59,7 @@ public class SimpleTest {
     @Test
     public void testPageWrapper() {
         LambdaQueryWrapper<Simple> wrapper = Wrappers.lambdaQuery(Simple.class);
-        wrapper.eq(Simple::getType,"n.");
+        wrapper.eq(Simple::getType, "n.");
         wrapper.orderByAsc(Simple::getWord);
         Page<Simple> simples = simpleMapper.selectPage(PageRequest.of(0, 15), wrapper);
         System.out.println(simples.getTotalElements());
@@ -54,7 +68,7 @@ public class SimpleTest {
     @Test
     public void testPageMap() {
         LambdaQueryWrapper<Simple> wrapper = Wrappers.lambdaQuery(Simple.class);
-        wrapper.eq(Simple::getType,"n.");
+        wrapper.eq(Simple::getType, "n.");
         wrapper.orderByAsc(Simple::getWord);
         Page<Map<String, Object>> simples = simpleMapper.selectMapsPage(PageRequest.of(0, 15), wrapper);
         System.out.println(simples.getTotalElements());

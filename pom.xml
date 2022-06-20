@@ -26,7 +26,7 @@
         <module>open-spring-boot</module>
         <module>mongo-transaction-spring-boot</module>
         <module>proxy-spring-boot</module>
-        <module>command-spring-boot</module>
+        <module>basic-spring-boot</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -257,7 +257,7 @@
             <!-- command -->
             <dependency>
                 <groupId>com.yj2025</groupId>
-                <artifactId>command-spring-boot-starter</artifactId>
+                <artifactId>basic-spring-boot-starter</artifactId>
                 <version>${base-starter.version}</version>
             </dependency>
 
