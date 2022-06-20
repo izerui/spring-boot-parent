@@ -27,8 +27,8 @@ public final class CommandInvoker {
         predicates.clear();
     }
 
-    public List execute() {
-        List results = new ArrayList();
+    public List<Object> execute() {
+        List<Object> results = new ArrayList();
         for (int i = 0; i < commandList.size(); i++) {
             if (predicates.get(i).get()) {
                 results.add(commandList.get(i).execute());
