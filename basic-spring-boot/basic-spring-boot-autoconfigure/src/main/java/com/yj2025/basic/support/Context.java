@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 
 public final class Context {
 
-    static ApplicationContext applicationContext;
+    public static ApplicationContext applicationContext;
     private final static ObjectMapper OBJECT_MAPPER;
 
     static {
