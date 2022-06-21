@@ -11,12 +11,12 @@ import java.util.Arrays;
 @Configuration
 public class MetricsConfiguration {
 
-    @ConditionalOnMissingBean
-    @Bean
-    public SkywalkingMeterRegistry skywalkingMeterRegistry() {
-        // Add rate configs If you need, otherwise using none args construct
-        SkywalkingConfig config = new SkywalkingConfig(Arrays.asList(""));
-        return new SkywalkingMeterRegistry(config);
-    }
+//    @ConditionalOnMissingBean
+//    @Bean
+//    public SkywalkingMeterRegistry skywalkingMeterRegistry() {
+//        // Add rate configs If you need, otherwise using none args construct
+//        SkywalkingConfig config = new SkywalkingConfig(Arrays.asList(""));
+//        return new SkywalkingMeterRegistry(config);
+//    }
 
 }
