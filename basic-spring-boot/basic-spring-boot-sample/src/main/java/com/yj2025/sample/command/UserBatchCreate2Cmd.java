@@ -1,7 +1,7 @@
 package com.yj2025.sample.command;
 
 import com.yj2025.basic.command.BasicCommand;
-import com.yj2025.basic.command.Context;
+import com.yj2025.basic.support.Context;
 import com.yj2025.performance.BatchConsumer;
 import com.yj2025.performance.Producer;
 import com.yj2025.sample.entity.User;

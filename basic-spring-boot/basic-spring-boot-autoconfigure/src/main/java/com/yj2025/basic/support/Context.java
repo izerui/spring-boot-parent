@@ -1,4 +1,4 @@
-package com.yj2025.basic.command;
+package com.yj2025.basic.support;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -8,7 +8,6 @@ import com.lmax.disruptor.dsl.ProducerType;
 import com.yj2025.performance.BatchConsumer;
 import com.yj2025.performance.Consumer;
 import com.yj2025.performance.Producer;
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.transaction.TransactionStatus;
@@ -281,63 +280,12 @@ public final class Context {
     }
 
     /**
-     * 捕获Exception异常,并抛出RuntimeException异常
-     */
-    public static void wrapExceptions(RunnableWrapper runnable) {
-        wrapExceptions(runnable, Strings.EMPTY);
-    }
-
-    /**
      * 捕获Exception异常,并抛出RuntimeException异常,同时指定message
      */
-    public static void wrapExceptions(RunnableWrapper runnable, String message) {
+    public static void wrapExceptions(RunnableWrapper runnable) {
         try {
             runnable.run();
         } catch (java.lang.Exception e) {
-            if (message != null && !"".equals(message)) {
-                throw new RuntimeException(message + " " + e.getMessage(), e);
-            }
-            if (e instanceof RuntimeException) {
-                throw (RuntimeException) e;
-            }
-            throw new RuntimeException(e.getMessage(), e);
-        }
-    }
-
-    /**
-     * 捕获Exception异常,并抛出RuntimeException异常
-     */
-    public static void wrapExceptions(RunnableWrapper runnable, RuntimeException throwE) {
-        try {
-            runnable.run();
-        } catch (java.lang.Exception e) {
-            if (throwE != null) {
-                throw throwE;
-            }
-            if (e instanceof RuntimeException) {
-                throw (RuntimeException) e;
-            }
-            throw new RuntimeException(e.getMessage(), e);
-        }
-    }
-
-    /**
-     * 捕获Exception异常,并抛出RuntimeException异常,并返回结果
-     */
-    public static <T> T wrapExceptions(SupplierWrapper<T> tSupplier) {
-        return wrapExceptions(tSupplier, Strings.EMPTY);
-    }
-
-    /**
-     * 捕获Exception异常,并抛出RuntimeException异常,并返回结果
-     */
-    public static <T> T wrapExceptions(SupplierWrapper<T> tSupplier, RuntimeException throwE) {
-        try {
-            return tSupplier.get();
-        } catch (java.lang.Exception e) {
-            if (throwE != null) {
-                throw throwE;
-            }
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;
             }
@@ -348,19 +296,24 @@ public final class Context {
     /**
      * 捕获Exception异常,并且抛出RuntimeException和指定异常message,并返回结果
      */
-    public static <T> T wrapExceptions(SupplierWrapper<T> tSupplier, String errMessage) {
+    public static <T> T wrapExceptions(SupplierWrapper<T> tSupplier) {
         try {
             return tSupplier.get();
         } catch (java.lang.Exception e) {
-            if (errMessage != null && !"".equals(errMessage)) {
-                throw new RuntimeException(errMessage + " " + e.getMessage(), e);
-            }
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;
             }
             throw new RuntimeException(e.getMessage(), e);
         }
     }
+
+//    public static <S, T> T convert(S source, Callable<T> constructor) {
+//        T t = wrapExceptions(() -> {
+//            T target = constructor.call();
+//            return target;
+//        });
+//        return t;
+//    }
 
     /**
      * 内部类区域

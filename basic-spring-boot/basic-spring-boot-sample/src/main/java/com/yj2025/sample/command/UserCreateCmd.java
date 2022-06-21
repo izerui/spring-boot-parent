@@ -2,7 +2,7 @@ package com.yj2025.sample.command;
 
 
 import com.yj2025.basic.command.BasicCommand;
-import com.yj2025.basic.command.Context;
+import com.yj2025.basic.support.Context;
 import com.yj2025.sample.entity.User;
 import com.yj2025.sample.repository.UserRepository;
 import org.springframework.util.Assert;
