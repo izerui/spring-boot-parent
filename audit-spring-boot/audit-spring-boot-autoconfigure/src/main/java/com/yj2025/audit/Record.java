@@ -1,5 +1,4 @@
 package com.yj2025.audit;
-import com.google.common.collect.Maps;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.yj2025.performance.ClearEvent;
@@ -225,6 +224,10 @@ public class Record implements ClearEvent {
 
     public void setEnd(Date end) {
         this.end = end;
+        if (end == null) {
+            this.time = 0L;
+            return;
+        }
         this.time = end.getTime() - begin.getTime();
     }
 
