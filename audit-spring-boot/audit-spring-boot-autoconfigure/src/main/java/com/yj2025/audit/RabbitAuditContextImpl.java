@@ -24,6 +24,9 @@ class RabbitAuditContextImpl implements AuditContext {
 
     @Override
     public void record(Record record) {
+        if (record == null || record.getName() == null) {
+            return;
+        }
         try {
             Message message = rabbitTemplate.getMessageConverter()
                     .toMessage(record,
