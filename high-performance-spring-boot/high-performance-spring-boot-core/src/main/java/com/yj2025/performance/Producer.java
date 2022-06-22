@@ -66,7 +66,7 @@ public final class Producer<T extends ClearEvent> {
      *
      * @param consumer
      */
-    public void sendData(ThrowsConsumer<T> consumer) throws Exception {
+    public void sendData(java.util.function.Consumer<T> consumer) throws Exception {
         if (disruptor == null) {
             log.warn("线程池未初始化,重新初始化...");
             initDisruptor();
