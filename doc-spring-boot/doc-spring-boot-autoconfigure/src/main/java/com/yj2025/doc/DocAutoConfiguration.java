@@ -51,7 +51,7 @@ public class DocAutoConfiguration implements WebMvcConfigurer {
                 .description("企业编码")
                 .in(ParameterType.HEADER)
                 .query(s -> s.model(m -> m.scalarModel(ScalarType.STRING)))
-                .required(true)
+                .required(false)
                 .build());
         params.add(new RequestParameterBuilder().name("userCode")
                 .description("用户编码")
