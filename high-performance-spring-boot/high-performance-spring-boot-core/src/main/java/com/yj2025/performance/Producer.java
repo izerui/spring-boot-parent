@@ -73,10 +73,13 @@ public final class Producer<T extends ClearEvent> {
         }
         RingBuffer<T> ringBuffer = disruptor.getRingBuffer();
         long sequence = ringBuffer.next();
-        T obj = ringBuffer.get(sequence);
-        obj.clear();
-        consumer.accept(obj);
-        ringBuffer.publish(sequence);
+        try {
+            T obj = ringBuffer.get(sequence);
+            obj.clear();
+            consumer.accept(obj);
+        } finally {
+            ringBuffer.publish(sequence);
+        }
     }
 
 
