@@ -59,6 +59,10 @@ public final class Producer<T> {
      * 发送补全的数据到待处理缓冲区
      */
     public void sendData(T event) {
+        if (event == null) {
+            log.warn("send event is null, auto ignore!!!");
+            return;
+        }
         if (disruptor == null) {
             log.warn("线程池未初始化,重新初始化...");
             initDisruptor();
