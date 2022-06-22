@@ -62,7 +62,7 @@ public final class Producer<T extends ClearEvent> {
 
 
     /**
-     * 发送补全的数据到待处理缓冲区
+     * 发送补全的数据到待处理缓冲区, 注意: 无论如何补全后的数据都会发送到缓冲区，所以需要选择性处理的话，请自行标记，并在消费者端过滤掉。
      *
      * @param consumer
      */
