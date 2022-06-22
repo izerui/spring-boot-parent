@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.common.util.concurrent.*;
 import com.lmax.disruptor.dsl.ProducerType;
 import com.yj2025.performance.BatchConsumer;
+import com.yj2025.performance.ClearEvent;
 import com.yj2025.performance.Consumer;
 import com.yj2025.performance.Producer;
 import org.springframework.context.ApplicationContext;
@@ -70,25 +71,27 @@ public final class Context {
     /**
      * 多线程异步消费发送到队列中的数据,当sendData调用完毕后，建议调用{@link Producer#shutdown()}关闭当前多线程处理器。
      *
+     * @param tClass    数据类型
      * @param threadNum 线程数： 建议 5 / 10 / 20 / 30 ...
      * @param consumer  消费者模型
      * @param <T>       发送的数据
      * @return 返回生产者
      */
-    public static <T> Producer<T> multiConsumer(int threadNum, Consumer<T> consumer) {
-        return (Producer<T>) Producer.builder().optionnalProducerType(ProducerType.SINGLE).requiredConsumers(consumer.cloneSelfToMulti(threadNum)).requiredRingBufferSize(65536).build();
+    public static <T extends ClearEvent> Producer<T> multiConsumer(Class<T> tClass, int threadNum, Consumer<T> consumer) {
+        return (Producer<T>) Producer.builder().optionnalProducerType(ProducerType.SINGLE).requiredDataType(tClass).requiredConsumers(consumer.cloneSelfToMulti(threadNum)).requiredRingBufferSize(65536).build();
     }
 
 
     /**
      * 批量消费发送到队列中的数据, 当sendData调用完毕后，建议调用{@link Producer#shutdown()}关闭当前多线程处理器。
      *
+     * @param tClass        发送到队列的数据类型
      * @param batchConsumer 批量消费者模型， 建议设置批量数量在 500 ~ 3000 范围内。
      * @param <T>           发送的数据
      * @return 返回生产者，
      */
-    public static <T> Producer<T> batchConsumer(BatchConsumer<T> batchConsumer) {
-        return (Producer<T>) Producer.builder().optionnalProducerType(ProducerType.SINGLE).requiredConsumers(batchConsumer).requiredRingBufferSize(65536).build();
+    public static <T extends ClearEvent> Producer<T> batchConsumer(Class<T> tClass, BatchConsumer<T> batchConsumer) {
+        return (Producer<T>) Producer.builder().optionnalProducerType(ProducerType.SINGLE).requiredDataType(tClass).requiredConsumers(batchConsumer).requiredRingBufferSize(65536).build();
     }
 
     /**

@@ -19,7 +19,7 @@ import java.util.concurrent.ThreadFactory;
  * @date 2022/5/23
  */
 @Slf4j
-public final class Producer<T> {
+public final class Producer<T extends ClearEvent> {
 
     private final Builder builder;
     private transient Disruptor<T> disruptor;
@@ -30,7 +30,13 @@ public final class Producer<T> {
     }
 
     private void initDisruptor() {
-        EventFactory eventFactory = () -> null;
+        EventFactory eventFactory = () -> {
+            try {
+                return builder.dataType.getDeclaredConstructor().newInstance();
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage(), e);
+            }
+        };
         // 创建disruptor，采用单生产者模式
         disruptor = new Disruptor(
                 // RingBuffer生产工厂,初始化RingBuffer的时候使用
@@ -57,12 +63,10 @@ public final class Producer<T> {
 
     /**
      * 发送补全的数据到待处理缓冲区
+     *
+     * @param consumer
      */
-    public void sendData(T event) {
-        if (event == null) {
-            log.warn("send event is null, auto ignore!!!");
-            return;
-        }
+    public void sendData(ThrowsConsumer<T> consumer) throws Exception {
         if (disruptor == null) {
             log.warn("线程池未初始化,重新初始化...");
             initDisruptor();
@@ -71,10 +75,8 @@ public final class Producer<T> {
         long sequence = ringBuffer.next();
         try {
             T obj = ringBuffer.get(sequence);
-            if (obj != null) {
-                log.info("对象开始重用: {}", obj.toString());
-            }
-            obj = event;
+            obj.clear();
+            consumer.accept(obj);
         } finally {
             ringBuffer.publish(sequence);
         }
@@ -99,6 +101,7 @@ public final class Producer<T> {
          * 指定RingBuffer的大小
          */
         private int ringBufferSize = 1024 * 64;
+        private Class dataType;
         private ProducerType producerType = ProducerType.MULTI;
         private ThreadFactory threadFactory = new Consumer.ConsumerThreadFactory();
         private WaitStrategy waitStrategy = new YieldingWaitStrategy();
@@ -113,6 +116,17 @@ public final class Producer<T> {
          */
         public Builder requiredRingBufferSize(int ringBufferSize) {
             this.ringBufferSize = ringBufferSize;
+            return this;
+        }
+
+        /**
+         * 用来预初始化data类型的
+         *
+         * @param dataType
+         * @return
+         */
+        public Builder requiredDataType(Class dataType) {
+            this.dataType = dataType;
             return this;
         }
 
@@ -155,7 +169,7 @@ public final class Producer<T> {
          * @param batchConsumer
          * @return
          */
-        public <T> Builder requiredConsumers(BatchConsumer<T> batchConsumer) {
+        public <T extends ClearEvent> Builder requiredConsumers(BatchConsumer<T> batchConsumer) {
             this.batchConsumer = batchConsumer;
             return this;
         }
@@ -166,7 +180,7 @@ public final class Producer<T> {
          * @param consumers
          * @return
          */
-        public <T> Builder requiredConsumers(Consumer<T>... consumers) {
+        public <T extends ClearEvent> Builder requiredConsumers(Consumer<T>... consumers) {
             this.consumers = consumers;
             return this;
         }
@@ -177,7 +191,7 @@ public final class Producer<T> {
          * @param consumers
          * @return
          */
-        public <T> Builder requiredConsumers(Collection<Consumer<T>> consumers) {
+        public <T extends ClearEvent> Builder requiredConsumers(Collection<Consumer<T>> consumers) {
             this.consumers = consumers.toArray(new Consumer[consumers.size()]);
             return this;
         }
@@ -188,6 +202,9 @@ public final class Producer<T> {
          * @return
          */
         public Producer build() {
+            if (dataType == null) {
+                throw new DisruptorException("dataType数据类型不能为空!");
+            }
             if (consumers == null && batchConsumer == null) {
                 throw new DisruptorException("请至少设置一种消费者处理器!");
             } else if (consumers != null && batchConsumer != null) {

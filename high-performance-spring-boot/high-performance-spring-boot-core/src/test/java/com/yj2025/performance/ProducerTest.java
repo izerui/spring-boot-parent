@@ -25,6 +25,7 @@ public class ProducerTest {
             }
         }.cloneSelfToMulti(5);
         Producer<MyTask> producer = Producer.builder()
+                .requiredDataType(MyTask.class)
                 .requiredConsumers(consumers)
                 .build();
         execute(producer);
@@ -43,12 +44,13 @@ public class ProducerTest {
             }
         };
         Producer<MyTask> producer = Producer.builder()
+                .requiredDataType(MyTask.class)
                 .requiredConsumers(batchConsumer)
                 .build();
         execute(producer);
     }
 
-    private void execute(Producer<MyTask> producer) {
+    private void execute(Producer<MyTask> producer) throws Exception {
         // 3个生产者，每个生产3秒过程
         AtomicInteger atomicInteger = new AtomicInteger(0);
         long l = System.currentTimeMillis();
@@ -69,18 +71,14 @@ public class ProducerTest {
 //        }
 
         while ((l + 100000L) > System.currentTimeMillis()) { // 3秒
-            MyTask o = new MyTask();
-            o.setValue(atomicInteger.getAndIncrement());
-            producer.sendData(o);
-//            Thread.sleep(RandomUtils.nextInt(10, 20));
+            producer.sendData(o -> o.setValue(atomicInteger.getAndIncrement()));
+            Thread.sleep(RandomUtils.nextInt(10, 20));
         }
         log.info("执行完毕, 消费者还在继续执行...");
         producer.shutdown();
         log.info("消费完成,关闭处理器,总生产: {}", atomicInteger.get());
         log.info("再发一条测试关闭后还能不能发");
-        MyTask o = new MyTask();
-        o.setValue(atomicInteger.getAndIncrement());
-        producer.sendData(o);
+        producer.sendData(o -> o.setValue(atomicInteger.getAndIncrement()));
 //        System.exit(1);
     }
 

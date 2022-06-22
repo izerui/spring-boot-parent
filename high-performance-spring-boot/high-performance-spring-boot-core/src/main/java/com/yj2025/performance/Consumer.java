@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author liuyuhua
  * @date 2022/5/23
  */
-public abstract class Consumer<T> implements WorkHandler<T>, Cloneable {
+public abstract class Consumer<T extends ClearEvent> implements WorkHandler<T>, Cloneable {
 
     protected abstract void handlerEvent(T event) throws Exception;
 

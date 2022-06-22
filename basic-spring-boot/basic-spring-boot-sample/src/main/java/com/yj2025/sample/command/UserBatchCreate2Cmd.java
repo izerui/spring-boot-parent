@@ -20,7 +20,7 @@ public class UserBatchCreate2Cmd extends BasicCommand<Void> {
     @Override
     protected Void doExecute() throws Exception{
         EntityManager entityManager = Context.getBean(EntityManager.class);
-        Producer<User> producer = Context.batchConsumer(new BatchConsumer<User>(1000) {
+        Producer<User> producer = Context.batchConsumer(User.class, new BatchConsumer<User>(1000) {
             @Override
             protected void handlerEvent(List<User> correlationData, long sequence) throws Exception {
                 Context.executeTransaction(status -> {
@@ -35,12 +35,12 @@ public class UserBatchCreate2Cmd extends BasicCommand<Void> {
         });
 
         for (Integer integer : integers) {
-            User user = new User();
-            user.setId(null);
-            user.setCode("code" + integer);
-            user.setName("张三丰");
-            user.setEmail("张三丰@qq.com");
-            producer.sendData(user);
+            producer.sendData(user -> {
+                user.setId(null);
+                user.setCode("code" + integer);
+                user.setName("张三丰");
+                user.setEmail("张三丰@qq.com");
+            });
         }
         producer.shutdown();
         return null;

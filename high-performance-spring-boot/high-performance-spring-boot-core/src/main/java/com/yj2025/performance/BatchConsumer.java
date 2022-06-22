@@ -14,7 +14,7 @@ import java.util.List;
  * @date 2022/5/24
  */
 @Slf4j
-public abstract class BatchConsumer<T> implements EventHandler<T> {
+public abstract class BatchConsumer<T extends ClearEvent> implements EventHandler<T> {
 
     /**
      * 每批次最多处理的数量
@@ -51,7 +51,7 @@ public abstract class BatchConsumer<T> implements EventHandler<T> {
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
-        // 对象可能重用，重置相关值
+        // 释放对象, 注意可能来不及gc，对象可能重用，注意重置相关值
         event = null;
     }
 

@@ -9,8 +9,14 @@ import lombok.ToString;
  */
 @Data
 @ToString
-public class MyTask {
+public class MyTask implements ClearEvent{
 
     private int id;
     private int value;
+
+    @Override
+    public void clear() {
+        this.id = 0;
+        this.value = 0;
+    }
 }

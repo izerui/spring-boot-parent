@@ -3,6 +3,7 @@ package com.yj2025.sample;
 import com.google.common.util.concurrent.FutureCallback;
 import com.yj2025.basic.support.Context;
 import com.yj2025.performance.BatchConsumer;
+import com.yj2025.performance.ClearEvent;
 import com.yj2025.performance.Producer;
 import com.yj2025.sample.service.ConditionEntity;
 import com.yj2025.sample.service.UpdateBatchExecutor;
@@ -94,9 +95,15 @@ public class UserTest {
     }
 
     @Data
-    public static class PageId {
+    public static class PageId implements ClearEvent {
         private Integer page;
         private Integer id;
+
+        @Override
+        public void clear() {
+            this.page = null;
+            this.id = null;
+        }
     }
 
     @Test
@@ -105,7 +112,7 @@ public class UserTest {
         long a = System.currentTimeMillis();
         Map<String, Object> updates = new HashMap<>();
         updates.put("age", 10);
-        Producer<PageId> producer = Context.batchConsumer(new BatchConsumer<PageId>(1000) {
+        Producer<PageId> producer = Context.batchConsumer(PageId.class, new BatchConsumer<PageId>(1000) {
             @Override
             protected void handlerEvent(List<PageId> correlationData, long sequence) throws Exception {
                 if (correlationData.isEmpty()) {
@@ -121,10 +128,10 @@ public class UserTest {
         IntStream.range(0, 10).forEach(value -> {
             batchGetPrimaryIds("test_user", new ConditionEntity().where("1=1"), (page, id) -> {
                 try {
-                    PageId pageId = new PageId();
-                    pageId.setPage(page);
-                    pageId.setId(id);
-                    producer.sendData(pageId);
+                    producer.sendData(pageId -> {
+                        pageId.setPage(page);
+                        pageId.setId(id);
+                    });
                 } catch (Exception e) {
                     throw new RuntimeException(e.getMessage(), e);
                 }
