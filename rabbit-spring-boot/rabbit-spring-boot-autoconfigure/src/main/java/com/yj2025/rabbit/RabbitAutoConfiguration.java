@@ -61,12 +61,12 @@ public class RabbitAutoConfiguration {
         return rabbitAdmin;
     }
 
-    @Lazy
-    @Bean
-    @ConditionalOnMissingBean
-    public PlatformTransactionManager rabbitTransactionManager(ConnectionFactory connectionFactory) {
-        return new RabbitTransactionManager(connectionFactory);
-    }
+//    @Lazy
+//    @Bean
+//    @ConditionalOnMissingBean
+//    public RabbitTransactionManager rabbitTransactionManager(ConnectionFactory connectionFactory) {
+//        return new RabbitTransactionManager(connectionFactory);
+//    }
 
 
 }

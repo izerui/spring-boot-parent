@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * Created by serv on 2016/12/8.
  */
-@Transactional
 class RabbitAuditContextImpl implements AuditContext {
 
     private Logger logger = LoggerFactory.getLogger(RabbitAuditContextImpl.class);
