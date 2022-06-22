@@ -69,7 +69,6 @@ public class AuditWebMethodAspect implements DisposableBean {
 //            }
 //        };
         this.recordProducer = Producer.builder()
-                .requiredDataType(Record.class)
                 .requiredConsumers(consumers)
                 .build();
     }
@@ -112,84 +111,81 @@ public class AuditWebMethodAspect implements DisposableBean {
                 throw e;
             } finally {
                 try {
-                    boolean finalSuccess = success;
-                    String finalException = exception;
-                    String finalExceptionClassType = exceptionClassType;
-                    recordProducer.sendData(record -> {
-                        try {
-                            record.setSuccess(finalSuccess);
-                            record.setBegin(begin);
-                            record.setException(finalException);
-                            record.setExceptionClassType(finalExceptionClassType);
-                            //操作结束时间
-                            record.setEnd(new Date());
-                            record.setGroupType("WEB请求审计日志");
-                            if (api != null) {
-                                if (api.description() != null && !"".equals(api.description())) {
-                                    record.setGroupType(api.description());
-                                } else if (api.value() != null && !"".equals(api.value())) {
-                                    record.setGroupType(api.value());
-                                } else if (api.tags() != null && api.tags().length > 0) {
-                                    record.setGroupType(String.join(",", api.tags()));
-                                }
+                    try {
+                        Record record = new Record();
+                        record.setSuccess(success);
+                        record.setBegin(begin);
+                        record.setException(exception);
+                        record.setExceptionClassType(exceptionClassType);
+                        //操作结束时间
+                        record.setEnd(new Date());
+                        record.setGroupType("WEB请求审计日志");
+                        if (api != null) {
+                            if (api.description() != null && !"".equals(api.description())) {
+                                record.setGroupType(api.description());
+                            } else if (api.value() != null && !"".equals(api.value())) {
+                                record.setGroupType(api.value());
+                            } else if (api.tags() != null && api.tags().length > 0) {
+                                record.setGroupType(String.join(",", api.tags()));
                             }
-                            record.setApplication(application);
-                            record.setBegin(new Date());
-                            record.setSignature(point.getSignature().toString());
-
-                            record.setIp(getIpAddress(request));
-                            record.setUrl(request.getRequestURL().toString());
-
-                            Map<String, Object> map = new HashMap();
-                            List<String> params = null;
-                            if (point.getArgs() != null && point.getArgs().length > 0) {
-                                params = Arrays.stream(point.getArgs()).map(o -> {
-                                    try {
-                                        if (o == null) {
-                                            return "null";
-                                        }
-                                        if (o instanceof MultipartFile
-                                                || o instanceof HttpServletRequest
-                                                || o instanceof HttpServletResponse) {
-                                            return o.toString();
-                                        }
-                                        return OBJECT_MAPPER.writeValueAsString(o);
-                                    } catch (Exception e) {
-                                        log.warn(o.getClass() + " to json error!");
-                                    }
-                                    return o.getClass() + " to json error! value is:" + o.toString();
-                                }).collect(Collectors.toList());
-                            }
-                            map.put("params", params);
-                            Map<String, String> headerMap = new HashMap<>();
-                            Enumeration<String> headerNames = request.getHeaderNames();
-                            while (headerNames.hasMoreElements()) {
-                                String headerName = headerNames.nextElement();
-                                String headerValue = request.getHeader(headerName);
-                                headerMap.put(headerName, headerValue);
-                            }
-                            map.put("heads", headerMap);
-                            map.put("query", request.getQueryString());
-                            record.setInfo(map);
-
-                            record.setAccountCode(request.getHeader("accountCode"));
-                            if (request.getHeader("accountName") != null) {
-                                record.setAccountName(URLDecoder.decode(request.getHeader("accountName"), "UTF-8"));
-                            }
-                            record.setEntCode(request.getHeader("entCode"));
-                            if (request.getHeader("entName") != null) {
-                                record.setEntName(URLDecoder.decode(request.getHeader("entName"), "UTF-8"));
-                            }
-                            record.setUserCode(request.getHeader("userCode"));
-                            if (request.getHeader("userName") != null) {
-                                record.setUserName(URLDecoder.decode(request.getHeader("userName"), "UTF-8"));
-                            }
-
-                            record.setName(recordAudit.value());
-                        } catch (Exception e) {
-                            log.warn("audit记录日志出错:" + e.getMessage());
                         }
-                    });
+                        record.setApplication(application);
+                        record.setBegin(new Date());
+                        record.setSignature(point.getSignature().toString());
+
+                        record.setIp(getIpAddress(request));
+                        record.setUrl(request.getRequestURL().toString());
+
+                        Map<String, Object> map = new HashMap();
+                        List<String> params = null;
+                        if (point.getArgs() != null && point.getArgs().length > 0) {
+                            params = Arrays.stream(point.getArgs()).map(o -> {
+                                try {
+                                    if (o == null) {
+                                        return "null";
+                                    }
+                                    if (o instanceof MultipartFile
+                                            || o instanceof HttpServletRequest
+                                            || o instanceof HttpServletResponse) {
+                                        return o.toString();
+                                    }
+                                    return OBJECT_MAPPER.writeValueAsString(o);
+                                } catch (Exception e) {
+                                    log.warn(o.getClass() + " to json error!");
+                                }
+                                return o.getClass() + " to json error! value is:" + o.toString();
+                            }).collect(Collectors.toList());
+                        }
+                        map.put("params", params);
+                        Map<String, String> headerMap = new HashMap<>();
+                        Enumeration<String> headerNames = request.getHeaderNames();
+                        while (headerNames.hasMoreElements()) {
+                            String headerName = headerNames.nextElement();
+                            String headerValue = request.getHeader(headerName);
+                            headerMap.put(headerName, headerValue);
+                        }
+                        map.put("heads", headerMap);
+                        map.put("query", request.getQueryString());
+                        record.setInfo(map);
+
+                        record.setAccountCode(request.getHeader("accountCode"));
+                        if (request.getHeader("accountName") != null) {
+                            record.setAccountName(URLDecoder.decode(request.getHeader("accountName"), "UTF-8"));
+                        }
+                        record.setEntCode(request.getHeader("entCode"));
+                        if (request.getHeader("entName") != null) {
+                            record.setEntName(URLDecoder.decode(request.getHeader("entName"), "UTF-8"));
+                        }
+                        record.setUserCode(request.getHeader("userCode"));
+                        if (request.getHeader("userName") != null) {
+                            record.setUserName(URLDecoder.decode(request.getHeader("userName"), "UTF-8"));
+                        }
+
+                        record.setName(recordAudit.value());
+                        recordProducer.sendData(record);
+                    } catch (Exception e) {
+                        log.warn("audit记录日志出错:" + e.getMessage());
+                    }
                 } catch (Exception ex) {
                     log.warn("audit记录日志出错:" + ex.getMessage());
                 }

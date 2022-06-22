@@ -51,7 +51,7 @@ public abstract class BatchConsumer<T> implements EventHandler<T> {
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
-        // 释放对象, 注意可能来不及gc，对象可能重用，注意重置相关值
+        // 对象可能重用，重置相关值
         event = null;
     }
 

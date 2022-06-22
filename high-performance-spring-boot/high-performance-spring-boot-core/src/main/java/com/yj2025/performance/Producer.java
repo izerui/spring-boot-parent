@@ -30,13 +30,7 @@ public final class Producer<T> {
     }
 
     private void initDisruptor() {
-        EventFactory eventFactory = () -> {
-            try {
-                return builder.dataType.getDeclaredConstructor().newInstance();
-            } catch (Exception e) {
-                throw new RuntimeException(e.getMessage(), e);
-            }
-        };
+        EventFactory eventFactory = () -> null;
         // 创建disruptor，采用单生产者模式
         disruptor = new Disruptor(
                 // RingBuffer生产工厂,初始化RingBuffer的时候使用
@@ -63,10 +57,8 @@ public final class Producer<T> {
 
     /**
      * 发送补全的数据到待处理缓冲区
-     *
-     * @param consumer
      */
-    public void sendData(ThrowsConsumer<T> consumer) throws Exception {
+    public void sendData(T event) {
         if (disruptor == null) {
             log.warn("线程池未初始化,重新初始化...");
             initDisruptor();
@@ -75,7 +67,10 @@ public final class Producer<T> {
         long sequence = ringBuffer.next();
         try {
             T obj = ringBuffer.get(sequence);
-            consumer.accept(obj);
+            if (obj != null) {
+                log.info("对象开始重用: {}", obj.toString());
+            }
+            obj = event;
         } finally {
             ringBuffer.publish(sequence);
         }
@@ -100,7 +95,6 @@ public final class Producer<T> {
          * 指定RingBuffer的大小
          */
         private int ringBufferSize = 1024 * 64;
-        private Class dataType;
         private ProducerType producerType = ProducerType.MULTI;
         private ThreadFactory threadFactory = new Consumer.ConsumerThreadFactory();
         private WaitStrategy waitStrategy = new YieldingWaitStrategy();
@@ -115,17 +109,6 @@ public final class Producer<T> {
          */
         public Builder requiredRingBufferSize(int ringBufferSize) {
             this.ringBufferSize = ringBufferSize;
-            return this;
-        }
-
-        /**
-         * 用来预初始化data类型的
-         *
-         * @param dataType
-         * @return
-         */
-        public Builder requiredDataType(Class dataType) {
-            this.dataType = dataType;
             return this;
         }
 
@@ -201,9 +184,6 @@ public final class Producer<T> {
          * @return
          */
         public Producer build() {
-            if (dataType == null) {
-                throw new DisruptorException("dataType数据类型不能为空!");
-            }
             if (consumers == null && batchConsumer == null) {
                 throw new DisruptorException("请至少设置一种消费者处理器!");
             } else if (consumers != null && batchConsumer != null) {

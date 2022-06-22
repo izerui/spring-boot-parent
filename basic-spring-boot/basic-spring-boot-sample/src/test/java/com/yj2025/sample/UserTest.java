@@ -105,7 +105,7 @@ public class UserTest {
         long a = System.currentTimeMillis();
         Map<String, Object> updates = new HashMap<>();
         updates.put("age", 10);
-        Producer<PageId> producer = Context.batchConsumer(PageId.class, new BatchConsumer<PageId>(1000) {
+        Producer<PageId> producer = Context.batchConsumer(new BatchConsumer<PageId>(1000) {
             @Override
             protected void handlerEvent(List<PageId> correlationData, long sequence) throws Exception {
                 if (correlationData.isEmpty()) {
@@ -121,10 +121,10 @@ public class UserTest {
         IntStream.range(0, 10).forEach(value -> {
             batchGetPrimaryIds("test_user", new ConditionEntity().where("1=1"), (page, id) -> {
                 try {
-                    producer.sendData(pageId -> {
-                        pageId.setPage(page);
-                        pageId.setId(id);
-                    });
+                    PageId pageId = new PageId();
+                    pageId.setPage(page);
+                    pageId.setId(id);
+                    producer.sendData(pageId);
                 } catch (Exception e) {
                     throw new RuntimeException(e.getMessage(), e);
                 }

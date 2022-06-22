@@ -18,7 +18,7 @@ public class UserBatchCreate3Cmd extends BasicCommand<Void> {
     @Override
     protected Void doExecute() throws Exception {
         UserRepository userRepository = Context.getBean(UserRepository.class);
-        Producer<User> producer = Context.multiConsumer(User.class, 5, new Consumer<User>() {
+        Producer<User> producer = Context.multiConsumer(5, new Consumer<User>() {
             @Override
             protected void handlerEvent(User event) throws Exception {
                 userRepository.save(event);
@@ -26,12 +26,12 @@ public class UserBatchCreate3Cmd extends BasicCommand<Void> {
         });
 
         for (Integer integer : integers) {
-            producer.sendData(user -> {
-                user.setId(null);
-                user.setCode("code" + integer);
-                user.setName("张三丰");
-                user.setEmail("张三丰@qq.com");
-            });
+            User user = new User();
+            user.setId(null);
+            user.setCode("code" + integer);
+            user.setName("张三丰");
+            user.setEmail("张三丰@qq.com");
+            producer.sendData(user);
         }
         producer.shutdown();
         return null;
