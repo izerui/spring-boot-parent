@@ -1,9 +1,6 @@
 package com.yj2025.performance;
 
-import com.lmax.disruptor.EventFactory;
-import com.lmax.disruptor.RingBuffer;
-import com.lmax.disruptor.WaitStrategy;
-import com.lmax.disruptor.YieldingWaitStrategy;
+import com.lmax.disruptor.*;
 import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.dsl.ProducerType;
 import lombok.extern.slf4j.Slf4j;
@@ -104,7 +101,7 @@ public final class Producer<T extends ClearEvent> {
         private Class dataType;
         private ProducerType producerType = ProducerType.MULTI;
         private ThreadFactory threadFactory = new Consumer.ConsumerThreadFactory();
-        private WaitStrategy waitStrategy = new YieldingWaitStrategy();
+        private WaitStrategy waitStrategy = new BlockingWaitStrategy();
         private Consumer[] consumers;
         private BatchConsumer batchConsumer;
 
