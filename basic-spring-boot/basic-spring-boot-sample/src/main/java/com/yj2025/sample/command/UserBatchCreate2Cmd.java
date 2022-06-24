@@ -5,10 +5,13 @@ import com.yj2025.basic.support.Context;
 import com.yj2025.performance.BatchConsumer;
 import com.yj2025.performance.Producer;
 import com.yj2025.sample.entity.User;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.EntityManager;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+@Slf4j
 public class UserBatchCreate2Cmd extends BasicCommand<Void> {
 
     private int[] integers;
@@ -18,11 +21,12 @@ public class UserBatchCreate2Cmd extends BasicCommand<Void> {
     }
 
     @Override
-    protected Void doExecute() throws Exception{
+    protected Void doExecute() throws Exception {
         EntityManager entityManager = Context.getBean(EntityManager.class);
-        Producer<User> producer = Context.batchConsumer(User.class, new BatchConsumer<User>(1000) {
+        Producer<User> producer = Context.batchConsumer(User.class, 3, TimeUnit.SECONDS, new BatchConsumer<User>(1000) {
             @Override
             protected void handlerEvent(List<User> correlationData, long sequence) throws Exception {
+                log.info("当前处理数量： {}", correlationData.size());
                 Context.executeTransaction(status -> {
                     for (User user : correlationData) {
                         entityManager.persist(user);
@@ -42,6 +46,7 @@ public class UserBatchCreate2Cmd extends BasicCommand<Void> {
                 user.setEmail("张三丰@qq.com");
             });
         }
+        log.info("发送个数：{}",integers.length);
         producer.shutdown();
         return null;
     }

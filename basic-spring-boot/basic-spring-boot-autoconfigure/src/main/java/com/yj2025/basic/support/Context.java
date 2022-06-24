@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.common.util.concurrent.*;
+import com.lmax.disruptor.LiteTimeoutBlockingWaitStrategy;
 import com.lmax.disruptor.dsl.ProducerType;
 import com.yj2025.performance.BatchConsumer;
 import com.yj2025.performance.ClearEvent;
@@ -78,7 +79,12 @@ public final class Context {
      * @return 返回生产者
      */
     public static <T extends ClearEvent> Producer<T> multiConsumer(Class<T> tClass, int threadNum, Consumer<T> consumer) {
-        return (Producer<T>) Producer.builder().optionnalProducerType(ProducerType.SINGLE).requiredDataType(tClass).requiredConsumers(consumer.cloneSelfToMulti(threadNum)).requiredRingBufferSize(65536).build();
+        return (Producer<T>) Producer.builder()
+                .optionnalProducerType(ProducerType.SINGLE)
+                .requiredDataType(tClass)
+                .requiredConsumers(consumer.cloneSelfToMulti(threadNum))
+                .requiredRingBufferSize(65536)
+                .build();
     }
 
 
@@ -86,12 +92,20 @@ public final class Context {
      * 批量消费发送到队列中的数据, 当sendData调用完毕后，建议调用{@link Producer#shutdown()}关闭当前多线程处理器。
      *
      * @param tClass        发送到队列的数据类型
+     * @param timeout       超时时间
+     * @param units         单位
      * @param batchConsumer 批量消费者模型， 建议设置批量数量在 500 ~ 3000 范围内。
      * @param <T>           发送的数据
      * @return 返回生产者，
      */
-    public static <T extends ClearEvent> Producer<T> batchConsumer(Class<T> tClass, BatchConsumer<T> batchConsumer) {
-        return (Producer<T>) Producer.builder().optionnalProducerType(ProducerType.SINGLE).requiredDataType(tClass).requiredConsumers(batchConsumer).requiredRingBufferSize(65536).build();
+    public static <T extends ClearEvent> Producer<T> batchConsumer(Class<T> tClass, final long timeout, final TimeUnit units, BatchConsumer<T> batchConsumer) {
+        return (Producer<T>) Producer.builder()
+                .optionnalProducerType(ProducerType.SINGLE)
+                .requiredDataType(tClass)
+                .requiredConsumers(batchConsumer)
+//                .optionnalWaitStrategy(new LiteTimeoutBlockingWaitStrategy(timeout, units))
+                .requiredRingBufferSize(65536)
+                .build();
     }
 
     /**

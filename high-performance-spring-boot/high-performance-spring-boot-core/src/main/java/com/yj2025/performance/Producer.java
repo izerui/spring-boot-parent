@@ -51,6 +51,9 @@ public final class Producer<T extends ClearEvent> {
         // 设置EventHandler 被一个批量处理消费者消费
         // https://www.jianshu.com/p/f4021e8141ad
         if (builder.batchConsumer != null) {
+            if (builder.batchConsumer.getBatchLimitSize() >= builder.ringBufferSize) {
+                throw new RuntimeException("批次数量必须小于缓冲区数量: " + builder.ringBufferSize);
+            }
             log.info("====== {} 批处理器启动成功 ======", builder.batchConsumer.getClass().getName());
             disruptor.handleEventsWith(builder.batchConsumer);
         }
@@ -72,6 +75,7 @@ public final class Producer<T extends ClearEvent> {
         long sequence = ringBuffer.next();
         try {
             T obj = ringBuffer.get(sequence);
+            // 重用对象之前重置相关值
             obj.clear();
             consumer.accept(obj);
         } finally {
@@ -101,6 +105,10 @@ public final class Producer<T extends ClearEvent> {
         private Class dataType;
         private ProducerType producerType = ProducerType.MULTI;
         private ThreadFactory threadFactory = new Consumer.ConsumerThreadFactory();
+
+        /**
+         * 批处理的情况下建议使用 {@link com.lmax.disruptor.LiteTimeoutBlockingWaitStrategy}
+         */
         private WaitStrategy waitStrategy = new BlockingWaitStrategy();
         private Consumer[] consumers;
         private BatchConsumer batchConsumer;

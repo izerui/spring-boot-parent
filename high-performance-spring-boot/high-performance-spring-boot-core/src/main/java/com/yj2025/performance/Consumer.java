@@ -18,7 +18,6 @@ public abstract class Consumer<T extends ClearEvent> implements WorkHandler<T>, 
     @Override
     public final void onEvent(T event) throws Exception {
         handlerEvent(event);
-        event.clear();
     }
 
 

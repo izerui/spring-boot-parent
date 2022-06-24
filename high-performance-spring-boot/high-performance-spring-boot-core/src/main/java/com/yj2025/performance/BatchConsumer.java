@@ -51,7 +51,6 @@ public abstract class BatchConsumer<T extends ClearEvent> implements EventHandle
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
-        event.clear();
     }
 
     /**
@@ -62,21 +61,34 @@ public abstract class BatchConsumer<T extends ClearEvent> implements EventHandle
      * @param endOfBatch 是否为RingBuffer内存片中的最后一块
      */
     private void handlerBatchEvents(T event, long sequence, boolean endOfBatch) throws Exception {
+//        log.info(event.toString());
         // 添加到批次
         correlationData.add(event);
+        // 够批次后批量处理，并继续消费
+        if (correlationData.size() == batchLimitSize) {
+            handlerEvent(correlationData, sequence);
+            // 重用数组
+            correlationData.clear();
+            return;
+        }
+        // 如果下一个序列从头开始的情况下,先批量处理完当前批次
         if ((sequence + 1) % batchLimitSize == 0) {
             handlerEvent(correlationData, sequence);
             // 重用数组
             correlationData.clear();
+            return;
         }
         if (endOfBatch) {
             if ((sequence + 1) % RING_BATCH_SIZE != 0) {
                 handlerEvent(correlationData, sequence);
                 // 重用数组
                 correlationData.clear();
+                return;
             }
         }
     }
 
-
+    public long getBatchLimitSize() {
+        return batchLimitSize;
+    }
 }
