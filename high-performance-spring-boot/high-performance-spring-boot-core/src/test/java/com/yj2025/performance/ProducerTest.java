@@ -37,7 +37,7 @@ public class ProducerTest {
         BatchConsumer<MyTask> batchConsumer = new BatchConsumer<MyTask>(1000) {
 
             @Override
-            protected void handlerEvent(List<MyTask> correlationData, long sequence) throws Exception {
+            protected void handlerEvent(List<MyTask> correlationData) throws Exception {
 //                len.getAndAdd(accumulationDatas.size());
                 Thread.sleep(RandomUtils.nextInt(1, 3) * 100);
                 log.info("当前处理: {} 条", correlationData.size());

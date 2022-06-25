@@ -4,12 +4,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.common.util.concurrent.*;
-import com.lmax.disruptor.LiteTimeoutBlockingWaitStrategy;
 import com.lmax.disruptor.dsl.ProducerType;
-import com.yj2025.performance.BatchConsumer;
-import com.yj2025.performance.ClearEvent;
-import com.yj2025.performance.Consumer;
-import com.yj2025.performance.Producer;
+import com.yj2025.performance.*;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.transaction.TransactionStatus;
@@ -103,7 +99,7 @@ public final class Context {
                 .optionnalProducerType(ProducerType.SINGLE)
                 .requiredDataType(tClass)
                 .requiredConsumers(batchConsumer)
-//                .optionnalWaitStrategy(new LiteTimeoutBlockingWaitStrategy(timeout, units))
+//                .optionnalWaitStrategy(new TimeoutBlockingWaitStrategy(timeout, units, batchConsumer))
                 .requiredRingBufferSize(65536)
                 .build();
     }

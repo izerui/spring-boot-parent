@@ -32,6 +32,7 @@ public class UserBatchCreate3Cmd extends BasicCommand<Void> {
                 user.setName("张三丰");
                 user.setEmail("张三丰@qq.com");
             });
+//            Thread.sleep(10);
         }
         producer.shutdown();
         return null;

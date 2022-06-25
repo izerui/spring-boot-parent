@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TimerTask;
 
 /**
  * 单线程批量消费者(如果支持批量尽量使用当前消费者模式)
@@ -14,8 +15,9 @@ import java.util.List;
  * @date 2022/5/24
  */
 @Slf4j
-public abstract class BatchConsumer<T extends ClearEvent> implements EventHandler<T> {
+public abstract class BatchConsumer<T extends ClearEvent> extends TimerTask implements EventHandler<T> {
 
+    private final TimerDaemonThread timer;
     /**
      * 每批次最多处理的数量
      */
@@ -33,16 +35,17 @@ public abstract class BatchConsumer<T extends ClearEvent> implements EventHandle
             throw new DisruptorException("请设置大于0的每批次消费数量限制");
         }
         this.batchLimitSize = batchLimitSize;
+        this.timer = new TimerDaemonThread(this, 1000);
+        this.timer.start();
     }
 
     /**
      * 批量处理当前积累的批次数据
      *
      * @param correlationData 积累的数据
-     * @param sequence        最后处理的序列
      * @throws Exception
      */
-    protected abstract void handlerEvent(List<T> correlationData, long sequence) throws Exception;
+    protected abstract void handlerEvent(List<T> correlationData) throws Exception;
 
     @Override
     public final void onEvent(T event, final long sequence, boolean endOfBatch) {
@@ -61,34 +64,44 @@ public abstract class BatchConsumer<T extends ClearEvent> implements EventHandle
      * @param endOfBatch 是否为RingBuffer内存片中的最后一块
      */
     private void handlerBatchEvents(T event, long sequence, boolean endOfBatch) throws Exception {
-//        log.info(event.toString());
-        // 添加到批次
-        correlationData.add(event);
+        timer.pause();
+        synchronized (correlationData) {
+            // 添加到批次
+            correlationData.add(event);
+        }
         // 够批次后批量处理，并继续消费
-        if (correlationData.size() == batchLimitSize) {
-            handlerEvent(correlationData, sequence);
-            // 重用数组
-            correlationData.clear();
+        if (correlationData.size() >= batchLimitSize) {
+            executeBatch();
             return;
+        } else {
+            timer.next();
         }
-        // 如果下一个序列从头开始的情况下,先批量处理完当前批次
-        if ((sequence + 1) % batchLimitSize == 0) {
-            handlerEvent(correlationData, sequence);
-            // 重用数组
-            correlationData.clear();
-            return;
+    }
+
+    @Override
+    public void run() {
+        try {
+            executeBatch();
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
         }
-        if (endOfBatch) {
-            if ((sequence + 1) % RING_BATCH_SIZE != 0) {
-                handlerEvent(correlationData, sequence);
+    }
+
+    public void executeBatch() throws Exception {
+        synchronized (correlationData) {
+            if (correlationData.size() > 0) {
+                handlerEvent(correlationData);
                 // 重用数组
                 correlationData.clear();
-                return;
             }
         }
     }
 
     public long getBatchLimitSize() {
         return batchLimitSize;
+    }
+
+    public boolean isFull() {
+        return correlationData.size() >= batchLimitSize;
     }
 }

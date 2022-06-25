@@ -114,7 +114,7 @@ public class UserTest {
         updates.put("age", 10);
         Producer<PageId> producer = Context.batchConsumer(PageId.class, 1, TimeUnit.SECONDS, new BatchConsumer<PageId>(1000) {
             @Override
-            protected void handlerEvent(List<PageId> correlationData, long sequence) throws Exception {
+            protected void handlerEvent(List<PageId> correlationData) {
                 if (correlationData.isEmpty()) {
                     return;
                 }

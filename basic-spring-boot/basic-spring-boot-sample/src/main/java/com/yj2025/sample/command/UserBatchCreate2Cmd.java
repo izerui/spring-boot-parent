@@ -25,28 +25,27 @@ public class UserBatchCreate2Cmd extends BasicCommand<Void> {
         EntityManager entityManager = Context.getBean(EntityManager.class);
         Producer<User> producer = Context.batchConsumer(User.class, 3, TimeUnit.SECONDS, new BatchConsumer<User>(1000) {
             @Override
-            protected void handlerEvent(List<User> correlationData, long sequence) throws Exception {
-                log.info("当前处理数量： {}", correlationData.size());
-                Context.executeTransaction(status -> {
-                    for (User user : correlationData) {
-                        entityManager.persist(user);
-                    }
-                    logger.info("批次执行数量： {} 当前sequence： {}", correlationData.size(), sequence);
-                    entityManager.flush();
-                    entityManager.clear();
-                });
+            protected void handlerEvent(List<User> correlationData) throws Exception {
+                logger.info("批次执行数量： {}", correlationData.size());
+//                Context.executeTransaction(status -> {
+//                    for (User user : correlationData) {
+//                        entityManager.persist(user);
+//                    }
+//                    entityManager.flush();
+//                    entityManager.clear();
+//                });
             }
         });
 
         for (Integer integer : integers) {
             producer.sendData(user -> {
-                user.setId(null);
                 user.setCode("code" + integer);
                 user.setName("张三丰");
                 user.setEmail("张三丰@qq.com");
             });
+            Thread.sleep(100);
         }
-        log.info("发送个数：{}",integers.length);
+        log.info("发送个数：{}", integers.length);
         producer.shutdown();
         return null;
     }
