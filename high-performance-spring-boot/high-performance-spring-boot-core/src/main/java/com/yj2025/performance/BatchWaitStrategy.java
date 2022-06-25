@@ -22,6 +22,9 @@ import com.lmax.disruptor.WaitStrategy;
 import com.lmax.disruptor.util.ThreadHints;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -37,7 +40,6 @@ public final class BatchWaitStrategy implements WaitStrategy {
     private final Lock lock = new ReentrantLock();
     private final Condition processorNotifyCondition = lock.newCondition();
 
-    private TimerThread timerThread;
     private int maxWaitSeconds;
     private long batchLimitSize;
 
@@ -65,21 +67,22 @@ public final class BatchWaitStrategy implements WaitStrategy {
         // 累积的数量
 //        long batchSize = dependentSequence.get() - sequence + 1;
 //        log.info("当前消费序列: {}  当前发送序列: {}  未消费数量: {}", sequence, dependentSequence.get(), batchSize);
-        if (timerThread == null) {
-            timerThread = new TimerThread(barrier);
-            timerThread.setName("Timer-BatchWaitStrategy-" + Thread.currentThread().getName());
-            timerThread.setDaemon(true);
-            timerThread.start();
-        }
-        timerThread.countDown();
+        AtomicBoolean block = new AtomicBoolean(true);
+        Timer timer = new Timer(true);
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                block.set(false);
+            }
+        }, maxWaitSeconds * 1000);
         // 当累积数量未达到批次数量 && 倒计时正在进行
         // 达到批次数量 或者 倒计时结束,否则自旋
-        while ((dependentSequence.get() - sequence + 1) < batchLimitSize && timerThread.isBlock()) {
+        while ((dependentSequence.get() - sequence + 1) < batchLimitSize && block.get()) {
 //            log.info("sequence: {}  producer: {}", sequence, dependentSequence.get());
 //            Thread.sleep(500);
             /** no op */
         }
-
+        timer.cancel();
         while ((availableSequence = dependentSequence.get()) < sequence) {
             barrier.checkAlert();
             ThreadHints.onSpinWait();

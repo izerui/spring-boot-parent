@@ -72,19 +72,19 @@ public class ProducerTest {
 //            future.get();
 //        }
 
-//        while ((l + 10000000L) > System.currentTimeMillis()) { // 3秒
-//            producer.sendData(o -> o.setValue(atomicInteger.getAndIncrement()));
-//            Thread.sleep(RandomUtils.nextInt(10, 20));
-//        }
-
-        IntStream.range(0, 530).forEach(value -> {
+        while ((l + 10000000L) > System.currentTimeMillis()) { // 3秒
             producer.sendData(o -> o.setValue(atomicInteger.getAndIncrement()));
-            try {
-                Thread.sleep(RandomUtils.nextInt(10, 20));
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        });
+            Thread.sleep(RandomUtils.nextInt(10, 20));
+        }
+
+//        IntStream.range(0, 530).forEach(value -> {
+//            producer.sendData(o -> o.setValue(atomicInteger.getAndIncrement()));
+//            try {
+//                Thread.sleep(RandomUtils.nextInt(10, 20));
+//            } catch (InterruptedException e) {
+//                throw new RuntimeException(e);
+//            }
+//        });
 
         log.info("执行完毕, 消费者还在继续执行...");
         producer.shutdown();
