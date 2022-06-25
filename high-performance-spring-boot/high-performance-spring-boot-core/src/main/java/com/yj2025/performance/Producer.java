@@ -101,7 +101,7 @@ public final class Producer<T extends ClearEvent> {
         /**
          * 指定RingBuffer的大小
          */
-        private int ringBufferSize = 4096;
+        private int ringBufferSize = 1024 * 64;
         private Class dataType;
         private ProducerType producerType = ProducerType.MULTI;
         private ThreadFactory threadFactory = new Consumer.ConsumerThreadFactory();
@@ -222,6 +222,9 @@ public final class Producer<T extends ClearEvent> {
                 throw new DisruptorException("最多只能设置一种消费处理器,要么批量消费,要么分别消费!");
             }
             if (batchConsumer != null) {
+                if (batchLimitSize >= ringBufferSize) {
+                    throw new RuntimeException("批次数量必须小于环形缓冲区数值");
+                }
                 this.waitStrategy = new BatchWaitStrategy(maxWaitSeconds, batchLimitSize);
             }
             return new Producer(
