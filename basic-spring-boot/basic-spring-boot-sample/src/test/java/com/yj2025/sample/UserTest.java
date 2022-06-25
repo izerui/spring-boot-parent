@@ -30,7 +30,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -112,9 +115,9 @@ public class UserTest {
         long a = System.currentTimeMillis();
         Map<String, Object> updates = new HashMap<>();
         updates.put("age", 10);
-        Producer<PageId> producer = Context.batchConsumer(PageId.class, 1, TimeUnit.SECONDS, new BatchConsumer<PageId>(1000) {
+        Producer<PageId> producer = Context.batchConsumer(PageId.class, 1, 1000, new BatchConsumer<PageId>() {
             @Override
-            protected void handlerEvent(List<PageId> correlationData) {
+            protected void handlerEvent(List<PageId> correlationData, long sequence) {
                 if (correlationData.isEmpty()) {
                     return;
                 }

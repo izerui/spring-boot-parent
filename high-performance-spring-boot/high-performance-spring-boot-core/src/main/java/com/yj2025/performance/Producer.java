@@ -1,6 +1,9 @@
 package com.yj2025.performance;
 
-import com.lmax.disruptor.*;
+import com.lmax.disruptor.BlockingWaitStrategy;
+import com.lmax.disruptor.EventFactory;
+import com.lmax.disruptor.RingBuffer;
+import com.lmax.disruptor.WaitStrategy;
 import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.dsl.ProducerType;
 import lombok.extern.slf4j.Slf4j;
@@ -51,9 +54,6 @@ public final class Producer<T extends ClearEvent> {
         // 设置EventHandler 被一个批量处理消费者消费
         // https://www.jianshu.com/p/f4021e8141ad
         if (builder.batchConsumer != null) {
-            if (builder.batchConsumer.getBatchLimitSize() >= builder.ringBufferSize) {
-                throw new RuntimeException("批次数量必须小于缓冲区数量: " + builder.ringBufferSize);
-            }
             log.info("====== {} 批处理器启动成功 ======", builder.batchConsumer.getClass().getName());
             disruptor.handleEventsWith(builder.batchConsumer);
         }
@@ -101,17 +101,15 @@ public final class Producer<T extends ClearEvent> {
         /**
          * 指定RingBuffer的大小
          */
-        private int ringBufferSize = 1024 * 64;
+        private int ringBufferSize = 4096;
         private Class dataType;
         private ProducerType producerType = ProducerType.MULTI;
         private ThreadFactory threadFactory = new Consumer.ConsumerThreadFactory();
-
-        /**
-         * 批处理的情况下建议使用 {@link com.lmax.disruptor.LiteTimeoutBlockingWaitStrategy}
-         */
         private WaitStrategy waitStrategy = new BlockingWaitStrategy();
         private Consumer[] consumers;
         private BatchConsumer batchConsumer;
+        private long batchLimitSize;
+        private int maxWaitSeconds;
 
         /**
          * 环形缓冲区大小
@@ -158,7 +156,7 @@ public final class Producer<T extends ClearEvent> {
         }
 
         /**
-         * 拒绝策略
+         * 等待策略，批量模式下无效
          *
          * @param waitStrategy
          * @return
@@ -171,10 +169,18 @@ public final class Producer<T extends ClearEvent> {
         /**
          * 批量消费者(优先使用)
          *
+         * @param maxWaitSeconds 当消费过快的时候，未达到批次最大等待秒数
+         * @param batchLimitSize
          * @param batchConsumer
+         * @param <T>
          * @return
          */
-        public <T extends ClearEvent> Builder requiredConsumers(BatchConsumer<T> batchConsumer) {
+        public <T extends ClearEvent> Builder requiredConsumers(int maxWaitSeconds, long batchLimitSize, BatchConsumer<T> batchConsumer) {
+            if (batchLimitSize <= 0) {
+                throw new DisruptorException("请设置大于0的每批次消费数量限制");
+            }
+            this.maxWaitSeconds = maxWaitSeconds;
+            this.batchLimitSize = batchLimitSize;
             this.batchConsumer = batchConsumer;
             return this;
         }
@@ -214,6 +220,9 @@ public final class Producer<T extends ClearEvent> {
                 throw new DisruptorException("请至少设置一种消费者处理器!");
             } else if (consumers != null && batchConsumer != null) {
                 throw new DisruptorException("最多只能设置一种消费处理器,要么批量消费,要么分别消费!");
+            }
+            if (batchConsumer != null) {
+                this.waitStrategy = new BatchWaitStrategy(maxWaitSeconds, batchLimitSize);
             }
             return new Producer(
                     this

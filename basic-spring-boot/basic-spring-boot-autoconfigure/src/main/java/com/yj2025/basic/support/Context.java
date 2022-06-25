@@ -87,18 +87,18 @@ public final class Context {
     /**
      * 批量消费发送到队列中的数据, 当sendData调用完毕后，建议调用{@link Producer#shutdown()}关闭当前多线程处理器。
      *
-     * @param tClass        发送到队列的数据类型
-     * @param timeout       超时时间
-     * @param units         单位
-     * @param batchConsumer 批量消费者模型， 建议设置批量数量在 500 ~ 3000 范围内。
-     * @param <T>           发送的数据
+     * @param tClass                   发送到队列的数据类型
+     * @param maxWaitSeconds 秒数倒计时
+     * @param batchLimitSize           批次数量
+     * @param batchConsumer            批量消费者模型， 建议设置批量数量在 500 ~ 3000 范围内。
+     * @param <T>                      发送的数据
      * @return 返回生产者，
      */
-    public static <T extends ClearEvent> Producer<T> batchConsumer(Class<T> tClass, final long timeout, final TimeUnit units, BatchConsumer<T> batchConsumer) {
+    public static <T extends ClearEvent> Producer<T> batchConsumer(Class<T> tClass, final int maxWaitSeconds, final long batchLimitSize, BatchConsumer<T> batchConsumer) {
         return (Producer<T>) Producer.builder()
                 .optionnalProducerType(ProducerType.SINGLE)
                 .requiredDataType(tClass)
-                .requiredConsumers(batchConsumer)
+                .requiredConsumers(maxWaitSeconds, batchLimitSize, batchConsumer)
 //                .optionnalWaitStrategy(new TimeoutBlockingWaitStrategy(timeout, units, batchConsumer))
                 .requiredRingBufferSize(65536)
                 .build();

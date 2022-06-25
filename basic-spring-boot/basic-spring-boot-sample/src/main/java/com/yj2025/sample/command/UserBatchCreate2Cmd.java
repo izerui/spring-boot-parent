@@ -23,9 +23,9 @@ public class UserBatchCreate2Cmd extends BasicCommand<Void> {
     @Override
     protected Void doExecute() throws Exception {
         EntityManager entityManager = Context.getBean(EntityManager.class);
-        Producer<User> producer = Context.batchConsumer(User.class, 3, TimeUnit.SECONDS, new BatchConsumer<User>(1000) {
+        Producer<User> producer = Context.batchConsumer(User.class, 2, 500, new BatchConsumer<User>() {
             @Override
-            protected void handlerEvent(List<User> correlationData) throws Exception {
+            protected void handlerEvent(List<User> correlationData, long sequence) throws Exception {
                 logger.info("批次执行数量： {}", correlationData.size());
 //                Context.executeTransaction(status -> {
 //                    for (User user : correlationData) {
