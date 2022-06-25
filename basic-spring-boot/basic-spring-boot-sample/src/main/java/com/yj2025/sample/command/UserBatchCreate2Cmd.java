@@ -27,13 +27,13 @@ public class UserBatchCreate2Cmd extends BasicCommand<Void> {
             @Override
             protected void handlerEvent(List<User> correlationData, long sequence) throws Exception {
                 logger.info("批次执行数量： {}", correlationData.size());
-//                Context.executeTransaction(status -> {
-//                    for (User user : correlationData) {
-//                        entityManager.persist(user);
-//                    }
-//                    entityManager.flush();
-//                    entityManager.clear();
-//                });
+                Context.executeTransaction(status -> {
+                    for (User user : correlationData) {
+                        entityManager.persist(user);
+                    }
+                    entityManager.flush();
+                    entityManager.clear();
+                });
             }
         });
 

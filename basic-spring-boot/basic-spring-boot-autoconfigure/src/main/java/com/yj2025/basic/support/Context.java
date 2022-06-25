@@ -110,8 +110,8 @@ public final class Context {
      * 批量消费发送到队列中的数据, 当sendData调用完毕后，建议调用{@link Producer#shutdown()}关闭当前多线程处理器。
      *
      * @param tClass         发送到队列的数据类型
-     * @param maxWaitSeconds 秒数倒计时
-     * @param batchLimitSize 批次数量
+     * @param maxWaitSeconds 秒数倒计时，当累积数据比较慢，达不到批次数量时，在指定秒内等待数据积累。
+     * @param batchLimitSize 批次数量，尽量按当前的批次数进行批操作
      * @param batchConsumer  批量消费者模型， 建议设置批量数量在 500 ~ 3000 范围内。
      * @param <T>            发送的数据
      * @return 返回生产者，
@@ -129,8 +129,8 @@ public final class Context {
      * 批量消费发送到队列中的数据, 当sendData调用完毕后，建议调用{@link Producer#shutdown()}关闭当前多线程处理器。
      *
      * @param tClass         发送到队列的数据类型
-     * @param maxWaitSeconds 秒数倒计时
-     * @param batchLimitSize 批次数量
+     * @param maxWaitSeconds 秒数倒计时，当累积数据比较慢，达不到批次数量时，在指定秒内等待数据积累。
+     * @param batchLimitSize 批次数量，尽量按当前的批次数进行批操作
      * @param batchConsumer  批量消费者模型， 建议设置批量数量在 500 ~ 3000 范围内。
      * @param ringBufferSize 环形缓冲区大小，2的幂 ，建议设置合适的值，发送量大的情况下建议大一些，可以使用65536。量小的话建议 4096,数值越大发送效率越高
      * @param <T>            发送的数据
