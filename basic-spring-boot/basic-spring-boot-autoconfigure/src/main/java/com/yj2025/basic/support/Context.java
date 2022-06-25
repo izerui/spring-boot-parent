@@ -5,7 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.common.util.concurrent.*;
 import com.lmax.disruptor.dsl.ProducerType;
-import com.yj2025.performance.*;
+import com.yj2025.performance.BatchConsumer;
+import com.yj2025.performance.ClearEvent;
+import com.yj2025.performance.Consumer;
+import com.yj2025.performance.Producer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.transaction.TransactionStatus;
@@ -83,15 +86,34 @@ public final class Context {
                 .build();
     }
 
+    /**
+     * 多线程异步消费发送到队列中的数据,当sendData调用完毕后，建议调用{@link Producer#shutdown()}关闭当前多线程处理器。
+     *
+     * @param tClass         数据类型
+     * @param threadNum      线程数： 建议 5 / 10 / 20 / 30 ...
+     * @param ringBufferSize 环形缓冲区大小，2的幂 ，建议设置合适的值，发送量大的情况下建议大一些，可以使用65536。量小的话建议 4096,数值越大发送效率越高
+     * @param consumer       消费者模型
+     * @param <T>            发送的数据
+     * @return 返回生产者
+     */
+    public static <T extends ClearEvent> Producer<T> multiConsumer(Class<T> tClass, int threadNum, int ringBufferSize, Consumer<T> consumer) {
+        return (Producer<T>) Producer.builder()
+                .optionnalProducerType(ProducerType.SINGLE)
+                .requiredDataType(tClass)
+                .requiredConsumers(consumer.cloneSelfToMulti(threadNum))
+                .requiredRingBufferSize(ringBufferSize)
+                .build();
+    }
+
 
     /**
      * 批量消费发送到队列中的数据, 当sendData调用完毕后，建议调用{@link Producer#shutdown()}关闭当前多线程处理器。
      *
-     * @param tClass                   发送到队列的数据类型
+     * @param tClass         发送到队列的数据类型
      * @param maxWaitSeconds 秒数倒计时
-     * @param batchLimitSize           批次数量
-     * @param batchConsumer            批量消费者模型， 建议设置批量数量在 500 ~ 3000 范围内。
-     * @param <T>                      发送的数据
+     * @param batchLimitSize 批次数量
+     * @param batchConsumer  批量消费者模型， 建议设置批量数量在 500 ~ 3000 范围内。
+     * @param <T>            发送的数据
      * @return 返回生产者，
      */
     public static <T extends ClearEvent> Producer<T> batchConsumer(Class<T> tClass, final int maxWaitSeconds, final long batchLimitSize, BatchConsumer<T> batchConsumer) {
@@ -99,8 +121,27 @@ public final class Context {
                 .optionnalProducerType(ProducerType.SINGLE)
                 .requiredDataType(tClass)
                 .requiredConsumers(maxWaitSeconds, batchLimitSize, batchConsumer)
-//                .optionnalWaitStrategy(new TimeoutBlockingWaitStrategy(timeout, units, batchConsumer))
                 .requiredRingBufferSize(65536)
+                .build();
+    }
+
+    /**
+     * 批量消费发送到队列中的数据, 当sendData调用完毕后，建议调用{@link Producer#shutdown()}关闭当前多线程处理器。
+     *
+     * @param tClass         发送到队列的数据类型
+     * @param maxWaitSeconds 秒数倒计时
+     * @param batchLimitSize 批次数量
+     * @param batchConsumer  批量消费者模型， 建议设置批量数量在 500 ~ 3000 范围内。
+     * @param ringBufferSize 环形缓冲区大小，2的幂 ，建议设置合适的值，发送量大的情况下建议大一些，可以使用65536。量小的话建议 4096,数值越大发送效率越高
+     * @param <T>            发送的数据
+     * @return 返回生产者，
+     */
+    public static <T extends ClearEvent> Producer<T> batchConsumer(Class<T> tClass, final int maxWaitSeconds, final long batchLimitSize, int ringBufferSize, BatchConsumer<T> batchConsumer) {
+        return (Producer<T>) Producer.builder()
+                .optionnalProducerType(ProducerType.SINGLE)
+                .requiredDataType(tClass)
+                .requiredConsumers(maxWaitSeconds, batchLimitSize, batchConsumer)
+                .requiredRingBufferSize(ringBufferSize)
                 .build();
     }
 
