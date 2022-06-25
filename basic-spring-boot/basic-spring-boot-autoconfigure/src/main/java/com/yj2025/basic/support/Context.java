@@ -82,7 +82,7 @@ public final class Context {
                 .optionnalProducerType(ProducerType.SINGLE)
                 .requiredDataType(tClass)
                 .requiredConsumers(consumer.cloneSelfToMulti(threadNum))
-                .requiredRingBufferSize(65536)
+                .requiredRingBufferSize(4096)
                 .build();
     }
 
@@ -121,7 +121,7 @@ public final class Context {
                 .optionnalProducerType(ProducerType.SINGLE)
                 .requiredDataType(tClass)
                 .requiredConsumers(maxWaitSeconds, batchLimitSize, batchConsumer)
-                .requiredRingBufferSize(65536)
+                .requiredRingBufferSize(4096)
                 .build();
     }
 

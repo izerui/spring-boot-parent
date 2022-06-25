@@ -101,7 +101,7 @@ public final class Producer<T extends ClearEvent> {
         /**
          * 指定RingBuffer的大小
          */
-        private int ringBufferSize = 1024 * 64;
+        private int ringBufferSize = 4096;
         private Class dataType;
         private ProducerType producerType = ProducerType.MULTI;
         private ThreadFactory threadFactory = new Consumer.ConsumerThreadFactory();
