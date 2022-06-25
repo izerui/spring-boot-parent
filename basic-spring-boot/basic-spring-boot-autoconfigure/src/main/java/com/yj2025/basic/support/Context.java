@@ -146,7 +146,7 @@ public final class Context {
     }
 
     /**
-     * 提交一批runnable方法到线程池,不等待所有执行完毕
+     * 提交一批runnable方法到线程池,不等待所有执行完毕（注意，异步方法需要手动控制事务）
      *
      * @param corePoolSize    核心线程数
      * @param maximumPoolSize 最大线程数
@@ -157,7 +157,7 @@ public final class Context {
     }
 
     /**
-     * 提交一批runnable方法到线程池,不等待所有执行完毕
+     * 提交一批runnable方法到线程池,不等待所有执行完毕（注意，异步方法需要手动控制事务）
      *
      * @param corePoolSize    核心线程数
      * @param maximumPoolSize 最大线程数
@@ -168,7 +168,7 @@ public final class Context {
     }
 
     /**
-     * 提交一批runnable方法到线程池,并等待所有执行完毕
+     * 提交一批runnable方法到线程池,并等待所有执行完毕（注意，异步方法需要手动控制事务）
      *
      * @param corePoolSize    核心线程数
      * @param maximumPoolSize 最大线程数
@@ -180,7 +180,7 @@ public final class Context {
     }
 
     /**
-     * 提交一批runnable方法到线程池,并等待所有执行完毕
+     * 提交一批runnable方法到线程池,并等待所有执行完毕（注意，异步方法需要手动控制事务）
      *
      * @param corePoolSize    核心线程数
      * @param maximumPoolSize 最大线程数
@@ -192,7 +192,7 @@ public final class Context {
     }
 
     /**
-     * 提交一批runnable方法到线程池
+     * 提交一批runnable方法到线程池（注意，异步方法需要手动控制事务）
      */
     private static void submitAsync(int corePoolSize, int maximumPoolSize, Duration timeout, Collection<Runnable> runnables) {
         ListeningExecutorService listeningExecutorService = null;
@@ -222,7 +222,7 @@ public final class Context {
 
 
     /**
-     * 提交一批callable方法到线程池,每个处理完返调用callback,不等待任务全部执行完毕
+     * 提交一批callable方法到线程池,每个处理完返调用callback,不等待任务全部执行完毕（注意，异步方法需要手动控制事务）
      *
      * @param corePoolSize    核心线程数
      * @param maximumPoolSize 最大线程数
@@ -236,7 +236,7 @@ public final class Context {
     }
 
     /**
-     * 提交一批callable方法到线程池,每个处理完返调用callback,不等待任务全部执行完毕
+     * 提交一批callable方法到线程池,每个处理完返调用callback,不等待任务全部执行完毕（注意，异步方法需要手动控制事务）
      *
      * @param corePoolSize    核心线程数
      * @param maximumPoolSize 最大线程数
@@ -249,7 +249,7 @@ public final class Context {
     }
 
     /**
-     * 提交一批callable方法到线程池,每个处理完返调用callback,并等待所有执行完毕
+     * 提交一批callable方法到线程池,每个处理完返调用callback,并等待所有执行完毕（注意，异步方法需要手动控制事务）
      *
      * @param corePoolSize    核心线程数
      * @param maximumPoolSize 最大线程数
@@ -265,7 +265,7 @@ public final class Context {
 
 
     /**
-     * 提交一批callable方法到线程池,每个处理完返调用callback,并等待所有执行完毕
+     * 提交一批callable方法到线程池,每个处理完返调用callback,并等待所有执行完毕（注意，异步方法需要手动控制事务）
      *
      * @param corePoolSize    核心线程数
      * @param maximumPoolSize 最大线程数
@@ -279,7 +279,7 @@ public final class Context {
     }
 
     /**
-     * 提交一批callable方法到线程池,每个处理完返调用callback,并等待所有执行完毕
+     * 提交一批callable方法到线程池,每个处理完返调用callback,并等待所有执行完毕（注意，异步方法需要手动控制事务）
      *
      * @param corePoolSize    核心线程数
      * @param maximumPoolSize 最大线程数
