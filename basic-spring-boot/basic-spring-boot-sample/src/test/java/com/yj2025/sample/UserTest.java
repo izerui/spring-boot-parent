@@ -77,6 +77,11 @@ public class UserTest {
     }
 
     @Test
+    public void testBatchAdd5() {
+        userService.batchAdd5();
+    }
+
+    @Test
     public void testBatchUpdate() {
         long a = System.currentTimeMillis();
         List<Long> longs = new ArrayList<>();

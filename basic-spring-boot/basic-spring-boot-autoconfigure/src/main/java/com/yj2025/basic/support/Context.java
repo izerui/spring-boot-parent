@@ -11,10 +11,14 @@ import com.yj2025.performance.Consumer;
 import com.yj2025.performance.Producer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEvent;
+import org.springframework.jdbc.core.SqlParameter;
+import org.springframework.jdbc.object.BatchSqlUpdate;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import javax.sql.DataSource;
+import java.sql.JDBCType;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -315,6 +319,44 @@ public final class Context {
                 listeningExecutorService.shutdown();
             }
         }
+    }
+
+
+    /**
+     * 创建批量sql（更新、插入）执行器
+     *
+     * @param dataSource 数据源
+     * @param tplSQL     sql
+     * @param batchSize  每批次数量
+     * @param parameters 参数声明
+     * @param consumer   调用 update执行sql
+     *                   <pre>
+     *                                     Context.batchExecuteSql(dataSource, "insert into test_user(version,create_time,code,name,email,age) values (?,?,?,?,?,?)", 1000,
+     *                                   List.of(JDBCType.NUMERIC,
+     *                                           JDBCType.TIMESTAMP,
+     *                                           JDBCType.VARCHAR,
+     *                                           JDBCType.VARCHAR,
+     *                                           JDBCType.VARCHAR,
+     *                                           JDBCType.NUMERIC),
+     *                                   batchSqlUpdate -> {
+     *                                       Arrays.stream(integers).forEach(operand -> {
+     *                                           batchSqlUpdate.update(0, new Date(), "code" + operand, "张思峰", "mail00" + operand, operand);
+     *                                       });
+     *                                   }
+     *                           );
+     *                   </pre>
+     */
+    public static void batchExecuteSql(DataSource dataSource, String tplSQL, int batchSize, List<JDBCType> parameters, java.util.function.Consumer<BatchSqlUpdate> consumer) {
+        BatchSqlUpdate batchSqlUpdate = new BatchSqlUpdate();
+        batchSqlUpdate.setDataSource(dataSource);
+        batchSqlUpdate.setSql(tplSQL);
+        batchSqlUpdate.setBatchSize(batchSize);
+        for (JDBCType parameter : parameters) {
+            batchSqlUpdate.declareParameter(new SqlParameter(parameter.getVendorTypeNumber()));
+        }
+        consumer.accept(batchSqlUpdate);
+        batchSqlUpdate.flush();
+        batchSqlUpdate.reset();
     }
 
     /**

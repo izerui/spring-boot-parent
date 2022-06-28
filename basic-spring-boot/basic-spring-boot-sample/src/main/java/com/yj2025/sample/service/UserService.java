@@ -71,4 +71,13 @@ public class UserService {
         });
         commandInvoker.execute();
     }
+
+    @Transactional
+    public void batchAdd5() {
+        System.out.println(TransactionSynchronizationManager.isActualTransactionActive());
+        CommandInvoker commandInvoker = new CommandInvoker();
+//        commandInvoker.add(new UserDeleteCmd());
+        commandInvoker.add(new UserBatchCreate5Cmd(IntStream.range(0, 20000).toArray()));
+        commandInvoker.execute();
+    }
 }
