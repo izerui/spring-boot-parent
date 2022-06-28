@@ -5,6 +5,7 @@ import com.yj2025.basic.support.Context;
 import com.yj2025.performance.BatchConsumer;
 import com.yj2025.performance.ClearEvent;
 import com.yj2025.performance.Producer;
+import com.yj2025.sample.entity.User;
 import com.yj2025.sample.service.ConditionEntity;
 import com.yj2025.sample.service.UpdateBatchExecutor;
 import com.yj2025.sample.service.UserService;
@@ -79,6 +80,19 @@ public class UserTest {
     @Test
     public void testBatchAdd5() {
         userService.batchAdd5();
+    }
+
+    @Test
+    public void testContextPagenation() {
+        Context.pagenationQuerySql(dataSource, "select * from test_user", 550,
+                (rs, rowNum) -> {
+                    User user = new User();
+                    user.setCode(rs.getString("code"));
+                    return user;
+                },
+                users -> {
+                    System.out.println(users.size());
+                });
     }
 
     @Test

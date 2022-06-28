@@ -11,6 +11,8 @@ import com.yj2025.performance.Consumer;
 import com.yj2025.performance.Producer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEvent;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.object.BatchSqlUpdate;
 import org.springframework.transaction.TransactionStatus;
@@ -327,28 +329,29 @@ public final class Context {
      *
      * @param dataSource 数据源
      * @param tplSQL     sql
-     * @param batchSize  每批次数量
      * @param parameters 参数声明
+     * @param batchSize  每批次数量
      * @param consumer   调用 update执行sql
-     *                   <pre>
-     *                                      Context.batchExecuteSql(
-     *                                                       dataSource,
-     *                                                       "insert into test_user(version,create_time,code,name,email,age) values (?,?,?,?,?,?)", 1000,
-     *                                                     List.of(JDBCType.NUMERIC,
-     *                                                             JDBCType.TIMESTAMP,
-     *                                                             JDBCType.VARCHAR,
-     *                                                             JDBCType.VARCHAR,
-     *                                                             JDBCType.VARCHAR,
-     *                                                             JDBCType.NUMERIC),
-     *                                                     batchSqlUpdate -> {
-     *                                                         Arrays.stream(integers).forEach(operand -> {
-     *                                                             batchSqlUpdate.update(0, new Date(), "code" + operand, "张思峰", "mail00" + operand, operand);
-     *                                                         });
-     *                                                     }
-     *                                             );
-     *                                     </pre>
+     *                   <code>
+     *                   Context.batchExecuteSql(
+     *                   dataSource,
+     *                   "insert into test_user(version,create_time,code,name,email,age) values (?,?,?,?,?,?)",
+     *                   List.of(JDBCType.NUMERIC,
+     *                   JDBCType.TIMESTAMP,
+     *                   JDBCType.VARCHAR,
+     *                   JDBCType.VARCHAR,
+     *                   JDBCType.VARCHAR,
+     *                   JDBCType.NUMERIC),
+     *                   1000,
+     *                   batchSqlUpdate -> {
+     *                   Arrays.stream(integers).forEach(operand -> {
+     *                   batchSqlUpdate.update(0, new Date(), "code" + operand, "张思峰", "mail00" + operand, operand);
+     *                   });
+     *                   }
+     *                   );
+     *                   </code>
      */
-    public static void batchExecuteSql(DataSource dataSource, String tplSQL, int batchSize, List<JDBCType> parameters, java.util.function.Consumer<BatchSqlUpdate> consumer) {
+    public static void batchExecuteSql(DataSource dataSource, String tplSQL, List<JDBCType> parameters, int batchSize, java.util.function.Consumer<BatchSqlUpdate> consumer) {
         BatchSqlUpdate batchSqlUpdate = new BatchSqlUpdate();
         batchSqlUpdate.setDataSource(dataSource);
         batchSqlUpdate.setSql(tplSQL);
@@ -359,6 +362,45 @@ public final class Context {
         consumer.accept(batchSqlUpdate);
         batchSqlUpdate.flush();
         batchSqlUpdate.reset();
+    }
+
+    /**
+     * 将查询语句进行分页包装查询
+     *
+     * @param dataSource 数据源
+     * @param querySQL   查询语句
+     * @param pageSize   每页记录数
+     * @param rowMapper  行转换器
+     * @param <T>
+     */
+    public static <T> void pagenationQuerySql(DataSource dataSource, String querySQL, int pageSize, RowMapper<T> rowMapper) {
+        pagenationQuerySql(dataSource, querySQL, pageSize, rowMapper, null);
+    }
+
+    /**
+     * 将查询语句进行分页包装查询
+     *
+     * @param dataSource             数据源
+     * @param querySQL               查询语句
+     * @param pageSize               每页记录数
+     * @param rowMapper              行转换器
+     * @param perPageResultsConsumer 每页结果合集
+     * @param <T>
+     */
+    public static <T> void pagenationQuerySql(DataSource dataSource, String querySQL, int pageSize, RowMapper<T> rowMapper, java.util.function.Consumer<List<T>> perPageResultsConsumer) {
+        String sql = querySQL + " limit ? offset ?";
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+        Integer page = 1;
+        while (true) {
+            List<T> results = jdbcTemplate.query(sql, rowMapper, pageSize, (page - 1) * pageSize);
+            if (results.isEmpty()) {
+                break;
+            }
+            if (perPageResultsConsumer != null) {
+                perPageResultsConsumer.accept(results);
+            }
+            page++;
+        }
     }
 
     /**
