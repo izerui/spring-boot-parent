@@ -7,6 +7,7 @@ import com.lmax.disruptor.WaitStrategy;
 import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.dsl.ProducerType;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.DisposableBean;
 
 import java.util.Collection;
 import java.util.concurrent.ThreadFactory;
@@ -19,7 +20,7 @@ import java.util.concurrent.ThreadFactory;
  * @date 2022/5/23
  */
 @Slf4j
-public final class Producer<T extends ClearEvent> {
+public final class Producer<T extends ClearEvent> implements DisposableBean {
 
     private final Builder builder;
     private transient Disruptor<T> disruptor;
@@ -95,6 +96,11 @@ public final class Producer<T extends ClearEvent> {
 
     public static Builder builder() {
         return new Builder();
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        shutdown();
     }
 
     public static class Builder {
