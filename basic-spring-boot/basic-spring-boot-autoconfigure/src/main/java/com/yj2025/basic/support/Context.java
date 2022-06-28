@@ -331,20 +331,22 @@ public final class Context {
      * @param parameters 参数声明
      * @param consumer   调用 update执行sql
      *                   <pre>
-     *                                     Context.batchExecuteSql(dataSource, "insert into test_user(version,create_time,code,name,email,age) values (?,?,?,?,?,?)", 1000,
-     *                                   List.of(JDBCType.NUMERIC,
-     *                                           JDBCType.TIMESTAMP,
-     *                                           JDBCType.VARCHAR,
-     *                                           JDBCType.VARCHAR,
-     *                                           JDBCType.VARCHAR,
-     *                                           JDBCType.NUMERIC),
-     *                                   batchSqlUpdate -> {
-     *                                       Arrays.stream(integers).forEach(operand -> {
-     *                                           batchSqlUpdate.update(0, new Date(), "code" + operand, "张思峰", "mail00" + operand, operand);
-     *                                       });
-     *                                   }
-     *                           );
-     *                   </pre>
+     *                                      Context.batchExecuteSql(
+     *                                                       dataSource,
+     *                                                       "insert into test_user(version,create_time,code,name,email,age) values (?,?,?,?,?,?)", 1000,
+     *                                                     List.of(JDBCType.NUMERIC,
+     *                                                             JDBCType.TIMESTAMP,
+     *                                                             JDBCType.VARCHAR,
+     *                                                             JDBCType.VARCHAR,
+     *                                                             JDBCType.VARCHAR,
+     *                                                             JDBCType.NUMERIC),
+     *                                                     batchSqlUpdate -> {
+     *                                                         Arrays.stream(integers).forEach(operand -> {
+     *                                                             batchSqlUpdate.update(0, new Date(), "code" + operand, "张思峰", "mail00" + operand, operand);
+     *                                                         });
+     *                                                     }
+     *                                             );
+     *                                     </pre>
      */
     public static void batchExecuteSql(DataSource dataSource, String tplSQL, int batchSize, List<JDBCType> parameters, java.util.function.Consumer<BatchSqlUpdate> consumer) {
         BatchSqlUpdate batchSqlUpdate = new BatchSqlUpdate();
