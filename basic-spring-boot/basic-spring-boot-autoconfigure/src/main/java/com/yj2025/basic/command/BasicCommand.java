@@ -47,9 +47,9 @@ public abstract class BasicCommand<R> implements Command<R> {
         } finally {
             executeTimeMillis = System.currentTimeMillis() - startTime;
             if (executeTimeMillis > getLimitWarnningTimeMillis()) {
-                logger.warn("警告：{} 耗时: {} (ms)", this.getClass().getName(), executeTimeMillis);
+                logger.warn("警告：{} 耗时: {} (ms)", this.getClass().getSimpleName(), executeTimeMillis);
             } else {
-                logger.debug("{} 耗时: {} (ms)", this.getClass().getName(), executeTimeMillis);
+                logger.debug("{} 耗时: {} (ms)", this.getClass().getSimpleName(), executeTimeMillis);
             }
         }
         return r;
