@@ -325,43 +325,24 @@ public final class Context {
 
 
     /**
-     * 创建批量sql（更新、插入）执行器
+     * 创建批量sql（更新、插入）执行器, 数据update执行完毕后，调用flush、最好也调用reset。
      *
      * @param dataSource 数据源
      * @param tplSQL     sql
      * @param parameters 参数声明
      * @param batchSize  每批次数量
      * @param consumer   调用 update执行sql
-     *                   <code>
-     *                   Context.batchExecuteSql(
-     *                   dataSource,
-     *                   "insert into test_user(version,create_time,code,name,email,age) values (?,?,?,?,?,?)",
-     *                   List.of(JDBCType.NUMERIC,
-     *                   JDBCType.TIMESTAMP,
-     *                   JDBCType.VARCHAR,
-     *                   JDBCType.VARCHAR,
-     *                   JDBCType.VARCHAR,
-     *                   JDBCType.NUMERIC),
-     *                   1000,
-     *                   batchSqlUpdate -> {
-     *                   Arrays.stream(integers).forEach(operand -> {
-     *                   batchSqlUpdate.update(0, new Date(), "code" + operand, "张思峰", "mail00" + operand, operand);
-     *                   });
-     *                   }
-     *                   );
-     *                   </code>
      */
-    public static void batchExecuteSql(DataSource dataSource, String tplSQL, List<JDBCType> parameters, int batchSize, java.util.function.Consumer<BatchSqlUpdate> consumer) {
+    public static BatchSqlUpdate batchSqlExecutor(DataSource dataSource, String tplSQL, List<JDBCType> parameters, int batchSize) {
         BatchSqlUpdate batchSqlUpdate = new BatchSqlUpdate();
         batchSqlUpdate.setDataSource(dataSource);
         batchSqlUpdate.setSql(tplSQL);
-        batchSqlUpdate.setBatchSize(batchSize);
+        batchSqlUpdate.setBatchSize(batchSize
+        );
         for (JDBCType parameter : parameters) {
             batchSqlUpdate.declareParameter(new SqlParameter(parameter.getVendorTypeNumber()));
         }
-        consumer.accept(batchSqlUpdate);
-        batchSqlUpdate.flush();
-        batchSqlUpdate.reset();
+        return batchSqlUpdate;
     }
 
     /**
@@ -373,8 +354,8 @@ public final class Context {
      * @param rowMapper  行转换器
      * @param <T>
      */
-    public static <T> void pagenationQuerySql(DataSource dataSource, String querySQL, int pageSize, RowMapper<T> rowMapper) {
-        pagenationQuerySql(dataSource, querySQL, pageSize, rowMapper, null);
+    public static <T> void pagenationQueryWrap(DataSource dataSource, String querySQL, int pageSize, RowMapper<T> rowMapper) {
+        pagenationQueryWrap(dataSource, querySQL, pageSize, rowMapper, null);
     }
 
     /**
@@ -387,7 +368,7 @@ public final class Context {
      * @param perPageResultsConsumer 每页结果合集
      * @param <T>
      */
-    public static <T> void pagenationQuerySql(DataSource dataSource, String querySQL, int pageSize, RowMapper<T> rowMapper, java.util.function.Consumer<List<T>> perPageResultsConsumer) {
+    public static <T> void pagenationQueryWrap(DataSource dataSource, String querySQL, int pageSize, RowMapper<T> rowMapper, java.util.function.Consumer<List<T>> perPageResultsConsumer) {
         String sql = querySQL + " limit ? offset ?";
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
         Integer page = 1;

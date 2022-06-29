@@ -5,7 +5,6 @@ import com.yj2025.basic.support.Context;
 import com.yj2025.performance.BatchConsumer;
 import com.yj2025.performance.ClearEvent;
 import com.yj2025.performance.Producer;
-import com.yj2025.sample.entity.User;
 import com.yj2025.sample.service.ConditionEntity;
 import com.yj2025.sample.service.UpdateBatchExecutor;
 import com.yj2025.sample.service.UserService;
@@ -17,6 +16,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.datasource.DataSourceUtils;
+import org.springframework.jdbc.object.BatchSqlUpdate;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +24,7 @@ import org.springframework.util.Assert;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
+import java.sql.JDBCType;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.time.Duration;
@@ -84,14 +85,13 @@ public class UserTest {
 
     @Test
     public void testContextPagenation() {
-        Context.pagenationQuerySql(dataSource, "select * from test_user", 550,
-                (rs, rowNum) -> {
-                    User user = new User();
-                    user.setCode(rs.getString("code"));
-                    return user;
-                },
-                users -> {
-                    System.out.println(users.size());
+        BatchSqlUpdate batchSqlUpdate = Context.batchSqlExecutor(dataSource, "update test_user set age = 18 where id = ?", List.of(JDBCType.NUMERIC), 500);
+        Context.pagenationQueryWrap(dataSource, "select id from test_user", 550,
+                (rs, rowNum) -> rs.getLong("id"),
+                ids -> {
+                    for (Long id : ids) {
+                        batchSqlUpdate.update(id);
+                    }
                 });
     }
 

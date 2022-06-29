@@ -2,6 +2,7 @@ package com.yj2025.sample.command;
 
 import com.yj2025.basic.command.BasicCommand;
 import com.yj2025.basic.support.Context;
+import org.springframework.jdbc.object.BatchSqlUpdate;
 
 import javax.sql.DataSource;
 import java.sql.JDBCType;
@@ -20,7 +21,7 @@ public class UserBatchCreate5Cmd extends BasicCommand<Void> {
     @Override
     protected Void doExecute() throws Exception {
         DataSource dataSource = Context.getBean(DataSource.class);
-        Context.batchExecuteSql(
+        BatchSqlUpdate batchSqlUpdate = Context.batchSqlExecutor(
                 dataSource,
                 "insert into test_user(version,create_time,code,name,email,age) values (?,?,?,?,?,?)",
                 List.of(JDBCType.NUMERIC,
@@ -29,13 +30,13 @@ public class UserBatchCreate5Cmd extends BasicCommand<Void> {
                         JDBCType.VARCHAR,
                         JDBCType.VARCHAR,
                         JDBCType.NUMERIC),
-                1000,
-                batchSqlUpdate -> {
-                    Arrays.stream(integers).forEach(operand -> {
-                        batchSqlUpdate.update(0, new Date(), "code" + operand, "张思峰", "mail00" + operand, operand);
-                    });
-                }
+                1000
         );
+        Arrays.stream(integers).forEach(operand -> {
+            batchSqlUpdate.update(0, new Date(), "code" + operand, "张思峰", "mail00" + operand, operand);
+        });
+        batchSqlUpdate.flush();
+        batchSqlUpdate.reset();
         return null;
     }
 }
