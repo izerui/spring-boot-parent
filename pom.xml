@@ -27,6 +27,7 @@
         <module>mongo-transaction-spring-boot</module>
         <module>proxy-spring-boot</module>
         <module>basic-spring-boot</module>
+        <module>data-jdbc-spring-boot</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
