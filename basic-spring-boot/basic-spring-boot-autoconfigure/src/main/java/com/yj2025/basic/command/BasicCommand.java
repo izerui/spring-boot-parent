@@ -1,10 +1,12 @@
 package com.yj2025.basic.command;
 
+import com.yj2025.basic.support.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * 所有command命令集成该基类
+ *
  * @param <R> 返回的结果类型
  */
 public abstract class BasicCommand<R> implements Command<R> {
@@ -25,6 +27,7 @@ public abstract class BasicCommand<R> implements Command<R> {
 
     /**
      * 执行
+     *
      * @return
      */
     @Override
@@ -68,6 +71,7 @@ public abstract class BasicCommand<R> implements Command<R> {
 
     /**
      * 是否执行过
+     *
      * @return
      */
     @Override
@@ -77,6 +81,7 @@ public abstract class BasicCommand<R> implements Command<R> {
 
     /**
      * 获取执行的耗时（毫秒）
+     *
      * @return
      */
     @Override
@@ -86,10 +91,22 @@ public abstract class BasicCommand<R> implements Command<R> {
 
     /**
      * 超过该阈值限制的时间会告警
+     *
      * @return
      */
     protected long getLimitWarnningTimeMillis() {
         return 500L;
+    }
+
+    /**
+     * 获取bean
+     *
+     * @param beanClass
+     * @param <T>
+     * @return
+     */
+    protected <T> T $(Class<T> beanClass) {
+        return Context.getBean(beanClass);
     }
 
 }
