@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.common.util.concurrent.*;
 import com.lmax.disruptor.dsl.ProducerType;
+import com.yj2025.basic.utils.ExcelMapper;
 import com.yj2025.performance.BatchConsumer;
 import com.yj2025.performance.ClearEvent;
 import com.yj2025.performance.Consumer;
@@ -20,6 +21,8 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.sql.DataSource;
+import java.io.File;
+import java.io.InputStream;
 import java.sql.JDBCType;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -323,7 +326,6 @@ public final class Context {
         }
     }
 
-
     /**
      * 创建批量sql（更新、插入）执行器, 数据update执行完毕后，调用flush、最好也调用reset。
      *
@@ -331,7 +333,6 @@ public final class Context {
      * @param tplSQL     sql
      * @param parameters 参数声明
      * @param batchSize  每批次数量
-     * @param consumer   调用 update执行sql
      */
     public static BatchSqlUpdate batchSqlExecutor(DataSource dataSource, String tplSQL, List<JDBCType> parameters, int batchSize) {
         BatchSqlUpdate batchSqlUpdate = new BatchSqlUpdate();
@@ -382,6 +383,36 @@ public final class Context {
             }
             page++;
         }
+    }
+
+    /**
+     * 创建excel读取器
+     *
+     * @param excelFile
+     * @return
+     */
+    public static ExcelMapper excelMapper(File excelFile) {
+        return new ExcelMapper(excelFile);
+    }
+
+    /**
+     * 创建excel读取器
+     *
+     * @param excelBytes
+     * @return
+     */
+    public static ExcelMapper excelMapper(byte[] excelBytes) {
+        return new ExcelMapper(excelBytes);
+    }
+
+    /**
+     * 创建excel读取器
+     *
+     * @param inputStream
+     * @return
+     */
+    public static ExcelMapper excelMapper(InputStream inputStream) {
+        return new ExcelMapper(inputStream);
     }
 
     /**

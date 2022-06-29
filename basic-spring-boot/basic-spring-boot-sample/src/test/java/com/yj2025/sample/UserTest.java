@@ -93,6 +93,8 @@ public class UserTest {
                         batchSqlUpdate.update(id);
                     }
                 });
+        batchSqlUpdate.flush();
+        batchSqlUpdate.reset();
     }
 
     @Test
