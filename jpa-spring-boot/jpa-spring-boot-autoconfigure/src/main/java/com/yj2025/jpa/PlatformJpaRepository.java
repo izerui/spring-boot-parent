@@ -17,6 +17,10 @@ import java.util.List;
 @NoRepositoryBean
 public interface PlatformJpaRepository<T, ID extends Serializable> extends JpaRepository<T, ID>, JpaSpecificationExecutor<T> {
 
+    void batchInsert(Iterable<T> inserts);
+
+    void batchUpdate(Iterable<T> updates);
+
     T findOne(ID id);
 
     T findOne(Conditions conditions);

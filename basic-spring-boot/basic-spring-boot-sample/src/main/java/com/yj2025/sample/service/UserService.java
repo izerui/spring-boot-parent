@@ -1,12 +1,15 @@
 package com.yj2025.sample.service;
 
+import com.google.common.base.Stopwatch;
 import com.yj2025.basic.command.CommandInvoker;
 import com.yj2025.sample.command.*;
 import com.yj2025.sample.entity.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.springframework.util.StopWatch;
 
+import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
 @Service
@@ -33,7 +36,7 @@ public class UserService {
         System.out.println(TransactionSynchronizationManager.isActualTransactionActive());
         CommandInvoker commandInvoker = new CommandInvoker();
         commandInvoker.add(new UserDeleteCmd());
-        commandInvoker.add(new UserBatchCreateCmd(IntStream.range(0, 20000).toArray()), users -> {
+        commandInvoker.add(new UserBatchCreateCmd(IntStream.range(0, 5000).toArray()), users -> {
             for (User user : users) {
                 System.out.println(user.getId());
             }
@@ -45,18 +48,22 @@ public class UserService {
     public void batchAdd2() {
         System.out.println(TransactionSynchronizationManager.isActualTransactionActive());
         CommandInvoker commandInvoker = new CommandInvoker();
-        commandInvoker.add(new UserDeleteCmd());
-        commandInvoker.add(new UserBatchCreate2Cmd(IntStream.range(0, 20000).toArray()));
+//        commandInvoker.add(new UserDeleteCmd());
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        commandInvoker.add(new UserBatchCreate2Cmd(IntStream.range(0, 5000).toArray()));
         commandInvoker.execute();
+        System.out.println("耗时: " + stopwatch.elapsed(TimeUnit.MILLISECONDS));
     }
 
     @Transactional
     public void batchAdd3() {
         System.out.println(TransactionSynchronizationManager.isActualTransactionActive());
         CommandInvoker commandInvoker = new CommandInvoker();
-        commandInvoker.add(new UserDeleteCmd());
-        commandInvoker.add(new UserBatchCreate3Cmd(IntStream.range(0, 20000).toArray()));
+//        commandInvoker.add(new UserDeleteCmd());
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        commandInvoker.add(new UserBatchCreate3Cmd(IntStream.range(0, 5000).toArray()));
         commandInvoker.execute();
+        System.out.println("耗时: " + stopwatch.elapsed(TimeUnit.MILLISECONDS));
     }
 
     @Transactional

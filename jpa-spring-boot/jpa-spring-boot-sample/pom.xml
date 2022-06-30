@@ -34,6 +34,10 @@
             <artifactId>mysql-connector-java</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.yj2025</groupId>
+            <artifactId>basic-spring-boot-starter</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

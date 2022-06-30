@@ -6,6 +6,10 @@ import com.yj2025.performance.Consumer;
 import com.yj2025.performance.Producer;
 import com.yj2025.sample.entity.User;
 import com.yj2025.sample.repository.UserRepository;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
+
+import javax.sql.DataSource;
 
 public class UserBatchCreate3Cmd extends BasicCommand<Void> {
 
@@ -17,11 +21,13 @@ public class UserBatchCreate3Cmd extends BasicCommand<Void> {
 
     @Override
     protected Void doExecute() throws Exception {
-        UserRepository userRepository = Context.getBean(UserRepository.class);
         Producer<User> producer = Context.multiConsumer(User.class, 5, new Consumer<User>() {
             @Override
             protected void handlerEvent(User event) throws Exception {
-                userRepository.save(event);
+                SimpleJdbcInsert insert = new SimpleJdbcInsert($(DataSource.class));
+                insert.setTableName("test_user");
+                insert.execute(event.toMap());
+                System.out.println(event.getName());
             }
         });
 

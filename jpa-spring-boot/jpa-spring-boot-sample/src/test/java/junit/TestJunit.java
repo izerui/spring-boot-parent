@@ -1,7 +1,8 @@
 package junit;
 
+import com.google.common.base.Stopwatch;
+import com.yj2025.basic.support.Context;
 import com.yj2025.jpa.Application;
-import com.yj2025.jpa.PlatformJpaRepository;
 import com.yj2025.jpa.entity.Abcd;
 import com.yj2025.jpa.entity.User;
 import com.yj2025.jpa.entity.UserDistinct;
@@ -15,14 +16,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.jdbc.object.BatchSqlUpdate;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.sql.DataSource;
+import java.sql.JDBCType;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Transactional
 @Rollback(value = false)
@@ -34,14 +40,16 @@ public class TestJunit {
     UserRepository userRepository;
     @Autowired
     AbcdRepository abcdRepository;
-
     @Autowired
-    PlatformJpaRepository<User, Long> userLongPlatformJpaRepository;
-
+    private DataSource dataSource;
 
     @Test
     public void lis22t() {
-        List<User> all = userLongPlatformJpaRepository.findAll();
+        List<User> all = userRepository.findAll();
+        for (User user : all) {
+            user.setAge(18);
+        }
+        userRepository.batchUpdate(all);
         System.out.println(all);
     }
 
@@ -60,7 +68,7 @@ public class TestJunit {
 
     /**
      * PHASE 1 : Parse the HQL into an AST. 解析 hql
-     * {@link org.hibernate.hql.internal.ast.QueryTranslatorImpl#doCompile(Map, boolean, String)}
+     * {@link org.hibernate.hql.internal.ast.QueryTranslatorImpl##doCompile(Map, boolean, String)}
      */
     @Test
     public void testConditions() {
@@ -113,6 +121,74 @@ public class TestJunit {
     public void testGroupLimit() {
         List<Map> maps = userRepository.groupAll(Lists.newArrayList("code"), Lists.newArrayList("code"), Map.class, 3);
         System.out.println(maps);
+    }
+
+    @Test
+    public void batchInsert() {
+        Stopwatch watch = Stopwatch.createStarted();
+        List<User> users = IntStream.range(0, 5000).mapToObj(value -> {
+            User user = new User();
+            user.setVersion(0);
+            user.setCreateTime(new Date());
+            user.setCode("code" + value);
+            user.setName("name" + value);
+            user.setEmail("email" + value);
+            user.setAge(20);
+            return user;
+        }).collect(Collectors.toList());
+        userRepository.batchInsert(users);
+        System.out.println("耗时: " + watch.elapsed(TimeUnit.MILLISECONDS));
+    }
+
+    @Test
+    public void batchInsert2() {
+        Stopwatch watch = Stopwatch.createStarted();
+        BatchSqlUpdate batchSqlExecutor = Context.batchUpdate(
+                dataSource,
+                "insert into test_user(version, create_time, code, name, email, age) values (?,?,?,?,?,?)",
+                List.of(JDBCType.NUMERIC, JDBCType.TIMESTAMP, JDBCType.VARCHAR, JDBCType.VARCHAR, JDBCType.VARCHAR, JDBCType.NUMERIC),
+                500);
+        IntStream.range(0, 5000).forEach(value -> {
+            batchSqlExecutor.update(0, new Date(), "code" + value, "name" + value, "email" + value, 20);
+        });
+        batchSqlExecutor.flush();
+        batchSqlExecutor.reset();
+        System.out.println("耗时: " + watch.elapsed(TimeUnit.MILLISECONDS));
+    }
+
+    @Test
+    public void batchInsert3() {
+        Stopwatch watch = Stopwatch.createStarted();
+        List<User> users = IntStream.range(0, 5000).mapToObj(value -> {
+            User user = new User();
+            user.setVersion(0);
+            user.setCreateTime(new Date());
+            user.setCode("code" + value);
+            user.setName("name" + value);
+            user.setEmail("email" + value);
+            user.setAge(20);
+            return user;
+        }).collect(Collectors.toList());
+        userRepository.saveAll(users);
+        System.out.println("耗时: " + watch.elapsed(TimeUnit.MILLISECONDS));
+    }
+
+    @Test
+    public void batchInsert4() {
+        Stopwatch watch = Stopwatch.createStarted();
+        List<User> users = IntStream.range(0, 5000).mapToObj(value -> {
+            User user = new User();
+            user.setVersion(0);
+            user.setCreateTime(new Date());
+            user.setCode("code" + value);
+            user.setName("name" + value);
+            user.setEmail("email" + value);
+            user.setAge(29);
+            return user;
+        }).collect(Collectors.toList());
+        int[] ints = Context.batchUpdate(dataSource, "insert into test_user(version, create_time, code, name, email, age) values (:version,:createTime,:code,:name,:email,:age)", users);
+        System.out.println(ints);
+        System.out.println("耗时: " + watch.elapsed(TimeUnit.MILLISECONDS));
     }
 
     public static void main(String[] args) {

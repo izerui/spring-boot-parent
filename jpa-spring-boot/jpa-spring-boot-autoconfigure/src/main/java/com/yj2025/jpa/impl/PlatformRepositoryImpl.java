@@ -60,6 +60,24 @@ public class PlatformRepositoryImpl<T, ID extends Serializable> extends SimpleJp
     }
 
     @Override
+    public void batchInsert(Iterable<T> inserts) {
+        for (T t : inserts) {
+            entityManager.persist(t);
+        }
+        entityManager.flush();
+        entityManager.clear();
+    }
+
+    @Override
+    public void batchUpdate(Iterable<T> updates) {
+        for (T t : updates) {
+            entityManager.merge(t);
+        }
+        entityManager.flush();
+        entityManager.clear();
+    }
+
+    @Override
     public T findOne(ID id) {
         Optional<T> optional = this.findById(id);
         if (optional.isPresent()) {

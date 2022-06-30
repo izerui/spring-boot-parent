@@ -8,6 +8,7 @@ import com.yj2025.sample.entity.User;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.EntityManager;
+import javax.sql.DataSource;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -22,17 +23,12 @@ public class UserBatchCreate2Cmd extends BasicCommand<Void> {
 
     @Override
     protected Void doExecute() throws Exception {
-        EntityManager entityManager = $(EntityManager.class);
-        Producer<User> producer = Context.batchConsumer(User.class, 2, 500, new BatchConsumer<User>() {
+        Producer<User> producer = Context.batchConsumer(User.class, 2, 1000, new BatchConsumer<User>() {
             @Override
             protected void handlerEvent(List<User> correlationData, long sequence) throws Exception {
                 logger.info("批次执行数量： {}", correlationData.size());
                 Context.executeTransaction(status -> {
-                    for (User user : correlationData) {
-                        entityManager.persist(user);
-                    }
-                    entityManager.flush();
-                    entityManager.clear();
+                    Context.batchUpdate($(DataSource.class), "insert into test_user(version, create_time, code, name, email, age) values (:version,:createTime,:code,:name,:email,:age)", correlationData);
                 });
             }
         });
@@ -43,7 +39,7 @@ public class UserBatchCreate2Cmd extends BasicCommand<Void> {
                 user.setName("张三丰");
                 user.setEmail("张三丰@qq.com");
             });
-            Thread.sleep(100);
+//            Thread.sleep(100);
         }
         log.info("发送个数：{}", integers.length);
         producer.shutdown();

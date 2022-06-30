@@ -5,6 +5,8 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 //用户
 @Data
@@ -32,5 +34,15 @@ public class User implements ClearEvent {
         this.setName(null);
         this.setEmail(null);
         this.setAge(null);
+    }
+
+    public Map<String, ?> toMap() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("version", version);
+        map.put("create_time", createTime);
+        map.put("code", code);
+        map.put("name", name);
+        map.put("email", email);
+        return map;
     }
 }

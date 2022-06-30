@@ -10,29 +10,31 @@ import com.yj2025.performance.BatchConsumer;
 import com.yj2025.performance.ClearEvent;
 import com.yj2025.performance.Consumer;
 import com.yj2025.performance.Producer;
+import org.springframework.beans.BeanUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SqlParameter;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.object.BatchSqlUpdate;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.util.ReflectionUtils;
 
 import javax.sql.DataSource;
+import java.beans.PropertyDescriptor;
 import java.io.File;
 import java.io.InputStream;
 import java.sql.JDBCType;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public final class Context {
 
@@ -91,7 +93,7 @@ public final class Context {
                 .optionnalProducerType(ProducerType.SINGLE)
                 .requiredDataType(tClass)
                 .requiredConsumers(consumer.cloneSelfToMulti(threadNum))
-                .requiredRingBufferSize(4096)
+                .requiredRingBufferSize(1024 * 64)
                 .build();
     }
 
@@ -130,7 +132,7 @@ public final class Context {
                 .optionnalProducerType(ProducerType.SINGLE)
                 .requiredDataType(tClass)
                 .requiredConsumers(maxWaitSeconds, batchLimitSize, batchConsumer)
-                .requiredRingBufferSize(4096)
+                    .requiredRingBufferSize(1024 * 64)
                 .build();
     }
 
@@ -330,14 +332,14 @@ public final class Context {
      * 创建批量sql（更新、插入）执行器, 数据update执行完毕后，调用flush、最好也调用reset。
      *
      * @param dataSource 数据源
-     * @param tplSQL     sql
+     * @param placeSQL   占位符SQL
      * @param parameters 参数声明
      * @param batchSize  每批次数量
      */
-    public static BatchSqlUpdate batchSqlExecutor(DataSource dataSource, String tplSQL, List<JDBCType> parameters, int batchSize) {
+    public static BatchSqlUpdate batchUpdate(DataSource dataSource, String placeSQL, List<JDBCType> parameters, int batchSize) {
         BatchSqlUpdate batchSqlUpdate = new BatchSqlUpdate();
         batchSqlUpdate.setDataSource(dataSource);
-        batchSqlUpdate.setSql(tplSQL);
+        batchSqlUpdate.setSql(placeSQL);
         batchSqlUpdate.setBatchSize(batchSize
         );
         for (JDBCType parameter : parameters) {
@@ -347,7 +349,52 @@ public final class Context {
     }
 
     /**
-     * 将查询语句进行分页包装查询
+     * 批量执行命名SQL， 使用 :name , :code 之类的命名参数
+     *
+     * @param dataSource  数据源
+     * @param namedSQL    命名sql
+     * @param batchValues 批次值
+     */
+    public static int[] batchUpdate(DataSource dataSource, String namedSQL, Map<String, ?>[] batchValues) {
+        NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+        return namedParameterJdbcTemplate.batchUpdate(namedSQL, batchValues);
+    }
+
+    /**
+     * 批量执行命名SQL， 使用 :name , :code 之类的命名参数
+     *
+     * @param dataSource  数据源
+     * @param namedSQL    命名sql
+     * @param batchValues 批次值
+     */
+    public static <T> int[] batchUpdate(DataSource dataSource, String namedSQL, Collection<T> batchValues) {
+        AtomicInteger it = new AtomicInteger(0);
+        Map<String, ?>[] batchMaps = new HashMap[batchValues.size()];
+        for (Object batchValue : batchValues) {
+            if (batchValue instanceof Map) {
+                batchMaps[it.getAndIncrement()] = (Map<String, ?>) batchValue;
+            } else {
+                Map<String, Object> map = new HashMap<>();
+                PropertyDescriptor[] propertyDescriptors = BeanUtils.getPropertyDescriptors(batchValue.getClass());
+                for (PropertyDescriptor pd : propertyDescriptors) {
+                    if (pd.getReadMethod() != null) {
+                        String originName = pd.getName();
+//                        String camelName = pd.getName();
+//                        String underscoreName = CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, pd.getName());
+                        Object value = ReflectionUtils.invokeMethod(pd.getReadMethod(), batchValue);
+//                        map.put(camelName, value);
+                        map.put(originName, value);
+                    }
+                }
+                batchMaps[it.getAndIncrement()] = map;
+            }
+        }
+        NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+        return namedParameterJdbcTemplate.batchUpdate(namedSQL, batchMaps);
+    }
+
+    /**
+     * 将查询语句分批次查询，直到所有满足条件的数据都查询完
      *
      * @param dataSource 数据源
      * @param querySQL   查询语句

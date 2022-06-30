@@ -21,7 +21,7 @@ public class UserBatchCreate5Cmd extends BasicCommand<Void> {
     @Override
     protected Void doExecute() throws Exception {
         DataSource dataSource = Context.getBean(DataSource.class);
-        BatchSqlUpdate batchSqlUpdate = Context.batchSqlExecutor(
+        BatchSqlUpdate batchSqlUpdate = Context.batchUpdate(
                 dataSource,
                 "insert into test_user(version,create_time,code,name,email,age) values (?,?,?,?,?,?)",
                 List.of(JDBCType.NUMERIC,

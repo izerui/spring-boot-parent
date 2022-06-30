@@ -85,7 +85,7 @@ public class UserTest {
 
     @Test
     public void testContextPagenation() {
-        BatchSqlUpdate batchSqlUpdate = Context.batchSqlExecutor(dataSource, "update test_user set age = 18 where id = ?", List.of(JDBCType.NUMERIC), 500);
+        BatchSqlUpdate batchSqlUpdate = Context.batchUpdate(dataSource, "update test_user set age = 18 where id = ?", List.of(JDBCType.NUMERIC), 500);
         Context.pagenationQueryWrap(dataSource, "select id from test_user", 550,
                 (rs, rowNum) -> rs.getLong("id"),
                 ids -> {
