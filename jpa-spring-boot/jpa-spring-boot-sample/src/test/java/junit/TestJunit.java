@@ -191,6 +191,24 @@ public class TestJunit {
         System.out.println("耗时: " + watch.elapsed(TimeUnit.MILLISECONDS));
     }
 
+    @Test
+    public void batchInsert5() {
+        Stopwatch watch = Stopwatch.createStarted();
+        List<User> users = IntStream.range(0, 5000).mapToObj(value -> {
+            User user = new User();
+            user.setVersion(0);
+            user.setCreateTime(new Date());
+            user.setCode("code" + value);
+            user.setName("name" + value);
+            user.setEmail("email" + value);
+            user.setAge(29);
+            return user;
+        }).collect(Collectors.toList());
+        int[] ints = Context.batchInsert(dataSource, "test_user", users);
+        System.out.println(ints);
+        System.out.println("耗时: " + watch.elapsed(TimeUnit.MILLISECONDS));
+    }
+
     public static void main(String[] args) {
         Conditions conditions = Conditions.where("a").is(1)
                 .and("b").is(2)

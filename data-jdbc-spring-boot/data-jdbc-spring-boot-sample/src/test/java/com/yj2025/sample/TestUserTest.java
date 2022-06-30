@@ -1,6 +1,7 @@
 package com.yj2025.sample;
 
 import com.google.common.base.Stopwatch;
+import com.querydsl.core.types.Predicate;
 import com.sun.net.httpserver.Headers;
 import com.yj2025.sample.entity.TestUser;
 import com.yj2025.sample.repository.TestUserRepository;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.test.annotation.Rollback;
@@ -85,6 +87,11 @@ public class TestUserTest {
         jdbcTemplate.batchUpdate("insert into test_user(version, create_time, code, name, email, age) values (:version,:create_time,:code,:name,:email,:age)",
                 users.toArray(new HashMap[users.size()]));
         System.out.println("耗时: " + watch.elapsed(TimeUnit.MILLISECONDS));
+    }
+
+    @Test
+    public void testFindByAge() {
+//        System.out.println(byAge);
     }
 
 }

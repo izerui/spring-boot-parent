@@ -3,6 +3,7 @@ package com.yj2025.basic.support;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.google.common.base.CaseFormat;
 import com.google.common.util.concurrent.*;
 import com.lmax.disruptor.dsl.ProducerType;
 import com.yj2025.basic.utils.ExcelMapper;
@@ -17,6 +18,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.object.BatchSqlUpdate;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
@@ -132,7 +134,7 @@ public final class Context {
                 .optionnalProducerType(ProducerType.SINGLE)
                 .requiredDataType(tClass)
                 .requiredConsumers(maxWaitSeconds, batchLimitSize, batchConsumer)
-                    .requiredRingBufferSize(1024 * 64)
+                .requiredRingBufferSize(1024 * 64)
                 .build();
     }
 
@@ -391,6 +393,38 @@ public final class Context {
         }
         NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
         return namedParameterJdbcTemplate.batchUpdate(namedSQL, batchMaps);
+    }
+
+    /**
+     * 批量插入数据库,性能不高，建议使用 {@link #batchUpdate}
+     *
+     * @param dataSource  数据源
+     * @param tablename   表名
+     * @param batchValues 批次数据
+     * @param <T>
+     */
+    public static <T> int[] batchInsert(DataSource dataSource, String tablename, Collection<T> batchValues) {
+        AtomicInteger it = new AtomicInteger(0);
+        Map<String, ?>[] batchMaps = new HashMap[batchValues.size()];
+        for (T batchValue : batchValues) {
+            if (batchValue instanceof Map) {
+                batchMaps[it.getAndIncrement()] = (Map<String, ?>) batchValue;
+            } else {
+                Map<String, Object> map = new HashMap<>();
+                PropertyDescriptor[] propertyDescriptors = BeanUtils.getPropertyDescriptors(batchValue.getClass());
+                for (PropertyDescriptor pd : propertyDescriptors) {
+                    if (pd.getReadMethod() != null) {
+                        String underscoreName = CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, pd.getName());
+                        Object value = ReflectionUtils.invokeMethod(pd.getReadMethod(), batchValue);
+                        map.put(underscoreName, value);
+                    }
+                }
+                batchMaps[it.getAndIncrement()] = map;
+            }
+        }
+        SimpleJdbcInsert insert = new SimpleJdbcInsert(dataSource);
+        insert.setTableName(tablename);
+        return insert.executeBatch(batchMaps);
     }
 
     /**

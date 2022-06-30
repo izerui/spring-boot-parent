@@ -1,5 +1,6 @@
 package com.yj2025.sample.entity;
 
+import com.querydsl.core.annotations.QueryEntity;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
@@ -8,6 +9,7 @@ import java.util.Date;
 
 //用户
 @Data
+@QueryEntity
 public class TestUser {
     @Id
     private Long id;
