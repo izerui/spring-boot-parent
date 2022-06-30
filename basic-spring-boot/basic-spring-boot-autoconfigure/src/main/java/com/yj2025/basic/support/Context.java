@@ -500,20 +500,20 @@ public final class Context {
      * json序列化
      */
     public static String toJson(Object obj) {
-        return wrapExceptions(() -> OBJECT_MAPPER.writeValueAsString(obj));
+        return tryWith(() -> OBJECT_MAPPER.writeValueAsString(obj));
     }
 
     /**
      * json反序列化
      */
     public static <T> T fromJson(String json, Class<T> tClass) {
-        return wrapExceptions(() -> OBJECT_MAPPER.readValue(json, tClass));
+        return tryWith(() -> OBJECT_MAPPER.readValue(json, tClass));
     }
 
     /**
      * 捕获Exception异常,并抛出RuntimeException异常,同时指定message
      */
-    public static void wrapExceptions(RunnableWrapper runnable) {
+    public static void tryWith(RunnableWrapper runnable) {
         try {
             runnable.run();
         } catch (java.lang.Exception e) {
@@ -527,7 +527,7 @@ public final class Context {
     /**
      * 捕获Exception异常,并且抛出RuntimeException和指定异常message,并返回结果
      */
-    public static <T> T wrapExceptions(SupplierWrapper<T> tSupplier) {
+    public static <T> T tryWith(SupplierWrapper<T> tSupplier) {
         try {
             return tSupplier.get();
         } catch (java.lang.Exception e) {
