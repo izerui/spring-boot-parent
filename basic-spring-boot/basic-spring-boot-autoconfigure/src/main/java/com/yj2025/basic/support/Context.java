@@ -32,10 +32,7 @@ import java.io.InputStream;
 import java.sql.JDBCType;
 import java.time.Duration;
 import java.util.*;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public final class Context {
@@ -396,7 +393,12 @@ public final class Context {
     }
 
     /**
-     * 批量插入数据库,性能不高，建议使用 {@link #batchUpdate}
+     * 全局静态表名对应的SimpleJdbcInsert，高速缓存
+     */
+    private final static Map<String, SimpleJdbcInsert> GLOB_TABLE_INSERT_HOLDER = new ConcurrentHashMap<>();
+
+    /**
+     * 批量插入数据库,性能不高,但是也比mybatis和jpa批量效率高，建议使用 {@link #batchUpdate}
      *
      * @param dataSource  数据源
      * @param tablename   表名
@@ -422,10 +424,15 @@ public final class Context {
                 batchMaps[it.getAndIncrement()] = map;
             }
         }
-        SimpleJdbcInsert insert = new SimpleJdbcInsert(dataSource);
-        insert.setTableName(tablename);
+        SimpleJdbcInsert insert = GLOB_TABLE_INSERT_HOLDER.get(tablename);
+        if (insert == null) {
+            insert = new SimpleJdbcInsert(dataSource);
+            insert.setTableName(tablename);
+            GLOB_TABLE_INSERT_HOLDER.put(tablename, insert);
+        }
         return insert.executeBatch(batchMaps);
     }
+
 
     /**
      * 将查询语句分批次查询，直到所有满足条件的数据都查询完
