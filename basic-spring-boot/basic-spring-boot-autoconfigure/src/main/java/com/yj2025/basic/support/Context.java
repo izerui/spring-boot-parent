@@ -23,6 +23,7 @@ import org.springframework.jdbc.object.BatchSqlUpdate;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 
 import javax.sql.DataSource;
@@ -404,16 +405,19 @@ public final class Context {
     }
 
     /**
-     * 全局静态表名对应的SimpleJdbcInsert，高速缓存
+     * 全局静态表结构 SimpleJdbcInsert，高速缓存
      */
     private final static Map<String, SimpleJdbcInsert> GLOB_TABLE_INSERT_HOLDER = new ConcurrentHashMap<>();
 
-    private static SimpleJdbcInsert getInsert(DataSource dataSource, String tablename) {
+    private static SimpleJdbcInsert getInsert(DataSource dataSource, String tablename, String... primaryKeys) {
         SimpleJdbcInsert insert = GLOB_TABLE_INSERT_HOLDER.get(tablename);
         if (insert == null) {
             insert = new SimpleJdbcInsert(dataSource);
             insert.setTableName(tablename);
             GLOB_TABLE_INSERT_HOLDER.put(tablename, insert);
+        }
+        if (primaryKeys != null && primaryKeys.length > 0) {
+            insert.usingGeneratedKeyColumns(primaryKeys);
         }
         return insert;
     }
@@ -443,7 +447,22 @@ public final class Context {
     }
 
     /**
-     * 新增一条记录到数据库表
+     * 新增一条记录到数据库表，并返回主键值
+     *
+     * @param dataSource 数据源
+     * @param tablename  表名
+     * @param data       数据对象
+     * @param <T>
+     * @return
+     */
+    public static <T> Number insertReturnKey(DataSource dataSource, String tablename, String primaryKey, T data) {
+        Assert.notNull(primaryKey, "必须指定主键才能获取返回的主键值");
+        return getInsert(dataSource, tablename, primaryKey)
+                .executeAndReturnKey(mapOfUnderscoreKey(data));
+    }
+
+    /**
+     * 新增一条记录到数据库表，并返回主键值
      *
      * @param dataSource 数据源
      * @param tablename  表名
@@ -452,7 +471,8 @@ public final class Context {
      * @return
      */
     public static <T> int insert(DataSource dataSource, String tablename, T data) {
-        return getInsert(dataSource, tablename).execute(mapOfUnderscoreKey(data));
+        return getInsert(dataSource, tablename)
+                .execute(mapOfUnderscoreKey(data));
     }
 
 

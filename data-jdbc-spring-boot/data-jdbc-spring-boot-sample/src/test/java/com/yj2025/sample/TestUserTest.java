@@ -1,6 +1,7 @@
 package com.yj2025.sample;
 
 import com.google.common.base.Stopwatch;
+import com.yj2025.basic.support.Context;
 import com.yj2025.sample.entity.TestUser;
 import com.yj2025.sample.repository.TestUserRepository;
 import com.yj2025.sample.service.TestUserService;
@@ -16,6 +17,7 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.sql.DataSource;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +39,8 @@ public class TestUserTest {
     private TestUserRepository userRepository;
     @Autowired
     private NamedParameterJdbcTemplate jdbcTemplate;
+    @Autowired
+    private DataSource dataSource;
 
     @Test
     public void testFindAll() {
@@ -83,6 +87,47 @@ public class TestUserTest {
         jdbcTemplate.batchUpdate("insert into test_user(version, create_time, code, name, email, age) values (:version,:create_time,:code,:name,:email,:age)",
                 users.toArray(new HashMap[users.size()]));
         System.out.println("耗时: " + watch.elapsed(TimeUnit.MILLISECONDS));
+    }
+
+    @Test
+    public void testInsert3() {
+        Stopwatch watch = Stopwatch.createStarted();
+        Map<String, Object> map = new HashMap<>();
+        map.put("version", 0);
+        map.put("create_time", new Date());
+        map.put("code", "code" + 2);
+        map.put("name", "name" + 2);
+        map.put("email", "email" + 2);
+        map.put("age", 33);
+        Number test_user = Context.insertReturnKey(dataSource, "test_user", "id", map);
+        System.out.println("首次耗时：" + watch.elapsed(TimeUnit.MILLISECONDS));
+        System.out.println("返回主键值：" + test_user);
+
+        watch.reset();
+        watch.start();
+        Map<String, Object> map2 = new HashMap<>();
+        map2.put("version", 0);
+        map2.put("create_time", new Date());
+        map2.put("code", "code" + 2);
+        map2.put("name", "name" + 2);
+        map2.put("email", "email" + 2);
+        map2.put("age", 33);
+        Context.insert(dataSource, "test_user", map2);
+        System.out.println("二次插入耗时：" + watch.elapsed(TimeUnit.MILLISECONDS));
+        watch.reset();
+        watch.start();
+        List<TestUser> users = IntStream.range(0, 5000).mapToObj(value -> {
+            TestUser user = new TestUser();
+            user.setVersion(0);
+            user.setCreateTime(new Date());
+            user.setCode("code" + value);
+            user.setName("name" + value);
+            user.setEmail("email" + value);
+            user.setAge(66);
+            return user;
+        }).collect(Collectors.toList());
+        Context.batchInsert(dataSource, "test_user", users);
+        System.out.println("批量插入5000条耗时: " + watch.elapsed(TimeUnit.MILLISECONDS));
     }
 
     @Test
