@@ -14,7 +14,7 @@ public abstract class BasicCommand<R> implements Command<R> {
     private boolean executed = false;
     private Long executeTimeMillis;
 
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    protected final Logger logger = LoggerFactory.getLogger(getClass().getSimpleName());
 
     /**
      * 前置校验器，需要自行throw exception
