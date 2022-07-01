@@ -1,8 +1,6 @@
 package com.yj2025.sample;
 
 import com.google.common.base.Stopwatch;
-import com.querydsl.core.types.Predicate;
-import com.sun.net.httpserver.Headers;
 import com.yj2025.sample.entity.TestUser;
 import com.yj2025.sample.repository.TestUserRepository;
 import com.yj2025.sample.service.TestUserService;
@@ -13,8 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -74,8 +70,8 @@ public class TestUserTest {
     @Test
     public void testInsert2() {
         Stopwatch watch = Stopwatch.createStarted();
-        List<Map<String,Object>> users = IntStream.range(0, 5000).mapToObj(value -> {
-            Map<String,Object> map = new HashMap<>();
+        List<Map<String, Object>> users = IntStream.range(0, 5000).mapToObj(value -> {
+            Map<String, Object> map = new HashMap<>();
             map.put("version", 0);
             map.put("create_time", new Date());
             map.put("code", "code" + value);
