@@ -111,6 +111,7 @@ public class TestUserTest {
         map2.put("code", "code" + 2);
         map2.put("name", "name" + 2);
         map2.put("email", "email" + 2);
+        map2.put("email2", "email" + 2);
         map2.put("age", 33);
         Context.insert(dataSource, "test_user", map2);
         System.out.println("二次插入耗时：" + watch.elapsed(TimeUnit.MILLISECONDS));

@@ -462,7 +462,7 @@ public final class Context {
     }
 
     /**
-     * 新增一条记录到数据库表，并返回主键值
+     * 新增一条记录到数据库表
      *
      * @param dataSource 数据源
      * @param tablename  表名
@@ -477,7 +477,7 @@ public final class Context {
 
 
     /**
-     * 批量插入数据库,性能不高,但是也比mybatis和jpa批量效率高，建议使用 {@link #batchUpdate}
+     * 批量插入数据库
      *
      * @param dataSource  数据源
      * @param tablename   表名
