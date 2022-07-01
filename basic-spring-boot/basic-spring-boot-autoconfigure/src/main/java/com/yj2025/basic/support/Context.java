@@ -360,6 +360,33 @@ public final class Context {
     }
 
     /**
+     * 将对象转换成map,浅拷贝
+     *
+     * @param data
+     * @param <T>
+     * @return
+     */
+    private static <T> Map<String, ?> mapOfOriginKey(T data) {
+        if (data instanceof Map) {
+            return (Map<String, ?>) data;
+        } else {
+            Map<String, Object> map = new HashMap<>();
+            PropertyDescriptor[] propertyDescriptors = BeanUtils.getPropertyDescriptors(data.getClass());
+            for (PropertyDescriptor pd : propertyDescriptors) {
+                if (pd.getReadMethod() != null) {
+                    String originName = pd.getName();
+//                        String camelName = pd.getName();
+//                        String underscoreName = CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, pd.getName());
+                    Object value = ReflectionUtils.invokeMethod(pd.getReadMethod(), data);
+//                        map.put(camelName, value);
+                    map.put(originName, value);
+                }
+            }
+            return map;
+        }
+    }
+
+    /**
      * 批量执行命名SQL， 使用 :name , :code 之类的命名参数
      *
      * @param dataSource  数据源
@@ -370,23 +397,7 @@ public final class Context {
         AtomicInteger it = new AtomicInteger(0);
         Map<String, ?>[] batchMaps = new HashMap[batchValues.size()];
         for (Object batchValue : batchValues) {
-            if (batchValue instanceof Map) {
-                batchMaps[it.getAndIncrement()] = (Map<String, ?>) batchValue;
-            } else {
-                Map<String, Object> map = new HashMap<>();
-                PropertyDescriptor[] propertyDescriptors = BeanUtils.getPropertyDescriptors(batchValue.getClass());
-                for (PropertyDescriptor pd : propertyDescriptors) {
-                    if (pd.getReadMethod() != null) {
-                        String originName = pd.getName();
-//                        String camelName = pd.getName();
-//                        String underscoreName = CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, pd.getName());
-                        Object value = ReflectionUtils.invokeMethod(pd.getReadMethod(), batchValue);
-//                        map.put(camelName, value);
-                        map.put(originName, value);
-                    }
-                }
-                batchMaps[it.getAndIncrement()] = map;
-            }
+            batchMaps[it.getAndIncrement()] = mapOfOriginKey(batchValue);
         }
         NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
         return namedParameterJdbcTemplate.batchUpdate(namedSQL, batchMaps);
@@ -396,6 +407,54 @@ public final class Context {
      * 全局静态表名对应的SimpleJdbcInsert，高速缓存
      */
     private final static Map<String, SimpleJdbcInsert> GLOB_TABLE_INSERT_HOLDER = new ConcurrentHashMap<>();
+
+    private static SimpleJdbcInsert getInsert(DataSource dataSource, String tablename) {
+        SimpleJdbcInsert insert = GLOB_TABLE_INSERT_HOLDER.get(tablename);
+        if (insert == null) {
+            insert = new SimpleJdbcInsert(dataSource);
+            insert.setTableName(tablename);
+            GLOB_TABLE_INSERT_HOLDER.put(tablename, insert);
+        }
+        return insert;
+    }
+
+    /**
+     * 将对象转换成map，key由驼峰转换成下划线(浅拷贝)
+     *
+     * @param data
+     * @param <T>
+     * @return
+     */
+    private static <T> Map<String, ?> mapOfUnderscoreKey(T data) {
+        if (data instanceof Map) {
+            return (Map<String, ?>) data;
+        } else {
+            Map<String, Object> map = new HashMap<>();
+            PropertyDescriptor[] propertyDescriptors = BeanUtils.getPropertyDescriptors(data.getClass());
+            for (PropertyDescriptor pd : propertyDescriptors) {
+                if (pd.getReadMethod() != null) {
+                    String underscoreName = CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, pd.getName());
+                    Object value = ReflectionUtils.invokeMethod(pd.getReadMethod(), data);
+                    map.put(underscoreName, value);
+                }
+            }
+            return map;
+        }
+    }
+
+    /**
+     * 新增一条记录到数据库表
+     *
+     * @param dataSource 数据源
+     * @param tablename  表名
+     * @param data       数据对象
+     * @param <T>
+     * @return
+     */
+    public static <T> int insert(DataSource dataSource, String tablename, T data) {
+        return getInsert(dataSource, tablename).execute(mapOfUnderscoreKey(data));
+    }
+
 
     /**
      * 批量插入数据库,性能不高,但是也比mybatis和jpa批量效率高，建议使用 {@link #batchUpdate}
@@ -409,28 +468,9 @@ public final class Context {
         AtomicInteger it = new AtomicInteger(0);
         Map<String, ?>[] batchMaps = new HashMap[batchValues.size()];
         for (T batchValue : batchValues) {
-            if (batchValue instanceof Map) {
-                batchMaps[it.getAndIncrement()] = (Map<String, ?>) batchValue;
-            } else {
-                Map<String, Object> map = new HashMap<>();
-                PropertyDescriptor[] propertyDescriptors = BeanUtils.getPropertyDescriptors(batchValue.getClass());
-                for (PropertyDescriptor pd : propertyDescriptors) {
-                    if (pd.getReadMethod() != null) {
-                        String underscoreName = CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, pd.getName());
-                        Object value = ReflectionUtils.invokeMethod(pd.getReadMethod(), batchValue);
-                        map.put(underscoreName, value);
-                    }
-                }
-                batchMaps[it.getAndIncrement()] = map;
-            }
+            batchMaps[it.getAndIncrement()] = mapOfUnderscoreKey(batchValue);
         }
-        SimpleJdbcInsert insert = GLOB_TABLE_INSERT_HOLDER.get(tablename);
-        if (insert == null) {
-            insert = new SimpleJdbcInsert(dataSource);
-            insert.setTableName(tablename);
-            GLOB_TABLE_INSERT_HOLDER.put(tablename, insert);
-        }
-        return insert.executeBatch(batchMaps);
+        return getInsert(dataSource, tablename).executeBatch(batchMaps);
     }
 
 
