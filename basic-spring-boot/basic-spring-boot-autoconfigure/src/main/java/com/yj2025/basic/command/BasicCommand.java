@@ -3,6 +3,9 @@ package com.yj2025.basic.command;
 import com.yj2025.basic.support.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 /**
  * 所有command命令集成该基类
@@ -106,7 +109,10 @@ public abstract class BasicCommand<R> implements Command<R> {
      * @return
      */
     protected <T> T $(Class<T> beanClass) {
-        return Context.getBean(beanClass);
+        T bean = Context.getBean(beanClass);
+        Service annotation = AnnotationUtils.findAnnotation(beanClass, Service.class);
+        Assert.isNull(annotation, "cmd命令内部不允许使用@Service注释的bean");
+        return bean;
     }
 
 }
