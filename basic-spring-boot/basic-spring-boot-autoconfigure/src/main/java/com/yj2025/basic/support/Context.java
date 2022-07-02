@@ -586,7 +586,7 @@ public final class Context {
      * @param valueMapper v转换器
      * @return 新的map
      */
-    public static <K, V, T, U> Map<T, U> map2Map(Map<K, V> originMap, Function<Map.Entry<K, V>, ? extends T> keyMapper,
+    public static <K, V, T, U> Map<T, U> mapToMap(Map<K, V> originMap, Function<Map.Entry<K, V>, ? extends T> keyMapper,
                                                  Function<Map.Entry<K, V>, ? extends U> valueMapper) {
         return originMap.entrySet()
                 .stream()
