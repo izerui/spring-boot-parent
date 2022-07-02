@@ -35,6 +35,8 @@ import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public final class Context {
 
@@ -575,6 +577,20 @@ public final class Context {
      */
     public static <T> T fromJson(String json, Class<T> tClass) {
         return tryWith(() -> OBJECT_MAPPER.readValue(json, tClass));
+    }
+
+    /**
+     * map转成另一个map
+     * @param originMap 原始map
+     * @param keyMapper k转换器
+     * @param valueMapper v转换器
+     * @return 新的map
+     */
+    public static <K, V, T, U> Map<T, U> map2Map(Map<K, V> originMap, Function<Map.Entry<K, V>, ? extends T> keyMapper,
+                                                 Function<Map.Entry<K, V>, ? extends U> valueMapper) {
+        return originMap.entrySet()
+                .stream()
+                .collect(Collectors.toMap(keyMapper, valueMapper));
     }
 
     /**
