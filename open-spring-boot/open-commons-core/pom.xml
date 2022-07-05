@@ -26,7 +26,6 @@
         <dependency>
             <groupId>com.yj2025</groupId>
             <artifactId>platform-commons</artifactId>
-            <version>${project.version}</version>
         </dependency>
     </dependencies>
 
