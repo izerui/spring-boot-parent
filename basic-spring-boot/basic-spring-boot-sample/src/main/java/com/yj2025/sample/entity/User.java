@@ -24,7 +24,6 @@ public class User implements ClearEvent {
     private String name;
     private String email;
     private Integer age;
-    private User u;
 
     @Override
     public void clear() {
