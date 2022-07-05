@@ -9,7 +9,6 @@ import com.github.dadiyang.equator.GetterBaseEquator;
 import com.google.common.base.CaseFormat;
 import com.google.common.util.concurrent.*;
 import com.lmax.disruptor.dsl.ProducerType;
-import com.yj2025.basic.utils.ExcelMapper;
 import com.yj2025.performance.BatchConsumer;
 import com.yj2025.performance.ClearEvent;
 import com.yj2025.performance.Consumer;
@@ -31,8 +30,6 @@ import org.springframework.util.ReflectionUtils;
 
 import javax.sql.DataSource;
 import java.beans.PropertyDescriptor;
-import java.io.File;
-import java.io.InputStream;
 import java.sql.JDBCType;
 import java.time.Duration;
 import java.util.*;
@@ -540,44 +537,15 @@ public final class Context {
 
     /**
      * 获取两个对象的属性的区别
+     *
      * @param first
      * @param second
-     * @return
      * @param <T>
+     * @return
      */
     public static <T extends Object> List<FieldInfo> diff(T first, T second) {
         Equator equator = new GetterBaseEquator();
-        return equator.getDiffFields(first,second);
-    }
-
-    /**
-     * 创建excel读取器
-     *
-     * @param excelFile
-     * @return
-     */
-    public static ExcelMapper excelMapper(File excelFile) {
-        return new ExcelMapper(excelFile);
-    }
-
-    /**
-     * 创建excel读取器
-     *
-     * @param excelBytes
-     * @return
-     */
-    public static ExcelMapper excelMapper(byte[] excelBytes) {
-        return new ExcelMapper(excelBytes);
-    }
-
-    /**
-     * 创建excel读取器
-     *
-     * @param inputStream
-     * @return
-     */
-    public static ExcelMapper excelMapper(InputStream inputStream) {
-        return new ExcelMapper(inputStream);
+        return equator.getDiffFields(first, second);
     }
 
     /**
@@ -596,13 +564,14 @@ public final class Context {
 
     /**
      * map转成另一个map
-     * @param originMap 原始map
-     * @param keyMapper k转换器
+     *
+     * @param originMap   原始map
+     * @param keyMapper   k转换器
      * @param valueMapper v转换器
      * @return 新的map
      */
     public static <K, V, T, U> Map<T, U> mapToMap(Map<K, V> originMap, Function<Map.Entry<K, V>, ? extends T> keyMapper,
-                                                 Function<Map.Entry<K, V>, ? extends U> valueMapper) {
+                                                  Function<Map.Entry<K, V>, ? extends U> valueMapper) {
         return originMap.entrySet()
                 .stream()
                 .collect(Collectors.toMap(keyMapper, valueMapper));
