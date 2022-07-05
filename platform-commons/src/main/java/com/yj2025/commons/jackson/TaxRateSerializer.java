@@ -1,10 +1,10 @@
 package com.yj2025.commons.jackson;
 
-import com.ecworking.commons.em.MoneyEnum;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import com.yj2025.commons.em.MoneyEnum;
 
 import java.io.IOException;
 import java.math.BigDecimal;

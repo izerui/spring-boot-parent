@@ -1,10 +1,10 @@
 package com.yj2025.commons.jackson;
 
-import com.ecworking.commons.em.LossRateEnum;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.yj2025.commons.em.LossRateEnum;
 
 import java.io.IOException;
 import java.math.BigDecimal;
