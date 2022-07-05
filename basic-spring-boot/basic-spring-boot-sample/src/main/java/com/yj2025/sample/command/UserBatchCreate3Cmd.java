@@ -43,4 +43,9 @@ public class UserBatchCreate3Cmd extends BasicCommand<Void> {
         producer.shutdown();
         return null;
     }
+
+    @Override
+    protected long getLimitWarnningTimeMillis() {
+        return 1000;
+    }
 }

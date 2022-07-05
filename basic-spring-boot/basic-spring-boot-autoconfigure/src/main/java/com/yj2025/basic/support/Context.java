@@ -3,6 +3,9 @@ package com.yj2025.basic.support;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.github.dadiyang.equator.Equator;
+import com.github.dadiyang.equator.FieldInfo;
+import com.github.dadiyang.equator.GetterBaseEquator;
 import com.google.common.base.CaseFormat;
 import com.google.common.util.concurrent.*;
 import com.lmax.disruptor.dsl.ProducerType;
@@ -533,6 +536,18 @@ public final class Context {
             }
             page++;
         }
+    }
+
+    /**
+     * 获取两个对象的属性的区别
+     * @param first
+     * @param second
+     * @return
+     * @param <T>
+     */
+    public static <T extends Object> List<FieldInfo> diff(T first, T second) {
+        Equator equator = new GetterBaseEquator();
+        return equator.getDiffFields(first,second);
     }
 
     /**

@@ -1,10 +1,13 @@
 package com.yj2025.sample;
+import java.util.Date;
 
+import com.github.dadiyang.equator.FieldInfo;
 import com.google.common.util.concurrent.FutureCallback;
 import com.yj2025.basic.support.Context;
 import com.yj2025.performance.BatchConsumer;
 import com.yj2025.performance.ClearEvent;
 import com.yj2025.performance.Producer;
+import com.yj2025.sample.entity.User;
 import com.yj2025.sample.service.ConditionEntity;
 import com.yj2025.sample.service.UpdateBatchExecutor;
 import com.yj2025.sample.service.UserService;
