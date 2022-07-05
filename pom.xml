@@ -284,6 +284,12 @@
                 <artifactId>basic-spring-boot-starter</artifactId>
                 <version>${base-starter.version}</version>
             </dependency>
+            <!-- platform-commons -->
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>platform-commons</artifactId>
+                <version>${base-starter.version}</version>
+            </dependency>
 
         </dependencies>
     </dependencyManagement>
