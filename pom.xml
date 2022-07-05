@@ -28,7 +28,7 @@
         <module>proxy-spring-boot</module>
         <module>basic-spring-boot</module>
         <module>data-jdbc-spring-boot</module>
-        <module>public-commons</module>
+        <module>platform-commons</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>

@@ -1,7 +1,7 @@
 package com.yj2025.open.gateway.endpoint;
 
+import com.yj2025.commons.vo.RespVo;
 import com.yj2025.open.commons.Constants;
-import com.yj2025.open.commons.RespVo;
 import com.yj2025.open.gateway.GatewayProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
