@@ -50,6 +50,13 @@
         <base-starter.version>1.5.3-SNAPSHOT</base-starter.version>
         <org.mapstruct.version>1.5.2.Final</org.mapstruct.version>
         <m2e.apt.activation>jdt_apt</m2e.apt.activation>
+        <commons.version>2.8.0</commons.version>
+        <commons.collections.version>3.2.2</commons.collections.version>
+        <commons.text.version>1.9</commons.text.version>
+        <easyexcel.version>3.1.1</easyexcel.version>
+        <pinyin4j.version>2.5.1</pinyin4j.version>
+        <joda.time.version>2.10.2</joda.time.version>
+        <poi.ooxml.version>3.17</poi.ooxml.version>
     </properties>
 
 
@@ -72,16 +79,46 @@
                 <artifactId>mapstruct-processor</artifactId>
                 <version>${org.mapstruct.version}</version>
             </dependency>
-<!--            <dependency>-->
-<!--                <groupId>org.springframework.data</groupId>-->
-<!--                <artifactId>spring-data-jdbc</artifactId>-->
-<!--                <version>2.4.1</version>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>org.springframework.data</groupId>-->
-<!--                <artifactId>spring-data-relational</artifactId>-->
-<!--                <version>2.4.1</version>-->
-<!--            </dependency>-->
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-collections</groupId>
+                <artifactId>commons-collections</artifactId>
+                <version>${commons.collections.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons-lang3.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-text</artifactId>
+                <version>${commons.text.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>easyexcel</artifactId>
+                <version>${easyexcel.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.belerweb</groupId>
+                <artifactId>pinyin4j</artifactId>
+                <version>${pinyin4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>joda-time</groupId>
+                <artifactId>joda-time</artifactId>
+                <version>${joda.time.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi-ooxml</artifactId>
+                <version>${poi.ooxml.version}</version>
+            </dependency>
 
             <!-- starter 基础依赖 -->
             <!-- job -->
