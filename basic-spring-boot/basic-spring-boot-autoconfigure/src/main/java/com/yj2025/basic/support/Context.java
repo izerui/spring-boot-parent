@@ -421,15 +421,16 @@ public final class Context {
      */
     private final static Map<String, SimpleJdbcInsert> GLOB_TABLE_INSERT_HOLDER = new ConcurrentHashMap<>();
 
-    private static SimpleJdbcInsert getInsert(DataSource dataSource, String tablename, String... primaryKeys) {
+    private static SimpleJdbcInsert getInsert(DataSource dataSource, String tablename, String... generatedKeys) {
         SimpleJdbcInsert insert = GLOB_TABLE_INSERT_HOLDER.get(tablename);
         if (insert == null) {
             insert = new SimpleJdbcInsert(dataSource);
             insert.setTableName(tablename);
+            if (generatedKeys != null && generatedKeys.length > 0) {
+                insert.usingGeneratedKeyColumns(generatedKeys);
+            }
+            insert.compile();
             GLOB_TABLE_INSERT_HOLDER.put(tablename, insert);
-        }
-        if (primaryKeys != null && primaryKeys.length > 0) {
-            insert.usingGeneratedKeyColumns(primaryKeys);
         }
         return insert;
     }
@@ -461,29 +462,31 @@ public final class Context {
     /**
      * 新增一条记录到数据库表，并返回主键值
      *
-     * @param dataSource 数据源
-     * @param tablename  表名
-     * @param data       数据对象
+     * @param dataSource    数据源
+     * @param tablename     表名
+     * @param data          数据对象
+     * @param generatedKeys 自动生成的key
      * @param <T>
      * @return
      */
-    public static <T> Number insertReturnKey(DataSource dataSource, String tablename, String primaryKey, T data) {
-        Assert.notNull(primaryKey, "必须指定主键才能获取返回的主键值");
-        return getInsert(dataSource, tablename, primaryKey)
+    public static <T> Number insertReturnKey(DataSource dataSource, String tablename, T data, String generatedKeys) {
+        Assert.notNull(generatedKeys, "必须指定主键才能获取返回的主键值");
+        return getInsert(dataSource, tablename, generatedKeys)
                 .executeAndReturnKey(mapOfUnderscoreKey(data));
     }
 
     /**
      * 新增一条记录到数据库表
      *
-     * @param dataSource 数据源
-     * @param tablename  表名
-     * @param data       数据对象
+     * @param dataSource    数据源
+     * @param tablename     表名
+     * @param data          数据对象
+     * @param generatedKeys 自动生成的key
      * @param <T>
      * @return
      */
-    public static <T> int insert(DataSource dataSource, String tablename, T data) {
-        return getInsert(dataSource, tablename)
+    public static <T> int insert(DataSource dataSource, String tablename, T data, String... generatedKeys) {
+        return getInsert(dataSource, tablename, generatedKeys)
                 .execute(mapOfUnderscoreKey(data));
     }
 
@@ -491,18 +494,19 @@ public final class Context {
     /**
      * 批量插入数据库
      *
-     * @param dataSource  数据源
-     * @param tablename   表名
-     * @param batchValues 批次数据
+     * @param dataSource    数据源
+     * @param tablename     表名
+     * @param batchValues   批次数据
+     * @param generatedKeys 自动生成的key
      * @param <T>
      */
-    public static <T> int[] batchInsert(DataSource dataSource, String tablename, Collection<T> batchValues) {
+    public static <T> int[] batchInsert(DataSource dataSource, String tablename, Collection<T> batchValues, String... generatedKeys) {
         AtomicInteger it = new AtomicInteger(0);
         Map<String, ?>[] batchMaps = new HashMap[batchValues.size()];
         for (T batchValue : batchValues) {
             batchMaps[it.getAndIncrement()] = mapOfUnderscoreKey(batchValue);
         }
-        return getInsert(dataSource, tablename).executeBatch(batchMaps);
+        return getInsert(dataSource, tablename, generatedKeys).executeBatch(batchMaps);
     }
 
 
@@ -560,13 +564,14 @@ public final class Context {
 
     /**
      * 修改excel文件，针对单元格增加下来校验
-     * @param source 源文件
-     * @param target 目标文件
-     * @param list 下拉内容
+     *
+     * @param source   源文件
+     * @param target   目标文件
+     * @param list     下拉内容
      * @param firstRow 起始行
-     * @param lastRow 结束行
+     * @param lastRow  结束行
      * @param firstCol 起始列
-     * @param lastCol 结束列
+     * @param lastCol  结束列
      */
     public static void readerXlsDropdown(File source, File target, List<String> list, int firstRow, int lastRow, int firstCol, int lastCol) {
         FileOutputStream out = null;
