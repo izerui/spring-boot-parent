@@ -422,7 +422,8 @@ public final class Context {
     private final static Map<String, SimpleJdbcInsert> GLOB_TABLE_INSERT_HOLDER = new ConcurrentHashMap<>();
 
     private static SimpleJdbcInsert getInsert(DataSource dataSource, String tablename, String... generatedKeys) {
-        SimpleJdbcInsert insert = GLOB_TABLE_INSERT_HOLDER.get(tablename);
+        String mapKey = tablename + String.join("_", generatedKeys);
+        SimpleJdbcInsert insert = GLOB_TABLE_INSERT_HOLDER.get(mapKey);
         if (insert == null) {
             insert = new SimpleJdbcInsert(dataSource);
             insert.setTableName(tablename);
@@ -430,7 +431,7 @@ public final class Context {
                 insert.usingGeneratedKeyColumns(generatedKeys);
             }
             insert.compile();
-            GLOB_TABLE_INSERT_HOLDER.put(tablename, insert);
+            GLOB_TABLE_INSERT_HOLDER.put(mapKey, insert);
         }
         return insert;
     }
