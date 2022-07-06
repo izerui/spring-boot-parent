@@ -13,6 +13,13 @@ import com.yj2025.performance.BatchConsumer;
 import com.yj2025.performance.ClearEvent;
 import com.yj2025.performance.Consumer;
 import com.yj2025.performance.Producer;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.DataValidation;
+import org.apache.poi.ss.util.CellRangeAddressList;
+import org.apache.poi.xssf.usermodel.XSSFDataValidationConstraint;
+import org.apache.poi.xssf.usermodel.XSSFDataValidationHelper;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEvent;
@@ -30,6 +37,9 @@ import org.springframework.util.ReflectionUtils;
 
 import javax.sql.DataSource;
 import java.beans.PropertyDescriptor;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.sql.JDBCType;
 import java.time.Duration;
 import java.util.*;
@@ -549,6 +559,50 @@ public final class Context {
     }
 
     /**
+     * 修改excel文件，针对单元格增加下来校验
+     * @param source 源文件
+     * @param target 目标文件
+     * @param list 下拉内容
+     * @param firstRow 起始行
+     * @param lastRow 结束行
+     * @param firstCol 起始列
+     * @param lastCol 结束列
+     */
+    public static void readerXlsDropdown(File source, File target, List<String> list, int firstRow, int lastRow, int firstCol, int lastCol) {
+        FileOutputStream out = null;
+        XSSFWorkbook wb = null;
+        try {
+            wb = new XSSFWorkbook(source);
+            // 选中指定sheet
+            XSSFSheet sheet = wb.getSheetAt(0);
+            String[] values = list.toArray(new String[list.size()]);
+
+            XSSFDataValidationHelper dvHelper = new XSSFDataValidationHelper(sheet);
+            XSSFDataValidationConstraint dvConstraint = (XSSFDataValidationConstraint) dvHelper.createExplicitListConstraint(values);
+            CellRangeAddressList addressList = new CellRangeAddressList(firstRow, lastRow, firstCol, lastCol);
+            DataValidation validation = dvHelper.createValidation(dvConstraint, addressList);
+            //这两行设置单元格只能是列表中的内容，否则报错
+            validation.setSuppressDropDownArrow(true);
+            validation.setShowErrorBox(true);
+            sheet.addValidationData(validation);
+            // 写入文件
+            out = new FileOutputStream(target);
+            wb.write(out);
+        } catch (InvalidFormatException | IOException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (wb != null) {
+                XSSFWorkbook finalWb = wb;
+                tryWith(() -> finalWb.close());
+            }
+            if (out != null) {
+                FileOutputStream finalOut = out;
+                tryWith(() -> finalOut.close());
+            }
+        }
+    }
+
+    /**
      * json序列化
      */
     public static String toJson(Object obj) {
@@ -605,13 +659,6 @@ public final class Context {
         }
     }
 
-//    public static <S, T> T convert(S source, Callable<T> constructor) {
-//        T t = wrapExceptions(() -> {
-//            T target = constructor.call();
-//            return target;
-//        });
-//        return t;
-//    }
 
     /**
      * 内部类区域
