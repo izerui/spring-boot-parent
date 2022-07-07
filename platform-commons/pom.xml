@@ -91,6 +91,11 @@
             <optional>true</optional>
         </dependency>
         <dependency>
+            <groupId>com.yj2025</groupId>
+            <artifactId>mybatis-spring-boot-starter</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
