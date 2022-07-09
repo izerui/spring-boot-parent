@@ -21,6 +21,7 @@ import org.apache.poi.xssf.usermodel.XSSFDataValidationHelper;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -65,6 +66,16 @@ public final class Context {
      */
     public static <T> T getBean(Class<T> beanClass) {
         return Context.applicationContext.getBean(beanClass);
+    }
+
+    /**
+     * 获取一个或者多个bean对象持有者
+     * @param beanClass
+     * @return
+     * @param <T>
+     */
+    public static <T> ObjectProvider<T> getBeanProvider(Class<T> beanClass) {
+        return Context.applicationContext.getBeanProvider(beanClass);
     }
 
     /**
