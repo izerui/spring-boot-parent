@@ -24,6 +24,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEvent;
+import org.springframework.core.ResolvableType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SqlParameter;
@@ -64,18 +65,27 @@ public final class Context {
     /**
      * 获取spring上下文中的bean对象
      */
-    public static <T> T getBean(Class<T> beanClass) {
-        return Context.applicationContext.getBean(beanClass);
+    public static <T> T getBean(Class<T> beanClass, Class... genericTypes) {
+        if (genericTypes == null) {
+            return Context.applicationContext.getBean(beanClass);
+        } else {
+            ResolvableType resolvableType = ResolvableType.forClassWithGenerics(beanClass, genericTypes);
+            ObjectProvider<?> beanProvider = Context.applicationContext.getBeanProvider(resolvableType);
+            return (T) beanProvider.getIfAvailable();
+        }
     }
 
     /**
-     * 获取一个或者多个bean对象持有者
-     * @param beanClass
-     * @return
-     * @param <T>
+     * 获取一个或者多个beand的相同对象提供者
      */
-    public static <T> ObjectProvider<T> getBeanProvider(Class<T> beanClass) {
-        return Context.applicationContext.getBeanProvider(beanClass);
+    public static <T> ObjectProvider<T> getBeanProvider(Class<T> beanClass, Class... genericTypes) {
+        if (genericTypes == null) {
+            return Context.applicationContext.getBeanProvider(beanClass);
+        } else {
+            ResolvableType resolvableType = ResolvableType.forClassWithGenerics(beanClass, genericTypes);
+            return Context.applicationContext.getBeanProvider(resolvableType);
+        }
+
     }
 
     /**
