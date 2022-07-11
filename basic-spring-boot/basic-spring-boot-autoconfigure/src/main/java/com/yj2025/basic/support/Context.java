@@ -13,6 +13,9 @@ import com.yj2025.performance.BatchConsumer;
 import com.yj2025.performance.ClearEvent;
 import com.yj2025.performance.Consumer;
 import com.yj2025.performance.Producer;
+import io.vavr.CheckedFunction0;
+import io.vavr.CheckedRunnable;
+import io.vavr.control.Try;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.DataValidation;
 import org.apache.poi.ss.util.CellRangeAddressList;
@@ -603,7 +606,6 @@ public final class Context {
     /**
      * 将查询语句分批次查询，直到所有满足条件的数据都查询完
      *
-     * @param dataSource 数据源
      * @param querySQL   查询语句
      * @param pageSize   每页记录数
      * @param rowMapper  行转换器
@@ -630,7 +632,6 @@ public final class Context {
     /**
      * 将查询语句进行分页包装查询
      *
-     * @param dataSource             数据源
      * @param querySQL               查询语句
      * @param pageSize               每页记录数
      * @param rowMapper              行转换器
@@ -757,42 +758,15 @@ public final class Context {
     /**
      * 捕获Exception异常,并抛出RuntimeException异常,同时指定message
      */
-    public static void tryWith(RunnableWrapper runnable) {
-        try {
-            runnable.run();
-        } catch (java.lang.Exception e) {
-            if (e instanceof RuntimeException) {
-                throw (RuntimeException) e;
-            }
-            throw new RuntimeException(e.getMessage(), e);
-        }
+    public static void tryWith(CheckedRunnable runnable) {
+        Try.run(runnable);
     }
 
     /**
      * 捕获Exception异常,并且抛出RuntimeException和指定异常message,并返回结果
      */
-    public static <T> T tryWith(SupplierWrapper<T> tSupplier) {
-        try {
-            return tSupplier.get();
-        } catch (java.lang.Exception e) {
-            if (e instanceof RuntimeException) {
-                throw (RuntimeException) e;
-            }
-            throw new RuntimeException(e.getMessage(), e);
-        }
-    }
-
-
-    /**
-     * 内部类区域
-     */
-
-    public interface SupplierWrapper<T> {
-        T get() throws java.lang.Exception;
-    }
-
-    public interface RunnableWrapper {
-        void run() throws java.lang.Exception;
+    public static <T> T tryWith(CheckedFunction0<T> tSupplier) {
+        return Try.of(tSupplier).get();
     }
 
 }
