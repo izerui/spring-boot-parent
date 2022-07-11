@@ -364,6 +364,17 @@ public final class Context {
     /**
      * 创建批量sql（更新、插入）执行器, 数据update执行完毕后，调用flush、最好也调用reset。
      *
+     * @param placeSQL   占位符SQL
+     * @param parameters 参数声明
+     * @param batchSize  每批次数量
+     */
+    public static BatchSqlUpdate batchUpdate(String placeSQL, List<JDBCType> parameters, int batchSize) {
+        return batchUpdate(getBean(DataSource.class), placeSQL, parameters, batchSize);
+    }
+
+    /**
+     * 创建批量sql（更新、插入）执行器, 数据update执行完毕后，调用flush、最好也调用reset。
+     *
      * @param dataSource 数据源
      * @param placeSQL   占位符SQL
      * @param parameters 参数声明
@@ -379,6 +390,16 @@ public final class Context {
             batchSqlUpdate.declareParameter(new SqlParameter(parameter.getVendorTypeNumber()));
         }
         return batchSqlUpdate;
+    }
+
+    /**
+     * 批量执行命名SQL， 使用 :name , :code 之类的命名参数
+     *
+     * @param namedSQL    命名sql
+     * @param batchValues 批次值
+     */
+    public static int[] batchUpdate(String namedSQL, Map<String, ?>[] batchValues) {
+        return batchUpdate(getBean(DataSource.class), namedSQL, batchValues);
     }
 
     /**
@@ -418,6 +439,16 @@ public final class Context {
             }
             return map;
         }
+    }
+
+    /**
+     * 批量执行命名SQL， 使用 :name , :code 之类的命名参数
+     *
+     * @param namedSQL    命名sql
+     * @param batchValues 批次值
+     */
+    public static <T> int[] batchUpdate(String namedSQL, Collection<T> batchValues) {
+        return batchUpdate(getBean(DataSource.class), namedSQL, batchValues);
     }
 
     /**
@@ -484,6 +515,19 @@ public final class Context {
     /**
      * 新增一条记录到数据库表，并返回主键值
      *
+     * @param tablename     表名
+     * @param data          数据对象
+     * @param generatedKeys 自动生成的key
+     * @param <T>
+     * @return
+     */
+    public static <T> Number insertReturnKey(String tablename, T data, String generatedKeys) {
+        return insertReturnKey(getBean(DataSource.class), tablename, data, generatedKeys);
+    }
+
+    /**
+     * 新增一条记录到数据库表，并返回主键值
+     *
      * @param dataSource    数据源
      * @param tablename     表名
      * @param data          数据对象
@@ -500,6 +544,19 @@ public final class Context {
     /**
      * 新增一条记录到数据库表
      *
+     * @param tablename     表名
+     * @param data          数据对象
+     * @param generatedKeys 自动生成的key
+     * @param <T>
+     * @return
+     */
+    public static <T> int insert(String tablename, T data, String... generatedKeys) {
+        return insert(getBean(DataSource.class), tablename, data, generatedKeys);
+    }
+
+    /**
+     * 新增一条记录到数据库表
+     *
      * @param dataSource    数据源
      * @param tablename     表名
      * @param data          数据对象
@@ -510,6 +567,18 @@ public final class Context {
     public static <T> int insert(DataSource dataSource, String tablename, T data, String... generatedKeys) {
         return getInsert(dataSource, tablename, generatedKeys)
                 .execute(mapOfUnderscoreKey(data));
+    }
+
+    /**
+     * 批量插入数据库
+     *
+     * @param tablename     表名
+     * @param batchValues   批次数据
+     * @param generatedKeys 自动生成的key
+     * @param <T>
+     */
+    public static <T> int[] batchInsert(String tablename, Collection<T> batchValues, String... generatedKeys) {
+        return batchInsert(getBean(DataSource.class), tablename, batchValues, generatedKeys);
     }
 
 
@@ -531,6 +600,19 @@ public final class Context {
         return getInsert(dataSource, tablename, generatedKeys).executeBatch(batchMaps);
     }
 
+    /**
+     * 将查询语句分批次查询，直到所有满足条件的数据都查询完
+     *
+     * @param dataSource 数据源
+     * @param querySQL   查询语句
+     * @param pageSize   每页记录数
+     * @param rowMapper  行转换器
+     * @param <T>
+     */
+    public static <T> void pagenationQueryWrap(String querySQL, int pageSize, RowMapper<T> rowMapper) {
+        pagenationQueryWrap(getBean(DataSource.class), querySQL, pageSize, rowMapper);
+    }
+
 
     /**
      * 将查询语句分批次查询，直到所有满足条件的数据都查询完
@@ -542,7 +624,21 @@ public final class Context {
      * @param <T>
      */
     public static <T> void pagenationQueryWrap(DataSource dataSource, String querySQL, int pageSize, RowMapper<T> rowMapper) {
-        pagenationQueryWrap(dataSource, querySQL, pageSize, rowMapper, null);
+        pagenationQueryWrap(querySQL, pageSize, rowMapper, null);
+    }
+
+    /**
+     * 将查询语句进行分页包装查询
+     *
+     * @param dataSource             数据源
+     * @param querySQL               查询语句
+     * @param pageSize               每页记录数
+     * @param rowMapper              行转换器
+     * @param perPageResultsConsumer 每页结果合集
+     * @param <T>
+     */
+    public static <T> void pagenationQueryWrap(String querySQL, int pageSize, RowMapper<T> rowMapper, java.util.function.Consumer<List<T>> perPageResultsConsumer) {
+        pagenationQueryWrap(getBean(DataSource.class), querySQL, pageSize, rowMapper, perPageResultsConsumer);
     }
 
     /**
