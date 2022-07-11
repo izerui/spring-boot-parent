@@ -759,7 +759,7 @@ public final class Context {
      * 捕获Exception异常,并抛出RuntimeException异常,同时指定message
      */
     public static void tryWith(CheckedRunnable runnable) {
-        Try.run(runnable);
+        Try.run(runnable).get();
     }
 
     /**
