@@ -1,8 +1,6 @@
-package com.yj2025.basic.command.adapter;
+package com.yj2025.basic.command;
 
-import com.yj2025.basic.command.BasicCommand;
-
-public abstract class BasicAdapter<R> extends BasicCommand<R> {
+public abstract class BasicCommandAdapter<R> extends BasicCommand<R> {
 
     protected abstract BasicCommand<R> withCommand();
 
