@@ -1,18 +1,15 @@
 package com.yj2025.basic.command;
 
-import com.yj2025.basic.support.Context;
+import com.yj2025.basic.command.component.BasicComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 
 /**
  * 所有command命令集成该基类
  *
  * @param <R> 返回的结果类型
  */
-public abstract class BasicCommand<R> implements Command<R> {
+public abstract class BasicCommand<R> implements Command<R>, BasicComponent {
 
     private boolean executed = false;
     private Long executeTimeMillis;
@@ -99,20 +96,6 @@ public abstract class BasicCommand<R> implements Command<R> {
      */
     protected long getLimitWarnningTimeMillis() {
         return 500L;
-    }
-
-    /**
-     * 获取bean
-     *
-     * @param beanClass
-     * @param <T>
-     * @return
-     */
-    protected <T> T $(Class<T> beanClass) {
-        T bean = Context.getBean(beanClass);
-        Service annotation = AnnotationUtils.findAnnotation(beanClass, Service.class);
-        Assert.isNull(annotation, "cmd命令内部不允许使用@Service注释的bean");
-        return bean;
     }
 
 }

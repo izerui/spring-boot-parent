@@ -11,6 +11,7 @@ import com.yj2025.sample.entity.User;
 import com.yj2025.sample.service.ConditionEntity;
 import com.yj2025.sample.service.UpdateBatchExecutor;
 import com.yj2025.sample.service.UserService;
+import io.vavr.Tuple;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.checkerframework.checker.nullness.qual.Nullable;
