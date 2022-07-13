@@ -135,11 +135,13 @@ public class UserTest {
                 (rs, rowNum) -> rs.getLong("id"),
                 (ids, page) -> {
                     ListenableFuture<?> submit = executorService.submit(() -> {
-                        log.info("第{}页", page);
-                        List<HashMap> maps = ids.stream().map(aLong -> new HashMap(1) {{
-                            put("id", aLong);
-                        }}).collect(Collectors.toList());
-                        Context.batchUpdate("update test_user set age = 18 where id = :id", maps);
+                        Context.executeTransaction(status -> {
+                            log.info("第{}页", page);
+                            List<HashMap> maps = ids.stream().map(aLong -> new HashMap(1) {{
+                                put("id", aLong);
+                            }}).collect(Collectors.toList());
+                            Context.batchUpdate("update test_user set age = 18 where id = :id", maps);
+                        });
                     });
                     futures.add(submit);
                 });
