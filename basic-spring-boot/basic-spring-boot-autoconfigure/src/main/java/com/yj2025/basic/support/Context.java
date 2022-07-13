@@ -656,9 +656,9 @@ public final class Context {
     public static <T> void pagenationQueryWrap(DataSource dataSource, String querySQL, int pageSize, RowMapper<T> rowMapper, BiConsumer<List<T>, Integer> perPageResultsConsumer) {
         String sql = querySQL + " limit ? offset ?";
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-        Integer page = 0;
+        Integer page = 1;
         while (true) {
-            List<T> results = jdbcTemplate.query(sql, rowMapper, pageSize, page * pageSize);
+            List<T> results = jdbcTemplate.query(sql, rowMapper, pageSize, (page - 1) * pageSize);
             if (results.isEmpty()) {
                 break;
             }

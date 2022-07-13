@@ -1,17 +1,20 @@
 package com.yj2025.sample;
 
 import com.google.common.base.Stopwatch;
-import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.*;
 import com.yj2025.basic.support.Context;
 import com.yj2025.performance.BatchConsumer;
 import com.yj2025.performance.ClearEvent;
 import com.yj2025.performance.Producer;
-import com.yj2025.sample.entity.User;
 import com.yj2025.sample.service.ConditionEntity;
 import com.yj2025.sample.service.UpdateBatchExecutor;
 import com.yj2025.sample.service.UserService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.calcite.sql.SqlLiteral;
+import org.apache.calcite.sql.SqlNode;
+import org.apache.calcite.sql.SqlUpdate;
+import org.apache.calcite.sql.parser.SqlParser;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -99,12 +102,68 @@ public class UserTest {
         Context.pagenationQueryWrap(dataSource, "select id from test_user", 5000,
                 (rs, rowNum) -> rs.getLong("id"),
                 (ids, page) -> {
+                    log.info("第{}页", page);
                     for (Long id : ids) {
                         batchSqlUpdate.update(id);
                     }
                 });
         batchSqlUpdate.flush();
         batchSqlUpdate.reset();
+    }
+
+    @Test
+    public void testContextPagenationUpdate2() {
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        Context.pagenationQueryWrap(dataSource, "select id from test_user", 5000,
+                (rs, rowNum) -> rs.getLong("id"),
+                (ids, page) -> {
+                    log.info("第{}页", page);
+                    List<HashMap> maps = ids.stream().map(aLong -> new HashMap(1) {{
+                        put("id", aLong);
+                    }}).collect(Collectors.toList());
+                    Context.batchUpdate("update test_user set age = 18 where id = :id", maps);
+                });
+        System.out.println("耗时：" + stopwatch.elapsed(TimeUnit.MILLISECONDS));
+    }
+
+    @Test
+    public void testContextPagenationUpdate3() throws ExecutionException, InterruptedException {
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        ListeningExecutorService executorService = MoreExecutors.listeningDecorator(new ThreadPoolExecutor(3, 5, 0, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<Runnable>(65536), new ThreadPoolExecutor.CallerRunsPolicy()));
+        List<ListenableFuture<?>> futures = new ArrayList<>();
+        Context.pagenationQueryWrap(dataSource, "select id from test_user", 5000,
+                (rs, rowNum) -> rs.getLong("id"),
+                (ids, page) -> {
+                    ListenableFuture<?> submit = executorService.submit(() -> {
+                        log.info("第{}页", page);
+                        List<HashMap> maps = ids.stream().map(aLong -> new HashMap(1) {{
+                            put("id", aLong);
+                        }}).collect(Collectors.toList());
+                        Context.batchUpdate("update test_user set age = 18 where id = :id", maps);
+                    });
+                    futures.add(submit);
+                });
+        Futures.allAsList(futures).get();
+        executorService.shutdown();
+        System.out.println("耗时：" + stopwatch.elapsed(TimeUnit.MILLISECONDS));
+    }
+
+    private void batchForUpdate(String updateSQL, int batchSize, String primaryKey, JDBCType primaryKeyType) {
+        SqlParser sqlParser = SqlParser.create(updateSQL);
+        SqlUpdate sqlUpdate = (SqlUpdate) Context.tryWith(() -> sqlParser.parseQuery());
+        String tablename = sqlUpdate.getTargetTable().toString();
+        Map<String, Object> valueMap = new HashMap<>();
+        for (int i = 0; i < sqlUpdate.getTargetColumnList().size(); i++) {
+            SqlNode key = sqlUpdate.getTargetColumnList().get(i);
+            SqlLiteral value = (SqlLiteral) sqlUpdate.getSourceExpressionList().get(i);
+            valueMap.put(key.toString(), value.getValue());
+        }
+        String updates = sqlUpdate.getTargetColumnList().stream().map(sqlNode -> sqlNode.toString() + " = :" + sqlNode.toString()).collect(Collectors.joining(" , "));
+        Context.pagenationQueryWrap(Context.getBean(DataSource.class), "select " + primaryKey + " from " + tablename, batchSize,
+                (rs, rowNum) -> rs.getObject(primaryKey),
+                (primaryValues, page) -> {
+//                    Context.batchUpdate("update test_user set age = 18 where " + primaryKey + " = :" + primaryKey, valueMap)
+                });
     }
 
     @Test
@@ -116,7 +175,7 @@ public class UserTest {
     public void testBatchUpdate() {
         long a = System.currentTimeMillis();
         List<Long> longs = new ArrayList<>();
-        IntStream.range(0, 10).forEach(value -> {
+//        IntStream.range(0, 10).forEach(value -> {
             UpdateBatchExecutor batchExecutor = new UpdateBatchExecutor(dataSource, 3, 5);
             long begin = System.currentTimeMillis();
             ConditionEntity conditionEntity = new ConditionEntity();
@@ -124,7 +183,7 @@ public class UserTest {
             updates.put("age", 20);
             batchExecutor.execute("test_user", conditionEntity.where("1=1"), updates);
             longs.add(System.currentTimeMillis() - begin);
-        });
+//        });
         Long value = 0L;
         for (Long aLong : longs) {
             value = value + aLong;

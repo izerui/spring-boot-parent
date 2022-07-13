@@ -13,6 +13,13 @@ import net.sf.jsqlparser.parser.SimpleNode;
 import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.StatementVisitorAdapter;
 import net.sf.jsqlparser.statement.update.Update;
+import org.apache.calcite.sql.SqlLiteral;
+import org.apache.calcite.sql.SqlNode;
+import org.apache.calcite.sql.SqlUpdate;
+import org.apache.calcite.sql.parser.SqlParseException;
+import org.apache.calcite.sql.parser.SqlParser;
+import org.apache.calcite.sql.util.SqlBasicVisitor;
+import org.hibernate.loader.custom.sql.SQLQueryParser;
 import org.junit.Test;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
@@ -52,6 +59,7 @@ public class JunitTest {
     @Test
     public void testSql() throws ParseException, JSQLParserException {
         String sql = "update test_user set age = 18 where age > 16 and code is not null";
+//        String sql = "UPDATE `price_center`.`price_range_purchase` AS pr, `price_center`.`inventory_price_purchase` AS ip  SET pr.begin_num = pr.begin_num * ip.valuation_ratio, pr.original_unit_price = pr.original_unit_price * ip.valuation_ratio, pr.rmb_unit_price = pr.rmb_unit_price * ip.valuation_ratio  WHERE \tpr.record_id = '140a9c7c-6778-4b27-88af-40b5b7fd6e52'  \tAND pr.price_record_id = ip.record_id";
         Statement parse = CCJSqlParserUtil.parse(sql);
         parse.accept(new StatementVisitorAdapter(){
 
@@ -66,8 +74,17 @@ public class JunitTest {
                 super.visit(update);
             }
         });
+    }
 
-
+    @Test
+    public void testSql2() throws SqlParseException {
+        String sql = "update test_user set age = 18 where age > 16 and code is not null";
+//        String sql = "UPDATE `price_center`.`price_range_purchase` AS pr, `price_center`.`inventory_price_purchase` AS ip  SET pr.begin_num = pr.begin_num * ip.valuation_ratio, pr.original_unit_price = pr.original_unit_price * ip.valuation_ratio, pr.rmb_unit_price = pr.rmb_unit_price * ip.valuation_ratio  WHERE \tpr.record_id = '140a9c7c-6778-4b27-88af-40b5b7fd6e52'  \tAND pr.price_record_id = ip.record_id";
+        SqlParser sqlParser = SqlParser.create(sql);
+        SqlUpdate sqlUpdate = (SqlUpdate) sqlParser.parseQuery();
+        System.out.println(sqlUpdate.getTargetTable().toString());
+        System.out.println(sqlUpdate.getCondition().toString());
+        System.out.println(sqlUpdate.getOperandList());
 
     }
 

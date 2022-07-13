@@ -120,8 +120,8 @@ public class UpdateBatchExecutor {
             connection = DataSourceUtils.getConnection(dataSource);
             preparedStatement = connection.prepareStatement(sql);
             while (true) {
-                preparedStatement.setObject(1, 1000);
-                preparedStatement.setObject(2, (page - 1) * 1000);
+                preparedStatement.setObject(1, 5000);
+                preparedStatement.setObject(2, (page - 1) * 5000);
                 ResultSet resultSet = preparedStatement.executeQuery();
                 List<Integer> ids = new ArrayList<>();
                 while (resultSet.next()) {
