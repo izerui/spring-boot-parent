@@ -1,11 +1,14 @@
 package com.yj2025.basic.command.component;
 
 import com.yj2025.basic.support.Context;
+import org.slf4j.Logger;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 public interface BasicComponent {
+
+    Logger getLogger();
 
     /**
      * 获取bean

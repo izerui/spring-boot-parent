@@ -98,4 +98,8 @@ public abstract class BasicCommand<R> implements Command<R>, BasicComponent {
         return 500L;
     }
 
+    @Override
+    public Logger getLogger() {
+        return logger;
+    }
 }
