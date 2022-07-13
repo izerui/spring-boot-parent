@@ -1,7 +1,6 @@
 package com.yj2025.sample;
-import java.util.Date;
 
-import com.github.dadiyang.equator.FieldInfo;
+import com.google.common.base.Stopwatch;
 import com.google.common.util.concurrent.FutureCallback;
 import com.yj2025.basic.support.Context;
 import com.yj2025.performance.BatchConsumer;
@@ -11,7 +10,6 @@ import com.yj2025.sample.entity.User;
 import com.yj2025.sample.service.ConditionEntity;
 import com.yj2025.sample.service.UpdateBatchExecutor;
 import com.yj2025.sample.service.UserService;
-import io.vavr.Tuple;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -19,6 +17,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.jdbc.object.BatchSqlUpdate;
 import org.springframework.test.annotation.Rollback;
@@ -36,10 +35,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -88,17 +84,32 @@ public class UserTest {
     }
 
     @Test
-    public void testContextPagenation() {
-        BatchSqlUpdate batchSqlUpdate = Context.batchUpdate(dataSource, "update test_user set age = 18 where id = ?", List.of(JDBCType.NUMERIC), 500);
-        Context.pagenationQueryWrap(dataSource, "select id from test_user", 550,
+    public void testQueryPage() {
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        Context.pagenationQueryWrap("select id from test_user", 5000, (rs, rowNum) -> {
+//            System.out.println(rs.getLong("id"));
+            return null;
+        });
+        System.out.println("耗时: " + stopwatch.elapsed(TimeUnit.MILLISECONDS));
+    }
+
+    @Test
+    public void testContextPagenationUpdate() {
+        BatchSqlUpdate batchSqlUpdate = Context.batchUpdate(dataSource, "update test_user set age = 18 where id = ?", List.of(JDBCType.NUMERIC), 5000);
+        Context.pagenationQueryWrap(dataSource, "select id from test_user", 5000,
                 (rs, rowNum) -> rs.getLong("id"),
-                ids -> {
+                (ids, page) -> {
                     for (Long id : ids) {
                         batchSqlUpdate.update(id);
                     }
                 });
         batchSqlUpdate.flush();
         batchSqlUpdate.reset();
+    }
+
+    @Test
+    public void testUpdate() {
+        new JdbcTemplate(dataSource).execute("update test_user set age = 18");
     }
 
     @Test

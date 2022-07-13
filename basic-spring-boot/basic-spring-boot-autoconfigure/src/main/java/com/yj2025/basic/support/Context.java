@@ -50,6 +50,7 @@ import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -606,9 +607,9 @@ public final class Context {
     /**
      * 将查询语句分批次查询，直到所有满足条件的数据都查询完
      *
-     * @param querySQL   查询语句
-     * @param pageSize   每页记录数
-     * @param rowMapper  行转换器
+     * @param querySQL  查询语句
+     * @param pageSize  每页记录数
+     * @param rowMapper 行转换器
      * @param <T>
      */
     public static <T> void pagenationQueryWrap(String querySQL, int pageSize, RowMapper<T> rowMapper) {
@@ -638,7 +639,7 @@ public final class Context {
      * @param perPageResultsConsumer 每页结果合集
      * @param <T>
      */
-    public static <T> void pagenationQueryWrap(String querySQL, int pageSize, RowMapper<T> rowMapper, java.util.function.Consumer<List<T>> perPageResultsConsumer) {
+    public static <T> void pagenationQueryWrap(String querySQL, int pageSize, RowMapper<T> rowMapper, BiConsumer<List<T>, Integer> perPageResultsConsumer) {
         pagenationQueryWrap(getBean(DataSource.class), querySQL, pageSize, rowMapper, perPageResultsConsumer);
     }
 
@@ -652,17 +653,17 @@ public final class Context {
      * @param perPageResultsConsumer 每页结果合集
      * @param <T>
      */
-    public static <T> void pagenationQueryWrap(DataSource dataSource, String querySQL, int pageSize, RowMapper<T> rowMapper, java.util.function.Consumer<List<T>> perPageResultsConsumer) {
+    public static <T> void pagenationQueryWrap(DataSource dataSource, String querySQL, int pageSize, RowMapper<T> rowMapper, BiConsumer<List<T>, Integer> perPageResultsConsumer) {
         String sql = querySQL + " limit ? offset ?";
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-        Integer page = 1;
+        Integer page = 0;
         while (true) {
-            List<T> results = jdbcTemplate.query(sql, rowMapper, pageSize, (page - 1) * pageSize);
+            List<T> results = jdbcTemplate.query(sql, rowMapper, pageSize, page * pageSize);
             if (results.isEmpty()) {
                 break;
             }
             if (perPageResultsConsumer != null) {
-                perPageResultsConsumer.accept(results);
+                perPageResultsConsumer.accept(results, page);
             }
             page++;
         }
