@@ -150,7 +150,7 @@ public class UserTest {
     public void testContextPagenationUpdate4() throws ExecutionException, InterruptedException {
         Stopwatch stopwatch = Stopwatch.createStarted();
         // 分批按主键ID更新
-        Context.batchUpdateAsync("update test_user set age = 18 where age > 16 and code is not null", "id", 5, 5000);
+//        Context.batchUpdateAsync("update test_user set age = 18", "id", 5, 5000);
         // 分批按主键ID更新并且 监控已更新数据
         Context.batchUpdateAsync("update test_user set age = 18 where age > 16 and code is not null", "id", 5, 5000, (ids, page) -> {
 //            log.debug("第{}页 当前处理数量: {}", page, ids.size());
