@@ -16,7 +16,7 @@ public class UserService {
 
     public void add() {
         System.out.println(TransactionSynchronizationManager.isActualTransactionActive());
-        userRepository.deleteAll();
+        userRepository.findAll();
         for (int i = 0; i < 20; i++) {
             User user = new User();
             user.setCode("code" + i);

@@ -16,6 +16,7 @@ import com.yj2025.performance.Producer;
 import io.vavr.CheckedFunction0;
 import io.vavr.CheckedRunnable;
 import io.vavr.control.Try;
+import lombok.SneakyThrows;
 import org.apache.calcite.sql.SqlUpdate;
 import org.apache.calcite.sql.parser.SqlParser;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -768,10 +769,8 @@ public final class Context {
      * @param lastCol  结束列
      */
     public static void readerXlsDropdown(File source, File target, List<String> list, int firstRow, int lastRow, int firstCol, int lastCol) {
-        FileOutputStream out = null;
-        XSSFWorkbook wb = null;
-        try {
-            wb = new XSSFWorkbook(source);
+        try (XSSFWorkbook wb = new XSSFWorkbook(source);
+             FileOutputStream out = new FileOutputStream(target)) {
             // 选中指定sheet
             XSSFSheet sheet = wb.getSheetAt(0);
             String[] values = list.toArray(new String[list.size()]);
@@ -785,19 +784,9 @@ public final class Context {
             validation.setShowErrorBox(true);
             sheet.addValidationData(validation);
             // 写入文件
-            out = new FileOutputStream(target);
             wb.write(out);
         } catch (InvalidFormatException | IOException e) {
             throw new RuntimeException(e);
-        } finally {
-            if (wb != null) {
-                XSSFWorkbook finalWb = wb;
-                tryWith(() -> finalWb.close());
-            }
-            if (out != null) {
-                FileOutputStream finalOut = out;
-                tryWith(() -> finalOut.close());
-            }
         }
     }
 
@@ -831,14 +820,14 @@ public final class Context {
     }
 
     /**
-     * 捕获Exception异常,并抛出RuntimeException异常,同时指定message
+     * 捕获Exception异常,SneakyThrows
      */
     public static void tryWith(CheckedRunnable runnable) {
         Try.run(runnable).get();
     }
 
     /**
-     * 捕获Exception异常,并且抛出RuntimeException和指定异常message,并返回结果
+     * 捕获Exception异常,SneakyThrows,并返回结果
      */
     public static <T> T tryWith(CheckedFunction0<T> tSupplier) {
         return Try.of(tSupplier).get();
