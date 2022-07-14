@@ -44,6 +44,16 @@ public class TestJunit {
     private DataSource dataSource;
 
     @Test
+    public void testSelectSql(){
+        Conditions conditions = Conditions.where("name").is("张无忌");
+        List<Object[]> list = (List<Object[]>) userRepository.selectSql("select sum(age),sum(version) from User ",conditions);
+        Object[] array = list.get(0);
+        for (Object o : array) {
+            System.out.println("------"+o);
+        }
+    }
+
+    @Test
     public void lis22t() {
         List<User> all = userRepository.findAll();
         for (User user : all) {
