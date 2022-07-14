@@ -11,8 +11,6 @@ import com.yj2025.sample.service.UpdateBatchExecutor;
 import com.yj2025.sample.service.UserService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.calcite.sql.SqlLiteral;
-import org.apache.calcite.sql.SqlNode;
 import org.apache.calcite.sql.SqlUpdate;
 import org.apache.calcite.sql.parser.SqlParser;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -102,7 +100,7 @@ public class UserTest {
         Context.pagenationQueryWrap(dataSource, "select id from test_user", 5000,
                 (rs, rowNum) -> rs.getLong("id"),
                 (ids, page) -> {
-                    log.info("第{}页", page);
+                    log.debug("第{}页 当前处理数量: {}", page, ids.size());
                     for (Long id : ids) {
                         batchSqlUpdate.update(id);
                     }
@@ -117,7 +115,7 @@ public class UserTest {
         Context.pagenationQueryWrap(dataSource, "select id from test_user", 5000,
                 (rs, rowNum) -> rs.getLong("id"),
                 (ids, page) -> {
-                    log.info("第{}页", page);
+                    log.debug("第{}页 当前处理数量: {}", page, ids.size());
                     List<HashMap> maps = ids.stream().map(aLong -> new HashMap(1) {{
                         put("id", aLong);
                     }}).collect(Collectors.toList());
@@ -135,13 +133,11 @@ public class UserTest {
                 (rs, rowNum) -> rs.getLong("id"),
                 (ids, page) -> {
                     ListenableFuture<?> submit = executorService.submit(() -> {
-                        Context.executeTransaction(status -> {
-                            log.info("第{}页", page);
-                            List<HashMap> maps = ids.stream().map(aLong -> new HashMap(1) {{
-                                put("id", aLong);
-                            }}).collect(Collectors.toList());
-                            Context.batchUpdate("update test_user set age = 18 where id = :id", maps);
-                        });
+                        log.debug("第{}页 当前处理数量: {}", page, ids.size());
+                        List<HashMap> maps = ids.stream().map(aLong -> new HashMap(1) {{
+                            put("id", aLong);
+                        }}).collect(Collectors.toList());
+                        Context.batchUpdate("update test_user set age = 18 where id = :id", maps);
                     });
                     futures.add(submit);
                 });
@@ -150,22 +146,17 @@ public class UserTest {
         System.out.println("耗时：" + stopwatch.elapsed(TimeUnit.MILLISECONDS));
     }
 
-    private void batchForUpdate(String updateSQL, int batchSize, String primaryKey, JDBCType primaryKeyType) {
-        SqlParser sqlParser = SqlParser.create(updateSQL);
-        SqlUpdate sqlUpdate = (SqlUpdate) Context.tryWith(() -> sqlParser.parseQuery());
-        String tablename = sqlUpdate.getTargetTable().toString();
-        Map<String, Object> valueMap = new HashMap<>();
-        for (int i = 0; i < sqlUpdate.getTargetColumnList().size(); i++) {
-            SqlNode key = sqlUpdate.getTargetColumnList().get(i);
-            SqlLiteral value = (SqlLiteral) sqlUpdate.getSourceExpressionList().get(i);
-            valueMap.put(key.toString(), value.getValue());
-        }
-        String updates = sqlUpdate.getTargetColumnList().stream().map(sqlNode -> sqlNode.toString() + " = :" + sqlNode.toString()).collect(Collectors.joining(" , "));
-        Context.pagenationQueryWrap(Context.getBean(DataSource.class), "select " + primaryKey + " from " + tablename, batchSize,
-                (rs, rowNum) -> rs.getObject(primaryKey),
-                (primaryValues, page) -> {
-//                    Context.batchUpdate("update test_user set age = 18 where " + primaryKey + " = :" + primaryKey, valueMap)
-                });
+    @Test
+    public void testContextPagenationUpdate4() throws ExecutionException, InterruptedException {
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        // 分批按主键ID更新
+        Context.batchUpdateAsync("update test_user set age = 18 where age > 16 and code is not null", "id", 5, 5000);
+        // 分批按主键ID更新并且 监控已更新数据
+        Context.batchUpdateAsync("update test_user set age = 18 where age > 16 and code is not null", "id", 5, 5000, (ids, page) -> {
+//            log.debug("第{}页 当前处理数量: {}", page, ids.size());
+            System.out.println(page);
+        });
+        System.out.println("耗时：" + stopwatch.elapsed(TimeUnit.MILLISECONDS));
     }
 
     @Test
@@ -178,13 +169,13 @@ public class UserTest {
         long a = System.currentTimeMillis();
         List<Long> longs = new ArrayList<>();
 //        IntStream.range(0, 10).forEach(value -> {
-            UpdateBatchExecutor batchExecutor = new UpdateBatchExecutor(dataSource, 3, 5);
-            long begin = System.currentTimeMillis();
-            ConditionEntity conditionEntity = new ConditionEntity();
-            Map<String, Object> updates = new HashMap<>();
-            updates.put("age", 20);
-            batchExecutor.execute("test_user", conditionEntity.where("1=1"), updates);
-            longs.add(System.currentTimeMillis() - begin);
+        UpdateBatchExecutor batchExecutor = new UpdateBatchExecutor(dataSource, 10, 10);
+        long begin = System.currentTimeMillis();
+        ConditionEntity conditionEntity = new ConditionEntity();
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("age", 20);
+        batchExecutor.execute("test_user", conditionEntity.where("1=1"), updates);
+        longs.add(System.currentTimeMillis() - begin);
 //        });
         Long value = 0L;
         for (Long aLong : longs) {

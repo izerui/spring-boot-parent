@@ -16,6 +16,8 @@ import com.yj2025.performance.Producer;
 import io.vavr.CheckedFunction0;
 import io.vavr.CheckedRunnable;
 import io.vavr.control.Try;
+import org.apache.calcite.sql.SqlUpdate;
+import org.apache.calcite.sql.parser.SqlParser;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.DataValidation;
 import org.apache.poi.ss.util.CellRangeAddressList;
@@ -406,6 +408,8 @@ public final class Context {
         return batchUpdate(getBean(DataSource.class), namedSQL, batchValues);
     }
 
+    private final static Map<DataSource, NamedParameterJdbcTemplate> NAMED_PARAMETER_JDBCTEMPLATE_MAP = new HashMap<>();
+
     /**
      * 批量执行命名SQL， 使用 :name , :code 之类的命名参数
      *
@@ -414,7 +418,11 @@ public final class Context {
      * @param batchValues 批次值
      */
     public static int[] batchUpdate(DataSource dataSource, String namedSQL, Map<String, ?>[] batchValues) {
-        NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+        NamedParameterJdbcTemplate namedParameterJdbcTemplate = NAMED_PARAMETER_JDBCTEMPLATE_MAP.get(dataSource);
+        if (namedParameterJdbcTemplate == null) {
+            namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+            NAMED_PARAMETER_JDBCTEMPLATE_MAP.put(dataSource, namedParameterJdbcTemplate);
+        }
         return namedParameterJdbcTemplate.batchUpdate(namedSQL, batchValues);
     }
 
@@ -468,8 +476,74 @@ public final class Context {
         for (Object batchValue : batchValues) {
             batchMaps[it.getAndIncrement()] = mapOfOriginKey(batchValue);
         }
-        NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+        NamedParameterJdbcTemplate namedParameterJdbcTemplate = NAMED_PARAMETER_JDBCTEMPLATE_MAP.get(dataSource);
+        if (namedParameterJdbcTemplate == null) {
+            namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+            NAMED_PARAMETER_JDBCTEMPLATE_MAP.put(dataSource, namedParameterJdbcTemplate);
+        }
         return namedParameterJdbcTemplate.batchUpdate(namedSQL, batchMaps);
+    }
+
+    /**
+     * 批量异步执行更新语句
+     *
+     * @param updateSQL  更新语句
+     * @param primaryKey 按批次根据主键更新
+     * @param poolSize   执行线程个数
+     * @param batchNum   每批次数量
+     */
+    public static void batchUpdateAsync(String updateSQL, String primaryKey, int poolSize, int batchNum) {
+        batchUpdateAsync(Context.getBean(DataSource.class), updateSQL, primaryKey, poolSize, batchNum, null);
+    }
+
+    /**
+     * 批量异步执行更新语句
+     *
+     * @param updateSQL     更新语句
+     * @param primaryKey    按批次根据主键更新
+     * @param poolSize      执行线程个数
+     * @param batchNum      每批次数量
+     * @param batchConsumer 每批次观察
+     */
+    public static void batchUpdateAsync(String updateSQL, String primaryKey, int poolSize, int batchNum, BiConsumer<List<?>, Integer> batchConsumer) {
+        batchUpdateAsync(Context.getBean(DataSource.class), updateSQL, primaryKey, poolSize, batchNum, batchConsumer);
+    }
+
+    /**
+     * 批量异步执行更新语句
+     *
+     * @param dataSource    数据源
+     * @param updateSQL     更新语句
+     * @param primaryKey    按批次根据主键更新
+     * @param poolSize      执行线程个数
+     * @param batchNum      每批次数量
+     * @param batchConsumer 每批次观察
+     */
+    public static void batchUpdateAsync(DataSource dataSource, String updateSQL, String primaryKey, int poolSize, int batchNum, BiConsumer<List<?>, Integer> batchConsumer) {
+        SqlParser sqlParser = SqlParser.create(updateSQL);
+        SqlUpdate sqlUpdate = (SqlUpdate) Context.tryWith(() -> sqlParser.parseStmt());
+        String tablename = sqlUpdate.getTargetTable().toString();
+        String updateWithoutCondition = sqlUpdate.toString().split("\n")[0];
+        String condition = sqlUpdate.getCondition().toString();
+        ListeningExecutorService executorService = MoreExecutors.listeningDecorator(new ThreadPoolExecutor(poolSize, poolSize, 0, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<Runnable>(65536), new ThreadPoolExecutor.CallerRunsPolicy()));
+        List<ListenableFuture<?>> futures = new ArrayList<>();
+        Context.pagenationQueryWrap(Context.getBean(DataSource.class), "select " + primaryKey + " from " + tablename + " where " + condition, batchNum,
+                (rs, rowNum) -> rs.getObject(primaryKey),
+                (primaryValues, page) -> {
+                    ListenableFuture<?> future = executorService.submit(() -> {
+                        String usql = updateWithoutCondition + " where " + primaryKey + " = :key";
+                        List<HashMap> maps = primaryValues.stream().map(primaryValue -> new HashMap(1) {{
+                            put("key", primaryValue);
+                        }}).collect(Collectors.toList());
+                        Context.batchUpdate(dataSource, usql, maps);
+                        if (batchConsumer != null) {
+                            batchConsumer.accept(primaryValues, page);
+                        }
+                    });
+                    futures.add(future);
+                });
+        Context.tryWith(() -> Futures.allAsList(futures).get());
+        executorService.shutdown();
     }
 
     /**
@@ -633,27 +707,27 @@ public final class Context {
     /**
      * 将查询语句进行分页包装查询
      *
-     * @param querySQL               查询语句
-     * @param pageSize               每页记录数
-     * @param rowMapper              行转换器
-     * @param perPageResultsConsumer 每页结果合集
+     * @param querySQL      查询语句
+     * @param pageSize      每页记录数
+     * @param rowMapper     行转换器
+     * @param batchConsumer 每批观察
      * @param <T>
      */
-    public static <T> void pagenationQueryWrap(String querySQL, int pageSize, RowMapper<T> rowMapper, BiConsumer<List<T>, Integer> perPageResultsConsumer) {
-        pagenationQueryWrap(getBean(DataSource.class), querySQL, pageSize, rowMapper, perPageResultsConsumer);
+    public static <T> void pagenationQueryWrap(String querySQL, int pageSize, RowMapper<T> rowMapper, BiConsumer<List<T>, Integer> batchConsumer) {
+        pagenationQueryWrap(getBean(DataSource.class), querySQL, pageSize, rowMapper, batchConsumer);
     }
 
     /**
      * 将查询语句进行分页包装查询
      *
-     * @param dataSource             数据源
-     * @param querySQL               查询语句
-     * @param pageSize               每页记录数
-     * @param rowMapper              行转换器
-     * @param perPageResultsConsumer 每页结果合集
+     * @param dataSource    数据源
+     * @param querySQL      查询语句
+     * @param pageSize      每页记录数
+     * @param rowMapper     行转换器
+     * @param batchConsumer 每批观察
      * @param <T>
      */
-    public static <T> void pagenationQueryWrap(DataSource dataSource, String querySQL, int pageSize, RowMapper<T> rowMapper, BiConsumer<List<T>, Integer> perPageResultsConsumer) {
+    public static <T> void pagenationQueryWrap(DataSource dataSource, String querySQL, int pageSize, RowMapper<T> rowMapper, BiConsumer<List<T>, Integer> batchConsumer) {
         String sql = querySQL + " limit ? offset ?";
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
         Integer page = 1;
@@ -662,8 +736,8 @@ public final class Context {
             if (results.isEmpty()) {
                 break;
             }
-            if (perPageResultsConsumer != null) {
-                perPageResultsConsumer.accept(results, page);
+            if (batchConsumer != null) {
+                batchConsumer.accept(results, page);
             }
             page++;
         }
