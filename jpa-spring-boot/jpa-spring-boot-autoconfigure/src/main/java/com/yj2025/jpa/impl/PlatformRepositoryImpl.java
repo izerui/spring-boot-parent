@@ -356,6 +356,12 @@ public class PlatformRepositoryImpl<T, ID extends Serializable> extends SimpleJp
         return entityInformation.getJavaType();
     }
 
+    @Override
+    public List<?> selectSql(String sql, Conditions conditions) {
+        Query query = new JpqlQueryHolder(conditions).createSqlQuery(sql);
+        return query.getResultList();
+    }
+
 
     // Map --> Bean 1: 利用Introspector,PropertyDescriptor实现 Map --> Bean
     private <R> List<R> transMap2Bean(List<Map> mapList, Class<R> tClass) {
@@ -445,6 +451,14 @@ public class PlatformRepositoryImpl<T, ID extends Serializable> extends SimpleJp
                     //where
                     .append(applyCondition());
             Query query = entityManager.createQuery(QueryUtils.applySorting(sb.toString(), sort, ALIAS));
+            applyQueryParameter(query);
+            return query;
+        }
+
+        // 使用指定的sql执行查询
+        private Query createSqlQuery(String ql) {
+            ql += applyCondition();
+            Query query = entityManager.createQuery(ql);
             applyQueryParameter(query);
             return query;
         }
