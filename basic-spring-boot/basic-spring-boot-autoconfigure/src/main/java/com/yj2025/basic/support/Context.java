@@ -805,6 +805,13 @@ public final class Context {
     }
 
     /**
+     * json反序列化
+     */
+    public static <T> T fromJson(byte[] json, Class<T> tClass) {
+        return tryWith(() -> OBJECT_MAPPER.readValue(json, tClass));
+    }
+
+    /**
      * map转成另一个map
      *
      * @param originMap   原始map
