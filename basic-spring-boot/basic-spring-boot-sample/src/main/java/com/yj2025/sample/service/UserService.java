@@ -2,6 +2,7 @@ package com.yj2025.sample.service;
 
 import com.google.common.base.Stopwatch;
 import com.yj2025.basic.command.CommandInvoker;
+import com.yj2025.basic.support.WebRequestAware;
 import com.yj2025.sample.command.*;
 import com.yj2025.sample.entity.User;
 import org.springframework.stereotype.Service;
@@ -13,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
 @Service
-public class UserService {
+public class UserService implements WebRequestAware {
 
     @Transactional
     public void add() {
