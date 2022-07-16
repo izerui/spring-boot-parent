@@ -102,4 +102,9 @@ public abstract class BasicCommand<R> implements Command<R>, BasicComponent {
     public Logger getLogger() {
         return logger;
     }
+
+    @Override
+    public final  <T> T $(Class<T> beanClass) {
+        return BasicComponent.super.$(beanClass);
+    }
 }
