@@ -16,7 +16,6 @@ import com.yj2025.performance.Producer;
 import io.vavr.CheckedFunction0;
 import io.vavr.CheckedRunnable;
 import io.vavr.control.Try;
-import lombok.SneakyThrows;
 import org.apache.calcite.sql.SqlUpdate;
 import org.apache.calcite.sql.parser.SqlParser;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -419,6 +418,9 @@ public final class Context {
      * @param batchValues 批次值
      */
     public static int[] batchUpdate(DataSource dataSource, String namedSQL, Map<String, ?>[] batchValues) {
+        if (batchValues == null || batchValues.length == 0) {
+            return new int[0];
+        }
         NamedParameterJdbcTemplate namedParameterJdbcTemplate = NAMED_PARAMETER_JDBCTEMPLATE_MAP.get(dataSource);
         if (namedParameterJdbcTemplate == null) {
             namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
@@ -472,6 +474,9 @@ public final class Context {
      * @param batchValues 批次值
      */
     public static <T> int[] batchUpdate(DataSource dataSource, String namedSQL, Collection<T> batchValues) {
+        if (batchValues == null || batchValues.isEmpty()) {
+            return new int[0];
+        }
         AtomicInteger it = new AtomicInteger(0);
         Map<String, ?>[] batchMaps = new HashMap[batchValues.size()];
         for (Object batchValue : batchValues) {
@@ -671,6 +676,9 @@ public final class Context {
      * @param <T>
      */
     public static <T> int[] batchInsert(DataSource dataSource, String tablename, Collection<T> batchValues, String... generatedKeys) {
+        if (batchValues == null || batchValues.isEmpty()) {
+            return new int[0];
+        }
         AtomicInteger it = new AtomicInteger(0);
         Map<String, ?>[] batchMaps = new HashMap[batchValues.size()];
         for (T batchValue : batchValues) {
