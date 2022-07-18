@@ -1,5 +1,6 @@
 package com.yj2025.basic.command;
 
+import com.yj2025.basic.command.component.BasicComponent;
 import com.yj2025.basic.support.ApplicationBeanAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,7 +10,7 @@ import org.slf4j.LoggerFactory;
  *
  * @param <R> 返回的结果类型
  */
-public abstract class BasicCommand<R> implements Command<R>, ApplicationBeanAware {
+public abstract class BasicCommand<R> implements Command<R>, BasicComponent, ApplicationBeanAware {
 
     private boolean executed = false;
     private Long executeTimeMillis;
@@ -98,7 +99,8 @@ public abstract class BasicCommand<R> implements Command<R>, ApplicationBeanAwar
         return 500L;
     }
 
-    protected Logger getLogger() {
+    @Override
+    public Logger getLogger() {
         return logger;
     }
 
