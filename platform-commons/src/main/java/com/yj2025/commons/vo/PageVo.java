@@ -25,6 +25,19 @@ public class PageVo<T> {
 
     private boolean hasNext;
 
+    public PageVo(List<T> content, long totalElements, int totalPages, int number, int size) {
+        this.content = content;
+        this.totalElements = totalElements;
+        this.totalPages = totalPages;
+        this.number = number;
+        this.size = size;
+        this.content = content;
+        this.hasNext = this.number + 1 < this.getTotalPages();
+    }
+
+    public PageVo() {
+    }
+
     /**
      * 转换成PageVo 保持原对象不变
      *
