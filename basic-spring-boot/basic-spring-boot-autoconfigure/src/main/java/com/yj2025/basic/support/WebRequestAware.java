@@ -23,26 +23,26 @@ public interface WebRequestAware {
     }
 
     default String getEntCode() {
-        return URLDecoder.decode(getRequest().getHeader("entCode"), StandardCharsets.UTF_8);
+        return URLDecoder.decode(getRequestHeader("entCode"), StandardCharsets.UTF_8);
     }
 
     default String getEntName() {
-        return URLDecoder.decode(getRequest().getHeader("entName"), StandardCharsets.UTF_8);
+        return URLDecoder.decode(getRequestHeader("entName"), StandardCharsets.UTF_8);
     }
 
     default String getUserCode() {
-        return URLDecoder.decode(getRequest().getHeader("userCode"), StandardCharsets.UTF_8);
+        return URLDecoder.decode(getRequestHeader("userCode"), StandardCharsets.UTF_8);
     }
 
     default String getUserName() {
-        return URLDecoder.decode(getRequest().getHeader("userName"), StandardCharsets.UTF_8);
+        return URLDecoder.decode(getRequestHeader("userName"), StandardCharsets.UTF_8);
     }
 
     default String getAccountCode() {
-        return URLDecoder.decode(getRequest().getHeader("accountCode"), StandardCharsets.UTF_8);
+        return URLDecoder.decode(getRequestHeader("accountCode"), StandardCharsets.UTF_8);
     }
 
     default String getAccountName() {
-        return URLDecoder.decode(getRequest().getHeader("accountName"), StandardCharsets.UTF_8);
+        return URLDecoder.decode(getRequestHeader("accountName"), StandardCharsets.UTF_8);
     }
 }
