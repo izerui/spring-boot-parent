@@ -11,13 +11,17 @@ import com.yj2025.sample.service.UpdateBatchExecutor;
 import com.yj2025.sample.service.UserService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.calcite.sql.SqlUpdate;
-import org.apache.calcite.sql.parser.SqlParser;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.BDDMockito;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.jdbc.object.BatchSqlUpdate;
@@ -27,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import javax.sql.DataSource;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.JDBCType;
 import java.sql.PreparedStatement;
@@ -49,10 +54,16 @@ import java.util.stream.IntStream;
 public class UserTest {
 
     @Autowired
+    private DataSource dataSource;
+
+    @SpyBean
     private UserService userService;
 
-    @Autowired
-    private DataSource dataSource;
+    @Before
+    public void init() throws IOException {
+        BDDMockito.willReturn("测试用户").given(userService).getUserName();
+    }
+
 
     @Test
     public void testAdd() {

@@ -18,6 +18,8 @@ public class UserService implements WebRequestAware {
 
     @Transactional
     public void add() {
+        String userName = getUserName();
+        System.out.println(userName);
         System.out.println(TransactionSynchronizationManager.isActualTransactionActive());
         CommandInvoker commandInvoker = new CommandInvoker();
         commandInvoker.add(new UserDeleteCmd());
