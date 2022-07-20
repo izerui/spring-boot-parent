@@ -69,10 +69,6 @@
             <artifactId>spring-jdbc</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.yj2025</groupId>
-            <artifactId>platform-commons</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.github.dadiyang</groupId>
             <artifactId>equator</artifactId>
             <version>1.0.4</version>

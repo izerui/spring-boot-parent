@@ -48,7 +48,7 @@ public class ProxyQrcodeController {
         return webClientBuilder
                 .build()
                 .post()
-                .uri("http://" + properties.getOauth2().getAppName() + MappingUrls.QRCODE_GENERATE_URL)
+                .uri("lb://" + properties.getOauth2().getAppName() + MappingUrls.QRCODE_GENERATE_URL)
                 .accept(MediaType.APPLICATION_JSON)
                 .header("Content-Type", "application/json;charset=UTF-8")
                 .exchange()
@@ -71,7 +71,7 @@ public class ProxyQrcodeController {
         return webClientBuilder
                 .build()
                 .post()
-                .uri("http://" + properties.getOauth2().getAppName() + MappingUrls.QRCODE_VALIDATE_URL)
+                .uri("lb://" + properties.getOauth2().getAppName() + MappingUrls.QRCODE_VALIDATE_URL)
                 .accept(MediaType.APPLICATION_JSON)
                 .header("Content-Type", "application/json;charset=UTF-8")
                 .cookies(requestCookies -> {
