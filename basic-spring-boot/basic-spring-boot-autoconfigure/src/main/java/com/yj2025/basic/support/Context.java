@@ -605,7 +605,7 @@ public final class Context {
      * @param <T>
      * @return
      */
-    public static <T> Number insertReturnKey(String tablename, T data, String generatedKeys) {
+    public static <T> Number insertReturnKey(String tablename, T data, String... generatedKeys) {
         return insertReturnKey(getBean(DataSource.class), tablename, data, generatedKeys);
     }
 
@@ -619,7 +619,7 @@ public final class Context {
      * @param <T>
      * @return
      */
-    public static <T> Number insertReturnKey(DataSource dataSource, String tablename, T data, String generatedKeys) {
+    public static <T> Number insertReturnKey(DataSource dataSource, String tablename, T data, String... generatedKeys) {
         Assert.notNull(generatedKeys, "必须指定主键才能获取返回的主键值");
         return getInsert(dataSource, tablename, generatedKeys)
                 .executeAndReturnKey(mapOfUnderscoreKey(data));

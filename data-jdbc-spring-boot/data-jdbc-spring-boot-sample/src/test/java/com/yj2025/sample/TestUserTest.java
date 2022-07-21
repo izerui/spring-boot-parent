@@ -98,8 +98,8 @@ public class TestUserTest {
         map.put("code", "code" + 2);
         map.put("name", "name" + 2);
         map.put("email", "email" + 2);
-        map.put("age", 33);
-        Number test_user = Context.insertReturnKey(dataSource, "test_user", map, "id");
+//        map.put("age", 33);
+        Number test_user = Context.insertReturnKey(dataSource, "test_user", map, "id","age");
         System.out.println("首次耗时：" + watch.elapsed(TimeUnit.MILLISECONDS));
         System.out.println("返回主键值：" + test_user);
 
