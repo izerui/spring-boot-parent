@@ -1,6 +1,6 @@
 package com.yj2025.basic.command;
 
-import com.yj2025.basic.command.component.BasicComponent;
+import com.yj2025.basic.component.BasicComponent;
 import com.yj2025.basic.support.ApplicationBeanAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

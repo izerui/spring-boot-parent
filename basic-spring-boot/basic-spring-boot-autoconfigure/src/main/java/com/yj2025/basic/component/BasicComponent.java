@@ -1,4 +1,4 @@
-package com.yj2025.basic.command.component;
+package com.yj2025.basic.component;
 
 import org.slf4j.Logger;
 
