@@ -1,10 +1,11 @@
 package com.yj2025.basic.service;
 
 import com.yj2025.basic.command.Command;
+import com.yj2025.basic.support.ApplicationBeanAware;
 import io.vavr.*;
 import io.vavr.control.Option;
 
-public abstract class BasicService {
+public abstract class BasicService implements ApplicationBeanAware {
 
     /**
      * 执行一个cmd命令
