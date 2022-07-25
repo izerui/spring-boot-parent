@@ -2,6 +2,7 @@ package com.yj2025.basic.command;
 
 import com.yj2025.basic.component.BasicComponent;
 import com.yj2025.basic.support.ApplicationBeanAware;
+import com.yj2025.basic.support.ColorOutput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +49,7 @@ public abstract class BasicCommand<R> implements Command<R>, BasicComponent, App
         } finally {
             executeTimeMillis = System.currentTimeMillis() - startTime;
             if (executeTimeMillis > getLimitWarnningTimeMillis()) {
-                logger.warn("警告：{} 耗时: {} (ms)", this.getClass().getSimpleName(), executeTimeMillis);
+                logger.warn(ColorOutput.RED("警告：{} 耗时: {} (ms)"), this.getClass().getSimpleName(), executeTimeMillis);
             } else {
                 logger.debug("{} 耗时: {} (ms)", this.getClass().getSimpleName(), executeTimeMillis);
             }
