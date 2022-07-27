@@ -22,27 +22,51 @@ public interface WebRequestAware {
         return getRequest().getHeader(header);
     }
 
-    default String getEntCode() {
-        return URLDecoder.decode(getRequestHeader("entCode"), StandardCharsets.UTF_8);
+    default RequestWrapper getRequestWrapper() {
+        return new RequestWrapper() {
+            @Override
+            public String getEntCode() {
+                return URLDecoder.decode(getRequestHeader("entCode"), StandardCharsets.UTF_8);
+            }
+
+            @Override
+            public String getEntName() {
+                return URLDecoder.decode(getRequestHeader("entName"), StandardCharsets.UTF_8);
+            }
+
+            @Override
+            public String getUserCode() {
+                return URLDecoder.decode(getRequestHeader("userCode"), StandardCharsets.UTF_8);
+            }
+
+            @Override
+            public String getUserName() {
+                return URLDecoder.decode(getRequestHeader("userName"), StandardCharsets.UTF_8);
+            }
+
+            @Override
+            public String getAccountCode() {
+                return URLDecoder.decode(getRequestHeader("accountCode"), StandardCharsets.UTF_8);
+            }
+
+            @Override
+            public String getAccountName() {
+                return URLDecoder.decode(getRequestHeader("accountName"), StandardCharsets.UTF_8);
+            }
+        };
     }
 
-    default String getEntName() {
-        return URLDecoder.decode(getRequestHeader("entName"), StandardCharsets.UTF_8);
-    }
+    interface RequestWrapper {
+        String getEntCode();
 
-    default String getUserCode() {
-        return URLDecoder.decode(getRequestHeader("userCode"), StandardCharsets.UTF_8);
-    }
+        String getEntName();
 
-    default String getUserName() {
-        return URLDecoder.decode(getRequestHeader("userName"), StandardCharsets.UTF_8);
-    }
+        String getUserCode();
 
-    default String getAccountCode() {
-        return URLDecoder.decode(getRequestHeader("accountCode"), StandardCharsets.UTF_8);
-    }
+        String getUserName();
 
-    default String getAccountName() {
-        return URLDecoder.decode(getRequestHeader("accountName"), StandardCharsets.UTF_8);
+        String getAccountCode();
+
+        String getAccountName();
     }
 }
