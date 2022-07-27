@@ -2,9 +2,11 @@ package sample;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.yj2025.mybatis.toolkit.ReflectionUtil;
 import com.yj2025.sample.Application;
 import com.yj2025.sample.entity.Simple;
 import com.yj2025.sample.mapper.SimpleMapper;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -78,5 +80,19 @@ public class SimpleTest {
     public void testSelectOne() {
         Simple simple = simpleMapper.selectOne(Wrappers.lambdaQuery(Simple.class).eq(Simple::getWord, "1"));
         System.out.println(simple);
+    }
+
+    public static void main(String[] args) {
+        User u = new User();
+        u.setName("111");
+
+        ReflectionUtil.setPropertyValue(User.class,u,"name","222");
+        System.out.println(u.getName());
+    }
+
+
+    @Data
+    public static class User {
+        private String name;
     }
 }
