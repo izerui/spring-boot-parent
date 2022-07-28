@@ -231,7 +231,9 @@ public class TestJunit {
         conditions.and("ddd").is(null).and("fff").like("");
 
 
-        System.out.println(Conditions.where("a").is(null));
+        System.out.println(
+                conditions
+        );
     }
 
 }

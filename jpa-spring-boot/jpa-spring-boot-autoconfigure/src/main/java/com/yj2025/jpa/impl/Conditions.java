@@ -131,9 +131,9 @@ public class Conditions implements Cloneable {
         return this;
     }
 
-    public boolean isValid() {
-        return cdList.stream().filter(Condition::isValid).count() > 0L;
-    }
+//    public boolean isValid() {
+//        return cdList.stream().filter(Condition::isValid).count() > 0L;
+//    }
 
 
     @Override
@@ -144,22 +144,21 @@ public class Conditions implements Cloneable {
     public String toQL(Map<String, Object> params) {
         Assert.notNull(params, "参数对象不能为空");
         StringBuilder sb = new StringBuilder("");
-        List<Condition> conditions = cdList.stream().filter(Condition::isValid).collect(Collectors.toList());
-        if (conditions.size() == 0) {
+        if (cdList == null || cdList.size() == 0) {
             return "";
         }
         sb.append(" ( ");
-        for (Condition condition : conditions) {
+        for (Condition condition : cdList) {
             sb.append(condition.toQL(params));
         }
 
         if (combList != null) {
 
             for (CombCondition comb : combList) {
-                if (comb.isValid()) {
-                    sb.append(comb.andOr);
-                    sb.append(comb.toQL(params));
-                }
+//                if (comb.isValid()) {
+                sb.append(comb.andOr);
+                sb.append(comb.toQL(params));
+//                }
             }
         }
 
@@ -199,9 +198,9 @@ public class Conditions implements Cloneable {
             return cds.toQL(params);
         }
 
-        public boolean isValid() {
-            return cds.isValid();
-        }
+//        public boolean isValid() {
+//            return cds.isValid();
+//        }
 
     }
 
@@ -221,7 +220,7 @@ public class Conditions implements Cloneable {
 
         private String toQL(Map<String, Object> params) {
             if (!isValid()) {
-                return "";
+                return isEmpty(andOr) ? "1=1 " : andOr + " 1=1 ";
             }
             int index = 0;
             String fieldValueKey = StringUtils.replace(this.field, ".", "_");
