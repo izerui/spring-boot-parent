@@ -223,12 +223,15 @@ public class TestJunit {
         Conditions conditions = Conditions.where("a").is(1)
                 .and("b").is(2)
                 .or(
-                        Conditions.where("c").is(3).or("d").is(4)
+                        Conditions.where("c").like(null)
                 )
                 .and(
                         Conditions.where("e").is(5).or("f").is(6)
                 );
-        System.out.println(conditions);
+        conditions.and("ddd").is(null).and("fff").like("");
+
+
+        System.out.println(Conditions.where("a").is(null));
     }
 
 }

@@ -5,13 +5,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 public class Conditions implements Cloneable {
 
@@ -133,6 +131,10 @@ public class Conditions implements Cloneable {
         return this;
     }
 
+    public boolean isValid() {
+        return cdList.stream().filter(Condition::isValid).count() > 0L;
+    }
+
 
     @Override
     public String toString() {
@@ -142,19 +144,22 @@ public class Conditions implements Cloneable {
     public String toQL(Map<String, Object> params) {
         Assert.notNull(params, "参数对象不能为空");
         StringBuilder sb = new StringBuilder("");
-        if (cdList == null || cdList.size() == 0) {
+        List<Condition> conditions = cdList.stream().filter(Condition::isValid).collect(Collectors.toList());
+        if (conditions.size() == 0) {
             return "";
         }
         sb.append(" ( ");
-        for (Condition condition : cdList) {
+        for (Condition condition : conditions) {
             sb.append(condition.toQL(params));
         }
 
         if (combList != null) {
 
             for (CombCondition comb : combList) {
-                sb.append(comb.andOr);
-                sb.append(comb.toQL(params));
+                if (comb.isValid()) {
+                    sb.append(comb.andOr);
+                    sb.append(comb.toQL(params));
+                }
             }
         }
 
@@ -194,6 +199,10 @@ public class Conditions implements Cloneable {
             return cds.toQL(params);
         }
 
+        public boolean isValid() {
+            return cds.isValid();
+        }
+
     }
 
     private static class Condition {
@@ -211,6 +220,9 @@ public class Conditions implements Cloneable {
         }
 
         private String toQL(Map<String, Object> params) {
+            if (!isValid()) {
+                return "";
+            }
             int index = 0;
             String fieldValueKey = StringUtils.replace(this.field, ".", "_");
             String paramsKey = fieldValueKey + "_" + index;
@@ -235,6 +247,17 @@ public class Conditions implements Cloneable {
         private Condition value(Object value) {
             this.value = value;
             return this;
+        }
+
+        public boolean isValid() {
+            if (isNotEmpty(express)) {
+                if (Objects.isNull(value) ||
+                        "%".equals(value.toString()) ||
+                        "%%".equals(value.toString())) {
+                    return false;
+                }
+            }
+            return true;
         }
 
         public String getAndOr() {
