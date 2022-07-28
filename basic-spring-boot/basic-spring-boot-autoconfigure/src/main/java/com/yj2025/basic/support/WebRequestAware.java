@@ -22,8 +22,8 @@ public interface WebRequestAware {
         return getRequest().getHeader(header);
     }
 
-    default RequestWrapper getRequestWrapper() {
-        return new RequestWrapper() {
+    default WrapHeader getWrapHeader() {
+        return new WrapHeader() {
             @Override
             public String getEntCode() {
                 return URLDecoder.decode(getRequestHeader("entCode"), StandardCharsets.UTF_8);
@@ -56,7 +56,7 @@ public interface WebRequestAware {
         };
     }
 
-    interface RequestWrapper {
+    interface WrapHeader {
         String getEntCode();
 
         String getEntName();

@@ -232,7 +232,7 @@ public class TestJunit {
 
 
         System.out.println(
-                conditions
+                Conditions.where("a").is(null).and("b").gt(2)
         );
     }
 
