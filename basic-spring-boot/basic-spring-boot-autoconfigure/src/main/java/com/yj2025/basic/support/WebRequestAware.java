@@ -18,7 +18,7 @@ public interface WebRequestAware {
         throw new RuntimeException("非web请求，无法获取request对象");
     }
 
-    default String getRequestHeader(String header) {
+    private String getHeader(String header) {
         return getRequest().getHeader(header);
     }
 
@@ -26,32 +26,32 @@ public interface WebRequestAware {
         return new WrapHeader() {
             @Override
             public String getEntCode() {
-                return URLDecoder.decode(getRequestHeader("entCode"), StandardCharsets.UTF_8);
+                return URLDecoder.decode(getHeader("entCode"), StandardCharsets.UTF_8);
             }
 
             @Override
             public String getEntName() {
-                return URLDecoder.decode(getRequestHeader("entName"), StandardCharsets.UTF_8);
+                return URLDecoder.decode(getHeader("entName"), StandardCharsets.UTF_8);
             }
 
             @Override
             public String getUserCode() {
-                return URLDecoder.decode(getRequestHeader("userCode"), StandardCharsets.UTF_8);
+                return URLDecoder.decode(getHeader("userCode"), StandardCharsets.UTF_8);
             }
 
             @Override
             public String getUserName() {
-                return URLDecoder.decode(getRequestHeader("userName"), StandardCharsets.UTF_8);
+                return URLDecoder.decode(getHeader("userName"), StandardCharsets.UTF_8);
             }
 
             @Override
             public String getAccountCode() {
-                return URLDecoder.decode(getRequestHeader("accountCode"), StandardCharsets.UTF_8);
+                return URLDecoder.decode(getHeader("accountCode"), StandardCharsets.UTF_8);
             }
 
             @Override
             public String getAccountName() {
-                return URLDecoder.decode(getRequestHeader("accountName"), StandardCharsets.UTF_8);
+                return URLDecoder.decode(getHeader("accountName"), StandardCharsets.UTF_8);
             }
         };
     }

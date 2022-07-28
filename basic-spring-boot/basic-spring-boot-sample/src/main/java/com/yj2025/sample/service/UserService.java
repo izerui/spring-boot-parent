@@ -19,7 +19,7 @@ public class UserService extends BasicService implements WebRequestAware {
 
     @Transactional
     public void add() {
-        String userName = getUserName();
+        String userName = getWrapHeader().getUserName();
         System.out.println(userName);
         System.out.println(TransactionSynchronizationManager.isActualTransactionActive());
         execute(new UserDeleteCmd());
