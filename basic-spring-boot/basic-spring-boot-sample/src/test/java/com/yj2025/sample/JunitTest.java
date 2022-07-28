@@ -1,9 +1,12 @@
 package com.yj2025.sample;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
+import com.google.common.util.concurrent.FutureCallback;
 import com.yj2025.basic.support.Context;
 import io.vavr.API;
 import io.vavr.Tuple;
+import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.ExpressionVisitorAdapter;
 import net.sf.jsqlparser.parser.CCJSqlParser;
@@ -29,12 +32,23 @@ import org.springframework.core.io.support.ResourcePatternUtils;
 import org.springframework.core.type.classreading.CachingMetadataReaderFactory;
 import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.core.type.classreading.MetadataReaderFactory;
+import org.springframework.util.Assert;
 
+import javax.annotation.Nullable;
 import java.io.File;
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
+@Slf4j
 public class JunitTest {
-    
+
     @Test
     public void test01() {
         Context.tryWith(() -> {
@@ -56,13 +70,13 @@ public class JunitTest {
             }
         });
     }
-    
+
     @Test
     public void testSql() throws ParseException, JSQLParserException {
         String sql = "update test_user set age = 18 where age > 16 and code is not null";
 //        String sql = "UPDATE `price_center`.`price_range_purchase` AS pr, `price_center`.`inventory_price_purchase` AS ip  SET pr.begin_num = pr.begin_num * ip.valuation_ratio, pr.original_unit_price = pr.original_unit_price * ip.valuation_ratio, pr.rmb_unit_price = pr.rmb_unit_price * ip.valuation_ratio  WHERE \tpr.record_id = '140a9c7c-6778-4b27-88af-40b5b7fd6e52'  \tAND pr.price_record_id = ip.record_id";
         Statement parse = CCJSqlParserUtil.parse(sql);
-        parse.accept(new StatementVisitorAdapter(){
+        parse.accept(new StatementVisitorAdapter() {
 
             @Override
             public void visit(Update update) {
@@ -94,6 +108,26 @@ public class JunitTest {
 //        System.out.println(sqlUpdate.getTargetTable().toString());
 //        System.out.println(sqlUpdate.getCondition().toString());
 //        System.out.println(sqlUpdate.getOperandList());
+
+    }
+
+
+    @Test
+    public void test03() {
+        while (true) {
+            List<Callable<Integer>> collect = IntStream.range(0, 10).mapToObj(value -> new Callable<Integer>() {
+                @Override
+                public Integer call() throws Exception {
+                    return value;
+                }
+            }).collect(Collectors.toList());
+            List<Integer> integers = Context.submitAsyncWaitReturn(5, 10, Duration.ofSeconds(60), collect);
+            log.info("end.....{}", integers);
+            Assert.state(integers.size() == collect.size(), "list大小不一致");
+            log.info("--------------------------------------------");
+            Context.tryWith(() -> Thread.sleep(3000));
+        }
+
 
     }
 

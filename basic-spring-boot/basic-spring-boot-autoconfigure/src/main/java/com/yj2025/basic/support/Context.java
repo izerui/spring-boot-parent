@@ -7,7 +7,10 @@ import com.github.dadiyang.equator.Equator;
 import com.github.dadiyang.equator.FieldInfo;
 import com.github.dadiyang.equator.GetterBaseEquator;
 import com.google.common.base.CaseFormat;
-import com.google.common.util.concurrent.*;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
 import com.lmax.disruptor.dsl.ProducerType;
 import com.yj2025.performance.BatchConsumer;
 import com.yj2025.performance.ClearEvent;
@@ -214,7 +217,19 @@ public final class Context {
      * @param runnables       runnable方法集合
      */
     public static void submitAsync(int corePoolSize, int maximumPoolSize, Collection<Runnable> runnables) {
-        submitAsync(corePoolSize, maximumPoolSize, Duration.ZERO, runnables);
+        ThreadPoolExecutor threadPoolExecutor = null;
+        try {
+            threadPoolExecutor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, 0, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(65536), new ThreadPoolExecutor.CallerRunsPolicy());
+            for (Runnable runnable : runnables) {
+                threadPoolExecutor.submit(runnable);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage(), e);
+        } finally {
+            if (threadPoolExecutor != null) {
+                threadPoolExecutor.shutdown();
+            }
+        }
     }
 
     /**
@@ -234,83 +249,47 @@ public final class Context {
      *
      * @param corePoolSize    核心线程数
      * @param maximumPoolSize 最大线程数
-     * @param timeout         每个线程超时时间 0:永不超时
+     * @param timeout         每个线程超时时间
      * @param runnables       runnable方法集合
      */
     public static void submitAsyncWait(int corePoolSize, int maximumPoolSize, Duration timeout, Collection<Runnable> runnables) {
-        submitAsync(corePoolSize, maximumPoolSize, timeout, runnables);
-    }
-
-    /**
-     * 提交一批runnable方法到线程池（注意，异步方法需要手动控制事务）
-     */
-    private static void submitAsync(int corePoolSize, int maximumPoolSize, Duration timeout, Collection<Runnable> runnables) {
-        ListeningExecutorService listeningExecutorService = null;
-        ListenableFuture<List<Object>> allAsList = null;
+        ThreadPoolExecutor threadPoolExecutor = null;
         try {
-            listeningExecutorService = MoreExecutors.listeningDecorator(new ThreadPoolExecutor(corePoolSize, maximumPoolSize, 0, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(65536), new ThreadPoolExecutor.CallerRunsPolicy()));
-            List<ListenableFuture<?>> futures = new ArrayList<>();
+            threadPoolExecutor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, 0, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(65536), new ThreadPoolExecutor.CallerRunsPolicy());
+            List<Future<?>> futures = new ArrayList<>();
             for (Runnable runnable : runnables) {
-                ListenableFuture<?> submit = listeningExecutorService.submit(runnable);
+                Future<?> submit = threadPoolExecutor.submit(runnable);
                 futures.add(submit);
             }
-            allAsList = Futures.allAsList(futures);
-            if (timeout.toSeconds() != 0L) {
-                allAsList.get(timeout.toSeconds(), TimeUnit.SECONDS);
-            }
+            futures.forEach(future -> tryWith(() -> {
+                if (timeout.toSeconds() != 0L) {
+                    future.get(timeout.toSeconds(), TimeUnit.SECONDS);
+                } else {
+                    future.get();
+                }
+            }));
         } catch (Exception e) {
-            if (allAsList != null) {
-                allAsList.cancel(true);
-            }
             throw new RuntimeException(e.getMessage(), e);
         } finally {
-            if (listeningExecutorService != null) {
-                listeningExecutorService.shutdown();
+            if (threadPoolExecutor != null) {
+                threadPoolExecutor.shutdown();
             }
         }
     }
 
 
     /**
-     * 提交一批callable方法到线程池,每个处理完返调用callback,不等待任务全部执行完毕（注意，异步方法需要手动控制事务）
+     * 提交一批callable方法到线程池,每个处理完返调用callback,并等待所有执行完毕（注意，异步方法需要手动控制事务）
      *
      * @param corePoolSize    核心线程数
      * @param maximumPoolSize 最大线程数
-     * @param callback        回调
+     * @param timeout         每个线程超时时间 0:永不超时
      * @param callables       callable方法集合
      * @param <T>             返回值类型
      */
     @SafeVarargs
-    public static <T> void submitAsync(int corePoolSize, int maximumPoolSize, FutureCallback<T> callback, Callable<T>... callables) {
-        submitAsync(corePoolSize, maximumPoolSize, callback, Arrays.asList(callables));
-    }
-
-    /**
-     * 提交一批callable方法到线程池,每个处理完返调用callback,不等待任务全部执行完毕（注意，异步方法需要手动控制事务）
-     *
-     * @param corePoolSize    核心线程数
-     * @param maximumPoolSize 最大线程数
-     * @param callback        回调
-     * @param callables       callable方法集合
-     * @param <T>             返回值类型
-     */
-    public static <T> void submitAsync(int corePoolSize, int maximumPoolSize, FutureCallback<T> callback, Collection<Callable<T>> callables) {
-        submitAsync(corePoolSize, maximumPoolSize, Duration.ZERO, callback, callables);
-    }
-
-    /**
-     * 提交一批callable方法到线程池,每个处理完返调用callback,并等待所有执行完毕（注意，异步方法需要手动控制事务）
-     *
-     * @param corePoolSize    核心线程数
-     * @param maximumPoolSize 最大线程数
-     * @param timeout         每个线程超时时间 0:永不超时
-     * @param callback        回调
-     * @param callables       callable方法集合
-     * @param <T>             返回值类型
-     */
-    @SafeVarargs
-    public static <T> void submitAsyncWait(int corePoolSize, int maximumPoolSize, Duration timeout, FutureCallback<T> callback, Callable<T>... callables) {
-        submitAsyncWait(corePoolSize, maximumPoolSize, timeout, callback, Arrays.asList(callables));
+    public static <T> List<T> submitAsyncWaitReturn(int corePoolSize, int maximumPoolSize, Duration timeout, Callable<T>... callables) {
+        return submitAsyncWaitReturn(corePoolSize, maximumPoolSize, timeout, Arrays.asList(callables));
     }
 
 
@@ -320,25 +299,10 @@ public final class Context {
      * @param corePoolSize    核心线程数
      * @param maximumPoolSize 最大线程数
      * @param timeout         每个线程超时时间 0:永不超时
-     * @param callback        回调
      * @param callables       callable方法集合
      * @param <T>             返回值类型
      */
-    public static <T> void submitAsyncWait(int corePoolSize, int maximumPoolSize, Duration timeout, FutureCallback<T> callback, Collection<Callable<T>> callables) {
-        submitAsync(corePoolSize, maximumPoolSize, timeout, callback, callables);
-    }
-
-    /**
-     * 提交一批callable方法到线程池,每个处理完返调用callback,并等待所有执行完毕（注意，异步方法需要手动控制事务）
-     *
-     * @param corePoolSize    核心线程数
-     * @param maximumPoolSize 最大线程数
-     * @param timeout         每个线程超时时间 0:永不超时
-     * @param callback        回调
-     * @param callables       callable方法集合
-     * @param <T>             返回值类型
-     */
-    private static <T> void submitAsync(int corePoolSize, int maximumPoolSize, Duration timeout, FutureCallback<T> callback, Collection<Callable<T>> callables) {
+    public static <T> List<T> submitAsyncWaitReturn(int corePoolSize, int maximumPoolSize, Duration timeout, Collection<Callable<T>> callables) {
         ListeningExecutorService listeningExecutorService = null;
         ListenableFuture<List<T>> allAsList = null;
         try {
@@ -346,14 +310,13 @@ public final class Context {
             List<ListenableFuture<T>> futures = new ArrayList<>();
             for (Callable<T> callable : callables) {
                 ListenableFuture<T> submit = listeningExecutorService.submit(callable);
-                if (callback != null) {
-                    Futures.addCallback(submit, callback, listeningExecutorService);
-                }
                 futures.add(submit);
             }
             allAsList = Futures.allAsList(futures);
             if (timeout.toSeconds() != 0L) {
-                allAsList.get(timeout.toSeconds(), TimeUnit.SECONDS);
+                return allAsList.get(timeout.toSeconds(), TimeUnit.SECONDS);
+            } else {
+                return allAsList.get();
             }
         } catch (Exception e) {
             if (allAsList != null) {

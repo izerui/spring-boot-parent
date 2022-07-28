@@ -11,16 +11,12 @@ import com.yj2025.sample.service.UpdateBatchExecutor;
 import com.yj2025.sample.service.UserService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.BDDMockito;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceUtils;
@@ -61,7 +57,7 @@ public class UserTest {
 
     @Before
     public void init() throws IOException {
-        BDDMockito.willReturn("测试用户").given(userService).getUserName();
+        BDDMockito.willReturn("测试用户").given(userService).getWrapHeader().getUserName();
     }
 
 
@@ -339,20 +335,8 @@ public class UserTest {
             };
         }
         CountDownLatch countDownLatch = new CountDownLatch(20000);
-        Context.submitAsyncWait(3, 5, Duration.ZERO, new FutureCallback<String>() {
-            @Override
-            public void onSuccess(@Nullable String result) {
-                System.out.println(result);
-                countDownLatch.countDown();
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-                System.out.println(t.getMessage());
-                countDownLatch.countDown();
-            }
-        }, callables);
-        countDownLatch.await();
+        List<String> strings = Context.submitAsyncWaitReturn(3, 5, Duration.ofSeconds(60), callables);
+        System.out.println(strings);
     }
 
 }

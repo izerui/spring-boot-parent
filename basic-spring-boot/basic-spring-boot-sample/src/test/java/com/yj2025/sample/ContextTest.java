@@ -1,13 +1,12 @@
 package com.yj2025.sample;
 
-import com.google.common.util.concurrent.FutureCallback;
 import com.yj2025.basic.support.Context;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.Test;
 
 import java.time.Duration;
+import java.util.List;
 
 @Slf4j
 public class ContextTest {
@@ -40,16 +39,7 @@ public class ContextTest {
 
     @Test
     public void testAwait2() {
-        Context.submitAsyncWait(5, 10, Duration.ofSeconds(10), new FutureCallback<String>() {
-            @Override
-            public void onSuccess(@Nullable String result) {
-                System.out.println(result);
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-                System.out.println("error: " + t.getMessage());
-            }
-        }, () -> "1", () -> "2");
+        List<String> strings = Context.submitAsyncWaitReturn(5, 10, Duration.ofSeconds(60), () -> "1", () -> "2");
+        System.out.println(strings);
     }
 }
