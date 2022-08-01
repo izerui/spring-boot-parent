@@ -57,6 +57,8 @@
         <pinyin4j.version>2.5.1</pinyin4j.version>
         <joda.time.version>2.10.2</joda.time.version>
         <poi.ooxml.version>4.1.2</poi.ooxml.version>
+        <vavr.version>0.10.4</vavr.version>
+        <equator.version>1.0.4</equator.version>
     </properties>
 
 
@@ -118,6 +120,16 @@
                 <groupId>org.apache.poi</groupId>
                 <artifactId>poi-ooxml</artifactId>
                 <version>${poi.ooxml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.vavr</groupId>
+                <artifactId>vavr</artifactId>
+                <version>${vavr.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.dadiyang</groupId>
+                <artifactId>equator</artifactId>
+                <version>${equator.version}</version>
             </dependency>
 
             <!-- starter 基础依赖 -->
@@ -318,7 +330,22 @@
             <!-- basic -->
             <dependency>
                 <groupId>com.yj2025</groupId>
-                <artifactId>basic-spring-boot-starter</artifactId>
+                <artifactId>basic-dao-spring-boot-starter</artifactId>
+                <version>${base-starter.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>basic-command-spring-boot-starter</artifactId>
+                <version>${base-starter.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>basic-service-spring-boot-starter</artifactId>
+                <version>${base-starter.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>basic-web-spring-boot-starter</artifactId>
                 <version>${base-starter.version}</version>
             </dependency>
             <!-- platform-commons -->

@@ -3,24 +3,18 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>yj2025-spring-boot-parent</artifactId>
+        <artifactId>basic-dao-spring-boot</artifactId>
         <groupId>com.yj2025</groupId>
         <version>1.6.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>basic-spring-boot</artifactId>
-    <packaging>pom</packaging>
-    <modules>
-        <module>basic-dao-spring-boot</module>
-        <module>basic-command-spring-boot</module>
-        <module>basic-web-spring-boot</module>
-        <module>basic-service-spring-boot</module>
-    </modules>
+    <artifactId>basic-dao-spring-boot-sample</artifactId>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
 </project>
