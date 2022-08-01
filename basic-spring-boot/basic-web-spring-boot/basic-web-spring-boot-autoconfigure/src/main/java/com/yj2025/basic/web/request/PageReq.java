@@ -1,17 +1,31 @@
 package com.yj2025.basic.web.request;
 
-import lombok.Data;
 
-@Data
 public class PageReq {
 
     /**
      * 页码
      */
-    protected Integer pageIndex = 0;
+    private Integer pageIndex = 0;
 
     /**
      * 每页条目数
      */
-    protected Integer pageSize = 20;
+    private Integer pageSize = 20;
+
+    public Integer getPageIndex() {
+        return pageIndex;
+    }
+
+    public void setPageIndex(Integer pageIndex) {
+        this.pageIndex = pageIndex;
+    }
+
+    public Integer getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(Integer pageSize) {
+        this.pageSize = pageSize;
+    }
 }
