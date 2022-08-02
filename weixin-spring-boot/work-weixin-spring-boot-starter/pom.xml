@@ -21,7 +21,7 @@
         <dependency>
             <groupId>com.yj2025</groupId>
             <artifactId>work-weixin-spring-boot-autoconfigure</artifactId>
-            <version>${base-starter.version}</version>
+            <version>${parent.version}</version>
         </dependency>
     </dependencies>
 

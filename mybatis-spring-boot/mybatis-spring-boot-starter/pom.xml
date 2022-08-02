@@ -16,7 +16,7 @@
         <dependency>
             <groupId>com.yj2025</groupId>
             <artifactId>mybatis-spring-boot-autoconfigure</artifactId>
-            <version>${base-starter.version}</version>
+            <version>${parent.version}</version>
         </dependency>
         <dependency>
             <groupId>com.zaxxer</groupId>
