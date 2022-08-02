@@ -16,7 +16,7 @@
         <dependency>
             <groupId>com.yj2025</groupId>
             <artifactId>sentinel-gateway-spring-boot-autoconfigure</artifactId>
-            <version>${project.version}</version>
+            <version>${base-starter.version}</version>
         </dependency>
     </dependencies>
 </project>

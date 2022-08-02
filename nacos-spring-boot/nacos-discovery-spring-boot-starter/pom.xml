@@ -17,7 +17,7 @@
         <dependency>
             <groupId>com.yj2025</groupId>
             <artifactId>nacos-discovery-spring-boot-autoconfigure</artifactId>
-            <version>${project.version}</version>
+            <version>${base-starter.version}</version>
         </dependency>
     </dependencies>
 

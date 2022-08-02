@@ -20,7 +20,7 @@
         <dependency>
             <groupId>com.yj2025</groupId>
             <artifactId>data-jdbc-spring-boot-starter</artifactId>
-            <version>${project.version}</version>
+            <version>${base-starter.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

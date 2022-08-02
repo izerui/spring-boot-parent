@@ -68,7 +68,7 @@
         <dependency>
             <groupId>com.yj2025</groupId>
             <artifactId>oauth2-server-security-core</artifactId>
-            <version>${project.version}</version>
+            <version>${base-starter.version}</version>
         </dependency>
     </dependencies>
 
