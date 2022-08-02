@@ -35,6 +35,10 @@
             <groupId>com.yj2025</groupId>
             <artifactId>mvc-rest-spring-boot-starter</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.yj2025</groupId>
+            <artifactId>doc-spring-boot-starter</artifactId>
+        </dependency>
     </dependencies>
 
 </project>
