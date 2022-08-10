@@ -18,6 +18,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.data.redis.core.Cursor;
+import org.springframework.data.redis.core.RedisCallback;
+import org.springframework.data.redis.core.ScanOptions;
+import org.springframework.data.redis.serializer.SerializationUtils;
 import org.springframework.util.Assert;
 
 import java.util.*;
@@ -184,7 +188,7 @@ public class UserChannelService {
 
     private List<Channel> findChannels(String entCode, String userCode, String random) {
         String keyParten = getRedisKey(entCode, userCode, random);
-        Set<String> keys = redisTemplate.keys(keyParten);
+        Set<String> keys = scan(keyParten);
         List<Channel> channels = new ArrayList<>();
         for (String key : keys) {
             ChannelId channelId = redisTemplate.boundValueOps(key).get();
@@ -211,4 +215,16 @@ public class UserChannelService {
         return _keyParten;
     }
 
+    private Set<String> scan(final String matchKey) {
+
+        Set<String> keys = redisTemplate.execute( (RedisCallback<Set<String>>) connection -> {
+            Set<byte[]> tmpKeys = new HashSet<>();
+            Cursor<byte[]> cursor = connection.scan(new ScanOptions.ScanOptionsBuilder().match(matchKey).count(Integer.MAX_VALUE).build());
+            while (cursor.hasNext()) {
+                tmpKeys.add(cursor.next());
+            }
+            return (Set<String>) SerializationUtils.deserialize(tmpKeys, redisTemplate.getKeySerializer()) ;
+        } );
+        return keys;
+    }
 }
