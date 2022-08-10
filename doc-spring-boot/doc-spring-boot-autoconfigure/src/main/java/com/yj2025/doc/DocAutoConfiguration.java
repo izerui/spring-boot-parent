@@ -1,7 +1,10 @@
 package com.yj2025.doc;
 
+import com.github.xiaoymin.knife4j.spring.extension.OpenApiExtensionResolver;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
@@ -42,6 +45,9 @@ public class DocAutoConfiguration implements WebMvcConfigurer {
     @Value("${doc.head.wrap.enabled:true}")
     private Boolean headWrapEnabled;
 
+    @Autowired
+    private ObjectProvider<OpenApiExtensionResolver> openApiExtensionResolver;
+
     private List<RequestParameter> parameter() {
         if (headWrapEnabled != null && !headWrapEnabled) {
             return null;
@@ -71,13 +77,25 @@ public class DocAutoConfiguration implements WebMvcConfigurer {
     @ConditionalOnMissingBean(Docket.class)
     @Bean(name = "defaultDocket")
     public Docket petApi() {
-        return new Docket(DocumentationType.SWAGGER_2)
-                .apiInfo(apiInfo())
-                .select()
-                .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
-                .paths(PathSelectors.any())
-                .build()
-                .globalRequestParameters(parameter());
+        OpenApiExtensionResolver ifAvailable = openApiExtensionResolver.getIfAvailable();
+        if (ifAvailable == null) {
+            return new Docket(DocumentationType.SWAGGER_2)
+                    .apiInfo(apiInfo())
+                    .select()
+                    .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
+                    .paths(PathSelectors.any())
+                    .build()
+                    .globalRequestParameters(parameter());
+        } else {
+            return new Docket(DocumentationType.SWAGGER_2)
+                    .apiInfo(apiInfo())
+                    .select()
+                    .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
+                    .paths(PathSelectors.any())
+                    .build()
+                    .globalRequestParameters(parameter())
+                    .extensions(ifAvailable.buildExtensions("default"));
+        }
     }
 
     private ApiInfo apiInfo() {

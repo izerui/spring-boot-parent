@@ -1,0 +1,17 @@
+spring:
+  profiles:
+    active: test
+doc:
+  head:
+    wrap:
+      enabled: false
+  main:
+    allow-bean-definition-overriding: true
+server:
+  port: 8888
+knife4j:
+  enable: true
+  documents:
+    - group: default
+      name: 大数据报表
+      locations: classpath:markdown/*
