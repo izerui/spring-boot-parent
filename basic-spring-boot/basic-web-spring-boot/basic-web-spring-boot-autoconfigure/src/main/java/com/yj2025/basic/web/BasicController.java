@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 
 public abstract class BasicController implements WebRequestAware {
@@ -20,6 +21,15 @@ public abstract class BasicController implements WebRequestAware {
         byte[] bytes = Files.readAllBytes(localFile.toPath());
         HttpHeaders headers = new HttpHeaders();
         headers.setContentDispositionFormData("attachment", localFile.getName());
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentLength(bytes.length);
+        return new ResponseEntity<byte[]>(bytes, headers, HttpStatus.CREATED);
+    }
+
+    protected ResponseEntity<byte[]> download(InputStream inputStream, String fileName) throws IOException {
+        byte[] bytes = inputStream.readAllBytes();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentDispositionFormData("attachment", fileName);
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
         headers.setContentLength(bytes.length);
         return new ResponseEntity<byte[]>(bytes, headers, HttpStatus.CREATED);
