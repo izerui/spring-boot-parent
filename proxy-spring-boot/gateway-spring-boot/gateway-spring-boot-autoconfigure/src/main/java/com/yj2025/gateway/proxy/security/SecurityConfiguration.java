@@ -8,6 +8,7 @@ import com.yj2025.gateway.proxy.filter.IgnoredUrlRemoveAuthorizationFilter;
 import com.yj2025.gateway.proxy.security.jwt.JwtTokenConfiguration;
 import com.yj2025.gateway.proxy.security.redis.OpaqueRedisTokenConfiguration;
 import com.yj2025.gateway.proxy.security.rest.OpaqueRestTokenConfiguration;
+import com.yj2025.gateway.proxy.utils.ServerWebExchangeContextHolder;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -67,6 +68,7 @@ public class SecurityConfiguration {
                     this.registerCorsConfiguration("/**", buildConfig());
                 }}))
                 .requestCache().disable()
+                .addFilterBefore((exchange, chain) -> chain.filter(exchange).subscriberContext(ctx -> ctx.put(ServerWebExchangeContextHolder.CONTEXT_KEY, exchange)), SecurityWebFiltersOrder.FIRST)
                 .addFilterBefore(new MaintenanceWebFilter(properties), SecurityWebFiltersOrder.AUTHENTICATION) // 前置加入系统维护中过滤器
                 .addFilterBefore(new IgnoredUrlRemoveAuthorizationFilter(properties), SecurityWebFiltersOrder.AUTHENTICATION)
                 .addFilterAfter(new AdditionHeaderFilter(), SecurityWebFiltersOrder.AUTHORIZATION) // header 信息补充过滤器
