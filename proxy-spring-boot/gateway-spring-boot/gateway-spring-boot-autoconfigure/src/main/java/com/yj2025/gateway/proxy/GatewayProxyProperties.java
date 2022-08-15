@@ -15,6 +15,7 @@ import java.util.Optional;
 @ConfigurationProperties(prefix = "gateway")
 public class GatewayProxyProperties {
 
+    private boolean develop;
     private boolean maintenance;
     private String whitelistIp;
     private String[] ignoredUrls;

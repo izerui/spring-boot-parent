@@ -1,5 +1,6 @@
 package com.yj2025.gateway.proxy.loadbalancer;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.loadbalancer.core.ReactorLoadBalancer;
 import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
@@ -13,7 +14,7 @@ import org.springframework.core.env.Environment;
  */
 public class LoadBalanceConfig {
 
-    @Profile({"dev", "test"})
+    @ConditionalOnProperty(prefix = "gateway", name = "develop", havingValue = "true")
     @Bean
     public ReactorLoadBalancer<ServiceInstance> reactorServiceInstanceLoadBalancer(
             Environment environment,
