@@ -38,6 +38,7 @@ server:
   port: 8082
 # 网关配置
 gateway:
+  develop: true
   ignored-urls:
     - /ignore
   oauth2:
