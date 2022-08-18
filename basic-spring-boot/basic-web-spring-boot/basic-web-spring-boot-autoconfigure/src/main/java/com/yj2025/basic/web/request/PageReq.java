@@ -39,7 +39,7 @@ public abstract class PageReq {
      *
      * @return
      */
-    protected String[] getSortFields() {
+    protected String[] withSortFields() {
         return new String[]{sortField};
     }
 
@@ -48,21 +48,21 @@ public abstract class PageReq {
      * 可覆盖更改排序方向字段名
      * @return
      */
-    protected Sort.Direction getSortDirection() {
+    protected Sort.Direction withSortDirection() {
         return sortDirection;
     }
 
     @JsonIgnore
-    public Sort getSort() {
-        String[] sortFields = getSortFields();
+    public final Sort getSort() {
+        String[] sortFields = withSortFields();
         if (sortFields != null && ArrayUtils.isNotEmpty(sortFields)) {
-            return Sort.by(getSortDirection(), sortFields);
+            return Sort.by(withSortDirection(), sortFields);
         }
         return getDefaultSort();
     }
 
     @JsonIgnore
-    public Pageable getPageable() {
+    public final Pageable getPageable() {
         return PageRequest.of(this.pageIndex, this.pageSize, getSort());
     }
 }
