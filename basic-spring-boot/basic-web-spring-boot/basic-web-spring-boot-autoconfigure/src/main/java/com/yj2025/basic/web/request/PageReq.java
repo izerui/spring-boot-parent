@@ -31,8 +31,12 @@ public abstract class PageReq {
      */
     private Sort.Direction sortDirection = Sort.Direction.DESC;
 
-    @JsonIgnore
-    protected abstract Sort getDefaultSort();
+    /**
+     * 默认的排序方式
+     * @return
+     */
+    protected abstract Sort withDefaultSort();
+
 
     /**
      * 可覆盖更改排序字段名
@@ -46,6 +50,7 @@ public abstract class PageReq {
 
     /**
      * 可覆盖更改排序方向字段名
+     *
      * @return
      */
     protected Sort.Direction withSortDirection() {
@@ -58,7 +63,7 @@ public abstract class PageReq {
         if (sortFields != null && ArrayUtils.isNotEmpty(sortFields)) {
             return Sort.by(withSortDirection(), sortFields);
         }
-        return getDefaultSort();
+        return withDefaultSort();
     }
 
     @JsonIgnore
