@@ -1,15 +1,22 @@
 package com.yj2025.basic.dto;
 
 import lombok.Data;
-import lombok.NonNull;
+import org.springframework.util.Assert;
 
 import java.io.Serializable;
 
-@Data
 public abstract class BasicAuthDTO implements Serializable {
 
-    @NonNull
     private Auth auth;
+
+    public Auth getAuth() {
+        Assert.notNull(auth, "无法获取auth对象,请检查是否赋值");
+        return auth;
+    }
+
+    public void setAuth(Auth auth) {
+        this.auth = auth;
+    }
 
     @Data
     public static class Auth {
