@@ -57,7 +57,7 @@ public class UserTest {
 
     @Before
     public void init() throws IOException {
-        BDDMockito.willReturn("测试用户").given(userService).getWrapHeader().getUserName();
+        BDDMockito.willReturn("测试用户").given(userService).getAuth().getUserName();
     }
 
 

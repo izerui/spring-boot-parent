@@ -1,12 +1,14 @@
 package com.yj2025.basic.dto;
 
 import lombok.Data;
+import lombok.NonNull;
 
 import java.io.Serializable;
 
 @Data
 public abstract class BasicAuthDTO implements Serializable {
 
+    @NonNull
     private Auth auth;
 
     @Data
