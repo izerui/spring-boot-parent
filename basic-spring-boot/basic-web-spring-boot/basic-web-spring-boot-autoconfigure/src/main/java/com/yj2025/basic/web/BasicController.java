@@ -1,6 +1,6 @@
 package com.yj2025.basic.web;
 
-import com.yj2025.basic.web.support.WebRequestAware;
+import com.yj2025.basic.web.support.AuthAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 
-public abstract class BasicController implements WebRequestAware {
+public abstract class BasicController implements AuthAware {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass().getSimpleName());
 

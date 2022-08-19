@@ -2,7 +2,7 @@ package com.yj2025.sample.service;
 
 import com.google.common.base.Stopwatch;
 import com.yj2025.basic.service.BasicService;
-import com.yj2025.basic.web.support.WebRequestAware;
+import com.yj2025.basic.web.support.AuthAware;
 import com.yj2025.sample.command.*;
 import com.yj2025.sample.entity.User;
 import org.springframework.stereotype.Service;
@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
 @Service
-public class UserService extends BasicService implements WebRequestAware {
+public class UserService extends BasicService implements AuthAware {
 
     @Transactional
     public void add() {

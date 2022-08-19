@@ -2,7 +2,7 @@ package com.yj2025.basic.web.request;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.yj2025.basic.web.support.WebRequestAware;
+import com.yj2025.basic.web.support.AuthAware;
 import lombok.Data;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.data.domain.PageRequest;
@@ -10,7 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 @Data
-public abstract class PageReq implements WebRequestAware {
+public abstract class PageReq implements AuthAware {
 
     /**
      * 页码
