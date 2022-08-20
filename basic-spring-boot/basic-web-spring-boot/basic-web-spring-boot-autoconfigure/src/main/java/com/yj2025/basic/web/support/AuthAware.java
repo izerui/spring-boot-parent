@@ -24,51 +24,33 @@ public interface AuthAware {
     }
 
     @JsonIgnore
-    default HeaderRequestAuth getAuth() {
-        return new HeaderRequestAuth() {
-            @Override
-            public String getEntCode() {
-                return URLDecoder.decode(getHeader("entCode"), StandardCharsets.UTF_8);
-            }
-
-            @Override
-            public String getEntName() {
-                return URLDecoder.decode(getHeader("entName"), StandardCharsets.UTF_8);
-            }
-
-            @Override
-            public String getUserCode() {
-                return URLDecoder.decode(getHeader("userCode"), StandardCharsets.UTF_8);
-            }
-
-            @Override
-            public String getUserName() {
-                return URLDecoder.decode(getHeader("userName"), StandardCharsets.UTF_8);
-            }
-
-            @Override
-            public String getAccountCode() {
-                return URLDecoder.decode(getHeader("accountCode"), StandardCharsets.UTF_8);
-            }
-
-            @Override
-            public String getAccountName() {
-                return URLDecoder.decode(getHeader("accountName"), StandardCharsets.UTF_8);
-            }
-        };
+    default String getEntCode() {
+        return URLDecoder.decode(getHeader("entCode"), StandardCharsets.UTF_8);
     }
 
-    interface HeaderRequestAuth {
-        String getEntCode();
-
-        String getEntName();
-
-        String getUserCode();
-
-        String getUserName();
-
-        String getAccountCode();
-
-        String getAccountName();
+    @JsonIgnore
+    default String getEntName() {
+        return URLDecoder.decode(getHeader("entName"), StandardCharsets.UTF_8);
     }
+
+    @JsonIgnore
+    default String getUserCode() {
+        return URLDecoder.decode(getHeader("userCode"), StandardCharsets.UTF_8);
+    }
+
+    @JsonIgnore
+    default String getUserName() {
+        return URLDecoder.decode(getHeader("userName"), StandardCharsets.UTF_8);
+    }
+
+    @JsonIgnore
+    default String getAccountCode() {
+        return URLDecoder.decode(getHeader("accountCode"), StandardCharsets.UTF_8);
+    }
+
+    @JsonIgnore
+    default String getAccountName() {
+        return URLDecoder.decode(getHeader("accountName"), StandardCharsets.UTF_8);
+    }
+
 }
