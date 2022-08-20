@@ -18,7 +18,7 @@ public class UserService extends BasicService implements AuthAware {
 
     @Transactional
     public void add() {
-        String userName = getAuth().getUserName();
+        String userName = getUserName();
         System.out.println(userName);
         System.out.println(TransactionSynchronizationManager.isActualTransactionActive());
         execute(new UserDeleteCmd());
