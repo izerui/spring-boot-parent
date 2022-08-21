@@ -20,37 +20,41 @@ public interface AuthAware {
     }
 
     private String getHeader(String header) {
-        return getRequest().getHeader(header);
+        String value = getRequest().getHeader(header);
+        if (value != null) {
+            value = URLDecoder.decode(value, StandardCharsets.UTF_8);
+        }
+        return value;
     }
 
     @JsonIgnore
     default String getEntCode() {
-        return URLDecoder.decode(getHeader("entCode"), StandardCharsets.UTF_8);
+        return getHeader("entCode");
     }
 
     @JsonIgnore
     default String getEntName() {
-        return URLDecoder.decode(getHeader("entName"), StandardCharsets.UTF_8);
+        return getHeader("entName");
     }
 
     @JsonIgnore
     default String getUserCode() {
-        return URLDecoder.decode(getHeader("userCode"), StandardCharsets.UTF_8);
+        return getHeader("userCode");
     }
 
     @JsonIgnore
     default String getUserName() {
-        return URLDecoder.decode(getHeader("userName"), StandardCharsets.UTF_8);
+        return getHeader("userName");
     }
 
     @JsonIgnore
     default String getAccountCode() {
-        return URLDecoder.decode(getHeader("accountCode"), StandardCharsets.UTF_8);
+        return getHeader("accountCode");
     }
 
     @JsonIgnore
     default String getAccountName() {
-        return URLDecoder.decode(getHeader("accountName"), StandardCharsets.UTF_8);
+        return getHeader("accountName");
     }
 
 }
