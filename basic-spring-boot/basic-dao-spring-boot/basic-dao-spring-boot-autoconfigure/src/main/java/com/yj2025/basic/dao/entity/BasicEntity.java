@@ -48,7 +48,7 @@ public abstract class BasicEntity {
     /**
      * 创建时间
      */
-    @Column(name = "create_time", columnDefinition = "DATETIME COMMENT '创建时间'", nullable = false)
+    @Column(name = "create_time", columnDefinition = "DATETIME(3) COMMENT '创建时间'", nullable = false)
     protected Date createTime = new Date();
 
     /**
@@ -60,7 +60,7 @@ public abstract class BasicEntity {
     /**
      * 更新时间
      */
-    @Column(name = "update_time", columnDefinition = "DATETIME COMMENT '更新时间'")
+    @Column(name = "update_time", columnDefinition = "DATETIME(3) COMMENT '更新时间'")
     protected Date updateTime;
 
     /**
