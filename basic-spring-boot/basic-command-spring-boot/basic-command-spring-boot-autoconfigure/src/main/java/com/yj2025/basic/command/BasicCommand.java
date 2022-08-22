@@ -45,7 +45,7 @@ public abstract class BasicCommand<R> implements Command<R>, BasicComponent, App
             field.setAccessible(true);
             Annotation[] annotations = field.getAnnotations();
             boolean anyMatch = Arrays.asList(annotations).stream().map(Annotation::annotationType)
-                    .anyMatch(aClass -> aClass.isAssignableFrom(Autowired.class) || aClass.isAssignableFrom(Resource.class));
+                    .anyMatch(aClass -> aClass.isAssignableFrom(Autowired.class));
             if (anyMatch) {
                 ReflectionUtils.setField(field, this, $(field.getType()));
             }
