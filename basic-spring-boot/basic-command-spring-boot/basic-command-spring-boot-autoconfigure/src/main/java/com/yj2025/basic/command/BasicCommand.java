@@ -5,11 +5,17 @@ import com.yj2025.basic.support.ApplicationBeanAware;
 import com.yj2025.basic.support.ColorOutput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.ReflectionUtils;
+
+import java.lang.reflect.Field;
+import java.util.Arrays;
 
 /**
  * 所有command命令集成该基类
  *
  * @param <R> 返回的结果类型
+ * @author liuyuhua
  */
 public abstract class BasicCommand<R> implements Command<R>, BasicComponent, ApplicationBeanAware {
 
@@ -18,6 +24,10 @@ public abstract class BasicCommand<R> implements Command<R>, BasicComponent, App
 
     protected final Logger logger = LoggerFactory.getLogger(getClass().getSimpleName());
 
+    public BasicCommand() {
+        autowiredBean();
+    }
+
     /**
      * 前置校验器，需要自行throw exception
      *
@@ -25,6 +35,17 @@ public abstract class BasicCommand<R> implements Command<R>, BasicComponent, App
      */
     protected void beforeDoExecute() {
         /** no op */
+    }
+
+    protected void autowiredBean() {
+        Field[] declaredFields = this.getClass().getDeclaredFields();
+        Arrays.asList(declaredFields).forEach(field -> {
+            field.setAccessible(true);
+            Autowired annotation = field.getAnnotation(Autowired.class);
+            if (annotation != null) {
+                ReflectionUtils.setField(field, this, $(field.getType()));
+            }
+        });
     }
 
     /**

@@ -21,7 +21,7 @@ public class UserService extends BasicService implements AuthAware {
         String userName = getUserName();
         System.out.println(userName);
         System.out.println(TransactionSynchronizationManager.isActualTransactionActive());
-        execute(new UserDeleteCmd());
+        execute(new UserDeleteCmd("sss"));
         for (int i = 0; i < 20; i++) {
             User user = new User();
             user.setCode("code" + i);
@@ -34,7 +34,7 @@ public class UserService extends BasicService implements AuthAware {
     @Transactional
     public void batchAdd() {
         System.out.println(TransactionSynchronizationManager.isActualTransactionActive());
-        execute(new UserDeleteCmd());
+        execute(new UserDeleteCmd("sss"));
         List<User> users = executeReturn(new UserBatchCreateCmd(IntStream.range(0, 5000).toArray()));
         for (User user : users) {
             System.out.println(user.getId());
@@ -62,7 +62,7 @@ public class UserService extends BasicService implements AuthAware {
     @Transactional
     public void batchAdd4() {
         System.out.println(TransactionSynchronizationManager.isActualTransactionActive());
-        execute(new UserDeleteCmd());
+        execute(new UserDeleteCmd("sss"));
         List<User> users = executeReturn(new UserBatchCreate4Cmd(IntStream.range(0, 20000).toArray()));
         for (User user : users) {
             System.out.println(user.getId());

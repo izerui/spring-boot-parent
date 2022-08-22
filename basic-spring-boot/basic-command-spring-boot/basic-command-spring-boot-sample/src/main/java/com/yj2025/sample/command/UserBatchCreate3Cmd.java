@@ -16,6 +16,7 @@ public class UserBatchCreate3Cmd extends BasicCommand<Void> {
     private int[] integers;
 
     public UserBatchCreate3Cmd(int[] integers) {
+        super();
         this.integers = integers;
     }
 
