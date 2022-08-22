@@ -33,7 +33,7 @@ public abstract class PageReq implements AuthAware {
     /**
      * 排序字段
      */
-    List<OrderRequest> orders = new ArrayList<>();
+    private List<OrderRequest> orders = new ArrayList<>();
 
 
     /**
