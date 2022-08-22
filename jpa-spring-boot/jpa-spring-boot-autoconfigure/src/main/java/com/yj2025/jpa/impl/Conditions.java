@@ -5,11 +5,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 public class Conditions implements Cloneable {
 
@@ -37,28 +39,74 @@ public class Conditions implements Cloneable {
 
     public static Conditions where(String field) {
         Conditions root = where();
-        root.cdList.add(new Condition("", field));
+        root.cdList.add(new Condition(true, "", field));
         return root;
     }
 
+    public static Conditions where(boolean valid, String field) {
+        Conditions root = where();
+        root.cdList.add(new Condition(valid, "", field));
+        return root;
+    }
+
+    public static Conditions where(Supplier<Boolean> valid, String field) {
+        return where(valid.get(), field);
+    }
+
     public Conditions and(String field) {
-        cdList.add(new Condition(cdList.isEmpty() ? "" : "and", field));
+        cdList.add(new Condition(true, cdList.isEmpty() ? "" : "and", field));
         return this;
+    }
+
+    public Conditions and(boolean valid, String field) {
+        cdList.add(new Condition(valid, cdList.isEmpty() ? "" : "and", field));
+        return this;
+    }
+
+    public Conditions and(Supplier<Boolean> valid, String field) {
+        return and(valid.get(), field);
     }
 
     public Conditions or(String field) {
-        cdList.add(new Condition(cdList.isEmpty() ? "" : "or", field));
+        cdList.add(new Condition(true, cdList.isEmpty() ? "" : "or", field));
         return this;
+    }
+
+    public Conditions or(boolean valid, String field) {
+        cdList.add(new Condition(valid, cdList.isEmpty() ? "" : "or", field));
+        return this;
+    }
+
+    public Conditions or(Supplier<Boolean> valid, String field) {
+        return or(valid.get(), field);
     }
 
     public Conditions and(Conditions conditions) {
-        this.combList.add(new CombCondition("and", conditions));
+        this.combList.add(new CombCondition(true, "and", conditions));
         return this;
     }
 
-    public Conditions or(Conditions conditions) {
-        this.combList.add(new CombCondition("or", conditions));
+    public Conditions and(boolean valid, Conditions conditions) {
+        this.combList.add(new CombCondition(valid, "and", conditions));
         return this;
+    }
+
+    public Conditions and(Supplier<Boolean> valid, Conditions conditions) {
+        return and(valid.get(), conditions);
+    }
+
+    public Conditions or(Conditions conditions) {
+        this.combList.add(new CombCondition(true, "or", conditions));
+        return this;
+    }
+
+    public Conditions or(boolean valid, Conditions conditions) {
+        this.combList.add(new CombCondition(valid, "or", conditions));
+        return this;
+    }
+
+    public Conditions or(Supplier<Boolean> valid, Conditions conditions) {
+        return or(valid.get(), conditions);
     }
 
     private Condition lastCondition() {
@@ -120,21 +168,6 @@ public class Conditions implements Cloneable {
         return this;
     }
 
-    public Conditions remove(String filed) {
-        List<Condition> conditions =
-                this.cdList.stream().filter(condition -> !condition.getField().equalsIgnoreCase(filed)).collect(Collectors.toList());
-        if (conditions != null && conditions.size() > 0) {
-            conditions.get(0).andOr = "";
-            this.cdList.clear();
-            this.cdList.addAll(conditions);
-        }
-        return this;
-    }
-
-//    public boolean isValid() {
-//        return cdList.stream().filter(Condition::isValid).count() > 0L;
-//    }
-
 
     @Override
     public String toString() {
@@ -155,10 +188,10 @@ public class Conditions implements Cloneable {
         if (combList != null) {
 
             for (CombCondition comb : combList) {
-//                if (comb.isValid()) {
-                sb.append(comb.andOr);
-                sb.append(comb.toQL(params));
-//                }
+                if (comb.isValid()) {
+                    sb.append(comb.andOr);
+                    sb.append(comb.toQL(params));
+                }
             }
         }
 
@@ -170,10 +203,12 @@ public class Conditions implements Cloneable {
     }
 
     private static class CombCondition {
+        private boolean valid;
         private String andOr;
         private Conditions cds;
 
-        public CombCondition(String andOr, Conditions cds) {
+        public CombCondition(boolean valid, String andOr, Conditions cds) {
+            this.valid = valid;
             this.andOr = andOr;
             this.cds = cds;
         }
@@ -190,21 +225,18 @@ public class Conditions implements Cloneable {
             return cds;
         }
 
-        public void setCds(Conditions cds) {
-            this.cds = cds;
+        public boolean isValid() {
+            return valid;
         }
 
         private String toQL(Map<String, Object> params) {
             return cds.toQL(params);
         }
 
-//        public boolean isValid() {
-//            return cds.isValid();
-//        }
-
     }
 
     private static class Condition {
+        private boolean valid;
         private String andOr;
         //查询字段
         private String field;
@@ -213,7 +245,8 @@ public class Conditions implements Cloneable {
         //值
         private Object value;
 
-        private Condition(String andOr, String field) {
+        private Condition(boolean valid, String andOr, String field) {
+            this.valid = valid;
             this.andOr = andOr;
             this.field = field;
         }
@@ -248,17 +281,6 @@ public class Conditions implements Cloneable {
             return this;
         }
 
-        public boolean isValid() {
-            if (isNotEmpty(express)) {
-                if (Objects.isNull(value) ||
-                        "%".equals(value.toString()) ||
-                        "%%".equals(value.toString())) {
-                    return false;
-                }
-            }
-            return true;
-        }
-
         public String getAndOr() {
             return andOr;
         }
@@ -274,6 +296,11 @@ public class Conditions implements Cloneable {
         public Object getValue() {
             return value;
         }
+
+        public boolean isValid() {
+            return valid;
+        }
+
     }
 
 }

@@ -69,4 +69,22 @@ public abstract class BasicEntity {
     @Column(name = "deleted", columnDefinition = "bit(1) COMMENT '逻辑删除 0未删除 1删除'", nullable = false)
     protected boolean deleted = false;
 
+    /**
+     * 修改更新人、更新时间
+     * @param updater
+     */
+    public void updateBy(String updater) {
+        this.updater = updater;
+        this.updateTime = new Date();
+    }
+
+    /**
+     * 修改删除人、删除时间
+     * @param deletor
+     */
+    public void deleteBy(String deletor) {
+        this.deleted = true;
+        this.updateTime = new Date();
+    }
+
 }

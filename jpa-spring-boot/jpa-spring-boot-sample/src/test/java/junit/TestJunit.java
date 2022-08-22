@@ -44,12 +44,12 @@ public class TestJunit {
     private DataSource dataSource;
 
     @Test
-    public void testSelectSql(){
+    public void testSelectSql() {
         Conditions conditions = Conditions.where("name").is("张无忌");
-        List<Object[]> list = (List<Object[]>) userRepository.selectSql("select sum(age),sum(version) from User ",conditions);
+        List<Object[]> list = (List<Object[]>) userRepository.selectSql("select sum(age),sum(version) from User ", conditions);
         Object[] array = list.get(0);
         for (Object o : array) {
-            System.out.println("------"+o);
+            System.out.println("------" + o);
         }
     }
 
@@ -230,10 +230,15 @@ public class TestJunit {
                 );
         conditions.and("ddd").is(null).and("fff").like("");
 
-
+        System.out.println(conditions);
         System.out.println(
-                Conditions.where("a").is(null).and("b").gt(2)
+                Conditions.where(false, "abc").notNull()
+                        .and( "b").gt(2)
+                        .and(false, Conditions.where(false, "abc is not null")
+                                .and("abc = '123'"))
+                        .and(true, Conditions.where("abs != 0"))
         );
+
     }
 
 }
