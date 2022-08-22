@@ -1,5 +1,6 @@
 package com.yj2025.basic.support;
 
+import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
@@ -75,6 +76,7 @@ public interface DeepObserverAware {
      * @param <T>
      */
     default <T> void subscribeOutGoing(Class<T> interfaceType, Consumer<T> consumer) {
+        Assert.state(interfaceType.isInterface(), interfaceType.getName() + "不是一个接口");
         Class<?>[] interfaces = this.getClass().getInterfaces();
         boolean anyMatch = Arrays.stream(interfaces).anyMatch(aClass -> aClass.isAssignableFrom(interfaceType));
         if (anyMatch) {
@@ -98,6 +100,7 @@ public interface DeepObserverAware {
      * @param <T>
      */
     default <T> void subscribeIncoming(Class<T> interfaceType, Consumer<T> consumer) {
+        Assert.state(interfaceType.isInterface(), interfaceType.getName() + "不是一个接口");
         Field[] declaredFields = this.getClass().getDeclaredFields();
         for (Field declaredField : declaredFields) {
             declaredField.setAccessible(true);
