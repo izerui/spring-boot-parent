@@ -13,4 +13,5 @@ public abstract class BasicAuthDTO implements Serializable {
     protected String userName;
     protected String accountCode;
     protected String accountName;
+
 }
