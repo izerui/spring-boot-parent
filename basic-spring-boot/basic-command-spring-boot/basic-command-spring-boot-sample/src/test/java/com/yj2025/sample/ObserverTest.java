@@ -9,11 +9,11 @@ public class ObserverTest {
     @Test
     public void test() {
         A a = new A();
-        System.out.println("自上而下");
+        System.out.println("自上而下 subscribeOutGoing");
         a.subscribeOutGoing(ClassNamePrinter.class, classNamePrinter -> {
             classNamePrinter.print();
         });
-        System.out.println("自下而上");
+        System.out.println("自下而上 subscribeIncoming");
         a.subscribeIncoming(ClassNamePrinter.class, classNamePrinter -> {
             classNamePrinter.print();
         });
