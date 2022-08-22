@@ -6,7 +6,6 @@ import com.yj2025.basic.web.support.AuthAware;
 import lombok.Data;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import javax.validation.constraints.Max;
@@ -40,6 +39,7 @@ public abstract class PageReq implements AuthAware {
 
     /**
      * 默认的排序方式
+     *
      * @return
      */
     protected abstract Sort withDefaultSort();
@@ -65,16 +65,12 @@ public abstract class PageReq implements AuthAware {
     }
 
     @JsonIgnore
-    public final Sort getSort() {
+    public final PageRequest getPageable() {
+        Sort sort = withDefaultSort();
         String[] sortFields = withSortFields();
         if (sortFields != null && ArrayUtils.isNotEmpty(sortFields)) {
-            return Sort.by(withSortDirection(), sortFields);
+            sort = Sort.by(withSortDirection(), sortFields);
         }
-        return withDefaultSort();
-    }
-
-    @JsonIgnore
-    public final Pageable getPageable() {
-        return PageRequest.of(this.pageIndex, this.pageSize, getSort());
+        return PageRequest.of(this.pageIndex, this.pageSize, sort);
     }
 }
