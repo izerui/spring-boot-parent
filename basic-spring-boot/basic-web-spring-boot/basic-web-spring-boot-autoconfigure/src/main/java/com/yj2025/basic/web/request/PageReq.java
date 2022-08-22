@@ -65,7 +65,7 @@ public abstract class PageReq implements AuthAware {
     }
 
     @JsonIgnore
-    public final PageRequest getPageable() {
+    public final PageRequest getPageRequest() {
         Sort sort = withDefaultSort();
         String[] sortFields = withSortFields();
         if (sortFields != null && ArrayUtils.isNotEmpty(sortFields)) {
