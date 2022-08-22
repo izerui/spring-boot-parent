@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ReflectionUtils;
 
+import javax.annotation.Resource;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 
@@ -41,8 +43,10 @@ public abstract class BasicCommand<R> implements Command<R>, BasicComponent, App
         Field[] declaredFields = this.getClass().getDeclaredFields();
         Arrays.asList(declaredFields).forEach(field -> {
             field.setAccessible(true);
-            Autowired annotation = field.getAnnotation(Autowired.class);
-            if (annotation != null) {
+            Annotation[] annotations = field.getAnnotations();
+            boolean anyMatch = Arrays.asList(annotations).stream().map(Annotation::annotationType)
+                    .anyMatch(aClass -> aClass.isAssignableFrom(Autowired.class) || aClass.isAssignableFrom(Resource.class));
+            if (anyMatch) {
                 ReflectionUtils.setField(field, this, $(field.getType()));
             }
         });
