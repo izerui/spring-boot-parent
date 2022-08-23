@@ -86,8 +86,23 @@ public interface DeepObserverAware {
         for (Field declaredField : declaredFields) {
             declaredField.setAccessible(true);
             Object fieldValue = ReflectionUtils.getField(declaredField, this);
-            if (fieldValue != null && fieldValue instanceof DeepObserverAware) {
+            if (fieldValue == null) {
+                continue;
+            }
+            if (fieldValue instanceof DeepObserverAware) {
                 ((DeepObserverAware) fieldValue).subscribeOutGoing(interfaceType, consumer);
+            }
+            if (fieldValue.getClass().isArray()) {
+                for (T t : ((T[]) fieldValue)) {
+                    ((DeepObserverAware) t).subscribeOutGoing(interfaceType, consumer);
+                }
+            }
+            if (fieldValue instanceof Iterable) {
+                ((Iterable<?>) fieldValue).forEach(o -> {
+                    if (o instanceof DeepObserverAware) {
+                        ((DeepObserverAware) o).subscribeOutGoing(interfaceType, consumer);
+                    }
+                });
             }
         }
     }
@@ -105,8 +120,23 @@ public interface DeepObserverAware {
         for (Field declaredField : declaredFields) {
             declaredField.setAccessible(true);
             Object fieldValue = ReflectionUtils.getField(declaredField, this);
-            if (fieldValue != null && fieldValue instanceof DeepObserverAware) {
-                ((DeepObserverAware) fieldValue).subscribeIncoming(interfaceType, consumer);
+            if (fieldValue == null) {
+                continue;
+            }
+            if (fieldValue instanceof DeepObserverAware) {
+                ((DeepObserverAware) fieldValue).subscribeOutGoing(interfaceType, consumer);
+            }
+            if (fieldValue.getClass().isArray()) {
+                for (T t : ((T[]) fieldValue)) {
+                    ((DeepObserverAware) t).subscribeOutGoing(interfaceType, consumer);
+                }
+            }
+            if (fieldValue instanceof Iterable) {
+                ((Iterable<?>) fieldValue).forEach(o -> {
+                    if (o instanceof DeepObserverAware) {
+                        ((DeepObserverAware) o).subscribeOutGoing(interfaceType, consumer);
+                    }
+                });
             }
         }
         Class<?>[] interfaces = this.getClass().getInterfaces();
