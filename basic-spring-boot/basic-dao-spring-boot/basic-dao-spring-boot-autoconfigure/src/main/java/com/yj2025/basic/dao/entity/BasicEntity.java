@@ -21,7 +21,7 @@ public abstract class BasicEntity {
      * 乐观锁
      */
     @Version
-    protected long version;
+    protected Long version;
 
     /**
      * 业务主键
