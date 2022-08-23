@@ -87,4 +87,11 @@ public abstract class BasicEntity {
         this.updateTime = new Date();
     }
 
+    public BasicEntity() {
+    }
+
+    public BasicEntity(String entCode, String creator) {
+        this.entCode = entCode;
+        this.creator = creator;
+    }
 }
