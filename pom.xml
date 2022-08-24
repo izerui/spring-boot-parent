@@ -59,6 +59,7 @@
         <poi.ooxml.version>4.1.2</poi.ooxml.version>
         <vavr.version>0.10.4</vavr.version>
         <equator.version>1.0.4</equator.version>
+        <lombok.version>1.18.24</lombok.version>
     </properties>
 
 
@@ -130,6 +131,11 @@
                 <groupId>com.github.dadiyang</groupId>
                 <artifactId>equator</artifactId>
                 <version>${equator.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
             </dependency>
 
             <!-- starter 基础依赖 -->
