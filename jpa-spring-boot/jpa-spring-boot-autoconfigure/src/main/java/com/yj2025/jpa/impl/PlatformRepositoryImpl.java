@@ -112,6 +112,11 @@ public class PlatformRepositoryImpl<T, ID extends Serializable> extends SimpleJp
 
     @Override
     public Page<T> findAll(Conditions conditions, Pageable pageable) {
+        return findPage(conditions, pageable);
+    }
+
+    @Override
+    public Page<T> findPage(Conditions conditions, Pageable pageable) {
         if (pageable == null) {
             return new PageImpl<T>((List<T>) findAll(conditions));
         }
@@ -199,6 +204,11 @@ public class PlatformRepositoryImpl<T, ID extends Serializable> extends SimpleJp
 
     @Override
     public <R> Page<R> groupAll(Conditions conditions, Pageable pageable, List<String> selectFields, List<String> groupFields, Class<R> rClass) {
+        return groupPage(conditions, pageable, selectFields, groupFields, rClass);
+    }
+
+    @Override
+    public <R> Page<R> groupPage(Conditions conditions, Pageable pageable, List<String> selectFields, List<String> groupFields, Class<R> rClass) {
         Assert.notEmpty(selectFields);
         Assert.notEmpty(groupFields);
         Assert.notNull(pageable);
@@ -263,6 +273,11 @@ public class PlatformRepositoryImpl<T, ID extends Serializable> extends SimpleJp
 
     @Override
     public <R> Page<R> distinctAll(Conditions conditions, Pageable pageable, Class<R> rClass) {
+        return distinctPage(conditions, pageable, rClass);
+    }
+
+    @Override
+    public <R> Page<R> distinctPage(Conditions conditions, Pageable pageable, Class<R> rClass) {
         List<String> fields = getFields(rClass);
         Assert.notNull(pageable);
 

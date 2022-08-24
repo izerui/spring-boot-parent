@@ -31,7 +31,9 @@ public interface PlatformJpaRepository<T, ID extends Serializable> extends JpaRe
 
     List<T> findAll(Conditions conditions, Sort sort);
 
+    @Deprecated
     Page<T> findAll(Conditions conditions, Pageable pageable);
+    Page<T> findPage(Conditions conditions, Pageable pageable);
 
     <R> List<R> groupAll(List<String> selectFields, List<String> groupFields, Class<R> rClass);
 
@@ -49,7 +51,10 @@ public interface PlatformJpaRepository<T, ID extends Serializable> extends JpaRe
 
     <R> List<R> groupAll(Conditions conditions, Sort sort, List<String> selectFields, List<String> groupFields, Class<R> rClass, int limit);
 
+    @Deprecated
     <R> Page<R> groupAll(Conditions conditions, Pageable pageable, List<String> selectFields, List<String> groupFields, Class<R> rClass);
+
+    <R> Page<R> groupPage(Conditions conditions, Pageable pageable, List<String> selectFields, List<String> groupFields, Class<R> rClass);
 
     <R> List<R> distinctAll(Class<R> rClass);
 
@@ -59,7 +64,9 @@ public interface PlatformJpaRepository<T, ID extends Serializable> extends JpaRe
 
     <R> List<R> distinctAll(Conditions conditions, Sort sort, Class<R> rClass);
 
+    @Deprecated
     <R> Page<R> distinctAll(Conditions conditions, Pageable pageable, Class<R> rClass);
+    <R> Page<R> distinctPage(Conditions conditions, Pageable pageable, Class<R> rClass);
 
     long count(Conditions conditions);
 
@@ -95,6 +102,7 @@ public interface PlatformJpaRepository<T, ID extends Serializable> extends JpaRe
      * @param conditions 查询条件
      * @return
      */
+    @Deprecated
     List<?> selectSql(String sql, Conditions conditions);
 
 }

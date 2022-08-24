@@ -4,6 +4,9 @@ import com.yj2025.basic.support.DeepObserverAware;
 import lombok.Data;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ObserverTest {
 
     @Test
@@ -23,7 +26,7 @@ public class ObserverTest {
     @Data
     public static class A implements DeepObserverAware, ClassNamePrinter{
         private String label = "A";
-        private B b = new B();
+        private B[] b = {new B(),new B()};
     }
 
     @Data
