@@ -4,6 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+/**
+ * 建议使用: {@link CacheWrapperAware}
+ */
+@Deprecated
 public interface UserNameAware {
 
     ThreadLocal<Map<String, String>> THREAD_LOCAL = new InheritableThreadLocal<>();

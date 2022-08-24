@@ -18,9 +18,9 @@ import static com.yj2025.basic.support.Context.tryWith;
  * 适合结果集内容补全逻辑。例如：根据分类号设置分类名称等等。
  * 注意： sourceField 和 methodName 尽量保证其值对象为基本类型：String、Integer等。否则无法达到缓存多次利用的目的（或者覆盖equals方法）。
  *
- * @param <T>
+ * @param <T> 当前对象类型
  */
-public interface CacheWrapperAware<T extends Object> {
+public interface CacheWrapperAware<T> {
     /**
      * 当使用 {{@link #wrapByField}}时表示：
      * <pre>
