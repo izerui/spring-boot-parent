@@ -23,18 +23,22 @@ import static com.yj2025.basic.support.Context.tryWith;
 public interface CacheWrapperAware<T extends Object> {
     /**
      * 当使用 {{@link #wrapByField}}时表示：
-     * {
-     * 源字段名: {
-     * 源字段值: 缓存
-     * }
-     * }
+     * <pre>
+     *     {
+     *       源字段名: {
+     *          源字段值: 缓存
+     *       }
+     *     }
+     * </pre>
      * <p>
      * 当使用 {{@link #wrapByMethod}}时表示：
-     * {
-     * 方法名: {
-     * 方法返回值: 缓存
-     * }
-     * }
+     * <pre>
+     *     {
+     *      方法名: {
+     *          方法返回值: 缓存
+     *      }
+     *     }
+     * </pre>
      */
     ThreadLocal<Map<String, Map<Object, Object>>> THREAD_LOCAL = new InheritableThreadLocal<>();
 
