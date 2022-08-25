@@ -754,6 +754,21 @@ public final class Context {
     }
 
     /**
+     * list转成map
+     *
+     * @param iterable    列表数据
+     * @param keyMapper   key转换器
+     * @param valueMapper value转换器
+     * @param <K>         map的key类型
+     * @param <V>         map的value类型
+     * @param <T>         列表数据对象类型
+     * @return map
+     */
+    public static <K, V, T> Map<? extends K, ? extends V> listToMap(Iterable<T> iterable, Function<? super T, ? extends K> keyMapper, Function<? super T, ? extends V> valueMapper) {
+        return io.vavr.collection.List.ofAll(iterable).toMap(keyMapper, valueMapper).toJavaMap();
+    }
+
+    /**
      * 捕获Exception异常,SneakyThrows
      */
     public static void tryWith(CheckedRunnable runnable) {
