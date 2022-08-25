@@ -3,6 +3,7 @@ package com.yj2025.commons.vo;
 import io.vavr.control.Try;
 import lombok.Data;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.function.Function;
@@ -32,7 +33,15 @@ public class PageVo<T> {
         this.totalPages = totalPages;
         this.number = number;
         this.size = size;
+        this.hasNext = this.number + 1 < this.getTotalPages();
+    }
+
+    public PageVo(List<T> content, Pageable pageable, long total) {
         this.content = content;
+        this.size = pageable.getPageSize();
+        this.totalElements = total;
+        this.number = pageable.getPageNumber();
+        this.totalPages = getSize() == 0 ? 1 : (int) Math.ceil((double) total / (double) getSize());;
         this.hasNext = this.number + 1 < this.getTotalPages();
     }
 
