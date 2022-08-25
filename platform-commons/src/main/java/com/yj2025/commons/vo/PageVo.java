@@ -1,5 +1,6 @@
 package com.yj2025.commons.vo;
 
+import io.vavr.control.Try;
 import lombok.Data;
 import org.springframework.data.domain.Page;
 
@@ -73,14 +74,14 @@ public class PageVo<T> {
      */
     public static <S, T> PageVo<T> map(Object page, Function<S, T> mapper, Class<S> clazz) {
         try {
-            Class pageImplClass = Class.forName("org.springframework.data.domain.PageImpl");
-            Class pageClass = Class.forName("com.baomidou.mybatisplus.extension.plugins.pagination.Page");
-            if (pageImplClass.isAssignableFrom(page.getClass())) {
+            Class pageImplClass = Try.of(() -> Class.forName("org.springframework.data.domain.PageImpl")).getOrNull();
+            Class<?> pageClass = Try.of(() -> Class.forName("com.baomidou.mybatisplus.extension.plugins.pagination.Page")).getOrNull();
+            if (pageImplClass != null && pageImplClass.isAssignableFrom(page.getClass())) {
                 return PageSpringDataVo.map(page, mapper, clazz);
-            } else if (pageClass.isAssignableFrom(page.getClass())) {
+            } else if (pageClass != null && pageClass.isAssignableFrom(page.getClass())) {
                 return PageBaomidouVo.map(page, mapper, clazz);
             }
-            throw new RuntimeException("不支持");
+            throw new RuntimeException("未找到jpa或者mybatis-plus的分页类");
         } catch (Exception ex) {
             ex.printStackTrace();
             throw new RuntimeException(ex.getMessage(), ex);
