@@ -5,9 +5,9 @@ import com.yj2025.basic.support.ApplicationBeanAware;
 import com.yj2025.basic.support.ColorOutput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ReflectionUtils;
 
-import javax.inject.Inject;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -44,7 +44,7 @@ public abstract class BasicCommand<R> implements Command<R>, BasicComponent, App
             field.setAccessible(true);
             Annotation[] annotations = field.getAnnotations();
             boolean anyMatch = Arrays.asList(annotations).stream().map(Annotation::annotationType)
-                    .anyMatch(aClass -> aClass.isAssignableFrom(Inject.class));
+                    .anyMatch(aClass -> aClass.isAssignableFrom(Autowired.class));
             if (anyMatch) {
                 ReflectionUtils.setField(field, this, $(field.getType()));
             }
