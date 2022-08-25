@@ -764,7 +764,7 @@ public final class Context {
      * @param <T>         列表数据对象类型
      * @return map
      */
-    public static <K, V, T> Map<? extends K, ? extends V> listToMap(Iterable<T> iterable, Function<? super T, ? extends K> keyMapper, Function<? super T, ? extends V> valueMapper) {
+    public static <K, V, T> Map<K, V> listToMap(Iterable<T> iterable, Function<? super T, K> keyMapper, Function<? super T, V> valueMapper) {
         return io.vavr.collection.List.ofAll(iterable).toMap(keyMapper, valueMapper).toJavaMap();
     }
 
