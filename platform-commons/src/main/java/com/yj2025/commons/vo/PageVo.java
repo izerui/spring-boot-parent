@@ -57,7 +57,7 @@ public class PageVo<T> {
      */
     public static <S> PageVo<S> map(Object page) {
         try {
-            Class pageImplClass = Try.of(() -> Class.forName("org.springframework.data.domain.PageImpl")).getOrNull();
+            Class<?> pageImplClass = Try.of(() -> Class.forName("org.springframework.data.domain.PageImpl")).getOrNull();
             Class<?> pageClass = Try.of(() -> Class.forName("com.baomidou.mybatisplus.extension.plugins.pagination.Page")).getOrNull();
             if (pageImplClass != null && pageImplClass.isAssignableFrom(page.getClass())) {
                 return PageSpringDataVo.map(page);
@@ -83,7 +83,7 @@ public class PageVo<T> {
      */
     public static <S, T> PageVo<T> map(Object page, Function<S, T> mapper, Class<S> clazz) {
         try {
-            Class pageImplClass = Try.of(() -> Class.forName("org.springframework.data.domain.PageImpl")).getOrNull();
+            Class<?> pageImplClass = Try.of(() -> Class.forName("org.springframework.data.domain.PageImpl")).getOrNull();
             Class<?> pageClass = Try.of(() -> Class.forName("com.baomidou.mybatisplus.extension.plugins.pagination.Page")).getOrNull();
             if (pageImplClass != null && pageImplClass.isAssignableFrom(page.getClass())) {
                 return PageSpringDataVo.map(page, mapper, clazz);
