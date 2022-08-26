@@ -57,11 +57,11 @@ public class PageVo<T> {
      */
     public static <S> PageVo<S> map(Object page) {
         try {
-            Class pageImplClass = Class.forName("org.springframework.data.domain.PageImpl");
-            Class pageClass = Class.forName("com.baomidou.mybatisplus.extension.plugins.pagination.Page");
-            if (pageImplClass.isAssignableFrom(page.getClass())) {
+            Class pageImplClass = Try.of(() -> Class.forName("org.springframework.data.domain.PageImpl")).getOrNull();
+            Class<?> pageClass = Try.of(() -> Class.forName("com.baomidou.mybatisplus.extension.plugins.pagination.Page")).getOrNull();
+            if (pageImplClass != null && pageImplClass.isAssignableFrom(page.getClass())) {
                 return PageSpringDataVo.map(page);
-            } else if (pageClass.isAssignableFrom(page.getClass())) {
+            } else if (pageClass != null && pageClass.isAssignableFrom(page.getClass())) {
                 return PageBaomidouVo.map(page);
             }
             throw new RuntimeException("不支持");
