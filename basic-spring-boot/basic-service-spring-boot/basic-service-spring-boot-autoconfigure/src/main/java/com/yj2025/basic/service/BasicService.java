@@ -1,6 +1,7 @@
 package com.yj2025.basic.service;
 
 import com.yj2025.basic.command.Command;
+import com.yj2025.basic.support.Context;
 import io.vavr.*;
 import io.vavr.control.Option;
 
@@ -220,6 +221,17 @@ public abstract class BasicService {
                 Option.when(t7Command._1(), t7Command._2().execute()).getOrElse(t7Command._3()),
                 Option.when(t8Command._1(), t8Command._2().execute()).getOrElse(t8Command._3())
         );
+    }
+
+    /**
+     * 获取bean
+     *
+     * @param beanClass
+     * @param <T>
+     * @return
+     */
+    protected  <T> T $(Class<T> beanClass) {
+        return Context.getBean(beanClass);
     }
 
 

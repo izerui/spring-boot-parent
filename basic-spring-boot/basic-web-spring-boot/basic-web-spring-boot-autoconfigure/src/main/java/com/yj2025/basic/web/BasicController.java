@@ -1,5 +1,6 @@
 package com.yj2025.basic.web;
 
+import com.yj2025.basic.support.Context;
 import com.yj2025.basic.web.support.AuthAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,5 +34,16 @@ public abstract class BasicController implements AuthAware {
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
         headers.setContentLength(bytes.length);
         return new ResponseEntity<byte[]>(bytes, headers, HttpStatus.CREATED);
+    }
+
+    /**
+     * 获取bean
+     *
+     * @param beanClass
+     * @param <T>
+     * @return
+     */
+    protected  <T> T $(Class<T> beanClass) {
+        return Context.getBean(beanClass);
     }
 }
