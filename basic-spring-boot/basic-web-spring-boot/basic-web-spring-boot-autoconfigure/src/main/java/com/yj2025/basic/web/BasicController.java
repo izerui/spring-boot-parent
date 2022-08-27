@@ -1,9 +1,9 @@
 package com.yj2025.basic.web;
 
-import com.yj2025.basic.support.Context;
 import com.yj2025.basic.web.support.AuthAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 
-public abstract class BasicController implements AuthAware {
+public abstract class BasicController implements AuthAware, ApplicationContextAware {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass().getSimpleName());
 
@@ -36,14 +36,4 @@ public abstract class BasicController implements AuthAware {
         return new ResponseEntity<byte[]>(bytes, headers, HttpStatus.CREATED);
     }
 
-    /**
-     * 获取bean
-     *
-     * @param beanClass
-     * @param <T>
-     * @return
-     */
-    protected  <T> T $(Class<T> beanClass) {
-        return Context.getBean(beanClass);
-    }
 }
