@@ -86,22 +86,11 @@ public class Conditions implements Cloneable {
         return this;
     }
 
-    public Conditions and(boolean valid, Conditions conditions) {
-        if (valid) {
-            this.combList.add(new CombCondition("and", conditions));
-        }
-        return this;
-    }
-
     public Conditions and(boolean valid, Supplier<Conditions> conditions) {
         if (valid) {
             this.combList.add(new CombCondition("and", conditions.get()));
         }
         return this;
-    }
-
-    public Conditions and(Supplier<Boolean> valid, Conditions conditions) {
-        return and(valid.get(), conditions);
     }
 
     public Conditions and(Supplier<Boolean> valid, Supplier<Conditions> conditions) {
@@ -113,22 +102,11 @@ public class Conditions implements Cloneable {
         return this;
     }
 
-    public Conditions or(boolean valid, Conditions conditions) {
-        if (valid) {
-            this.combList.add(new CombCondition("or", conditions));
-        }
-        return this;
-    }
-
     public Conditions or(boolean valid, Supplier<Conditions> conditions) {
         if (valid) {
             this.combList.add(new CombCondition("or", conditions.get()));
         }
         return this;
-    }
-
-    public Conditions or(Supplier<Boolean> valid, Conditions conditions) {
-        return or(valid.get(), conditions);
     }
 
     public Conditions or(Supplier<Boolean> valid, Supplier<Conditions> conditions) {
