@@ -82,12 +82,14 @@ public class Conditions implements Cloneable {
     }
 
     public Conditions and(Conditions conditions) {
-        this.combList.add(new CombCondition(true, "and", conditions));
+        this.combList.add(new CombCondition("and", conditions));
         return this;
     }
 
     public Conditions and(boolean valid, Conditions conditions) {
-        this.combList.add(new CombCondition(valid, "and", conditions));
+        if (valid) {
+            this.combList.add(new CombCondition("and", conditions));
+        }
         return this;
     }
 
@@ -96,12 +98,14 @@ public class Conditions implements Cloneable {
     }
 
     public Conditions or(Conditions conditions) {
-        this.combList.add(new CombCondition(true, "or", conditions));
+        this.combList.add(new CombCondition("or", conditions));
         return this;
     }
 
     public Conditions or(boolean valid, Conditions conditions) {
-        this.combList.add(new CombCondition(valid, "or", conditions));
+        if (valid) {
+            this.combList.add(new CombCondition("or", conditions));
+        }
         return this;
     }
 
@@ -188,10 +192,8 @@ public class Conditions implements Cloneable {
         if (combList != null) {
 
             for (CombCondition comb : combList) {
-                if (comb.isValid()) {
-                    sb.append(comb.andOr);
-                    sb.append(comb.toQL(params));
-                }
+                sb.append(comb.andOr);
+                sb.append(comb.toQL(params));
             }
         }
 
@@ -203,12 +205,10 @@ public class Conditions implements Cloneable {
     }
 
     private static class CombCondition {
-        private boolean valid;
         private String andOr;
         private Conditions cds;
 
-        public CombCondition(boolean valid, String andOr, Conditions cds) {
-            this.valid = valid;
+        public CombCondition(String andOr, Conditions cds) {
             this.andOr = andOr;
             this.cds = cds;
         }
@@ -223,10 +223,6 @@ public class Conditions implements Cloneable {
 
         public Conditions getCds() {
             return cds;
-        }
-
-        public boolean isValid() {
-            return valid;
         }
 
         private String toQL(Map<String, Object> params) {
