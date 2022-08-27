@@ -233,10 +233,10 @@ public class TestJunit {
         System.out.println(conditions);
         System.out.println(
                 Conditions.where(false, "abc").notNull()
-                        .and( "b").gt(2)
-                        .and(false, Conditions.where(false, "abc is not null")
+                        .and("b").gt(2)
+                        .and(false, () -> Conditions.where(false, "abc is not null")
                                 .and("abc = '123'"))
-                        .and(true, Conditions.where("abs != 0"))
+                        .and(true, () -> Conditions.where("abs != 0"))
         );
 
     }
