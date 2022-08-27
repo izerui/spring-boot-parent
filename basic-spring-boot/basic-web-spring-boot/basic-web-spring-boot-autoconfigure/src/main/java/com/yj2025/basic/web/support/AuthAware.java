@@ -1,6 +1,7 @@
 package com.yj2025.basic.web.support;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.util.Assert;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -21,10 +22,8 @@ public interface AuthAware {
 
     private String getHeader(String header) {
         String value = getRequest().getHeader(header);
-        if (value != null) {
-            value = URLDecoder.decode(value, StandardCharsets.UTF_8);
-        }
-        return value;
+        Assert.notNull(value, "head请求中" + header + "不能为空");
+        return URLDecoder.decode(value, StandardCharsets.UTF_8);
     }
 
     @JsonIgnore
