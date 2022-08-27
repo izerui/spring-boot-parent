@@ -1,11 +1,11 @@
 package com.yj2025.basic.service;
 
 import com.yj2025.basic.command.Command;
+import com.yj2025.basic.support.ApplicationBeanAware;
 import io.vavr.*;
 import io.vavr.control.Option;
-import org.springframework.context.ApplicationContextAware;
 
-public abstract class BasicService implements ApplicationContextAware {
+public abstract class BasicService implements ApplicationBeanAware {
 
     /**
      * 执行一个cmd命令
