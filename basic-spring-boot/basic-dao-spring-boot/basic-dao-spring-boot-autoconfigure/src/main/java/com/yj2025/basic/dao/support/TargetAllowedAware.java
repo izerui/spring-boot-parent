@@ -7,11 +7,11 @@ import java.util.List;
  *
  * @param <T>
  */
-public interface TargetValidator<T> {
+public interface TargetAllowedAware<T> {
 
     List<T> allowedTargets();
 
-    default void validateTarget(T t) {
+    default void validateAllowed(T t) {
         List<T> targets = allowedTargets();
         if (targets != null && !targets.contains(this)) {
             throw new RuntimeException("不允许变更的目标对象");
