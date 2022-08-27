@@ -3,6 +3,8 @@ package com.yj2025.basic.web.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.yj2025.basic.web.support.AuthAware;
+import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiParam;
 import io.vavr.control.Option;
 import lombok.Data;
 import org.springframework.data.domain.PageRequest;
@@ -44,7 +46,9 @@ public abstract class PageReq implements AuthAware {
     protected abstract Sort withDefaultSort();
 
 
+    @ApiParam(hidden = true)
     @JsonIgnore
+    @ApiModelProperty(hidden = true)
     public final PageRequest getPageRequest() {
         Sort sort = withDefaultSort();
         if (orders != null && !orders.isEmpty()) {
