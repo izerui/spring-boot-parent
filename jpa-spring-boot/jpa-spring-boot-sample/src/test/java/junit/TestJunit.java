@@ -7,6 +7,7 @@ import com.yj2025.jpa.entity.Abcd;
 import com.yj2025.jpa.entity.User;
 import com.yj2025.jpa.entity.UserDistinct;
 import com.yj2025.jpa.impl.Conditions;
+import com.yj2025.jpa.impl.JpqlSelector;
 import com.yj2025.jpa.repository.AbcdRepository;
 import com.yj2025.jpa.repository.UserRepository;
 import org.assertj.core.util.Lists;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.jdbc.object.BatchSqlUpdate;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -42,6 +44,18 @@ public class TestJunit {
     AbcdRepository abcdRepository;
     @Autowired
     private DataSource dataSource;
+
+    @Test
+    public void testJpqlSelector() {
+        List<?> all = userRepository.findAll(
+                JpqlSelector.create()
+                        .withFields("u , a.a , a.b")
+                        .withTable(Abcd.class, "a")
+                        .withTable(User.class, "u")
+                        .withConditions(Conditions.where("u.id = a.id")),
+                Sort.by("a.a")
+        );
+    }
 
     @Test
     public void testSelectSql() {
