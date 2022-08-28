@@ -109,16 +109,6 @@ public class PlatformRepositoryImpl<T, ID extends Serializable> extends SimpleJp
     }
 
     @Override
-    public List<?> findAll(JpqlSelector selector) {
-        return new JpqlQueryHolder(selector.conditions).createQuery(selector.fields, selector.tables).getResultList();
-    }
-
-    @Override
-    public List<?> findAll(JpqlSelector selector, Sort sort) {
-        return new JpqlQueryHolder(selector.conditions, sort).createQuery(selector.fields, selector.tables).getResultList();
-    }
-
-    @Override
     public List<T> findAll(Conditions conditions, Sort sort) {
         return new JpqlQueryHolder(conditions, sort).createQuery().getResultList();
     }
@@ -480,34 +470,6 @@ public class PlatformRepositoryImpl<T, ID extends Serializable> extends SimpleJp
                     //where
                     .append(applyCondition());
             Query query = entityManager.createQuery(QueryUtils.applySorting(sb.toString(), sort, ALIAS));
-            applyQueryParameter(query);
-            return query;
-        }
-
-        private Query createQuery(String fields, Map<Class, String> tables) {
-            final AtomicReference<String> tablesQL = new AtomicReference<>("");
-            tables.forEach((aClass, alias) -> {
-                JpaEntityInformation<?, ?> information = entityInformationMap.get(aClass);
-                if (information == null) {
-                    information = JpaEntityInformationSupport.getEntityInformation(aClass, entityManager);
-                    entityInformationMap.put(aClass, information);
-                }
-                String entityName = information.getEntityName();
-                if (StringUtils.isEmpty(tablesQL.get())) {
-                    tablesQL.set(entityName + " " + alias);
-                } else {
-                    tablesQL.set(tablesQL.get() + "," + entityName + " " + alias);
-                }
-            });
-            StringBuilder sb = new StringBuilder();
-            // select x from table
-            sb.append("select ")
-                    .append(fields)
-                    .append(" from ")
-                    .append(tablesQL.get())
-                    //where
-                    .append(applyCondition());
-            Query query = entityManager.createQuery(QueryUtils.applySorting(sb.toString(), sort));
             applyQueryParameter(query);
             return query;
         }

@@ -46,18 +46,6 @@ public class TestJunit {
     private DataSource dataSource;
 
     @Test
-    public void testJpqlSelector() {
-        List<?> all = userRepository.findAll(
-                JpqlSelector.create()
-                        .withFields("u , a.a , a.b")
-                        .withTable(Abcd.class, "a")
-                        .withTable(User.class, "u")
-                        .withConditions(Conditions.where("u.id = a.id")),
-                Sort.by("a.a")
-        );
-    }
-
-    @Test
     public void testSelectSql() {
         Conditions conditions = Conditions.where("name").is("张无忌");
         List<Object[]> list = (List<Object[]>) userRepository.selectSql("select sum(age),sum(version) from User ", conditions);

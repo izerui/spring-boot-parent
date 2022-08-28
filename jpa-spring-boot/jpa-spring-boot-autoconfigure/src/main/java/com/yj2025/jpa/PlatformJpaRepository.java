@@ -30,10 +30,6 @@ public interface PlatformJpaRepository<T, ID extends Serializable> extends JpaRe
 
     List<T> findAll(Conditions conditions);
 
-    List<?> findAll(JpqlSelector selector);
-
-    List<?> findAll(JpqlSelector selector, Sort sort);
-
     List<T> findAll(Conditions conditions, Sort sort);
 
     @Deprecated
