@@ -22,8 +22,10 @@ public interface AuthAware {
 
     private String getHeader(String header) {
         String value = getRequest().getHeader(header);
-        Assert.notNull(value, "head请求中" + header + "不能为空");
-        return URLDecoder.decode(value, StandardCharsets.UTF_8);
+        if (value != null) {
+            value = URLDecoder.decode(value, StandardCharsets.UTF_8);
+        }
+        return value;
     }
 
     @JsonIgnore
