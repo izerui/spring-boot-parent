@@ -15,8 +15,8 @@ import java.lang.annotation.*;
 @Target({ElementType.FIELD})
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
-@Repeatable(value = IdenticalFields.class)
-public @interface IdenticalField {
+@Repeatable(value = IdenticalColumns.class)
+public @interface IdenticalColumn {
 
     /**
      * 对应实体类的字段名,默认为当前属性名

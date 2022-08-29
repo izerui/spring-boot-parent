@@ -15,8 +15,8 @@ import java.lang.annotation.*;
 @Target({ElementType.FIELD})
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
-@Repeatable(value = RelatedFields.class)
-public @interface RelatedField {
+@Repeatable(value = RelatedColumns.class)
+public @interface RelatedColumn {
 
     /**
      * 关联实体类的字段,默认为 recordId
