@@ -64,10 +64,22 @@ public abstract class BasicEntity {
     protected Date updateTime;
 
     /**
+     * 删除人
+     */
+    @Column(name = "deletor", columnDefinition = "VARCHAR(64) COMMENT '删除人'")
+    protected String deletor;
+
+    /**
      * 删除状态
      */
     @Column(name = "deleted", columnDefinition = "bit(1) COMMENT '逻辑删除 0未删除 1删除'", nullable = false)
     protected boolean deleted = false;
+
+    /**
+     * 删除时间
+     */
+    @Column(name = "delete_time", columnDefinition = "DATETIME(3) COMMENT '删除时间'")
+    protected Date deleteTime;
 
     /**
      * 修改更新人、更新时间
@@ -84,7 +96,8 @@ public abstract class BasicEntity {
      */
     public void deleteBy(String deletor) {
         this.deleted = true;
-        this.updateTime = new Date();
+        this.deletor = deletor;
+        this.deleteTime = new Date();
     }
 
     public BasicEntity() {
