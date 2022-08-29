@@ -3,6 +3,8 @@ package com.yj2025.basic.web.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.yj2025.basic.web.support.AuthAware;
+import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiParam;
 import io.vavr.control.Option;
 import lombok.Data;
 import org.springframework.data.domain.PageRequest;
@@ -21,14 +23,14 @@ public abstract class PageReq implements AuthAware {
      * 页码
      */
     @NotNull(message = "页码不能为空,起始页从0开始")
-    private Integer page = 0;
+    private Integer pageIndex = 0;
 
     /**
      * 每页条目数
      */
     @NotNull(message = "每页条目数不能为空")
     @Max(value = 2000, message = "每页条目数最大不能超过2000条")
-    private Integer size = 20;
+    private Integer pageSize = 20;
 
     /**
      * 排序字段
@@ -44,13 +46,15 @@ public abstract class PageReq implements AuthAware {
     protected abstract Sort withDefaultSort();
 
 
+    @ApiParam(hidden = true)
     @JsonIgnore
+    @ApiModelProperty(hidden = true)
     public final PageRequest getPageRequest() {
         Sort sort = withDefaultSort();
         if (orders != null && !orders.isEmpty()) {
             sort = Sort.by(io.vavr.collection.List.ofAll(orders).map(OrderRequest::toOrder).toJavaList());
         }
-        return PageRequest.of(this.page, this.size, sort);
+        return PageRequest.of(this.pageIndex, this.pageSize, sort);
     }
 
     public static class OrderRequest {

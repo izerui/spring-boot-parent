@@ -1,5 +1,6 @@
 package com.yj2025.basic.web;
 
+import com.yj2025.basic.support.ApplicationBeanAware;
 import com.yj2025.basic.web.support.AuthAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 
-public abstract class BasicController implements AuthAware {
+public abstract class BasicController implements AuthAware, ApplicationBeanAware {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass().getSimpleName());
 
@@ -34,4 +35,5 @@ public abstract class BasicController implements AuthAware {
         headers.setContentLength(bytes.length);
         return new ResponseEntity<byte[]>(bytes, headers, HttpStatus.CREATED);
     }
+
 }

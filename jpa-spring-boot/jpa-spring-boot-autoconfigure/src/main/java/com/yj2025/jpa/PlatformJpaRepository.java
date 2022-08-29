@@ -1,6 +1,7 @@
 package com.yj2025.jpa;
 
 import com.yj2025.jpa.impl.Conditions;
+import com.yj2025.jpa.impl.JpqlSelector;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;

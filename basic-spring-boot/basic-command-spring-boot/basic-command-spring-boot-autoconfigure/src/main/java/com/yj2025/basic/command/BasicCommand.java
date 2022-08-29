@@ -1,6 +1,5 @@
 package com.yj2025.basic.command;
 
-import com.yj2025.basic.component.BasicComponent;
 import com.yj2025.basic.support.ApplicationBeanAware;
 import com.yj2025.basic.support.ColorOutput;
 import org.slf4j.Logger;
@@ -18,7 +17,7 @@ import java.util.Arrays;
  * @param <R> 返回的结果类型
  * @author liuyuhua
  */
-public abstract class BasicCommand<R> implements Command<R>, BasicComponent, ApplicationBeanAware {
+public abstract class BasicCommand<R> implements Command<R>, ApplicationBeanAware {
 
     private boolean executed = false;
     private Long executeTimeMillis;
@@ -124,7 +123,6 @@ public abstract class BasicCommand<R> implements Command<R>, BasicComponent, App
         return 500L;
     }
 
-    @Override
     public Logger getLogger() {
         return logger;
     }
