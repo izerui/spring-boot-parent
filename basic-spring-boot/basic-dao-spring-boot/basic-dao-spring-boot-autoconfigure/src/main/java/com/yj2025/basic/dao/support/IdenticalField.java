@@ -15,6 +15,7 @@ import java.lang.annotation.*;
 @Target({ElementType.FIELD})
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
+@Repeatable(value = IdenticalFields.class)
 public @interface IdenticalField {
 
     /**
@@ -22,7 +23,7 @@ public @interface IdenticalField {
      *
      * @return
      */
-    String value();
+    String column();
 
 
     /**
@@ -30,5 +31,5 @@ public @interface IdenticalField {
      *
      * @return
      */
-    Class[] entity();
+    Class entity();
 }

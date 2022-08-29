@@ -15,6 +15,7 @@ import java.lang.annotation.*;
 @Target({ElementType.FIELD})
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
+@Repeatable(value = RelatedFields.class)
 public @interface RelatedField {
 
     /**
@@ -22,12 +23,12 @@ public @interface RelatedField {
      *
      * @return
      */
-    String value();
+    String column();
 
     /**
      * 关联的实体类
      *
      * @return
      */
-    Class[] entity();
+    Class entity();
 }
