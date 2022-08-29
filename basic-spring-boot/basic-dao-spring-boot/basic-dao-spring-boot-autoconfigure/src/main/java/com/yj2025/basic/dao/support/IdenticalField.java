@@ -10,30 +10,30 @@ import java.lang.annotation.*;
 /**
  * @author liuyuhua
  */
-@Label("关联关系")
+@Label("冗余字段")
 @Category("Entity")
-@Description("表示所对应的外表的关联关系")
+@Description("表示所冗余的字段信息")
 @Target({ElementType.FIELD})
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Related {
+public @interface IdenticalField {
 
     /**
-     * 关联实体类的字段
+     * 对应实体类的字段名
      * @return
      */
-    @AliasFor("primaryKey")
-    String value() default "recordId";
+    @AliasFor("columName")
+    String value() default "";
 
     /**
-     * 关联实体类的主键名
+     * 对应实体类的字段名
      * @return
      */
     @AliasFor("value")
-    String primaryKey() default "recordId";
+    String columName() default "";
 
     /**
-     * 关联的实体类
+     * 冗余字段对应的实体类
      * @return
      */
     Class[] entity() default {};
