@@ -19,11 +19,11 @@ import java.lang.annotation.*;
 public @interface RelatedField {
 
     /**
-     * 关联实体类的字段
+     * 关联实体类的字段,默认为 recordId
      *
      * @return
      */
-    String column();
+    String column() default "recordId";
 
     /**
      * 关联的实体类

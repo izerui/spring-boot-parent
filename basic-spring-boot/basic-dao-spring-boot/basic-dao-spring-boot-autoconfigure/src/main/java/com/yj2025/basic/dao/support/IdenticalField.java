@@ -19,11 +19,11 @@ import java.lang.annotation.*;
 public @interface IdenticalField {
 
     /**
-     * 对应实体类的字段名
+     * 对应实体类的字段名,默认为当前属性名
      *
      * @return
      */
-    String column();
+    String column() default "";
 
 
     /**
