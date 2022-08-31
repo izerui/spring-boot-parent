@@ -14,7 +14,6 @@ import com.google.common.util.concurrent.MoreExecutors;
 import com.lmax.disruptor.dsl.ProducerType;
 import com.yj2025.performance.BatchConsumer;
 import com.yj2025.performance.ClearEvent;
-import com.yj2025.performance.Consumer;
 import com.yj2025.performance.Producer;
 import io.vavr.CheckedFunction0;
 import io.vavr.CheckedRunnable;
@@ -46,6 +45,8 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
+import java.util.function.BiPredicate;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -96,7 +97,7 @@ public final class Context {
     /**
      * 开启手动事务执行
      */
-    public static void executeTransaction(java.util.function.Consumer<TransactionStatus> action) {
+    public static void executeTransaction(Consumer<TransactionStatus> action) {
         TransactionTemplate transactionTemplate = Context.getBean(TransactionTemplate.class);
         transactionTemplate.executeWithoutResult(action);
     }
@@ -119,7 +120,7 @@ public final class Context {
      * @param <T>       发送的数据
      * @return 返回生产者
      */
-    public static <T extends ClearEvent> Producer<T> multiConsumer(Class<T> tClass, int threadNum, Consumer<T> consumer) {
+    public static <T extends ClearEvent> Producer<T> multiConsumer(Class<T> tClass, int threadNum, com.yj2025.performance.Consumer<T> consumer) {
         return (Producer<T>) Producer.builder()
                 .optionnalProducerType(ProducerType.SINGLE)
                 .requiredDataType(tClass)
@@ -138,7 +139,7 @@ public final class Context {
      * @param <T>            发送的数据
      * @return 返回生产者
      */
-    public static <T extends ClearEvent> Producer<T> multiConsumer(Class<T> tClass, int threadNum, int ringBufferSize, Consumer<T> consumer) {
+    public static <T extends ClearEvent> Producer<T> multiConsumer(Class<T> tClass, int threadNum, int ringBufferSize, com.yj2025.performance.Consumer<T> consumer) {
         return (Producer<T>) Producer.builder()
                 .optionnalProducerType(ProducerType.SINGLE)
                 .requiredDataType(tClass)
@@ -766,6 +767,28 @@ public final class Context {
      */
     public static <K, V, T> Map<K, V> listToMap(Iterable<T> iterable, Function<? super T, K> keyMapper, Function<? super T, V> valueMapper) {
         return io.vavr.collection.List.ofAll(iterable).toMap(keyMapper, valueMapper).toJavaMap();
+    }
+
+    /**
+     * 找相同的item，并且组合消费
+     * @param leftList 左侧数组
+     * @param rightList 右侧数组
+     * @param predicate 左侧对象和右侧对象匹配一致的条件
+     * @param consumer 左右一起消费
+     * @param <T> 左对象
+     * @param <R> 右对象
+     */
+    public static <T, R> void matchItem(List<T> leftList, List<R> rightList, BiPredicate<T, R> predicate, BiConsumer<T, R> consumer) {
+        outer:
+        for (T left : leftList) {
+            inner:
+            for (R right : rightList) {
+                if (predicate.test(left, right)) {
+                    consumer.accept(left, right);
+                    continue outer;
+                }
+            }
+        }
     }
 
     /**

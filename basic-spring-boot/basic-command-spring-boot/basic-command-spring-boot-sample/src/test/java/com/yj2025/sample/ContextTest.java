@@ -6,10 +6,22 @@ import org.apache.commons.lang3.RandomUtils;
 import org.junit.Test;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 public class ContextTest {
+
+    @Test
+    public void test001() {
+        List<String> alist = null;
+        List<Integer> blist = null;
+        Context.matchItem(alist, blist, (s, integer) -> s.equals(integer.toString()),(s, integer) -> {
+            s = integer.toString() + "1";
+        });
+    }
 
     @Test
     public void test() {
