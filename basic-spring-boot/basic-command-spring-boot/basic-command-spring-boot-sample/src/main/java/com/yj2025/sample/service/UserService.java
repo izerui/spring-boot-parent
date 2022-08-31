@@ -21,11 +21,11 @@ public class UserService extends BasicService implements AuthAware {
         String userName = getUserName();
         System.out.println(userName);
         System.out.println(TransactionSynchronizationManager.isActualTransactionActive());
-        execute(new UserDeleteCmd("sss"));
+//        execute(new UserDeleteCmd("sss"));
         for (int i = 0; i < 20; i++) {
             User user = new User();
             user.setCode("code" + i);
-            user.setName("张2丰");
+//            user.setName("张2丰");
             user.setEmail("张三丰@qq.com");
             executeWhen(i > 5, new UserCreateCmd(user));
         }

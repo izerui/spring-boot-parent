@@ -45,8 +45,6 @@ import java.util.stream.IntStream;
 @Slf4j
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = SampleApplication.class)
-@Transactional
-@Rollback(value = false)
 public class UserTest {
 
     @Autowired

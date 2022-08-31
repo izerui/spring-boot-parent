@@ -7,6 +7,10 @@ import com.yj2025.sample.entity.User;
 import com.yj2025.sample.repository.UserRepository;
 import org.springframework.util.Assert;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ValidationException;
+import java.util.Set;
+
 public class UserCreateCmd extends BasicCommand<Long> {
 
     private User user;
@@ -17,6 +21,13 @@ public class UserCreateCmd extends BasicCommand<Long> {
 
     @Override
     protected void beforeDoExecute() {
+        Set<ConstraintViolation<User>> errors = validatorFast.validate(user);
+        if (errors != null) {
+            for (ConstraintViolation<User> error : errors) {
+                throw new ValidationException(error.getMessage());
+            }
+        }
+
         if (user == null) {
             throw new RuntimeException("user对象不能为空");
         }

@@ -2,8 +2,11 @@ package com.yj2025.sample.entity;
 
 import com.yj2025.performance.ClearEvent;
 import lombok.Data;
+import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.*;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,6 +24,7 @@ public class User implements ClearEvent {
     private Date createTime = new Date();
     @Column(unique = true, nullable = false, updatable = false, length = 64)
     private String code;
+    @NotBlank(message = "必须传入名称")
     private String name;
     private String email;
     private Integer age;

@@ -2,14 +2,20 @@ package com.yj2025.basic.command;
 
 import com.yj2025.basic.support.ApplicationBeanAware;
 import com.yj2025.basic.support.ColorOutput;
+import org.hibernate.validator.HibernateValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ReflectionUtils;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.ValidationException;
+import javax.validation.Validator;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.Set;
 
 /**
  * 所有command命令集成该基类
@@ -22,6 +28,7 @@ public abstract class BasicCommand<R> implements Command<R>, ApplicationBeanAwar
     private boolean executed = false;
     private Long executeTimeMillis;
 
+    protected static final Validator validatorFast = Validation.byProvider(HibernateValidator.class).configure().failFast(true).buildValidatorFactory().getValidator();
     protected final Logger logger = LoggerFactory.getLogger(getClass().getSimpleName());
 
     public BasicCommand() {
@@ -125,6 +132,15 @@ public abstract class BasicCommand<R> implements Command<R>, ApplicationBeanAwar
 
     public Logger getLogger() {
         return logger;
+    }
+
+    protected <T> void validate(T request) {
+        Set<ConstraintViolation<T>> errors = validatorFast.validate(request);
+        if (errors != null) {
+            for (ConstraintViolation<T> error : errors) {
+                throw new ValidationException(error.getMessage());
+            }
+        }
     }
 
 }
