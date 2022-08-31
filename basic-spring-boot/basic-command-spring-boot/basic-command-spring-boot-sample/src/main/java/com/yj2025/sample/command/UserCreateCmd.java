@@ -21,7 +21,7 @@ public class UserCreateCmd extends BasicCommand<Long> {
 
     @Override
     protected void beforeDoExecute() {
-        validate(null);
+        validate(user);
 
 //        if (user == null) {
 //            throw new RuntimeException("user对象不能为空");
