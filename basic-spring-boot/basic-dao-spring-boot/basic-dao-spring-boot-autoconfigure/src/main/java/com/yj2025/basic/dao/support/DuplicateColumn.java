@@ -15,7 +15,7 @@ import java.lang.annotation.*;
 @Target({ElementType.FIELD})
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
-@Repeatable(value = DuplicateColumns.class)
+@Repeatable(value = DuplicateColumn.DuplicateColumns.class)
 public @interface DuplicateColumn {
 
     /**
@@ -32,4 +32,16 @@ public @interface DuplicateColumn {
      * @return
      */
     Class entity();
+
+    /**
+     * @author liuyuhua
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Inherited
+    @Target({ElementType.FIELD})
+    @Documented
+    @interface DuplicateColumns {
+
+        DuplicateColumn[] value();
+    }
 }

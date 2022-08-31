@@ -14,8 +14,8 @@ public interface TargetAllowedAware<T> {
     List<T> allowedTargets();
 
     default void validateAllowed(T t) {
-        List<T> targets = allowedTargets();
-        if (targets != null && !targets.contains(this)) {
+        List<T> targets = this.allowedTargets();
+        if (targets != null && !targets.contains(t)) {
             throw new RuntimeException("不允许变更的目标对象");
         }
     }

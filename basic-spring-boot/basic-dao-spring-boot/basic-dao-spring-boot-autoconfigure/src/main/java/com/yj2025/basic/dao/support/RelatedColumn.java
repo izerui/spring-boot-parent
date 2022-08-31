@@ -15,7 +15,7 @@ import java.lang.annotation.*;
 @Target({ElementType.FIELD})
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
-@Repeatable(value = RelatedColumns.class)
+@Repeatable(value = RelatedColumn.RelatedColumns.class)
 public @interface RelatedColumn {
 
     /**
@@ -31,4 +31,16 @@ public @interface RelatedColumn {
      * @return
      */
     Class entity();
+
+    /**
+     * @author liuyuhua
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Inherited
+    @Target({ElementType.FIELD})
+    @Documented
+    @interface RelatedColumns {
+
+        RelatedColumn[] value();
+    }
 }
