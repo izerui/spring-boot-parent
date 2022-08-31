@@ -9,7 +9,7 @@ import java.lang.annotation.*;
 @Inherited
 @Target({ElementType.FIELD})
 @Documented
-public @interface IdenticalColumns {
+public @interface DuplicateColumns {
 
-    IdenticalColumn[] value();
+    DuplicateColumn[] value();
 }
