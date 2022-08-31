@@ -21,17 +21,12 @@ public class UserCreateCmd extends BasicCommand<Long> {
 
     @Override
     protected void beforeDoExecute() {
-        Set<ConstraintViolation<User>> errors = validatorFast.validate(user);
-        if (errors != null) {
-            for (ConstraintViolation<User> error : errors) {
-                throw new ValidationException(error.getMessage());
-            }
-        }
+        validate(null);
 
-        if (user == null) {
-            throw new RuntimeException("user对象不能为空");
-        }
-        Assert.state(user.getId() == null, "新增用户，id必须为空");
+//        if (user == null) {
+//            throw new RuntimeException("user对象不能为空");
+//        }
+//        Assert.state(user.getId() == null, "新增用户，id必须为空");
     }
 
     @Override

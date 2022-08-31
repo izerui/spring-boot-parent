@@ -134,8 +134,11 @@ public abstract class BasicCommand<R> implements Command<R>, ApplicationBeanAwar
         return logger;
     }
 
-    protected <T> void validate(T request) {
-        Set<ConstraintViolation<T>> errors = validatorFast.validate(request);
+    /**
+     * 使用jsr303校验参数
+     */
+    protected <T> void validate(T request, Class<?>... groups) {
+        Set<ConstraintViolation<T>> errors = validatorFast.validate(request, groups);
         if (errors != null) {
             for (ConstraintViolation<T> error : errors) {
                 throw new ValidationException(error.getMessage());
