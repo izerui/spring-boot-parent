@@ -137,7 +137,7 @@ public abstract class BasicCommand<R> implements Command<R>, ApplicationBeanAwar
     /**
      * 使用jsr303校验参数： 如果需要嵌套校验在相应的字段属性增加 @Valid
      */
-    protected <T> void validate(T request, Class<?>... groups) {
+    protected <T> void validateAndThrow(T request, Class<?>... groups) {
         Set<ConstraintViolation<T>> errors = validatorFast.validate(request, groups);
         if (errors != null) {
             for (ConstraintViolation<T> error : errors) {

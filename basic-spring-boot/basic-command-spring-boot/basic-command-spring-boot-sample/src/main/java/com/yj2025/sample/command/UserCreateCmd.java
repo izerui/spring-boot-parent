@@ -5,11 +5,6 @@ import com.yj2025.basic.command.BasicCommand;
 import com.yj2025.basic.support.Context;
 import com.yj2025.sample.entity.User;
 import com.yj2025.sample.repository.UserRepository;
-import org.springframework.util.Assert;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.ValidationException;
-import java.util.Set;
 
 public class UserCreateCmd extends BasicCommand<Long> {
 
@@ -21,7 +16,7 @@ public class UserCreateCmd extends BasicCommand<Long> {
 
     @Override
     protected void beforeDoExecute() {
-        validate(user);
+        validateAndThrow(user);
 
 //        if (user == null) {
 //            throw new RuntimeException("user对象不能为空");
