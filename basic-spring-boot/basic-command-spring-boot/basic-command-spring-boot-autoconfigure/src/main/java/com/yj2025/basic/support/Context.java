@@ -768,14 +768,15 @@ public final class Context {
 
     /**
      * 找相同的item，并且组合消费
+     *
      * @param sourceList 左侧源数组
-     * @param matchList 用来匹配的右侧数组
-     * @param predicate 左侧对象和右侧对象匹配一致的条件
+     * @param matchList  用来匹配的右侧数组
+     * @param predicate  左侧对象和右侧对象匹配一致的条件
      * @param ifConsumer 当匹配到右侧的对象的时候触发消费逻辑
-     * @param <T> 源对象
-     * @param <R> 用来匹配的对象
+     * @param <T>        源对象
+     * @param <R>        用来匹配的对象
      */
-    public static <T, R> void matchListAndBundleFirst(Iterable<T> sourceList, Iterable<R> matchList, BiPredicate<T, R> predicate, BiConsumer<T, R> ifConsumer) {
+    public static <T, R> void matchAndBundleFirst(Iterable<T> sourceList, Iterable<R> matchList, BiPredicate<T, R> predicate, BiConsumer<T, R> ifConsumer) {
         outer:
         for (T left : sourceList) {
             inner:
@@ -790,14 +791,15 @@ public final class Context {
 
     /**
      * 找相同的item，并且组合消费
+     *
      * @param sourceList 左侧源数组
-     * @param matchList 用来匹配的右侧数组
-     * @param predicate 左侧对象和右侧对象匹配一致的条件
+     * @param matchList  用来匹配的右侧数组
+     * @param predicate  左侧对象和右侧对象匹配一致的条件
      * @param ifConsumer 当匹配到右侧的对象的时候触发消费逻辑
-     * @param <T> 源对象
-     * @param <R> 用来匹配的对象
+     * @param <T>        源对象
+     * @param <R>        用来匹配的对象
      */
-    public static <T, R> void matchListAndBundleFirst(Iterable<T> sourceList, Supplier<Iterable<R>> matchList, BiPredicate<T, R> predicate, BiConsumer<T, R> ifConsumer) {
+    public static <T, R> void matchAndBundleFirst(Iterable<T> sourceList, Supplier<Iterable<R>> matchList, BiPredicate<T, R> predicate, BiConsumer<T, R> ifConsumer) {
         outer:
         for (T left : sourceList) {
             inner:
@@ -807,6 +809,53 @@ public final class Context {
                     continue outer;
                 }
             }
+        }
+    }
+
+    /**
+     * 匹配matchList，找到满足条件的所有R集合，与当前匹配的T对象一起消费
+     *
+     * @param sourceList 左侧源数组
+     * @param matchList  用来匹配的右侧数组
+     * @param predicate  左侧对象和右侧对象匹配一致的条件
+     * @param consumer   当匹配到右侧的对象的时候触发消费逻辑
+     * @param <T>        源对象
+     * @param <R>        用来匹配的对象
+     */
+    public static <T, R> void matchAndBundleList(Iterable<T> sourceList, Iterable<R> matchList, BiPredicate<T, R> predicate, BiConsumer<T, List<R>> consumer) {
+        outer:
+        for (T left : sourceList) {
+            List<R> bundleList = new ArrayList<>();
+            inner:
+            for (R right : matchList) {
+                if (predicate.test(left, right)) {
+                    bundleList.add(right);
+                }
+            }
+            consumer.accept(left, bundleList);
+        }
+    }
+
+    /**
+     * 匹配matchList，找到满足条件的所有R集合，与当前匹配的T对象一起消费
+     *
+     * @param sourceList 左侧源数组
+     * @param matchList  用来匹配的右侧数组
+     * @param predicate  左侧对象和右侧对象匹配一致的条件
+     * @param consumer   当匹配到右侧的对象的时候触发消费逻辑
+     * @param <T>        源对象
+     * @param <R>        用来匹配的对象
+     */
+    public static <T, R> void matchAndBundleList(Iterable<T> sourceList, Supplier<Iterable<R>> matchList, BiPredicate<T, R> predicate, BiConsumer<T, List<R>> consumer) {
+        for (T left : sourceList) {
+            List<R> bundleList = new ArrayList<>();
+            inner:
+            for (R right : matchList.get()) {
+                if (predicate.test(left, right)) {
+                    bundleList.add(right);
+                }
+            }
+            consumer.accept(left, bundleList);
         }
     }
 
