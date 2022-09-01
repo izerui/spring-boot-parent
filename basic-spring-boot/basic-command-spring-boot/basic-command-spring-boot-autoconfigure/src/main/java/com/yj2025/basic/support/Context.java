@@ -44,10 +44,7 @@ import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.BiConsumer;
-import java.util.function.BiPredicate;
-import java.util.function.Consumer;
-import java.util.function.Function;
+import java.util.function.*;
 import java.util.stream.Collectors;
 
 public final class Context {
@@ -771,20 +768,42 @@ public final class Context {
 
     /**
      * 找相同的item，并且组合消费
-     * @param leftList 左侧数组
-     * @param rightList 右侧数组
+     * @param sourceList 左侧源数组
+     * @param matchList 用来匹配的右侧数组
      * @param predicate 左侧对象和右侧对象匹配一致的条件
-     * @param consumer 左右一起消费
-     * @param <T> 左对象
-     * @param <R> 右对象
+     * @param ifConsumer 当匹配到右侧的对象的时候触发消费逻辑
+     * @param <T> 源对象
+     * @param <R> 用来匹配的对象
      */
-    public static <T, R> void matchItem(List<T> leftList, List<R> rightList, BiPredicate<T, R> predicate, BiConsumer<T, R> consumer) {
+    public static <T, R> void matchListAndBundleFirst(Iterable<T> sourceList, Iterable<R> matchList, BiPredicate<T, R> predicate, BiConsumer<T, R> ifConsumer) {
         outer:
-        for (T left : leftList) {
+        for (T left : sourceList) {
             inner:
-            for (R right : rightList) {
+            for (R right : matchList) {
                 if (predicate.test(left, right)) {
-                    consumer.accept(left, right);
+                    ifConsumer.accept(left, right);
+                    continue outer;
+                }
+            }
+        }
+    }
+
+    /**
+     * 找相同的item，并且组合消费
+     * @param sourceList 左侧源数组
+     * @param matchList 用来匹配的右侧数组
+     * @param predicate 左侧对象和右侧对象匹配一致的条件
+     * @param ifConsumer 当匹配到右侧的对象的时候触发消费逻辑
+     * @param <T> 源对象
+     * @param <R> 用来匹配的对象
+     */
+    public static <T, R> void matchListAndBundleFirst(Iterable<T> sourceList, Supplier<Iterable<R>> matchList, BiPredicate<T, R> predicate, BiConsumer<T, R> ifConsumer) {
+        outer:
+        for (T left : sourceList) {
+            inner:
+            for (R right : matchList.get()) {
+                if (predicate.test(left, right)) {
+                    ifConsumer.accept(left, right);
                     continue outer;
                 }
             }
