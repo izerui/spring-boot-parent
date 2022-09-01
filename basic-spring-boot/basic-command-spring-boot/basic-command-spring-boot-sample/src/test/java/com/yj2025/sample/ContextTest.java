@@ -15,7 +15,7 @@ public class ContextTest {
     public void test001() {
         List<String> alist = null;
         List<Integer> blist = null;
-        Context.matchFirstItem(alist, blist, (s, integer) -> s.equals(integer.toString()),(s, integer) -> {
+        Context.matchAndBundleList(alist, blist, (s, integer) -> s.equals(integer.toString()),(s, integer) -> {
             s = integer.toString() + "1";
         });
     }
