@@ -29,6 +29,7 @@
         <module>basic-spring-boot</module>
         <module>data-jdbc-spring-boot</module>
         <module>platform-commons</module>
+        <module>validator-spring-boot</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -358,6 +359,12 @@
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>platform-commons</artifactId>
+                <version>${base-starter.version}</version>
+            </dependency>
+            <!-- validator -->
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>validator-spring-boot-starter</artifactId>
                 <version>${base-starter.version}</version>
             </dependency>
 

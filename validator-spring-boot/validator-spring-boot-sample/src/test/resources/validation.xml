@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE validation PUBLIC
+        "-//ecworking//DTD Form Validator Rules Configuration 1.0.0//EN"
+        "https://raw.githubusercontent.com/izerui/validator/master/src/main/resources/dtd/validation.dtd">
+<validation>
+    <formset>
+        <form name="ent_type_1" description="跟单管理-贸易版验证">
+            <field name="name">
+                <validator name="not_null" msg="名称不能为空"/>
+                <!--<validator name="lyh" msg="不是刘玉华"/>-->
+            </field>
+            <field name="email">
+                <validator name="not_null" msg="邮件不能为空"/>
+                <validator name="email" msg="邮件格式不正确"/>
+            </field>
+            <field name="dateFormat">
+                <validator name="date_pattern" var="yyyy-MM-dd" msg="格式不对"/>
+            </field>
+        </form>
+
+        <form name="ent_type_2" description="跟单管理-制造版验证">
+            <field name="field01">
+                <validator name="null" msg="必须为空"/>
+            </field>
+        </form>
+    </formset>
+</validation>
