@@ -1,5 +1,6 @@
 package com.yj2025.basic.support;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -734,6 +735,13 @@ public final class Context {
      */
     public static <T> T fromJson(byte[] json, Class<T> tClass) {
         return tryWith(() -> OBJECT_MAPPER.readValue(json, tClass));
+    }
+
+    /**
+     * json反序列化
+     */
+    public static <T> T fromJson(byte[] json, TypeReference<T> valueTypeRef) {
+        return tryWith(() -> OBJECT_MAPPER.readValue(json, valueTypeRef));
     }
 
     /**
