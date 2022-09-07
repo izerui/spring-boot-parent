@@ -16,6 +16,9 @@ import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author liuyuhua
+ */
 @Data
 public abstract class PageReq implements AuthAware {
 
@@ -37,6 +40,11 @@ public abstract class PageReq implements AuthAware {
      */
     private List<OrderRequest> orders = new ArrayList<>();
 
+    /**
+     * 单个排序
+     */
+    private OrderRequest order = new OrderRequest();
+
 
     /**
      * 默认的排序方式
@@ -51,12 +59,16 @@ public abstract class PageReq implements AuthAware {
     @ApiModelProperty(hidden = true)
     public final PageRequest getPageRequest() {
         Sort sort = withDefaultSort();
+        if (order != null) {
+            sort = Sort.by(order.toOrder());
+        }
         if (orders != null && !orders.isEmpty()) {
             sort = Sort.by(io.vavr.collection.List.ofAll(orders).map(OrderRequest::toOrder).toJavaList());
         }
         return PageRequest.of(this.pageIndex, this.pageSize, sort);
     }
 
+    @Data
     public static class OrderRequest {
         @Nullable
         String property;
