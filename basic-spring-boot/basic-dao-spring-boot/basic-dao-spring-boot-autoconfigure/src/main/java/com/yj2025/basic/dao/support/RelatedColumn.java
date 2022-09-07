@@ -30,7 +30,7 @@ public @interface RelatedColumn {
      *
      * @return
      */
-    Class entity();
+    Class entity() default Void.class;
 
     /**
      * @author liuyuhua

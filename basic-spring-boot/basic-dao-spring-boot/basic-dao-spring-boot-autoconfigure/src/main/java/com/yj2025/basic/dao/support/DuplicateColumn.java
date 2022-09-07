@@ -31,7 +31,7 @@ public @interface DuplicateColumn {
      *
      * @return
      */
-    Class entity();
+    Class entity() default Void.class;
 
     /**
      * @author liuyuhua
