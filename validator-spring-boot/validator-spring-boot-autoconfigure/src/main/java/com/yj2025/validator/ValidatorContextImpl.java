@@ -3,8 +3,7 @@ package com.yj2025.validator;
 import com.yj2025.validator.parser.Field;
 import com.yj2025.validator.parser.Form;
 import com.yj2025.validator.parser.ValidatorExec;
-import com.yj2025.validator.validation.Property;
-import com.yj2025.validator.validation.Validator;
+import com.yj2025.validator.validation.*;
 import org.springframework.util.Assert;
 
 import java.beans.BeanInfo;
@@ -21,21 +20,36 @@ import java.util.stream.Collectors;
  */
 public class ValidatorContextImpl implements ValidatorContext {
 
-    private List<Validator> validators;
+    private final static List<Validator<?>> DEFAULT_VALIDATORS = List.of(
+            new AfterNowValidator(),
+            new BeforeNowValidator(),
+            new BlankValidator(),
+            new CreditCardValidator(),
+            new DatePatternFormatValidator(),
+            new EmailValidator(),
+            new MaxDoubleValidator(),
+            new MaxFloatValidator(),
+            new MaxIntValidator(),
+            new MaxLongValidator(),
+            new MinDoubleValidator(),
+            new MinFloatValidator(),
+            new MinIntValidator(),
+            new MinLongValidator(),
+            new NotBlankValidator(),
+            new NotNullValidator(),
+            new NullValidator(),
+            new RangeDoubleValidator(),
+            new RangeFloatValidator(),
+            new RangeIntValidator(),
+            new RangeLongValidator(),
+            new RangeShortValidator(),
+            new RegexpValidator(),
+            new UrlValidator()
+    );
     private List<Form> forms;
 
-    public ValidatorContextImpl(List<Validator> validators, List<Form> forms) {
-        this.validators = validators;
+    public ValidatorContextImpl(List<Form> forms) {
         this.forms = forms;
-    }
-
-    /**
-     * 设置新的验证器,允许覆盖
-     *
-     * @param validator
-     */
-    public void addValidator(Validator validator) {
-        validators.add(validator);
     }
 
     /**
@@ -59,13 +73,9 @@ public class ValidatorContextImpl implements ValidatorContext {
         throw new ValidatorException("未找到名字为 [" + name + "] 的验证表单");
     }
 
-    //根据验证器名字查找为当前名字的验证器
-    protected List<Validator> getExecs(String name) {
-        return validators.stream().filter(validator -> validator.name().equals(name)).collect(Collectors.toList());
-    }
 
     @Override
-    public Results validate(String form, Object obj) {
+    public Results validate(String form, Object obj, Validator<?>... customizeValidators) {
 
         Assert.notNull(obj);
 
@@ -73,12 +83,15 @@ public class ValidatorContextImpl implements ValidatorContext {
 
         List<Result> resultList = new ArrayList<>();
 
+        List<Validator<?>> validators = List.of(customizeValidators);
+        validators.addAll(DEFAULT_VALIDATORS);
+
         for (Field field : validationForm.getFields()) {
             Result result = null;
 
 
             //初始化property
-            Property property = getProperty(obj,field.getName(),validationForm.getName());
+            Property property = getProperty(obj, field.getName(), validationForm.getName());
 
             exec:
             for (ValidatorExec exec : field.getValidators()) {
@@ -87,14 +100,14 @@ public class ValidatorContextImpl implements ValidatorContext {
                 property.setVar(exec.getVar());
 
                 //查找对应验证器名字的多个验证器
-                List<Validator> execs = getExecs(exec.getName());
+                List<Validator> execs = validators.stream().filter(validator -> validator.name().equals(exec.getName())).collect(Collectors.toList());
                 //找到属性的类型一致的验证器
                 Optional<Validator> first = execs.stream().filter(validator -> validator.pType().isAssignableFrom(property.getType())).findFirst();
-                if(!first.isPresent()){
-                    if(execs==null||execs.size()<0){
-                        throw new ValidatorException(property.getForm()+"中未找名字为 ["+exec.getName()+"]的验证器");
-                    }else {
-                        throw new ValidatorException(property.getForm()+"中未找到对应验证属性类型并且名字为 ["+exec.getName()+"]的验证器");
+                if (!first.isPresent()) {
+                    if (execs == null || execs.size() < 0) {
+                        throw new ValidatorException(property.getForm() + "中未找名字为 [" + exec.getName() + "]的验证器");
+                    } else {
+                        throw new ValidatorException(property.getForm() + "中未找到对应验证属性类型并且名字为 [" + exec.getName() + "]的验证器");
                     }
                 }
                 Validator validator = first.get();
@@ -115,28 +128,22 @@ public class ValidatorContextImpl implements ValidatorContext {
     }
 
     @Override
-    public void validateAndThrowFirst(String form, Object obj) {
-        Results results = validate(form, obj);
-        if(!results.validAll()) {
+    public void validateAndThrowFirst(String form, Object obj, Validator<?>... customizeValidators) {
+        Results results = validate(form, obj, customizeValidators);
+        if (!results.validAll()) {
             throw new ValidatorException(results.getFirstErrorMsg());
         }
     }
 
-    @Override
-    public List<Validator> getValidators() {
-        return validators;
-    }
-
-    @Override
     public List<Form> getForms() {
         return forms;
     }
 
-    private Property getProperty(Object obj, String fieldName, String form) throws ValidatorException{
+    private Property getProperty(Object obj, String fieldName, String form) throws ValidatorException {
         try {
             BeanInfo beanInfo = Introspector.getBeanInfo(obj.getClass());
             for (PropertyDescriptor descriptor : beanInfo.getPropertyDescriptors()) {
-                if(descriptor.getName().equals(fieldName)){
+                if (descriptor.getName().equals(fieldName)) {
                     Class type = descriptor.getPropertyType();
                     Method readMethod = descriptor.getReadMethod();
                     Object value = readMethod.invoke(obj);
@@ -149,9 +156,9 @@ public class ValidatorContextImpl implements ValidatorContext {
                     return property;
                 }
             }
-            throw new ValidatorException(form+" 未找到名字为"+fieldName+"的属性 ");
+            throw new ValidatorException(form + " 未找到名字为" + fieldName + "的属性 ");
         } catch (Exception e) {
-            throw new ValidatorException(form+" 无法获取"+fieldName+"的属性信息 "+e.getMessage(),e);
+            throw new ValidatorException(form + " 无法获取" + fieldName + "的属性信息 " + e.getMessage(), e);
         }
     }
 
