@@ -200,7 +200,7 @@ public class Conditions implements Cloneable {
         sb.append(") ");
 
         String ql = sb.toString();
-        logger.debug(ql);
+//        logger.debug(ql);
         return ql;
     }
 

@@ -7,14 +7,13 @@ import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiParam;
 import io.vavr.control.Option;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author liuyuhua
@@ -38,13 +37,12 @@ public abstract class PageReq implements AuthAware {
     /**
      * 排序字段
      */
-    private List<OrderRequest> orders = new ArrayList<>();
+    private String sortField;
 
     /**
-     * 单个排序
+     * 排序方向
      */
-    private OrderRequest order = new OrderRequest();
-
+    private String sortDirection;
 
     /**
      * 默认的排序方式
@@ -59,11 +57,12 @@ public abstract class PageReq implements AuthAware {
     @ApiModelProperty(hidden = true)
     public final PageRequest getPageRequest() {
         Sort sort = withDefaultSort();
-        if (order != null) {
-            sort = Sort.by(order.toOrder());
-        }
-        if (orders != null && !orders.isEmpty()) {
-            sort = Sort.by(io.vavr.collection.List.ofAll(orders).map(OrderRequest::toOrder).toJavaList());
+        if (StringUtils.isNotBlank(sortField)) {
+            if (StringUtils.isNotBlank(sortDirection)) {
+                sort = Sort.by(Sort.Direction.fromString(sortDirection), sortField);
+            } else {
+                sort = Sort.by(sortField);
+            }
         }
         return PageRequest.of(this.pageIndex, this.pageSize, sort);
     }
