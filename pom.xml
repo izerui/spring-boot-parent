@@ -30,6 +30,7 @@
         <module>data-jdbc-spring-boot</module>
         <module>platform-commons</module>
         <module>validator-spring-boot</module>
+        <module>cloud-file-spring-boot</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -365,6 +366,12 @@
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>validator-spring-boot-starter</artifactId>
+                <version>${base-starter.version}</version>
+            </dependency>
+            <!-- cloud-file -->
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>cloud-file-spring-boot-starter</artifactId>
                 <version>${base-starter.version}</version>
             </dependency>
 
