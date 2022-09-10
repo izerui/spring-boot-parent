@@ -20,7 +20,8 @@ public class CloudFileApplication implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         String filePath = "/Users/liuyuhua/Downloads/0b55f88d5f9efa155e634702c0098355_512_512.jpg";
-        String bucket = "sz-yunji-test";
+//        String bucket = "sz-yunji-test";
+        String bucket = "sz-yunji-test-private";
         String key = UUID.randomUUID().toString() + ".jpg";
         cloudFileManager.upload(bucket, key, filePath);
 
