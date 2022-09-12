@@ -59,10 +59,19 @@ public class AttachmentVO implements Serializable {
 
     /**
      * 同文件预览地址
+     *
      * @return
      */
     public String getUrl() {
         return previewUrl;
+    }
+
+    /**
+     * 同 fileId
+     * @return
+     */
+    public String getKey() {
+        return fileId;
     }
 
 }
