@@ -37,7 +37,11 @@ public class AttachmentVO implements Serializable {
      */
     private String ext;
     /**
-     * 文件hash
+     * 文件etag
+     */
+    private String etag;
+    /**
+     * 文件etag
      */
     private String hash;
     /**
