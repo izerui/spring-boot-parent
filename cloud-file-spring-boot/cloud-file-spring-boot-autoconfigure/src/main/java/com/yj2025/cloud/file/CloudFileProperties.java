@@ -88,6 +88,15 @@ public class CloudFileProperties {
         return buckets.values().stream().filter(bucket -> !bucket.isPublic).findFirst().orElseThrow();
     }
 
+    /**
+     * 根据名字获取桶配置
+     * @param bucket
+     * @return
+     */
+    public Bucket getBucketByname(String bucket) {
+        return buckets.values().stream().filter(b -> b.getBucketName().equals(bucket)).findFirst().orElseThrow();
+    }
+
     @Data
     public static class Bucket {
         private Boolean isPublic = true;

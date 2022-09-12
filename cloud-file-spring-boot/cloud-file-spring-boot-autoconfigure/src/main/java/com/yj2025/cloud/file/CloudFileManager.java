@@ -18,6 +18,20 @@ public interface CloudFileManager {
     FileInfo getFileInfo(String bucket, String key);
 
     /**
+     * 通过公共或者私有获取桶配置
+     * @param isPublic true：公共桶 FALSE：私有桶
+     * @return
+     */
+    CloudFileProperties.Bucket getBucket(boolean isPublic);
+
+    /**
+     * 通过桶名字获取桶配置
+     * @param bucket 桶名称
+     * @return
+     */
+    CloudFileProperties.Bucket getBucket(String bucket);
+
+    /**
      * 生成上传token
      *
      * @param bucket 空间名

@@ -17,6 +17,9 @@ import org.springframework.util.Assert;
 import java.io.File;
 import java.io.InputStream;
 
+/**
+ * @author liuyuhua
+ */
 public class CloudFileManagerImpl implements CloudFileManager {
 
     private final CloudFileProperties properties;
@@ -46,10 +49,6 @@ public class CloudFileManagerImpl implements CloudFileManager {
         this.bucketManager = new BucketManager(auth, config);
     }
 
-    private CloudFileProperties.Bucket getBucketConfig(String bucket) {
-        return properties.getBuckets().values().stream().filter(bck -> bck.getBucketName().equals(bucket)).findFirst().orElseThrow();
-    }
-
     @Override
     public FileInfo getFileInfo(String bucket, String key) {
         try {
@@ -58,6 +57,20 @@ public class CloudFileManagerImpl implements CloudFileManager {
         } catch (QiniuException e) {
             throw new CloudFileException(e.getMessage(), e);
         }
+    }
+
+    @Override
+    public CloudFileProperties.Bucket getBucket(boolean isPublic) {
+        if (isPublic) {
+            return properties.getFirstPublicBucket();
+        } else {
+            return properties.getFirstPrivateBucket();
+        }
+    }
+
+    @Override
+    public CloudFileProperties.Bucket getBucket(String bucket) {
+        return properties.getBucketByname(bucket);
     }
 
     @Override
@@ -126,7 +139,7 @@ public class CloudFileManagerImpl implements CloudFileManager {
     @Override
     public String getDownloadUrl(String bucket, String key, String attName, String fop) {
         try {
-            CloudFileProperties.Bucket cloudBucket = getBucketConfig(bucket);
+            CloudFileProperties.Bucket cloudBucket = properties.getBucketByname(bucket);
             Assert.notNull(cloudBucket, "未找到名称为" + cloudBucket + "的存储空间配置");
             DownloadUrl downloadUrl = new DownloadUrl(cloudBucket.getDomain(), cloudBucket.getUseHttps(), key);
             downloadUrl.setAttname(attName);
