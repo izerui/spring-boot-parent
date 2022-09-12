@@ -47,7 +47,7 @@ public interface CloudFileManager {
      * @param key    文件名
      * @param bytes  待上传的字节数组
      */
-    void upload(String bucket, String key, byte[] bytes);
+    UploadResponse upload(String bucket, String key, byte[] bytes);
 
     /**
      * 自动生成token并上传
@@ -56,7 +56,7 @@ public interface CloudFileManager {
      * @param key    文件名
      * @param file   待上传文件
      */
-    void upload(String bucket, String key, File file);
+    UploadResponse upload(String bucket, String key, File file);
 
     /**
      * 自动生成token并上传
@@ -65,7 +65,7 @@ public interface CloudFileManager {
      * @param key      文件名
      * @param filePath 待上传文件路径
      */
-    void upload(String bucket, String key, String filePath);
+    UploadResponse upload(String bucket, String key, String filePath);
 
     /**
      * 自动生成token并上传
@@ -75,7 +75,7 @@ public interface CloudFileManager {
      * @param inputStream 待上传文件输入流
      * @param mime        指定文件mimetype [可选]
      */
-    void upload(String bucket, String key, InputStream inputStream, String mime);
+    UploadResponse upload(String bucket, String key, InputStream inputStream, String mime);
 
     /**
      * 生成文件下载url,私有空间的话有效时长5分钟
