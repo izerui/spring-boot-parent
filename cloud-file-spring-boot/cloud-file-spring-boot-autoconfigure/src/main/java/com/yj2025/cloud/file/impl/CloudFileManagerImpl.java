@@ -92,7 +92,7 @@ public class CloudFileManagerImpl implements CloudFileManager {
                 .append("{")
                 .append("\"bucket\":\"$(bucket)\",")
                 .append("\"fileId\":\"$(key)\",")
-                .append("\"hash\":\"$(etag)\",")
+                .append("\"eTag\":\"$(etag)\",")
                 .append("\"fileSize\":$(fsize),")
                 .append("\"fileName\":$(fname),")
                 .append("\"filePrefix\":$(fprefix),")

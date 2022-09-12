@@ -14,9 +14,9 @@ public class UploadResponse {
      */
     private String fileId;
     /**
-     * 文件hash
+     * 文件eTag
      */
-    private String hash;
+    private String eTag;
     /**
      * 文件大小
      */
