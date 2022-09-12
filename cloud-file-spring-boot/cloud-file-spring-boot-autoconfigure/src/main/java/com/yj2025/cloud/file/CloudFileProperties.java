@@ -71,6 +71,23 @@ public class CloudFileProperties {
     @NestedConfigurationProperty
     private Map<String, Bucket> buckets = new HashMap<>();
 
+
+    /**
+     * 获取第一个public桶
+     * @return
+     */
+    public Bucket getFirstPublicBucket() {
+        return buckets.values().stream().filter(bucket -> bucket.isPublic).findFirst().orElseThrow();
+    }
+
+    /**
+     * 获取第一个private桶
+     * @return
+     */
+    public Bucket getFirstPrivateBucket() {
+        return buckets.values().stream().filter(bucket -> !bucket.isPublic).findFirst().orElseThrow();
+    }
+
     @Data
     public static class Bucket {
         private Boolean isPublic = true;
