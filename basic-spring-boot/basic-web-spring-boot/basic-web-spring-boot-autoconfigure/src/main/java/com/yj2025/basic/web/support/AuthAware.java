@@ -1,7 +1,5 @@
 package com.yj2025.basic.web.support;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.springframework.util.Assert;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -28,32 +26,26 @@ public interface AuthAware {
         return value;
     }
 
-    @JsonIgnore
     default String getEntCode() {
         return getHeader("entCode");
     }
 
-    @JsonIgnore
     default String getEntName() {
         return getHeader("entName");
     }
 
-    @JsonIgnore
     default String getUserCode() {
         return getHeader("userCode");
     }
 
-    @JsonIgnore
     default String getUserName() {
         return getHeader("userName");
     }
 
-    @JsonIgnore
     default String getAccountCode() {
         return getHeader("accountCode");
     }
 
-    @JsonIgnore
     default String getAccountName() {
         return getHeader("accountName");
     }
