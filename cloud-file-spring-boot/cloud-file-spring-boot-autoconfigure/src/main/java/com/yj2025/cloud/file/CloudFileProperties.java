@@ -6,6 +6,7 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -74,22 +75,25 @@ public class CloudFileProperties {
 
     /**
      * 获取第一个public桶
+     *
      * @return
      */
     public Bucket getFirstPublicBucket() {
-        return buckets.values().stream().filter(bucket -> bucket.isPublic).findFirst().orElseThrow();
+        return buckets.values().stream().filter(bucket -> bucket.isPublic).sorted(Comparator.comparing(o -> o.isDefault)).findFirst().orElseThrow();
     }
 
     /**
      * 获取第一个private桶
+     *
      * @return
      */
     public Bucket getFirstPrivateBucket() {
-        return buckets.values().stream().filter(bucket -> !bucket.isPublic).findFirst().orElseThrow();
+        return buckets.values().stream().filter(bucket -> !bucket.isPublic).sorted(Comparator.comparing(o -> o.isDefault)).findFirst().orElseThrow();
     }
 
     /**
      * 根据名字获取桶配置
+     *
      * @param bucket
      * @return
      */
@@ -100,6 +104,7 @@ public class CloudFileProperties {
     @Data
     public static class Bucket {
         private Boolean isPublic = true;
+        private Boolean isDefault;
         private String domain;
         private Boolean useHttps = true;
         private String bucketName;
