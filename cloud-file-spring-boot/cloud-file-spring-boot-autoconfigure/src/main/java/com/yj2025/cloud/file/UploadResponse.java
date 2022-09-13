@@ -37,8 +37,4 @@ public class UploadResponse {
      * 文件后缀
      */
     private String ext;
-    /**
-     * 图片解析信息
-     */
-    private String imageInfo;
 }
