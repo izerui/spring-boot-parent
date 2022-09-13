@@ -23,6 +23,7 @@ public class CloudFileApplication implements CommandLineRunner {
 //        String bucket = "sz-yunji-test";
         String bucket = "sz-yunji-test-private";
         String key = UUID.randomUUID().toString() + ".jpg";
+        System.out.println(cloudFileManager.getBucket(false));
         cloudFileManager.upload(bucket, key, filePath);
 
         System.out.println(cloudFileManager.getPreviewUrl(bucket, key));

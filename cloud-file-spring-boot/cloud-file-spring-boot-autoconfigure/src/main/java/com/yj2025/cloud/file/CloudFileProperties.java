@@ -79,7 +79,7 @@ public class CloudFileProperties {
      * @return
      */
     public Bucket getFirstPublicBucket() {
-        return buckets.values().stream().filter(bucket -> bucket.isPublic).sorted(Comparator.comparing(o -> o.isDefault)).findFirst().orElseThrow();
+        return buckets.values().stream().filter(bucket -> bucket.isPublic).sorted(Comparator.comparing(o -> o.isDefault ? 0 : 1)).findFirst().orElseThrow();
     }
 
     /**
@@ -88,7 +88,7 @@ public class CloudFileProperties {
      * @return
      */
     public Bucket getFirstPrivateBucket() {
-        return buckets.values().stream().filter(bucket -> !bucket.isPublic).sorted(Comparator.comparing(o -> o.isDefault)).findFirst().orElseThrow();
+        return buckets.values().stream().filter(bucket -> !bucket.isPublic).sorted(Comparator.comparing(o -> o.isDefault ? 0 : 1)).findFirst().orElseThrow();
     }
 
     /**
