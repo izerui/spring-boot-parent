@@ -97,8 +97,7 @@ public class CloudFileManagerImpl implements CloudFileManager {
                 .append("\"fileName\":$(fname),")
                 .append("\"filePrefix\":$(fprefix),")
                 .append("\"mimeType\":\"$(mimeType)\",")
-                .append("\"ext\":\"$(ext)\",")
-                .append("\"imageInfo\":\"$(imageInfo)\"")
+                .append("\"ext\":\"$(ext)\"")
                 .append("}");
         final String returnBody = builder.toString();
         StringMap policy = new StringMap();
