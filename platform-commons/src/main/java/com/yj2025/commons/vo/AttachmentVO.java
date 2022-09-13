@@ -39,7 +39,7 @@ public class AttachmentVO implements Serializable {
     /**
      * 文件etag
      */
-    private String etag;
+    private String eTag;
     /**
      * 文件etag
      */
