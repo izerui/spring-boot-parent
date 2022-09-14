@@ -58,6 +58,11 @@ public class AttachmentVO implements Serializable {
     private String remark;
 
     /**
+     * 是否是主图
+     */
+    private Boolean isHome;
+
+    /**
      * 同文件预览地址
      *
      * @return
