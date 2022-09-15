@@ -1,5 +1,7 @@
 package com.yj2025.commons.vo;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -39,6 +41,7 @@ public class AttachmentVO implements Serializable {
     /**
      * 文件etag
      */
+    @JsonProperty("eTag")
     private String eTag;
     /**
      * 文件etag
