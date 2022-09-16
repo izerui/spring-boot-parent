@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,6 +30,15 @@ public abstract class BasicController implements AuthAware, ApplicationBeanAware
 
     protected ResponseEntity<byte[]> download(InputStream inputStream, String fileName) throws IOException {
         byte[] bytes = inputStream.readAllBytes();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentDispositionFormData("attachment", fileName);
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentLength(bytes.length);
+        return new ResponseEntity<byte[]>(bytes, headers, HttpStatus.CREATED);
+    }
+
+    protected ResponseEntity<byte[]> download(ByteArrayOutputStream outputStream, String fileName) throws IOException {
+        byte[] bytes = outputStream.toByteArray();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentDispositionFormData("attachment", fileName);
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
