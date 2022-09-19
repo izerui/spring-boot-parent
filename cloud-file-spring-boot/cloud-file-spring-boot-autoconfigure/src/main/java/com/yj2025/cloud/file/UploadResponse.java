@@ -10,9 +10,9 @@ public class UploadResponse {
      */
     private String bucket;
     /**
-     * 文件id
+     * 七牛key
      */
-    private String fileId;
+    private String key;
     /**
      * 文件eTag
      */

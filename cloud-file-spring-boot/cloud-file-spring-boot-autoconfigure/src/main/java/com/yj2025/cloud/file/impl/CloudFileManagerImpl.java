@@ -63,9 +63,9 @@ public class CloudFileManagerImpl implements CloudFileManager {
     }
 
     @Override
-    public FileInfo getFileInfo(String bucket, String fileId) {
+    public FileInfo getFileInfo(String bucket, String key) {
         try {
-            return bucketManager.stat(bucket, fileId);
+            return bucketManager.stat(bucket, key);
         } catch (QiniuException e) {
             throw new CloudFileException(e.getMessage(), e);
         }
@@ -86,12 +86,12 @@ public class CloudFileManagerImpl implements CloudFileManager {
     }
 
     @Override
-    public String getUploadToken(String bucket, String fileId) {
+    public String getUploadToken(String bucket, String key) {
         // https://developer.qiniu.com/kodo/1235/vars#magicvar
         StringBuilder builder = new StringBuilder()
                 .append("{")
                 .append("\"bucket\":\"$(bucket)\",")
-                .append("\"fileId\":\"$(key)\",")
+                .append("\"key\":\"$(key)\",")
                 .append("\"eTag\":\"$(etag)\",")
                 .append("\"fileSize\":$(fsize),")
                 .append("\"fileName\":$(fname),")
@@ -102,14 +102,14 @@ public class CloudFileManagerImpl implements CloudFileManager {
         final String returnBody = builder.toString();
         StringMap policy = new StringMap();
         policy.put("returnBody", returnBody);
-        return auth.uploadToken(bucket, fileId, 3600, policy);
+        return auth.uploadToken(bucket, key, 3600, policy);
     }
 
     @Override
-    public UploadResponse upload(String bucket, String fileId, byte[] bytes) {
+    public UploadResponse upload(String bucket, String key, byte[] bytes) {
         try {
-            String token = getUploadToken(bucket, fileId);
-            Response response = this.uploadManager.put(bytes, fileId, token);
+            String token = getUploadToken(bucket, key);
+            Response response = this.uploadManager.put(bytes, key, token);
             return OBJECT_MAPPER.readValue(response.bodyString(), UploadResponse.class);
         } catch (Exception ex) {
             throw new CloudFileException(ex.getMessage(), ex);
@@ -117,10 +117,10 @@ public class CloudFileManagerImpl implements CloudFileManager {
     }
 
     @Override
-    public UploadResponse upload(String bucket, String fileId, File file) {
+    public UploadResponse upload(String bucket, String key, File file) {
         try {
-            String token = getUploadToken(bucket, fileId);
-            Response response = this.uploadManager.put(file, fileId, token);
+            String token = getUploadToken(bucket, key);
+            Response response = this.uploadManager.put(file, key, token);
             return OBJECT_MAPPER.readValue(response.bodyString(), UploadResponse.class);
         } catch (Exception ex) {
             throw new CloudFileException(ex.getMessage(), ex);
@@ -128,10 +128,10 @@ public class CloudFileManagerImpl implements CloudFileManager {
     }
 
     @Override
-    public UploadResponse upload(String bucket, String fileId, String filePath) {
+    public UploadResponse upload(String bucket, String key, String filePath) {
         try {
-            String token = getUploadToken(bucket, fileId);
-            Response response = this.uploadManager.put(filePath, fileId, token);
+            String token = getUploadToken(bucket, key);
+            Response response = this.uploadManager.put(filePath, key, token);
             return OBJECT_MAPPER.readValue(response.bodyString(), UploadResponse.class);
         } catch (Exception ex) {
             throw new CloudFileException(ex.getMessage(), ex);
@@ -139,10 +139,10 @@ public class CloudFileManagerImpl implements CloudFileManager {
     }
 
     @Override
-    public UploadResponse upload(String bucket, String fileId, InputStream inputStream, String mime) {
+    public UploadResponse upload(String bucket, String key, InputStream inputStream, String mime) {
         try {
-            String token = getUploadToken(bucket, fileId);
-            Response response = this.uploadManager.put(inputStream, fileId, token, null, mime);
+            String token = getUploadToken(bucket, key);
+            Response response = this.uploadManager.put(inputStream, key, token, null, mime);
             return OBJECT_MAPPER.readValue(response.bodyString(), UploadResponse.class);
         } catch (Exception ex) {
             throw new CloudFileException(ex.getMessage(), ex);
@@ -150,16 +150,16 @@ public class CloudFileManagerImpl implements CloudFileManager {
     }
 
     @Override
-    public String getDownloadUrl(String bucket, String fileId, String attName) {
-        return getDownloadUrl(bucket, fileId, attName, null);
+    public String getDownloadUrl(String bucket, String key, String attName) {
+        return getDownloadUrl(bucket, key, attName, null);
     }
 
     @Override
-    public String getDownloadUrl(String bucket, String fileId, String attName, String fop) {
+    public String getDownloadUrl(String bucket, String key, String attName, String fop) {
         try {
             CloudFileProperties.Bucket cloudBucket = properties.getBucketByname(bucket);
             Assert.notNull(cloudBucket, "未找到名称为" + cloudBucket + "的存储空间配置");
-            DownloadUrl downloadUrl = new DownloadUrl(cloudBucket.getDomain(), cloudBucket.getUseHttps(), fileId);
+            DownloadUrl downloadUrl = new DownloadUrl(cloudBucket.getDomain(), cloudBucket.getUseHttps(), key);
             downloadUrl.setAttname(attName);
             downloadUrl.setFop(fop);
             if (cloudBucket.getIsPublic()) {
@@ -173,12 +173,12 @@ public class CloudFileManagerImpl implements CloudFileManager {
     }
 
     @Override
-    public String getPreviewUrl(String bucket, String fileId, Integer width, Integer height) {
-        return getDownloadUrl(bucket, fileId, null, "imageView2/2/w/" + width + "/h/" + height);
+    public String getPreviewUrl(String bucket, String key, Integer width, Integer height) {
+        return getDownloadUrl(bucket, key, null, "imageView2/2/w/" + width + "/h/" + height);
     }
 
     @Override
-    public String getPreviewUrl(String bucket, String fileId) {
-        return getDownloadUrl(bucket, fileId, null);
+    public String getPreviewUrl(String bucket, String key) {
+        return getDownloadUrl(bucket, key, null);
     }
 }

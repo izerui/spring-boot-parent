@@ -11,9 +11,14 @@ public class AttachmentVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 文件id
+     * 业务主键
      */
-    private String fileId;
+    private String recordId;
+
+    /**
+     * 文件在七牛上的key
+     */
+    private String key;
     /**
      * 文件存储桶
      */
@@ -72,14 +77,6 @@ public class AttachmentVO implements Serializable {
      */
     public String getUrl() {
         return previewUrl;
-    }
-
-    /**
-     * 同 fileId
-     * @return
-     */
-    public String getKey() {
-        return fileId;
     }
 
 }
