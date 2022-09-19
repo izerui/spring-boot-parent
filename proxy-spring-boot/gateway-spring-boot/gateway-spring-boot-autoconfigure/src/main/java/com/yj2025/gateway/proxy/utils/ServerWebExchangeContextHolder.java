@@ -20,11 +20,12 @@ public class ServerWebExchangeContextHolder implements WebFilter {
      */
     public static Mono<ServerWebExchange> getExchange() {
         return Mono.subscriberContext()
-                .map(ctx -> ctx.get(CONTEXT_KEY));
+                .map(ctx -> ctx.get(CONTEXT_KEY))
+                .onErrorReturn(null);
     }
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-        return chain.filter(exchange).subscriberContext(ctx -> ctx.put(ServerWebExchangeContextHolder.CONTEXT_KEY, exchange));
+        return chain.filter(exchange).subscriberContext(ctx -> ctx.put(CONTEXT_KEY, exchange));
     }
 }
