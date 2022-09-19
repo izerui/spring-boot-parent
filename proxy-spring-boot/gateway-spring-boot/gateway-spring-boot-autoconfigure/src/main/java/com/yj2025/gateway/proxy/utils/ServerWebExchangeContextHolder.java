@@ -6,6 +6,8 @@ import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
+import java.util.NoSuchElementException;
+
 /**
  * orignal: ReactiveRequestContextHolder
  *
@@ -19,7 +21,7 @@ public class ServerWebExchangeContextHolder implements WebFilter {
      *
      * @return the {@code Mono<ServerWebExchange>}
      */
-    public static Mono<ServerWebExchange> getExchange() {
+    public static Mono<ServerWebExchange> getExchange() throws NoSuchElementException {
         return Mono.subscriberContext()
                 .map(ctx -> ctx.get(CONTEXT_KEY));
     }
