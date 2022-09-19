@@ -27,10 +27,7 @@ import org.springframework.cloud.client.loadbalancer.reactive.DefaultResponse;
 import org.springframework.cloud.client.loadbalancer.reactive.EmptyResponse;
 import org.springframework.cloud.client.loadbalancer.reactive.Request;
 import org.springframework.cloud.client.loadbalancer.reactive.Response;
-import org.springframework.cloud.loadbalancer.core.NoopServiceInstanceListSupplier;
-import org.springframework.cloud.loadbalancer.core.ReactorServiceInstanceLoadBalancer;
-import org.springframework.cloud.loadbalancer.core.SelectedInstanceCallback;
-import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
+import org.springframework.cloud.loadbalancer.core.*;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -45,6 +42,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author Olga Maciaszek-Sharma
  */
 public class DevelopLoadBalancer implements ReactorServiceInstanceLoadBalancer {
+
+    private RoundRobinLoadBalancer roundRobinLoadBalancer;
 
     private static final Log log = LogFactory.getLog(DevelopLoadBalancer.class);
 
@@ -63,6 +62,7 @@ public class DevelopLoadBalancer implements ReactorServiceInstanceLoadBalancer {
             @NonNull ObjectProvider<ServiceInstanceListSupplier> serviceInstanceListSupplierProvider,
             String serviceId) {
         this(serviceInstanceListSupplierProvider, serviceId, new Random().nextInt(1000));
+        this.roundRobinLoadBalancer = new RoundRobinLoadBalancer(serviceInstanceListSupplierProvider, serviceId);
     }
 
     /**
@@ -89,11 +89,8 @@ public class DevelopLoadBalancer implements ReactorServiceInstanceLoadBalancer {
                     return supplier.get().next().map(serviceInstances -> new RequestServers(serviceInstances, serverWebExchange));
                 })
                 .map(requestServers -> processInstanceResponse(supplier,
-                        requestServers));
-
-//        return supplier.get().next()
-//                .map(serviceInstances -> processInstanceResponse(supplier,
-//                        serviceInstances));
+                        requestServers))
+                .doOnError(throwable -> roundRobinLoadBalancer.choose(request));
     }
 
     private Response<ServiceInstance> processInstanceResponse(
