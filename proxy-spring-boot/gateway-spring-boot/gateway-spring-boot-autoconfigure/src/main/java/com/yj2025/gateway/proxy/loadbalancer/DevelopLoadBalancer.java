@@ -90,7 +90,7 @@ public class DevelopLoadBalancer implements ReactorServiceInstanceLoadBalancer {
                 })
                 .map(requestServers -> processInstanceResponse(supplier,
                         requestServers))
-                .doOnError(throwable -> roundRobinLoadBalancer.choose(request));
+                .onErrorResume(throwable -> roundRobinLoadBalancer.choose(request));
     }
 
     private Response<ServiceInstance> processInstanceResponse(
