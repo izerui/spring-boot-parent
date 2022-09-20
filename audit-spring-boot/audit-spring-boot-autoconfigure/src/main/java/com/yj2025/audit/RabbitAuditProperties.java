@@ -5,6 +5,6 @@ import lombok.Data;
 @Data
 public class RabbitAuditProperties {
 
-    private String exchange = "ierp";
-    private String routingKey = "audit";
+    private String exchange;
+    private String routingKey;
 }
