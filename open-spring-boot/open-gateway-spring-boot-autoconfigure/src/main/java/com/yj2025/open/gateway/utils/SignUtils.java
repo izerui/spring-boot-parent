@@ -16,7 +16,7 @@ public final class SignUtils {
     /**
      * 签名的有效时长（毫秒）
      */
-    private final static long EFFICIENT_MILLIS_FOR_SIGN = 1000 * 15;
+    private final static long EFFICIENT_MILLIS_FOR_SIGN = 1000 * 300;
 
 
     /**
