@@ -1,12 +1,13 @@
 package com.yj2025.performance;
 
+import com.lmax.disruptor.BlockingWaitStrategy;
 import com.lmax.disruptor.EventFactory;
 import com.lmax.disruptor.RingBuffer;
 import com.lmax.disruptor.WaitStrategy;
-import com.lmax.disruptor.YieldingWaitStrategy;
 import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.dsl.ProducerType;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.DisposableBean;
 
 import java.util.Collection;
 import java.util.concurrent.ThreadFactory;
@@ -19,7 +20,7 @@ import java.util.concurrent.ThreadFactory;
  * @date 2022/5/23
  */
 @Slf4j
-public final class Producer<T> {
+public final class Producer<T extends ClearEvent> implements DisposableBean {
 
     private final Builder builder;
     private transient Disruptor<T> disruptor;
@@ -48,13 +49,13 @@ public final class Producer<T> {
                 builder.waitStrategy);
         // 设置WorkHandler 同一事件会被一组消费者其中之一消费
         if (builder.consumers != null) {
-            log.info("====== {} 并行处理器启动成功 ======", this.builder.dataType.getName());
+            log.info("====== {} 并行处理器启动成功 ======", builder.consumers[0].getClass().getName());
             disruptor.handleEventsWithWorkerPool(builder.consumers);
         }
         // 设置EventHandler 被一个批量处理消费者消费
         // https://www.jianshu.com/p/f4021e8141ad
         if (builder.batchConsumer != null) {
-            log.info("====== {} 批处理器启动成功 ======", this.builder.dataType.getName());
+            log.info("====== {} 批处理器启动成功 ======", builder.batchConsumer.getClass().getName());
             disruptor.handleEventsWith(builder.batchConsumer);
         }
         disruptor.start();
@@ -62,11 +63,11 @@ public final class Producer<T> {
 
 
     /**
-     * 发送补全的数据到待处理缓冲区
+     * 发送补全的数据到待处理缓冲区, 注意: 无论如何补全后的数据都会发送到缓冲区，所以需要选择性处理的话，请自行标记，并在消费者端过滤掉。
      *
      * @param consumer
      */
-    public void sendData(ThrowsConsumer<T> consumer) throws Exception {
+    public void sendData(java.util.function.Consumer<T> consumer) {
         if (disruptor == null) {
             log.warn("线程池未初始化,重新初始化...");
             initDisruptor();
@@ -75,6 +76,8 @@ public final class Producer<T> {
         long sequence = ringBuffer.next();
         try {
             T obj = ringBuffer.get(sequence);
+            // 重用对象之前重置相关值
+            obj.clear();
             consumer.accept(obj);
         } finally {
             ringBuffer.publish(sequence);
@@ -95,17 +98,24 @@ public final class Producer<T> {
         return new Builder();
     }
 
+    @Override
+    public void destroy() throws Exception {
+        shutdown();
+    }
+
     public static class Builder {
         /**
          * 指定RingBuffer的大小
          */
-        private int ringBufferSize = 1024 * 8;
+        private int ringBufferSize = 1024 * 64;
         private Class dataType;
         private ProducerType producerType = ProducerType.MULTI;
         private ThreadFactory threadFactory = new Consumer.ConsumerThreadFactory();
-        private WaitStrategy waitStrategy = new YieldingWaitStrategy();
+        private WaitStrategy waitStrategy = new BlockingWaitStrategy();
         private Consumer[] consumers;
         private BatchConsumer batchConsumer;
+        private long batchLimitSize;
+        private int maxWaitSeconds;
 
         /**
          * 环形缓冲区大小
@@ -152,7 +162,7 @@ public final class Producer<T> {
         }
 
         /**
-         * 拒绝策略
+         * 等待策略，批量模式下无效
          *
          * @param waitStrategy
          * @return
@@ -165,10 +175,18 @@ public final class Producer<T> {
         /**
          * 批量消费者(优先使用)
          *
+         * @param maxWaitSeconds 当消费过快的时候，未达到批次最大等待秒数
+         * @param batchLimitSize
          * @param batchConsumer
+         * @param <T>
          * @return
          */
-        public <T> Builder requiredConsumers(BatchConsumer<T> batchConsumer) {
+        public <T extends ClearEvent> Builder requiredConsumers(int maxWaitSeconds, long batchLimitSize, BatchConsumer<T> batchConsumer) {
+            if (batchLimitSize <= 0) {
+                throw new DisruptorException("请设置大于0的每批次消费数量限制");
+            }
+            this.maxWaitSeconds = maxWaitSeconds;
+            this.batchLimitSize = batchLimitSize;
             this.batchConsumer = batchConsumer;
             return this;
         }
@@ -179,7 +197,7 @@ public final class Producer<T> {
          * @param consumers
          * @return
          */
-        public <T> Builder requiredConsumers(Consumer<T>... consumers) {
+        public <T extends ClearEvent> Builder requiredConsumers(Consumer<T>... consumers) {
             this.consumers = consumers;
             return this;
         }
@@ -190,7 +208,7 @@ public final class Producer<T> {
          * @param consumers
          * @return
          */
-        public <T> Builder requiredConsumers(Collection<Consumer<T>> consumers) {
+        public <T extends ClearEvent> Builder requiredConsumers(Collection<Consumer<T>> consumers) {
             this.consumers = consumers.toArray(new Consumer[consumers.size()]);
             return this;
         }
@@ -208,6 +226,12 @@ public final class Producer<T> {
                 throw new DisruptorException("请至少设置一种消费者处理器!");
             } else if (consumers != null && batchConsumer != null) {
                 throw new DisruptorException("最多只能设置一种消费处理器,要么批量消费,要么分别消费!");
+            }
+            if (batchConsumer != null) {
+                if (batchLimitSize >= ringBufferSize) {
+                    throw new RuntimeException("批次数量必须小于环形缓冲区数值");
+                }
+                this.waitStrategy = new BatchWaitStrategy(maxWaitSeconds, batchLimitSize);
             }
             return new Producer(
                     this

@@ -9,7 +9,7 @@ spring:
         namespace: dev
         shared-configs:
           - data-id: global.properties
-            refresh: true
+        refresh-enabled: false
       discovery:
         server-addr: 10.96.55.103:8848
         namespace: dev

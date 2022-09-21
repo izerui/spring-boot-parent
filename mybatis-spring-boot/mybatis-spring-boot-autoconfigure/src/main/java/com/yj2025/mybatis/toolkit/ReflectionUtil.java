@@ -15,6 +15,6 @@ public class ReflectionUtil {
     public static void setPropertyValue(Class targetClass, Object target, String property, Object value) {
         Field field = ReflectionUtils.findField(targetClass, property);
         field.setAccessible(true);
-        ReflectionUtils.setField(field,target,value);
+        ReflectionUtils.setField(field, target, value);
     }
 }

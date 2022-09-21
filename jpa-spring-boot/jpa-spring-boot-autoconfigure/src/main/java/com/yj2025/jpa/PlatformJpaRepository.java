@@ -17,6 +17,10 @@ import java.util.List;
 @NoRepositoryBean
 public interface PlatformJpaRepository<T, ID extends Serializable> extends JpaRepository<T, ID>, JpaSpecificationExecutor<T> {
 
+    void batchInsert(Iterable<T> inserts);
+
+    void batchUpdate(Iterable<T> updates);
+
     T findOne(ID id);
 
     T findOne(Conditions conditions);
@@ -84,5 +88,13 @@ public interface PlatformJpaRepository<T, ID extends Serializable> extends JpaRe
     void deleteAll(Conditions conditions);
 
     Class<T> getEntityClass();
+
+    /**
+     * 使用指定sql和conditions进行查询
+     * @param sql 自定义sql
+     * @param conditions 查询条件
+     * @return
+     */
+    List<?> selectSql(String sql, Conditions conditions);
 
 }

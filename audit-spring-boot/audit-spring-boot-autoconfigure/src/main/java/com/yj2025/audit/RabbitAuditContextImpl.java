@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * Created by serv on 2016/12/8.
  */
-@Transactional
 class RabbitAuditContextImpl implements AuditContext {
 
     private Logger logger = LoggerFactory.getLogger(RabbitAuditContextImpl.class);
@@ -25,6 +24,9 @@ class RabbitAuditContextImpl implements AuditContext {
 
     @Override
     public void record(Record record) {
+        if (record == null || record.getName() == null) {
+            return;
+        }
         try {
             Message message = rabbitTemplate.getMessageConverter()
                     .toMessage(record,

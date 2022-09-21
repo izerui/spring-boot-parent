@@ -1,6 +1,7 @@
 package com.yj2025.audit;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.yj2025.performance.ClearEvent;
 import lombok.ToString;
 
 import java.util.Date;
@@ -11,7 +12,7 @@ import java.util.Map;
  */
 @ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Record {
+public class Record implements ClearEvent {
     /**
      * 应用名称
      */
@@ -223,6 +224,10 @@ public class Record {
 
     public void setEnd(Date end) {
         this.end = end;
+        if (end == null) {
+            this.time = 0L;
+            return;
+        }
         this.time = end.getTime() - begin.getTime();
     }
 
@@ -264,5 +269,31 @@ public class Record {
 
     public void setExceptionClassType(String exceptionClassType) {
         this.exceptionClassType = exceptionClassType;
+    }
+
+    @Override
+    public void clear() {
+        this.setApplication(null);
+        this.setGroupType(null);
+        this.setSignature(null);
+        this.setName(null);
+        this.setBegin(null);
+        this.setIp(null);
+        this.setUrl(null);
+        this.setAccountCode(null);
+        this.setAccountName(null);
+        this.setUserCode(null);
+        this.setUserName(null);
+        this.setEntCode(null);
+        this.setEntName(null);
+        this.setSuccess(false);
+        this.setException(null);
+        this.setEnd(null);
+        this.setTime(0L);
+        this.setAppId(null);
+        this.setToken(null);
+        this.setInfo(null);
+        this.setExceptionClassType(null);
+
     }
 }

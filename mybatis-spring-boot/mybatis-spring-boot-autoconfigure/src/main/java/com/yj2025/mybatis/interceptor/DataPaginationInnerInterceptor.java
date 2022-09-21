@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.pagination.DialectModel;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.IDialect;
 import com.yj2025.mybatis.override.OverrideMybatisMapperMethod;
 import net.sf.jsqlparser.JSQLParserException;
@@ -50,7 +51,7 @@ public class DataPaginationInnerInterceptor extends PaginationInnerInterceptor {
             countSql = countMs.getBoundSql(parameter);
         } else {
             countMs = buildAutoCountMappedStatement(ms);
-            String countSqlStr = autoCountSql(true, boundSql.getSql());
+            String countSqlStr = autoCountSql(new Page<>(page.getPageNumber(),page.getPageSize()), boundSql.getSql());
             PluginUtils.MPBoundSql mpBoundSql = PluginUtils.mpBoundSql(boundSql);
             countSql = new BoundSql(countMs.getConfiguration(), countSqlStr, mpBoundSql.parameterMappings(), parameter);
             PluginUtils.setAdditionalParameter(countSql, mpBoundSql.additionalParameters());

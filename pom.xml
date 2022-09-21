@@ -22,10 +22,13 @@
         <module>amazonaws-spring-boot</module>
         <module>weixin-spring-boot</module>
         <module>sequence-number-spring-boot</module>
-        <module>oauth2-server-spring-boot</module>
-        <module>gateway-spring-boot</module>
         <module>high-performance-spring-boot</module>
         <module>open-spring-boot</module>
+        <module>mongo-transaction-spring-boot</module>
+        <module>proxy-spring-boot</module>
+        <module>basic-spring-boot</module>
+        <module>data-jdbc-spring-boot</module>
+        <module>platform-commons</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -37,14 +40,25 @@
     <groupId>com.yj2025</groupId>
     <artifactId>yj2025-spring-boot-parent</artifactId>
 
-    <version>1.4.1-SNAPSHOT</version>
+    <version>1.7.0-SNAPSHOT</version>
 
     <properties>
         <java.version>11</java.version>
         <spring-cloud.version>Hoxton.SR12</spring-cloud.version>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
-        <base-starter.version>1.4.1-SNAPSHOT</base-starter.version>
+        <base-starter.version>1.7.0-SNAPSHOT</base-starter.version>
+        <org.mapstruct.version>1.5.2.Final</org.mapstruct.version>
+        <m2e.apt.activation>jdt_apt</m2e.apt.activation>
+        <commons.version>2.8.0</commons.version>
+        <commons.collections.version>3.2.2</commons.collections.version>
+        <commons.text.version>1.9</commons.text.version>
+        <easyexcel.version>3.1.1</easyexcel.version>
+        <pinyin4j.version>2.5.1</pinyin4j.version>
+        <joda.time.version>2.10.2</joda.time.version>
+        <poi.ooxml.version>4.1.2</poi.ooxml.version>
+        <vavr.version>0.10.4</vavr.version>
+        <equator.version>1.0.4</equator.version>
     </properties>
 
 
@@ -57,14 +71,69 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct</artifactId>
+                <version>${org.mapstruct.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct-processor</artifactId>
+                <version>${org.mapstruct.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-collections</groupId>
+                <artifactId>commons-collections</artifactId>
+                <version>${commons.collections.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons-lang3.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-text</artifactId>
+                <version>${commons.text.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>easyexcel</artifactId>
+                <version>${easyexcel.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.belerweb</groupId>
+                <artifactId>pinyin4j</artifactId>
+                <version>${pinyin4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>joda-time</groupId>
+                <artifactId>joda-time</artifactId>
+                <version>${joda.time.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi-ooxml</artifactId>
+                <version>${poi.ooxml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.vavr</groupId>
+                <artifactId>vavr</artifactId>
+                <version>${vavr.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.dadiyang</groupId>
+                <artifactId>equator</artifactId>
+                <version>${equator.version}</version>
+            </dependency>
 
             <!-- starter 基础依赖 -->
             <!-- job -->
-            <dependency>
-                <groupId>com.yj2025</groupId>
-                <artifactId>job-spring-boot-autoconfigure</artifactId>
-                <version>${base-starter.version}</version>
-            </dependency>
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>job-spring-boot-starter</artifactId>
@@ -74,21 +143,11 @@
             <!-- jpa -->
             <dependency>
                 <groupId>com.yj2025</groupId>
-                <artifactId>jpa-spring-boot-autoconfigure</artifactId>
-                <version>${base-starter.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.yj2025</groupId>
                 <artifactId>jpa-spring-boot-starter</artifactId>
                 <version>${base-starter.version}</version>
             </dependency>
 
             <!-- mybatis -->
-            <dependency>
-                <groupId>com.yj2025</groupId>
-                <artifactId>mybatis-spring-boot-autoconfigure</artifactId>
-                <version>${base-starter.version}</version>
-            </dependency>
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>mybatis-spring-boot-starter</artifactId>
@@ -98,21 +157,11 @@
             <!-- nacos config -->
             <dependency>
                 <groupId>com.yj2025</groupId>
-                <artifactId>nacos-config-spring-boot-autoconfigure</artifactId>
-                <version>${base-starter.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.yj2025</groupId>
                 <artifactId>nacos-config-spring-boot-starter</artifactId>
                 <version>${base-starter.version}</version>
             </dependency>
 
             <!-- nacos discovery -->
-            <dependency>
-                <groupId>com.yj2025</groupId>
-                <artifactId>nacos-discovery-spring-boot-autoconfigure</artifactId>
-                <version>${base-starter.version}</version>
-            </dependency>
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>nacos-discovery-spring-boot-starter</artifactId>
@@ -122,21 +171,11 @@
             <!-- sentinel gateway -->
             <dependency>
                 <groupId>com.yj2025</groupId>
-                <artifactId>sentinel-gateway-spring-boot-autoconfigure</artifactId>
-                <version>${base-starter.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.yj2025</groupId>
                 <artifactId>sentinel-gateway-spring-boot-starter</artifactId>
                 <version>${base-starter.version}</version>
             </dependency>
 
             <!-- sentinel micro service -->
-            <dependency>
-                <groupId>com.yj2025</groupId>
-                <artifactId>sentinel-spring-boot-autoconfigure</artifactId>
-                <version>${base-starter.version}</version>
-            </dependency>
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>sentinel-spring-boot-starter</artifactId>
@@ -146,21 +185,11 @@
             <!-- sentinel zuul -->
             <dependency>
                 <groupId>com.yj2025</groupId>
-                <artifactId>sentinel-zuul-spring-boot-autoconfigure</artifactId>
-                <version>${base-starter.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.yj2025</groupId>
                 <artifactId>sentinel-zuul-spring-boot-starter</artifactId>
                 <version>${base-starter.version}</version>
             </dependency>
 
             <!-- rabbit -->
-            <dependency>
-                <groupId>com.yj2025</groupId>
-                <artifactId>rabbit-spring-boot-autoconfigure</artifactId>
-                <version>${base-starter.version}</version>
-            </dependency>
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>rabbit-spring-boot-starter</artifactId>
@@ -170,21 +199,11 @@
             <!-- redis -->
             <dependency>
                 <groupId>com.yj2025</groupId>
-                <artifactId>redis-spring-boot-autoconfigure</artifactId>
-                <version>${base-starter.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.yj2025</groupId>
                 <artifactId>redis-spring-boot-starter</artifactId>
                 <version>${base-starter.version}</version>
             </dependency>
 
             <!-- websocket -->
-            <dependency>
-                <groupId>com.yj2025</groupId>
-                <artifactId>websocket-producer-spring-boot-autoconfigure</artifactId>
-                <version>${base-starter.version}</version>
-            </dependency>
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>websocket-producer-spring-boot-starter</artifactId>
@@ -194,21 +213,11 @@
             <!-- websocket server -->
             <dependency>
                 <groupId>com.yj2025</groupId>
-                <artifactId>websocket-server-spring-boot-autoconfigure</artifactId>
-                <version>${base-starter.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.yj2025</groupId>
                 <artifactId>websocket-server-spring-boot-starter</artifactId>
                 <version>${base-starter.version}</version>
             </dependency>
 
             <!-- audit -->
-            <dependency>
-                <groupId>com.yj2025</groupId>
-                <artifactId>audit-spring-boot-autoconfigure</artifactId>
-                <version>${base-starter.version}</version>
-            </dependency>
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>audit-spring-boot-starter</artifactId>
@@ -218,21 +227,11 @@
             <!-- doc -->
             <dependency>
                 <groupId>com.yj2025</groupId>
-                <artifactId>doc-spring-boot-autoconfigure</artifactId>
-                <version>${base-starter.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.yj2025</groupId>
                 <artifactId>doc-spring-boot-starter</artifactId>
                 <version>${base-starter.version}</version>
             </dependency>
 
             <!-- mvc exception -->
-            <dependency>
-                <groupId>com.yj2025</groupId>
-                <artifactId>mvc-rest-spring-boot-autoconfigure</artifactId>
-                <version>${base-starter.version}</version>
-            </dependency>
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>mvc-rest-spring-boot-starter</artifactId>
@@ -242,21 +241,11 @@
             <!-- mvc reactive exception -->
             <dependency>
                 <groupId>com.yj2025</groupId>
-                <artifactId>mvc-rest-reactive-spring-boot-autoconfigure</artifactId>
-                <version>${base-starter.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.yj2025</groupId>
                 <artifactId>mvc-rest-reactive-spring-boot-starter</artifactId>
                 <version>${base-starter.version}</version>
             </dependency>
 
             <!-- lock -->
-            <dependency>
-                <groupId>com.yj2025</groupId>
-                <artifactId>lock-spring-boot-autoconfigure</artifactId>
-                <version>${base-starter.version}</version>
-            </dependency>
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>lock-spring-boot-starter</artifactId>
@@ -266,21 +255,11 @@
             <!-- override -->
             <dependency>
                 <groupId>com.yj2025</groupId>
-                <artifactId>customizer-spring-boot-autoconfigure</artifactId>
-                <version>${base-starter.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.yj2025</groupId>
                 <artifactId>customizer-spring-boot-starter</artifactId>
                 <version>${base-starter.version}</version>
             </dependency>
 
             <!-- metrics -->
-            <dependency>
-                <groupId>com.yj2025</groupId>
-                <artifactId>metrics-spring-boot-autoconfigure</artifactId>
-                <version>${base-starter.version}</version>
-            </dependency>
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>metrics-spring-boot-starter</artifactId>
@@ -290,21 +269,11 @@
             <!-- sms -->
             <dependency>
                 <groupId>com.yj2025</groupId>
-                <artifactId>sms-spring-boot-autoconfigure</artifactId>
-                <version>${base-starter.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.yj2025</groupId>
                 <artifactId>sms-spring-boot-starter</artifactId>
                 <version>${base-starter.version}</version>
             </dependency>
 
             <!-- amazonaws-sdk -->
-            <dependency>
-                <groupId>com.yj2025</groupId>
-                <artifactId>amazonaws-spring-boot-autoconfigure</artifactId>
-                <version>${base-starter.version}</version>
-            </dependency>
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>amazonaws-spring-boot-starter</artifactId>
@@ -313,20 +282,10 @@
             <!-- work weixin-->
             <dependency>
                 <groupId>com.yj2025</groupId>
-                <artifactId>work-weixin-spring-boot-autoconfigure</artifactId>
-                <version>${base-starter.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.yj2025</groupId>
                 <artifactId>work-weixin-spring-boot-starter</artifactId>
                 <version>${base-starter.version}</version>
             </dependency>
             <!-- sequence number -->
-            <dependency>
-                <groupId>com.yj2025</groupId>
-                <artifactId>sequence-number-spring-boot-autoconfigure</artifactId>
-                <version>${base-starter.version}</version>
-            </dependency>
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>sequence-number-spring-boot-starter</artifactId>
@@ -335,20 +294,10 @@
             <!-- oauth2 -->
             <dependency>
                 <groupId>com.yj2025</groupId>
-                <artifactId>oauth2-server-spring-boot-autoconfigure</artifactId>
-                <version>${base-starter.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.yj2025</groupId>
                 <artifactId>oauth2-server-spring-boot-starter</artifactId>
                 <version>${base-starter.version}</version>
             </dependency>
             <!-- gateway -->
-            <dependency>
-                <groupId>com.yj2025</groupId>
-                <artifactId>gateway-spring-boot-autoconfigure</artifactId>
-                <version>${base-starter.version}</version>
-            </dependency>
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>gateway-spring-boot-starter</artifactId>
@@ -363,23 +312,46 @@
             <!-- open-gateway -->
             <dependency>
                 <groupId>com.yj2025</groupId>
-                <artifactId>open-gateway-spring-boot-autoconfigure</artifactId>
-                <version>${base-starter.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.yj2025</groupId>
                 <artifactId>open-gateway-spring-boot-starter</artifactId>
                 <version>${base-starter.version}</version>
             </dependency>
             <!-- open-oauth-server -->
             <dependency>
                 <groupId>com.yj2025</groupId>
-                <artifactId>open-oauth-server-spring-boot-autoconfigure</artifactId>
+                <artifactId>open-oauth-server-spring-boot-starter</artifactId>
+                <version>${base-starter.version}</version>
+            </dependency>
+            <!-- mongo -->
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>mongo-transaction-spring-boot-starter</artifactId>
+                <version>${base-starter.version}</version>
+            </dependency>
+            <!-- basic -->
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>basic-dao-spring-boot-starter</artifactId>
                 <version>${base-starter.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.yj2025</groupId>
-                <artifactId>open-oauth-server-spring-boot-starter</artifactId>
+                <artifactId>basic-command-spring-boot-starter</artifactId>
+                <version>${base-starter.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>basic-service-spring-boot-starter</artifactId>
+                <version>${base-starter.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>basic-web-spring-boot-starter</artifactId>
+                <version>${base-starter.version}</version>
+            </dependency>
+            <!-- platform-commons -->
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>platform-commons</artifactId>
                 <version>${base-starter.version}</version>
             </dependency>
 
@@ -462,6 +434,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
+                <version>${maven-resources-plugin.version}</version>
                 <configuration>
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>

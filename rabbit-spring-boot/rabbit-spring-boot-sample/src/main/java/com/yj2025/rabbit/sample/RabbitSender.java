@@ -25,6 +25,5 @@ public class RabbitSender {
         map.put("type", "测试");
         rabbitTemplate.convertAndSend("test", "test.queue001", map);
         log.info("发送成功, tx: {}", TransactionSynchronizationManager.isActualTransactionActive());
-        throw new RuntimeException("抛出异常");
     }
 }

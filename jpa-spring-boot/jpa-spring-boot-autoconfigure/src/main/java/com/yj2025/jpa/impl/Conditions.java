@@ -5,13 +5,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 public class Conditions implements Cloneable {
 
@@ -133,6 +131,10 @@ public class Conditions implements Cloneable {
         return this;
     }
 
+//    public boolean isValid() {
+//        return cdList.stream().filter(Condition::isValid).count() > 0L;
+//    }
+
 
     @Override
     public String toString() {
@@ -153,8 +155,10 @@ public class Conditions implements Cloneable {
         if (combList != null) {
 
             for (CombCondition comb : combList) {
+//                if (comb.isValid()) {
                 sb.append(comb.andOr);
                 sb.append(comb.toQL(params));
+//                }
             }
         }
 
@@ -194,6 +198,10 @@ public class Conditions implements Cloneable {
             return cds.toQL(params);
         }
 
+//        public boolean isValid() {
+//            return cds.isValid();
+//        }
+
     }
 
     private static class Condition {
@@ -211,6 +219,9 @@ public class Conditions implements Cloneable {
         }
 
         private String toQL(Map<String, Object> params) {
+            if (!isValid()) {
+                return isEmpty(andOr) ? "1=1 " : andOr + " 1=1 ";
+            }
             int index = 0;
             String fieldValueKey = StringUtils.replace(this.field, ".", "_");
             String paramsKey = fieldValueKey + "_" + index;
@@ -235,6 +246,17 @@ public class Conditions implements Cloneable {
         private Condition value(Object value) {
             this.value = value;
             return this;
+        }
+
+        public boolean isValid() {
+            if (isNotEmpty(express)) {
+                if (Objects.isNull(value) ||
+                        "%".equals(value.toString()) ||
+                        "%%".equals(value.toString())) {
+                    return false;
+                }
+            }
+            return true;
         }
 
         public String getAndOr() {

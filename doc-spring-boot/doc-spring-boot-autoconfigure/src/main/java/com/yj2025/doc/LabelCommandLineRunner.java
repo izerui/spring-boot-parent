@@ -16,7 +16,9 @@ public class LabelCommandLineRunner implements CommandLineRunner {
 
     private final static String LABEL_LINE_RUNNER =
             "\n----------------------------------------------------------\n\t" +
-                    "Application '${application}' is running! Profile Active:[${profile}] Access URLs:\n\t" +
+                    "Os: \t\t${osName} ${osArch} ${osVersion}\n\t" +
+                    "Java: \t\t${jVendor} ${jVersion}\n\t" +
+                    "Application [${application}] is running! Profile Active:[${profile}] Access URLs:\n\t" +
                     "Web: \t\thttp://${host}:${port}${contextPath}\n\t" +
                     "Docs: \t\thttp://${host}:${port}${contextPath}/api\n\t" +
                     "Actuator: \thttp://${host}:${port}${contextPath}/actuator\n" +
@@ -37,6 +39,11 @@ public class LabelCommandLineRunner implements CommandLineRunner {
         variables.put("host", InetAddress.getLocalHost().getHostAddress());
         variables.put("application", env.getProperty("spring.application.name"));
         variables.put("profile", Optional.ofNullable(env.getProperty("spring.profiles.active")).orElse("default"));
+        variables.put("osName", System.getProperty("os.name"));
+        variables.put("osArch", System.getProperty("os.arch"));
+        variables.put("osVersion", System.getProperty("os.version"));
+        variables.put("jVersion", System.getProperty("java.version"));
+        variables.put("jVendor", System.getProperty("java.vendor"));
         log.info(new StringSubstitutor(variables).replace(LABEL_LINE_RUNNER));
     }
 }

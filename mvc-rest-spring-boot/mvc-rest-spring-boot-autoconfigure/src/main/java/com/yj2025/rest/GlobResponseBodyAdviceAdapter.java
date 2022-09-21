@@ -19,6 +19,9 @@ import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.http.server.ServletServerHttpResponse;
 import org.springframework.util.Base64Utils;
 import org.springframework.util.SerializationUtils;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
@@ -26,8 +29,10 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 /**
  * Created by serv on 2017/2/17.
@@ -128,6 +133,11 @@ public class GlobResponseBodyAdviceAdapter implements ResponseBodyAdvice<Object>
             if (throwable instanceof HttpMessageNotReadableException) {
                 resp.put("status", 200);
                 errMsg = "请求中包含错误格式的数据,请检查";
+            }
+            if (throwable instanceof MethodArgumentNotValidException) {
+                resp.put("status", 200);
+                List<ObjectError> allErrors = ((MethodArgumentNotValidException) throwable).getBindingResult().getAllErrors();
+                errMsg = allErrors.stream().map(objectError -> objectError.getDefaultMessage()).collect(Collectors.joining(";"));
             }
             if (throwable instanceof NullPointerException) {
                 resp.put("status", 200);
