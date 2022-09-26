@@ -37,12 +37,12 @@ public abstract class PageReq implements AuthAware {
     /**
      * 排序字段
      */
-    private String sortField;
+    private String orderBy;
 
     /**
      * 排序方向
      */
-    private String sortDirection;
+    private String orderByDirection;
 
     /**
      * 默认的排序方式
@@ -57,11 +57,11 @@ public abstract class PageReq implements AuthAware {
     @ApiModelProperty(hidden = true)
     public final PageRequest getPageRequest() {
         Sort sort = withDefaultSort();
-        if (StringUtils.isNotBlank(sortField)) {
-            if (StringUtils.isNotBlank(sortDirection)) {
-                sort = Sort.by(Sort.Direction.fromString(sortDirection), sortField);
+        if (StringUtils.isNotBlank(orderBy)) {
+            if (StringUtils.isNotBlank(orderByDirection)) {
+                sort = Sort.by(Sort.Direction.fromString(orderByDirection), orderBy);
             } else {
-                sort = Sort.by(sortField);
+                sort = Sort.by(orderBy);
             }
         }
         return PageRequest.of(this.pageIndex, this.pageSize, sort);
