@@ -1,14 +1,19 @@
 package com.yj2025.gateway.proxy.utils;
 
 import org.springframework.web.server.ServerWebExchange;
+import org.springframework.web.server.ServerWebExchangeDecorator;
+import org.springframework.web.server.WebFilter;
+import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
+
+import java.util.NoSuchElementException;
 
 /**
  * orignal: ReactiveRequestContextHolder
  *
  * @author L.cm
  */
-public class ServerWebExchangeContextHolder {
+public class ServerWebExchangeContextHolder implements WebFilter {
     public static final Class<ServerWebExchange> CONTEXT_KEY = ServerWebExchange.class;
 
     /**
@@ -16,9 +21,13 @@ public class ServerWebExchangeContextHolder {
      *
      * @return the {@code Mono<ServerWebExchange>}
      */
-    public static Mono<ServerWebExchange> getExchange() {
+    public static Mono<ServerWebExchange> getExchange() throws NoSuchElementException {
         return Mono.subscriberContext()
                 .map(ctx -> ctx.get(CONTEXT_KEY));
     }
 
+    @Override
+    public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
+        return chain.filter(exchange).subscriberContext(ctx -> ctx.put(CONTEXT_KEY, exchange));
+    }
 }

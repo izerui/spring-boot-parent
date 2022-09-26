@@ -15,13 +15,13 @@ public abstract class BasicEntity {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    protected Long id;
+    protected long id;
 
     /**
      * 乐观锁
      */
     @Version
-    protected Long version;
+    protected long version;
 
     /**
      * 业务主键
