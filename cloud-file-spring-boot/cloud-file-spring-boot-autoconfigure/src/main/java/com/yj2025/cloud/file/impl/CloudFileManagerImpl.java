@@ -21,6 +21,7 @@ import org.springframework.util.Assert;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.UUID;
 
 /**
  * @author liuyuhua
@@ -60,6 +61,12 @@ public class CloudFileManagerImpl implements CloudFileManager {
 
         this.uploadManager = new UploadManager(config, new FileRecorder(properties.getFileRecordDirectory()));
         this.bucketManager = new BucketManager(auth, config);
+    }
+
+    @Override
+    public String getRandomKey(String fileName) {
+        String key = fileName.replaceAll("^.+?(\\.\\w*)??$", UUID.randomUUID().toString() + "$1");
+        return key;
     }
 
     @Override

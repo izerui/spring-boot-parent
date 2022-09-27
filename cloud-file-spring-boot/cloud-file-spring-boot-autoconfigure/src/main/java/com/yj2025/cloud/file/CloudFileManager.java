@@ -8,6 +8,14 @@ import java.io.InputStream;
 public interface CloudFileManager {
 
     /**
+     * 根据文件名生成随机的一个key
+     *
+     * @param fileName 文件名
+     * @return
+     */
+    String getRandomKey(String fileName);
+
+    /**
      * 获取空间中文件的属性
      *
      * @param bucket 空间名称
