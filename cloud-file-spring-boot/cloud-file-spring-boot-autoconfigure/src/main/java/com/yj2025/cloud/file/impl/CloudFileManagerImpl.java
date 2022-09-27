@@ -64,7 +64,7 @@ public class CloudFileManagerImpl implements CloudFileManager {
     }
 
     @Override
-    public String getRandomKey(String fileName) {
+    public String generateKey(String fileName) {
         String key = fileName.replaceAll("^.+?(\\.\\w*)??$", UUID.randomUUID().toString() + "$1");
         return key;
     }

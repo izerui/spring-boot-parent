@@ -13,7 +13,7 @@ public interface CloudFileManager {
      * @param fileName 文件名
      * @return
      */
-    String getRandomKey(String fileName);
+    String generateKey(String fileName);
 
     /**
      * 获取空间中文件的属性
