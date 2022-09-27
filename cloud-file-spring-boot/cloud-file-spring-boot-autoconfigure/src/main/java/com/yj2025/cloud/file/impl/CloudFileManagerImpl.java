@@ -72,6 +72,12 @@ public class CloudFileManagerImpl implements CloudFileManager {
     }
 
     @Override
+    public FileInfo getFileInfo(boolean isPublic, String key) {
+        CloudFileProperties.Bucket bucket = getBucket(isPublic);
+        return getFileInfo(bucket.getBucketName(), key);
+    }
+
+    @Override
     public CloudFileProperties.Bucket getBucket(boolean isPublic) {
         if (isPublic) {
             return properties.getFirstPublicBucket();
@@ -106,6 +112,12 @@ public class CloudFileManagerImpl implements CloudFileManager {
     }
 
     @Override
+    public String getUploadToken(boolean isPublic, String key) {
+        CloudFileProperties.Bucket bucket = getBucket(isPublic);
+        return getUploadToken(bucket.getBucketName(), key);
+    }
+
+    @Override
     public UploadResponse upload(String bucket, String key, byte[] bytes) {
         try {
             String token = getUploadToken(bucket, key);
@@ -114,6 +126,12 @@ public class CloudFileManagerImpl implements CloudFileManager {
         } catch (Exception ex) {
             throw new CloudFileException(ex.getMessage(), ex);
         }
+    }
+
+    @Override
+    public UploadResponse upload(boolean isPublic, String key, byte[] bytes) {
+        CloudFileProperties.Bucket bucket = getBucket(isPublic);
+        return upload(bucket.getBucketName(), key, bytes);
     }
 
     @Override
@@ -128,6 +146,12 @@ public class CloudFileManagerImpl implements CloudFileManager {
     }
 
     @Override
+    public UploadResponse upload(boolean isPublic, String key, File file) {
+        CloudFileProperties.Bucket bucket = getBucket(isPublic);
+        return upload(bucket.getBucketName(), key, file);
+    }
+
+    @Override
     public UploadResponse upload(String bucket, String key, String filePath) {
         try {
             String token = getUploadToken(bucket, key);
@@ -136,6 +160,12 @@ public class CloudFileManagerImpl implements CloudFileManager {
         } catch (Exception ex) {
             throw new CloudFileException(ex.getMessage(), ex);
         }
+    }
+
+    @Override
+    public UploadResponse upload(boolean isPublic, String key, String filePath) {
+        CloudFileProperties.Bucket bucket = getBucket(isPublic);
+        return upload(bucket.getBucketName(), key, filePath);
     }
 
     @Override
@@ -150,8 +180,20 @@ public class CloudFileManagerImpl implements CloudFileManager {
     }
 
     @Override
+    public UploadResponse upload(boolean isPublic, String key, InputStream inputStream, String mime) {
+        CloudFileProperties.Bucket bucket = getBucket(isPublic);
+        return upload(bucket.getBucketName(), key, inputStream, mime);
+    }
+
+    @Override
     public String getDownloadUrl(String bucket, String key, String attName) {
         return getDownloadUrl(bucket, key, attName, null);
+    }
+
+    @Override
+    public String getDownloadUrl(boolean isPublic, String key, String attName) {
+        CloudFileProperties.Bucket bucket = getBucket(isPublic);
+        return getDownloadUrl(bucket.getBucketName(), key, attName);
     }
 
     @Override
@@ -173,12 +215,30 @@ public class CloudFileManagerImpl implements CloudFileManager {
     }
 
     @Override
+    public String getDownloadUrl(boolean isPublic, String key, String attName, String fop) {
+        CloudFileProperties.Bucket bucket = getBucket(isPublic);
+        return getDownloadUrl(bucket.getBucketName(), key, attName, fop);
+    }
+
+    @Override
     public String getPreviewUrl(String bucket, String key, Integer width, Integer height) {
         return getDownloadUrl(bucket, key, null, "imageView2/2/w/" + width + "/h/" + height);
     }
 
     @Override
+    public String getPreviewUrl(boolean isPublic, String key, Integer width, Integer height) {
+        CloudFileProperties.Bucket bucket = getBucket(isPublic);
+        return getPreviewUrl(bucket.getBucketName(), key, width, height);
+    }
+
+    @Override
     public String getPreviewUrl(String bucket, String key) {
         return getDownloadUrl(bucket, key, null);
+    }
+
+    @Override
+    public String getPreviewUrl(boolean isPublic, String key) {
+        CloudFileProperties.Bucket bucket = getBucket(isPublic);
+        return getPreviewUrl(bucket.getBucketName(), key);
     }
 }
