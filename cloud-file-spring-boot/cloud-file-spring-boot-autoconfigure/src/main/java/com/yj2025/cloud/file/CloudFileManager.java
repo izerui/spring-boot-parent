@@ -1,6 +1,7 @@
 package com.yj2025.cloud.file;
 
 import com.qiniu.storage.model.FileInfo;
+import com.yj2025.commons.vo.AttachmentVO;
 
 import java.io.File;
 import java.io.InputStream;
@@ -14,6 +15,13 @@ public interface CloudFileManager {
      * @return
      */
     String generateKey(String fileName);
+
+    /**
+     * 转换返回内容到 AttachmentVO
+     * @param response
+     * @return
+     */
+    AttachmentVO convert(UploadResponse response);
 
     /**
      * 获取空间中文件的属性

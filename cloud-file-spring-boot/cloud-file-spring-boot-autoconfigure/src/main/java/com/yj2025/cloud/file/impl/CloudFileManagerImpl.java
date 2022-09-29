@@ -17,6 +17,8 @@ import com.yj2025.cloud.file.CloudFileException;
 import com.yj2025.cloud.file.CloudFileManager;
 import com.yj2025.cloud.file.CloudFileProperties;
 import com.yj2025.cloud.file.UploadResponse;
+import com.yj2025.commons.vo.AttachmentVO;
+import lombok.SneakyThrows;
 import org.springframework.util.Assert;
 
 import java.io.File;
@@ -67,6 +69,15 @@ public class CloudFileManagerImpl implements CloudFileManager {
     public String generateKey(String fileName) {
         String key = fileName.replaceAll("^.+?(\\.\\w*)??$", UUID.randomUUID().toString() + "$1");
         return key;
+    }
+
+    @SneakyThrows
+    @Override
+    public AttachmentVO convert(UploadResponse response) {
+        AttachmentVO attachmentVO = OBJECT_MAPPER.readValue(OBJECT_MAPPER.writeValueAsString(response), AttachmentVO.class);
+        CloudFileProperties.Bucket bucket = getBucket(attachmentVO.getBucket());
+        attachmentVO.setPrivateBucket(!bucket.getIsPublic());
+        return attachmentVO;
     }
 
     @Override
