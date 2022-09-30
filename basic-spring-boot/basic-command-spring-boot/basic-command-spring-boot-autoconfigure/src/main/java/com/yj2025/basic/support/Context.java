@@ -21,6 +21,7 @@ import io.vavr.CheckedRunnable;
 import io.vavr.control.Try;
 import org.apache.calcite.sql.SqlUpdate;
 import org.apache.calcite.sql.parser.SqlParser;
+import org.hibernate.annotations.Type;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.ApplicationContext;
@@ -40,6 +41,7 @@ import org.springframework.util.ReflectionUtils;
 
 import javax.sql.DataSource;
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.Field;
 import java.sql.JDBCType;
 import java.time.Duration;
 import java.util.*;
@@ -537,10 +539,21 @@ public final class Context {
             Map<String, Object> map = new HashMap<>();
             PropertyDescriptor[] propertyDescriptors = BeanUtils.getPropertyDescriptors(data.getClass());
             for (PropertyDescriptor pd : propertyDescriptors) {
+                boolean isToJson = false;
+                Field field = ReflectionUtils.findField(data.getClass(), pd.getName());
+                if (field != null) {
+                    Type annotation = field.getAnnotation(Type.class);
+                    isToJson = annotation != null;
+                }
                 if (pd.getReadMethod() != null) {
                     String underscoreName = CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, pd.getName());
                     Object value = ReflectionUtils.invokeMethod(pd.getReadMethod(), data);
-                    map.put(underscoreName, value);
+                    if (isToJson) {
+                        map.put(underscoreName, toJson(value));
+                    } else {
+                        map.put(underscoreName, value);
+                    }
+
                 }
             }
             return map;
