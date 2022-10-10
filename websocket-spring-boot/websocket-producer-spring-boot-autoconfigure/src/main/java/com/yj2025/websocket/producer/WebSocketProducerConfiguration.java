@@ -15,7 +15,7 @@ public class WebSocketProducerConfiguration {
     @Bean
     @ConditionalOnProperty(name = "websocket.producer.type", matchIfMissing = true, havingValue = "rabbit")
     public WebSocketContext webSocketContext(RabbitTemplate rabbitTemplate, WebSocketProducerProperties webSocketProperties) {
-        return new RabbitContextImpl(rabbitTemplate, webSocketProperties.getRabbit());
+        return new RabbitContextImpl(rabbitTemplate, webSocketProperties);
     }
 
 }
