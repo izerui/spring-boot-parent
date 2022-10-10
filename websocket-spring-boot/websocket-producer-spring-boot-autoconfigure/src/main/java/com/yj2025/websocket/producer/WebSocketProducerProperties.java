@@ -17,8 +17,8 @@ public class WebSocketProducerProperties {
     @Data
     public static class RabbitWebSocketProperties {
 
-        private String exchange = "ierp";
-        private String routingKey = "websocket";
+        private String exchange;
+        private String routingKey;
     }
 
     public enum ProducerType {
