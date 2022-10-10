@@ -68,13 +68,14 @@ public abstract class BasicCommand<R> implements Command<R>, ApplicationBeanAwar
             throw new RuntimeException("command: " + this.getClass().getName() + " 已经执行过,不允许重复执行!");
         }
         long startTime = System.currentTimeMillis();
-        R r;
+        R r = null;
         try {
             beforeDoExecute();
             r = doExecute();
             executed = true;
             afterExecuted(r);
         } catch (Exception ex) {
+            whenThrowException(ex);
             throw new RuntimeException(ex.getMessage(), ex);
         } finally {
             executeTimeMillis = System.currentTimeMillis() - startTime;
@@ -86,6 +87,11 @@ public abstract class BasicCommand<R> implements Command<R>, ApplicationBeanAwar
         }
         return r;
     }
+
+    protected void whenThrowException(Exception ex) {
+        // do nothing
+    }
+
 
     /**
      * 执行器
