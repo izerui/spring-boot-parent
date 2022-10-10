@@ -8,15 +8,15 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 public class RabbitContextImpl implements WebSocketContext {
 
     private RabbitTemplate rabbitTemplate;
-    private WebSocketProducerProperties.RabbitWebSocketProperties rabbitWebSocketProperties;
+    private WebSocketProducerProperties rabbitWebSocketProperties;
 
-    public RabbitContextImpl(RabbitTemplate rabbitTemplate, WebSocketProducerProperties.RabbitWebSocketProperties rabbitWebSocketProperties) {
+    public RabbitContextImpl(RabbitTemplate rabbitTemplate, WebSocketProducerProperties rabbitWebSocketProperties) {
         this.rabbitTemplate = rabbitTemplate;
         this.rabbitWebSocketProperties = rabbitWebSocketProperties;
     }
 
     @Override
     public void sendMessage(WebMsg webMsg) {
-        rabbitTemplate.convertAndSend(rabbitWebSocketProperties.getExchange(), rabbitWebSocketProperties.getRoutingKey(), webMsg);
+        rabbitTemplate.convertAndSend(rabbitWebSocketProperties.getRabbit().getExchange(), rabbitWebSocketProperties.getRabbit().getRoutingKey(), webMsg);
     }
 }
