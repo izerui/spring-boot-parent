@@ -75,8 +75,7 @@ public abstract class BasicCommand<R> implements Command<R>, ApplicationBeanAwar
             executed = true;
             afterExecuted(r);
         } catch (Exception ex) {
-            whenThrowException(ex);
-            throw new RuntimeException(ex.getMessage(), ex);
+            catchThrowException(ex);
         } finally {
             executeTimeMillis = System.currentTimeMillis() - startTime;
             if (executeTimeMillis > getLimitWarnningTimeMillis()) {
@@ -88,8 +87,8 @@ public abstract class BasicCommand<R> implements Command<R>, ApplicationBeanAwar
         return r;
     }
 
-    protected void whenThrowException(Exception ex) {
-        // do nothing
+    protected void catchThrowException(Exception ex) {
+        throw new RuntimeException(ex.getMessage(), ex);
     }
 
 
