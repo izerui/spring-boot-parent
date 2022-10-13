@@ -36,9 +36,6 @@ public class PasswordAuthProvider extends AbstractAuthenticationProvider impleme
         if (!passwordEncoderMatchorObjectProvider.getIfAvailable().matches(inputPassword, user.getPassword(), user.getAdditionalSalt())) {
             throwCredentialsExpiredExceptionBlock("用户名或密码错误!");
         }
-        if (!user.isEnabled()) {
-            throwDisabledExceptionBlock("用户已禁用!");
-        }
     }
 
     @Override
