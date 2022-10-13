@@ -27,6 +27,8 @@ public class QrcodeAuthProvider extends AbstractAuthenticationProvider implement
                               QrcodeService qrcodeService) {
         this.userDetailsServiceAdapter = userDetailsServiceAdapter;
         this.qrcodeService = qrcodeService;
+        this.setPreAuthenticationChecks(new DefaultPreUserDetailsChecker());
+        this.setPostAuthenticationChecks(new DefaultPostUserDetailsChecker());
     }
 
     @Override

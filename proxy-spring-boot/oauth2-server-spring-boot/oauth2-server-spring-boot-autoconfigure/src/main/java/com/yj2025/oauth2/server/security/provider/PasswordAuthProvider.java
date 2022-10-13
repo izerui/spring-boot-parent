@@ -25,6 +25,8 @@ public class PasswordAuthProvider extends AbstractAuthenticationProvider impleme
     public PasswordAuthProvider(UserDetailsServiceAdapter userDetailsServiceAdapter, ObjectProvider<PasswordEncoderMatchor> passwordEncoderMatchorObjectProvider) {
         this.userDetailsServiceAdapter = userDetailsServiceAdapter;
         this.passwordEncoderMatchorObjectProvider = passwordEncoderMatchorObjectProvider;
+        this.setPreAuthenticationChecks(new DefaultPreUserDetailsChecker());
+        this.setPostAuthenticationChecks(new DefaultPostUserDetailsChecker());
     }
 
     @Override
