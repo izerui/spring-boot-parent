@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.yj2025.websocket.WebMsg;
+import com.yj2025.websocket.producer.WebSocketContext;
 import lombok.SneakyThrows;
 
 import java.util.List;
@@ -66,10 +67,14 @@ public class ImportWebMsgBuilder {
         return (T) this;
     }
 
-    public WebMsg build() {
+    protected WebMsg build() {
         WebMsg webMsg = new WebMsg(entCode, userCode, type);
         webMsg.set("status", status.name());
         return webMsg;
+    }
+
+    public void send(WebSocketContext context) {
+        context.sendMessage(build());
     }
 
 
@@ -135,7 +140,7 @@ public class ImportWebMsgBuilder {
         }
 
         @Override
-        public WebMsg build() {
+        protected WebMsg build() {
             WebMsg webMsg = super.build();
             webMsg.set("totalRowNum", totalRowNum);
             webMsg.set("currentRowNum", currentRowNum);
@@ -185,7 +190,7 @@ public class ImportWebMsgBuilder {
 
         @SneakyThrows
         @Override
-        public WebMsg build() {
+        protected WebMsg build() {
             WebMsg webMsg = super.build();
             webMsg.set("errorTitle", errorTitle);
             webMsg.set("errorList", OBJECT_MAPPER.writeValueAsString(errorList));
