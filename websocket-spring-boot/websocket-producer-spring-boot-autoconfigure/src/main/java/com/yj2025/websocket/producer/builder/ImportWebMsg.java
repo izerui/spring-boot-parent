@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.yj2025.websocket.WebMsg;
 import com.yj2025.websocket.producer.WebSocketContext;
+import lombok.Getter;
 import lombok.SneakyThrows;
 
 import java.util.List;
@@ -199,7 +200,9 @@ public class ImportWebMsg {
     }
 
     public static class RowError {
+        @Getter
         private String rowNum;
+        @Getter
         private String rowError;
 
         public RowError(String rowNum, String rowError) {
