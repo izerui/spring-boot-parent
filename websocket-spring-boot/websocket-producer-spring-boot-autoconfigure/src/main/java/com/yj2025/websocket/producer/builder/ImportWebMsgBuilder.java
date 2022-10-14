@@ -78,6 +78,21 @@ public class ImportWebMsgBuilder {
         protected SuccessBuilder() {
             super(ImportStatusEnum.SUCCESS);
         }
+
+        @Override
+        public SuccessBuilder entCode(String entCode) {
+            return super.entCode(entCode);
+        }
+
+        @Override
+        public SuccessBuilder userCode(String userCode) {
+            return super.userCode(userCode);
+        }
+
+        @Override
+        public SuccessBuilder type(String type) {
+            return super.type(type);
+        }
     }
 
     public static class PendingBuilder extends ImportWebMsgBuilder {
@@ -92,6 +107,21 @@ public class ImportWebMsgBuilder {
 
         protected PendingBuilder() {
             super(ImportStatusEnum.PENDING);
+        }
+
+        @Override
+        public PendingBuilder entCode(String entCode) {
+            return super.entCode(entCode);
+        }
+
+        @Override
+        public PendingBuilder userCode(String userCode) {
+            return super.userCode(userCode);
+        }
+
+        @Override
+        public PendingBuilder type(String type) {
+            return super.type(type);
         }
 
         public PendingBuilder totalRowNum(String totalRowNum) {
@@ -126,6 +156,21 @@ public class ImportWebMsgBuilder {
 
         protected ErrorBuilder() {
             super(ImportStatusEnum.ERROR);
+        }
+
+        @Override
+        public ErrorBuilder entCode(String entCode) {
+            return super.entCode(entCode);
+        }
+
+        @Override
+        public ErrorBuilder userCode(String userCode) {
+            return super.userCode(userCode);
+        }
+
+        @Override
+        public ErrorBuilder type(String type) {
+            return super.type(type);
         }
 
         public ErrorBuilder errorTitle(String errorTitle) {
