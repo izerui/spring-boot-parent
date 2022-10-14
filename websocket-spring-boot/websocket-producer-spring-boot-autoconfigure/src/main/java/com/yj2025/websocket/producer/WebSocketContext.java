@@ -5,4 +5,6 @@ import com.yj2025.websocket.WebMsg;
 public interface WebSocketContext {
 
     void sendMessage(WebMsg webMsg);
+
+    void destroy() throws Exception;
 }
