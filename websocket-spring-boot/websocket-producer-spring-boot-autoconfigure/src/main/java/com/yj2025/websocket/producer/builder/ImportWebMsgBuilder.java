@@ -36,15 +36,15 @@ public class ImportWebMsgBuilder {
     private ImportStatusEnum status;
 
     public static PendingBuilder pendingBuilder() {
-        return new PendingBuilder().status(ImportStatusEnum.IMPORT_PENDING);
+        return new PendingBuilder().status(ImportStatusEnum.PENDING);
     }
 
     public static SuccessBuilder successBuilder() {
-        return new SuccessBuilder().status(ImportStatusEnum.IMPORT_SUCCESS);
+        return new SuccessBuilder().status(ImportStatusEnum.SUCCESS);
     }
 
     public static ErrorBuilder errorBuilder() {
-        return new ErrorBuilder().status(ImportStatusEnum.IMPORT_ERROR);
+        return new ErrorBuilder().status(ImportStatusEnum.ERROR);
     }
 
     public <T extends ImportWebMsgBuilder> T entCode(String entCode) {

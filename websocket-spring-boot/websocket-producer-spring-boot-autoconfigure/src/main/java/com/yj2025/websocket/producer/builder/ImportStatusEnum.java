@@ -4,13 +4,13 @@ public enum ImportStatusEnum {
     /**
      * 正在导入
      */
-    IMPORT_PENDING,
+    PENDING,
     /**
      * 导入失败
      */
-    IMPORT_ERROR,
+    ERROR,
     /**
      * 导入成功
      */
-    IMPORT_SUCCESS,
+    SUCCESS,
 }
