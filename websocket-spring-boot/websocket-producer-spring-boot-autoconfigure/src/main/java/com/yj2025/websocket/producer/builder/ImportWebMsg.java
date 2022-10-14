@@ -9,7 +9,7 @@ import lombok.SneakyThrows;
 
 import java.util.List;
 
-public class ImportWebMsgBuilder {
+public class ImportWebMsg {
 
     private static final ObjectMapper OBJECT_MAPPER;
 
@@ -34,35 +34,35 @@ public class ImportWebMsgBuilder {
     /**
      * 导入的状态
      */
-    protected ImportStatusEnum status;
+    protected WebMsgStatusEnum status;
 
-    protected ImportWebMsgBuilder(ImportStatusEnum status) {
+    protected ImportWebMsg(WebMsgStatusEnum status) {
         this.status = status;
     }
 
-    public static PendingBuilder pendingBuilder() {
-        return new PendingBuilder();
+    public static PendingWebMsg pending() {
+        return new PendingWebMsg();
     }
 
-    public static SuccessBuilder successBuilder() {
-        return new SuccessBuilder();
+    public static SuccessWebMsg success() {
+        return new SuccessWebMsg();
     }
 
-    public static ErrorBuilder errorBuilder() {
-        return new ErrorBuilder();
+    public static ErrorWebMsg error() {
+        return new ErrorWebMsg();
     }
 
-    public <T extends ImportWebMsgBuilder> T entCode(String entCode) {
+    public <T extends ImportWebMsg> T entCode(String entCode) {
         this.entCode = entCode;
         return (T) this;
     }
 
-    public <T extends ImportWebMsgBuilder> T userCode(String userCode) {
+    public <T extends ImportWebMsg> T userCode(String userCode) {
         this.userCode = userCode;
         return (T) this;
     }
 
-    public <T extends ImportWebMsgBuilder> T type(String type) {
+    public <T extends ImportWebMsg> T type(String type) {
         this.type = type;
         return (T) this;
     }
@@ -78,29 +78,29 @@ public class ImportWebMsgBuilder {
     }
 
 
-    public static class SuccessBuilder extends ImportWebMsgBuilder {
+    public static class SuccessWebMsg extends ImportWebMsg {
 
-        protected SuccessBuilder() {
-            super(ImportStatusEnum.SUCCESS);
+        protected SuccessWebMsg() {
+            super(WebMsgStatusEnum.SUCCESS);
         }
 
         @Override
-        public SuccessBuilder entCode(String entCode) {
+        public SuccessWebMsg entCode(String entCode) {
             return super.entCode(entCode);
         }
 
         @Override
-        public SuccessBuilder userCode(String userCode) {
+        public SuccessWebMsg userCode(String userCode) {
             return super.userCode(userCode);
         }
 
         @Override
-        public SuccessBuilder type(String type) {
+        public SuccessWebMsg type(String type) {
             return super.type(type);
         }
     }
 
-    public static class PendingBuilder extends ImportWebMsgBuilder {
+    public static class PendingWebMsg extends ImportWebMsg {
         /**
          * 总共条目数
          */
@@ -110,31 +110,31 @@ public class ImportWebMsgBuilder {
          */
         private String currentRowNum;
 
-        protected PendingBuilder() {
-            super(ImportStatusEnum.PENDING);
+        protected PendingWebMsg() {
+            super(WebMsgStatusEnum.PENDING);
         }
 
         @Override
-        public PendingBuilder entCode(String entCode) {
+        public PendingWebMsg entCode(String entCode) {
             return super.entCode(entCode);
         }
 
         @Override
-        public PendingBuilder userCode(String userCode) {
+        public PendingWebMsg userCode(String userCode) {
             return super.userCode(userCode);
         }
 
         @Override
-        public PendingBuilder type(String type) {
+        public PendingWebMsg type(String type) {
             return super.type(type);
         }
 
-        public PendingBuilder totalRowNum(String totalRowNum) {
+        public PendingWebMsg totalRowNum(String totalRowNum) {
             this.totalRowNum = totalRowNum;
             return this;
         }
 
-        public PendingBuilder currentRowNum(String currentRowNum) {
+        public PendingWebMsg currentRowNum(String currentRowNum) {
             this.currentRowNum = currentRowNum;
             return this;
         }
@@ -149,7 +149,7 @@ public class ImportWebMsgBuilder {
 
     }
 
-    public static class ErrorBuilder extends ImportWebMsgBuilder {
+    public static class ErrorWebMsg extends ImportWebMsg {
         /**
          * 出错title提示信息
          */
@@ -159,31 +159,31 @@ public class ImportWebMsgBuilder {
          */
         private List<RowError> errorList;
 
-        protected ErrorBuilder() {
-            super(ImportStatusEnum.ERROR);
+        protected ErrorWebMsg() {
+            super(WebMsgStatusEnum.ERROR);
         }
 
         @Override
-        public ErrorBuilder entCode(String entCode) {
+        public ErrorWebMsg entCode(String entCode) {
             return super.entCode(entCode);
         }
 
         @Override
-        public ErrorBuilder userCode(String userCode) {
+        public ErrorWebMsg userCode(String userCode) {
             return super.userCode(userCode);
         }
 
         @Override
-        public ErrorBuilder type(String type) {
+        public ErrorWebMsg type(String type) {
             return super.type(type);
         }
 
-        public ErrorBuilder errorTitle(String errorTitle) {
+        public ErrorWebMsg errorTitle(String errorTitle) {
             this.errorTitle = errorTitle;
             return this;
         }
 
-        public ErrorBuilder errorList(List<RowError> errorList) {
+        public ErrorWebMsg errorList(List<RowError> errorList) {
             this.errorList = errorList;
             return this;
         }

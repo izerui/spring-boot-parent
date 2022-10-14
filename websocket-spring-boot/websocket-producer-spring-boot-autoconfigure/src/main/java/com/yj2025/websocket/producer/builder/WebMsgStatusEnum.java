@@ -1,16 +1,16 @@
 package com.yj2025.websocket.producer.builder;
 
-public enum ImportStatusEnum {
+public enum WebMsgStatusEnum {
     /**
-     * 正在导入
+     * 正在处理
      */
     PENDING,
     /**
-     * 导入失败
+     * 处理失败
      */
     ERROR,
     /**
-     * 导入成功
+     * 处理成功
      */
     SUCCESS,
 }
