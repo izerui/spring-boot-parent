@@ -21,30 +21,34 @@ public class ImportWebMsgBuilder {
     /**
      * 企业账套编号
      */
-    private String entCode;
+    protected String entCode;
     /**
      * 发送的用户编码
      */
-    private String userCode;
+    protected String userCode;
     /**
      * 业务类型
      */
-    private String type;
+    protected String type;
     /**
      * 导入的状态
      */
-    private ImportStatusEnum status;
+    protected ImportStatusEnum status;
+
+    protected ImportWebMsgBuilder(ImportStatusEnum status) {
+        this.status = status;
+    }
 
     public static PendingBuilder pendingBuilder() {
-        return new PendingBuilder().status(ImportStatusEnum.PENDING);
+        return new PendingBuilder();
     }
 
     public static SuccessBuilder successBuilder() {
-        return new SuccessBuilder().status(ImportStatusEnum.SUCCESS);
+        return new SuccessBuilder();
     }
 
     public static ErrorBuilder errorBuilder() {
-        return new ErrorBuilder().status(ImportStatusEnum.ERROR);
+        return new ErrorBuilder();
     }
 
     public <T extends ImportWebMsgBuilder> T entCode(String entCode) {
@@ -62,11 +66,6 @@ public class ImportWebMsgBuilder {
         return (T) this;
     }
 
-    <T extends ImportWebMsgBuilder> T status(ImportStatusEnum status) {
-        this.status = status;
-        return (T) this;
-    }
-
     public WebMsg build() {
         WebMsg webMsg = new WebMsg(entCode, userCode, type);
         webMsg.set("status", status.name());
@@ -76,6 +75,9 @@ public class ImportWebMsgBuilder {
 
     public static class SuccessBuilder extends ImportWebMsgBuilder {
 
+        protected SuccessBuilder() {
+            super(ImportStatusEnum.SUCCESS);
+        }
     }
 
     public static class PendingBuilder extends ImportWebMsgBuilder {
@@ -87,6 +89,10 @@ public class ImportWebMsgBuilder {
          * 当前处理行数
          */
         private String currentRowNum;
+
+        protected PendingBuilder() {
+            super(ImportStatusEnum.PENDING);
+        }
 
         public PendingBuilder totalRowNum(String totalRowNum) {
             this.totalRowNum = totalRowNum;
@@ -117,6 +123,10 @@ public class ImportWebMsgBuilder {
          * 要显示的出错行列表及信息
          */
         private List<RowError> errorList;
+
+        protected ErrorBuilder() {
+            super(ImportStatusEnum.ERROR);
+        }
 
         public ErrorBuilder errorTitle(String errorTitle) {
             this.errorTitle = errorTitle;
