@@ -94,6 +94,8 @@ public interface PlatformJpaRepository<T, ID extends Serializable> extends JpaRe
 
     Map<String,Object> aggregate(Conditions conditions, String... aggregates);
 
+    <R> R aggregate(Conditions conditions, Class<R> resultClass, String... aggregates);
+
     <R> R aggregate(String aggregate, Class<R> resultClass);
 
     void deleteAll(Conditions conditions);

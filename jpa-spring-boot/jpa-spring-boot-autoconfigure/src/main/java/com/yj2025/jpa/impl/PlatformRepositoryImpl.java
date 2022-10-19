@@ -365,6 +365,14 @@ public class PlatformRepositoryImpl<T, ID extends Serializable> extends SimpleJp
     }
 
     @Override
+    public <R> R aggregate(Conditions conditions, Class<R> resultClass, String... aggregates) {
+        Assert.notEmpty(aggregates);
+        List<Map> mapList = new JpqlQueryHolder(conditions).createGroupQuery(Arrays.asList(aggregates), null, 1).getResultList();
+        List<R> list = transMap2Bean(mapList, resultClass);
+        return list.isEmpty() ? null : list.get(0);
+    }
+
+    @Override
     public <R> R aggregate(String aggregate, Class<R> resultClass) {
         TypedQuery<R> query = new JpqlQueryHolder().createAggregateQuery(aggregate, resultClass);
         List<R> list = query.getResultList();
