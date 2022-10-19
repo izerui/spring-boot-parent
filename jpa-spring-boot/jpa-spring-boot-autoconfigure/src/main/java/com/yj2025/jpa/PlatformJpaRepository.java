@@ -11,6 +11,7 @@ import org.springframework.data.repository.NoRepositoryBean;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by serv on 14-5-29.
@@ -90,6 +91,8 @@ public interface PlatformJpaRepository<T, ID extends Serializable> extends JpaRe
     <R> R avg(Conditions conditions, String columnName, Class<R> resultClass);
 
     <R> R aggregate(Conditions conditions, String aggregate, Class<R> resultClass);
+
+    Map<String,Object> aggregate(Conditions conditions, String... aggregates);
 
     <R> R aggregate(String aggregate, Class<R> resultClass);
 

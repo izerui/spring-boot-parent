@@ -7,7 +7,6 @@ import com.yj2025.jpa.entity.Abcd;
 import com.yj2025.jpa.entity.User;
 import com.yj2025.jpa.entity.UserDistinct;
 import com.yj2025.jpa.impl.Conditions;
-import com.yj2025.jpa.impl.JpqlSelector;
 import com.yj2025.jpa.repository.AbcdRepository;
 import com.yj2025.jpa.repository.UserRepository;
 import org.assertj.core.util.Lists;
@@ -17,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.jdbc.object.BatchSqlUpdate;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -48,11 +46,10 @@ public class TestJunit {
     @Test
     public void testSelectSql() {
         Conditions conditions = Conditions.where("name").is("张无忌");
-        List<Object[]> list = (List<Object[]>) userRepository.selectSql("select sum(age),sum(version) from User ", conditions);
-        Object[] array = list.get(0);
-        for (Object o : array) {
-            System.out.println("------" + o);
-        }
+        Map<String, Object> aggregate = userRepository.aggregate(conditions, "sum(id) as sumId", "count(id) as countId");
+        aggregate.forEach((s, o) -> {
+            System.out.println(s + " : " + o);
+        });
     }
 
     @Test

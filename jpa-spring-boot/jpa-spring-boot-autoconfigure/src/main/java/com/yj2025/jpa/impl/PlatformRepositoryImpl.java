@@ -27,6 +27,7 @@ import org.springframework.data.jpa.repository.support.JpaEntityInformationSuppo
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.util.Assert;
 
+import javax.annotation.Nullable;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
@@ -36,8 +37,6 @@ import java.beans.PropertyDescriptor;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
@@ -359,6 +358,13 @@ public class PlatformRepositoryImpl<T, ID extends Serializable> extends SimpleJp
     }
 
     @Override
+    public Map<String, Object> aggregate(Conditions conditions, String... aggregates) {
+        Assert.notEmpty(aggregates);
+        List<Map> mapList = new JpqlQueryHolder(conditions).createGroupQuery(Arrays.asList(aggregates), null, 1).getResultList();
+        return mapList.isEmpty() ? null : mapList.get(0);
+    }
+
+    @Override
     public <R> R aggregate(String aggregate, Class<R> resultClass) {
         TypedQuery<R> query = new JpqlQueryHolder().createAggregateQuery(aggregate, resultClass);
         List<R> list = query.getResultList();
@@ -505,11 +511,11 @@ public class PlatformRepositoryImpl<T, ID extends Serializable> extends SimpleJp
             return query;
         }
 
-        private TypedQuery<Map> createGroupQuery(List<String> selectFields, List<String> groupFields) {
+        private TypedQuery<Map> createGroupQuery(List<String> selectFields, @Nullable List<String> groupFields) {
             return this.createGroupQuery(selectFields, groupFields, -1);
         }
 
-        private TypedQuery<Map> createGroupQuery(List<String> selectFields, List<String> groupFields, int limit) {
+        private TypedQuery<Map> createGroupQuery(List<String> selectFields, @Nullable List<String> groupFields, int limit) {
             List<String> tempSelectFields = new ArrayList<>();
             for (String selectField : selectFields) {
                 if (!selectField.contains(" as ") && !selectField.contains(" AS ") && !selectField.contains(" ")) {
@@ -525,9 +531,11 @@ public class PlatformRepositoryImpl<T, ID extends Serializable> extends SimpleJp
                     //table
                     .append(QueryUtils.getQueryString(FIND_ALL_QUERY_STRING, entityInformation.getEntityName()))
                     //where
-                    .append(applyCondition())
-                    .append(" group by ")
-                    .append(StringUtils.join(groupFields, ","));
+                    .append(applyCondition());
+            if (groupFields != null && !groupFields.isEmpty()) {
+                sb.append(" group by ")
+                        .append(StringUtils.join(groupFields, ","));
+            }
             TypedQuery<Map> query = entityManager.createQuery(QueryUtils.applySorting(sb.toString(), sort, ALIAS), Map.class);
             if (limit > 0) {
                 query.setMaxResults(limit);
