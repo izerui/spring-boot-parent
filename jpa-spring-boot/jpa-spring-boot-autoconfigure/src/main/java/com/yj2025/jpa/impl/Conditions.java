@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
@@ -169,6 +170,17 @@ public class Conditions implements Cloneable {
 
     public Conditions in(Object value) {
         lastCondition().express("in").value(value);
+        return this;
+    }
+
+    public Conditions remove(String filed) {
+        List<Condition> conditions =
+                this.cdList.stream().filter(condition -> !condition.getField().equalsIgnoreCase(filed)).collect(Collectors.toList());
+        if (conditions != null && conditions.size() > 0) {
+            conditions.get(0).andOr = "";
+            this.cdList.clear();
+            this.cdList.addAll(conditions);
+        }
         return this;
     }
 
