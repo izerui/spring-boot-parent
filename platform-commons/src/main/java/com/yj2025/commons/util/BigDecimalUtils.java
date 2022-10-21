@@ -37,6 +37,23 @@ public class BigDecimalUtils {
         return num1.add(num2);
     }
 
+    /**
+     * 加法
+     *
+     * @param num1
+     * @param nums
+     * @return
+     */
+    public static final BigDecimal add(BigDecimal num1, BigDecimal... nums) {
+        Assert.notNull(num1, "加法运算的第一个数值不能为空");
+        Assert.notNull(nums, "加法运算的第二个数值不能为空");
+        BigDecimal result = num1;
+        for (BigDecimal num : nums) {
+            result = result.add(num);
+        }
+        return result;
+    }
+
 
     /**
      * 减法
@@ -50,6 +67,24 @@ public class BigDecimalUtils {
         Assert.notNull(num1, "减法运算的第一个数值不能为空");
         Assert.notNull(num2, "减法运算的第二个数值不能为空");
         return num1.subtract(num2);
+    }
+
+    /**
+     * 减法
+     *
+     * @param num1
+     * @param nums
+     * @return
+     */
+    @Deprecated
+    public static final BigDecimal substract(BigDecimal num1, BigDecimal... nums) {
+        Assert.notNull(num1, "减法运算的第一个数值不能为空");
+        Assert.notNull(nums, "减法运算的第二个数值不能为空");
+        BigDecimal result = num1;
+        for (BigDecimal num : nums) {
+            result = result.subtract(num);
+        }
+        return result;
     }
 
 
