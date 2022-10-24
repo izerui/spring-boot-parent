@@ -215,7 +215,12 @@ public class PlatformRepositoryImpl<T, ID extends Serializable> extends SimpleJp
         Assert.notEmpty(selectFields);
         Assert.notEmpty(groupFields);
         Assert.notNull(pageable);
-        Long total = count(conditions, "distinct " + StringUtils.join(groupFields, ","));
+        Long total;
+        if (1 == groupFields.size()) {
+            total = count(conditions, "distinct " + groupFields.get(0) );
+        } else {
+            total = count(conditions, "distinct concat(" + StringUtils.join(groupFields, ",") + ") ");
+        }
 
         Query query = new JpqlQueryHolder(conditions, pageable.getSort()).createGroupQuery(selectFields, groupFields);
         query.setFirstResult(Long.valueOf(pageable.getOffset()).intValue());
