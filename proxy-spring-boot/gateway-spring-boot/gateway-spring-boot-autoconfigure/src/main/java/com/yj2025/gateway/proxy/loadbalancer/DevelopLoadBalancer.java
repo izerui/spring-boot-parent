@@ -28,10 +28,12 @@ import org.springframework.cloud.client.loadbalancer.reactive.EmptyResponse;
 import org.springframework.cloud.client.loadbalancer.reactive.Request;
 import org.springframework.cloud.client.loadbalancer.reactive.Response;
 import org.springframework.cloud.loadbalancer.core.*;
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -112,7 +114,9 @@ public class DevelopLoadBalancer implements ReactorServiceInstanceLoadBalancer {
             return new EmptyResponse();
         }
         if (requestServers.exchange != null) {
-            String pcServer = requestServers.exchange.getRequest().getHeaders().getFirst("pcServer");
+            HttpHeaders headers = requestServers.exchange.getRequest().getHeaders();
+            String pcServer = Optional.ofNullable(headers.getFirst("pcServer"))
+                    .orElse(headers.getFirst("pcserver"));
             if (pcServer != null && !"".equals(pcServer)) {
                 ServiceInstance instance = requestServers.serviceInstances.stream().filter(serviceInstance -> pcServer.contains(serviceInstance.getHost())).findFirst().orElse(null);
                 if (instance != null) {
