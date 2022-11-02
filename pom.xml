@@ -43,14 +43,14 @@
     <groupId>com.yj2025</groupId>
     <artifactId>yj2025-spring-boot-parent</artifactId>
 
-    <version>1.6.1-SNAPSHOT</version>
+    <version>1.6.2-SNAPSHOT</version>
 
     <properties>
         <java.version>11</java.version>
         <spring-cloud.version>Hoxton.SR12</spring-cloud.version>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
-        <base-starter.version>1.6.1-SNAPSHOT</base-starter.version>
+        <base-starter.version>1.6.2-SNAPSHOT</base-starter.version>
         <org.mapstruct.version>1.5.2.Final</org.mapstruct.version>
         <m2e.apt.activation>jdt_apt</m2e.apt.activation>
         <commons.version>2.8.0</commons.version>
