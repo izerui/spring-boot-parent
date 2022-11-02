@@ -31,6 +31,7 @@
         <module>platform-commons</module>
         <module>validator-spring-boot</module>
         <module>cloud-file-spring-boot</module>
+        <module>elasticsearch-logging-spring-boot</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
