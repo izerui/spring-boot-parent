@@ -8,20 +8,7 @@ import java.util.UUID;
 
 @Data
 @MappedSuperclass
-public abstract class BasicEntity {
-
-    /**
-     * 主键
-     */
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    protected long id;
-
-    /**
-     * 乐观锁
-     */
-    @Version
-    protected long version;
+public abstract class BasicEntity extends BaseEntity{
 
     /**
      * 业务主键
@@ -46,40 +33,16 @@ public abstract class BasicEntity {
     protected String creator;
 
     /**
-     * 创建时间
-     */
-    @Column(name = "create_time", columnDefinition = "DATETIME(3) COMMENT '创建时间'", nullable = false)
-    protected Date createTime = new Date();
-
-    /**
      * 更新人
      */
     @Column(name = "updater", columnDefinition = "VARCHAR(64) COMMENT '更新人'")
     protected String updater;
 
     /**
-     * 更新时间
-     */
-    @Column(name = "update_time", columnDefinition = "DATETIME(3) COMMENT '更新时间'")
-    protected Date updateTime;
-
-    /**
      * 删除人
      */
     @Column(name = "deletor", columnDefinition = "VARCHAR(64) COMMENT '删除人'")
     protected String deletor;
-
-    /**
-     * 删除状态
-     */
-    @Column(name = "deleted", columnDefinition = "bit(1) COMMENT '逻辑删除 0未删除 1删除'", nullable = false)
-    protected boolean deleted = false;
-
-    /**
-     * 删除时间
-     */
-    @Column(name = "delete_time", columnDefinition = "DATETIME(3) COMMENT '删除时间'")
-    protected Date deleteTime;
 
     /**
      * 修改更新人、更新时间
