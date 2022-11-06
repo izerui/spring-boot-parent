@@ -88,7 +88,11 @@ public abstract class BasicCommand<R> implements Command<R>, ApplicationBeanAwar
     }
 
     protected void catchThrowException(Exception ex) {
-        throw new RuntimeException(ex.getMessage(), ex);
+        if (ex instanceof RuntimeException) {
+            throw (RuntimeException) ex;
+        } else {
+            throw new RuntimeException(ex.getMessage(), ex);
+        }
     }
 
 
