@@ -29,7 +29,7 @@ public abstract class BasicEntity extends BaseEntity{
     /**
      * 创建人
      */
-    @Column(name = "creator", columnDefinition = "VARCHAR(64) COMMENT '创建人'", nullable = false)
+    @Column(name = "creator", columnDefinition = "VARCHAR(64) COMMENT '创建人'")
     protected String creator;
 
     /**
