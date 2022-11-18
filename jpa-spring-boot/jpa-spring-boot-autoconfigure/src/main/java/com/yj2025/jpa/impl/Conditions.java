@@ -193,7 +193,7 @@ public class Conditions implements Cloneable {
     public String toQL(Map<String, Object> params) {
         Assert.notNull(params, "参数对象不能为空");
         StringBuilder sb = new StringBuilder("");
-        if (cdList == null || cdList.size() == 0) {
+        if ((cdList == null || cdList.size() == 0) && (combList == null || combList.size() == 0)) {
             return "";
         }
         sb.append(" ( ");
