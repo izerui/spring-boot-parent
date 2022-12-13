@@ -1,40 +1,20 @@
 package com.yj2025.doc;
 
-import com.github.xiaoymin.knife4j.spring.extension.OpenApiExtensionResolver;
-import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.parameters.HeaderParameter;
+import org.springdoc.core.GroupedOpenApi;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import springfox.documentation.builders.ApiInfoBuilder;
-import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.builders.RequestParameterBuilder;
-import springfox.documentation.schema.ScalarType;
-import springfox.documentation.service.ApiInfo;
-import springfox.documentation.service.ParameterType;
-import springfox.documentation.service.RequestParameter;
-import springfox.documentation.spi.DocumentationType;
-import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
- * knife4j
- *
- * @link https://doc.xiaominfo.com/knife4j/
+ * @author liuyuhua
  */
-@Slf4j
-@EnableSwagger2
 @Configuration
 @ConditionalOnWebApplication
 public class DocAutoConfiguration implements WebMvcConfigurer {
@@ -42,68 +22,27 @@ public class DocAutoConfiguration implements WebMvcConfigurer {
     @Value("${spring.application.name:#{null}}")
     private String applicationName;
 
-    @Value("${doc.head.wrap.enabled:true}")
-    private Boolean headWrapEnabled;
-
-    @Autowired
-    private ObjectProvider<OpenApiExtensionResolver> openApiExtensionResolver;
-
-    private List<RequestParameter> parameter() {
-        if (headWrapEnabled != null && !headWrapEnabled) {
-            return null;
-        }
-        List<RequestParameter> params = new ArrayList<>();
-        params.add(new RequestParameterBuilder().name("entCode")
-                .description("企业编码")
-                .in(ParameterType.HEADER)
-                .query(s -> s.model(m -> m.scalarModel(ScalarType.STRING)))
-                .required(false)
-                .build());
-        params.add(new RequestParameterBuilder().name("userCode")
-                .description("用户编码")
-                .in(ParameterType.HEADER)
-                .query(s -> s.model(m -> m.scalarModel(ScalarType.STRING)))
-                .required(false)
-                .build());
-        params.add(new RequestParameterBuilder().name("postCode")
-                .description("职能编码")
-                .in(ParameterType.HEADER)
-                .query(s -> s.model(m -> m.scalarModel(ScalarType.STRING)))
-                .required(false)
-                .build());
-        return params;
-    }
-
-    @ConditionalOnMissingBean(Docket.class)
-    @Bean(name = "defaultDocket")
-    public Docket petApi() {
-        OpenApiExtensionResolver ifAvailable = openApiExtensionResolver.getIfAvailable();
-        if (ifAvailable == null) {
-            return new Docket(DocumentationType.SWAGGER_2)
-                    .apiInfo(apiInfo())
-                    .select()
-                    .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
-                    .paths(PathSelectors.any())
-                    .build()
-                    .globalRequestParameters(parameter());
-        } else {
-            return new Docket(DocumentationType.SWAGGER_2)
-                    .apiInfo(apiInfo())
-                    .select()
-                    .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
-                    .paths(PathSelectors.any())
-                    .build()
-                    .globalRequestParameters(parameter())
-                    .extensions(ifAvailable.buildExtensions("default"));
-        }
-    }
-
-    private ApiInfo apiInfo() {
-        return new ApiInfoBuilder()
-                .title(applicationName)
-                .version("2.1")
+    @Bean
+    public GroupedOpenApi userApi() {
+        String[] paths = {"/**"};
+        return GroupedOpenApi.builder().group("default")
+                .pathsToMatch(paths)
+                .addOperationCustomizer((operation, handlerMethod) -> operation
+                        .addParametersItem(new HeaderParameter().name("entCode").description("企业编码").required(false))
+                        .addParametersItem(new HeaderParameter().name("userCode").description("用户编码").required(false))
+                        .addParametersItem(new HeaderParameter().name("postCode").description("职能编码").required(false)))
                 .build();
     }
+
+    @Bean
+    public OpenAPI customOpenAPI() {
+        return new OpenAPI()
+                .info(new Info()
+                        .title(applicationName)
+                        .version("3.0")
+                        .description(applicationName));
+    }
+
 
     @Bean
     public LabelCommandLineRunner labelCommandLineRunner(ApplicationContext applicationContext) {
@@ -116,5 +55,6 @@ public class DocAutoConfiguration implements WebMvcConfigurer {
         registry.addRedirectViewController("/api.html", "/doc.html");
         registry.addRedirectViewController("/api", "/doc.html");
     }
+
 
 }

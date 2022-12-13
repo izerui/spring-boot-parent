@@ -1,3 +1,0 @@
-# Auto Configure
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.yj2025.gateway.proxy.GatewayProxyConfiguration

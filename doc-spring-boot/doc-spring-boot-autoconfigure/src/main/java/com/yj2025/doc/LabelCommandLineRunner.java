@@ -7,6 +7,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -24,26 +25,38 @@ public class LabelCommandLineRunner implements CommandLineRunner {
                     "Actuator: \thttp://${host}:${port}${contextPath}/actuator\n" +
                     "----------------------------------------------------------";
 
+    private Map<String, Object> variables_;
+
     private ApplicationContext applicationContext;
 
     public LabelCommandLineRunner(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
 
+    public Map<String,Object> getVariables() throws UnknownHostException {
+        if(this.variables_ == null) {
+            Environment env = applicationContext.getEnvironment();
+            this.variables_ = new HashMap<>();
+            this.variables_.put("port", Optional.ofNullable(env.getProperty("server.port")).orElse("8080"));
+            this.variables_.put("contextPath", Optional.ofNullable(env.getProperty("server.servlet.context-path")).orElse(""));
+            this.variables_.put("host", InetAddress.getLocalHost().getHostAddress());
+            this.variables_.put("application", env.getProperty("spring.application.name"));
+            this.variables_.put("profile", Optional.ofNullable(env.getProperty("spring.profiles.active")).orElse("default"));
+            this.variables_.put("osName", System.getProperty("os.name"));
+            this.variables_.put("osArch", System.getProperty("os.arch"));
+            this.variables_.put("osVersion", System.getProperty("os.version"));
+            this.variables_.put("jVersion", System.getProperty("java.version"));
+            this.variables_.put("jVendor", System.getProperty("java.vendor"));
+        }
+        return this.variables_;
+    }
+
     @Override
     public void run(String... args) throws Exception {
-        Environment env = applicationContext.getEnvironment();
-        Map<String, Object> variables = new HashMap<>();
-        variables.put("port", Optional.ofNullable(env.getProperty("server.port")).orElse("8080"));
-        variables.put("contextPath", Optional.ofNullable(env.getProperty("server.servlet.context-path")).orElse(""));
-        variables.put("host", InetAddress.getLocalHost().getHostAddress());
-        variables.put("application", env.getProperty("spring.application.name"));
-        variables.put("profile", Optional.ofNullable(env.getProperty("spring.profiles.active")).orElse("default"));
-        variables.put("osName", System.getProperty("os.name"));
-        variables.put("osArch", System.getProperty("os.arch"));
-        variables.put("osVersion", System.getProperty("os.version"));
-        variables.put("jVersion", System.getProperty("java.version"));
-        variables.put("jVendor", System.getProperty("java.vendor"));
-        log.info(new StringSubstitutor(variables).replace(LABEL_LINE_RUNNER));
+        log.info(new StringSubstitutor(getVariables()).replace(LABEL_LINE_RUNNER));
+    }
+
+    public String getWebUrl() throws UnknownHostException {
+        return new StringSubstitutor(getVariables()).replace("http://${host}:${port}${contextPath}");
     }
 }

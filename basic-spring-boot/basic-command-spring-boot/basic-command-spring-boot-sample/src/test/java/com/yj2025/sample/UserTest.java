@@ -11,9 +11,8 @@ import com.yj2025.sample.service.UpdateBatchExecutor;
 import com.yj2025.sample.service.UserService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,9 +20,6 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.jdbc.object.BatchSqlUpdate;
-import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import javax.sql.DataSource;
@@ -43,7 +39,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Slf4j
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = SampleApplication.class)
 public class UserTest {
 
@@ -53,7 +48,7 @@ public class UserTest {
     @SpyBean
     private UserService userService;
 
-    @Before
+    @BeforeAll
     public void init() throws IOException {
         BDDMockito.willReturn("测试用户").given(userService).getUserName();
     }

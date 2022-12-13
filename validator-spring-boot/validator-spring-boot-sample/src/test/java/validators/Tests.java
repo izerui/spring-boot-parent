@@ -2,9 +2,9 @@ package validators;
 
 import com.yj2025.validator.Results;
 import com.yj2025.validator.ValidatorContext;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,7 +14,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 /**
  * Created by serv on 2016/12/1.
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = Tests.class)
 @SpringBootApplication
 public class Tests {
@@ -27,7 +26,7 @@ public class Tests {
 
     private User user;
 
-    @Before
+    @BeforeEach
     public void before() {
         user = new User();
         user.setName("红包");

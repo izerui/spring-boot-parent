@@ -6,8 +6,7 @@ import com.yj2025.sample.entity.TestUser;
 import com.yj2025.sample.repository.TestUserRepository;
 import com.yj2025.sample.service.TestUserService;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
@@ -27,7 +26,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Slf4j
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = SampleApplication.class)
 @Transactional
 @Rollback(value = false)

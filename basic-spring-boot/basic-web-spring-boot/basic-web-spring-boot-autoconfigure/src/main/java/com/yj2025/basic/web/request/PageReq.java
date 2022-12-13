@@ -3,8 +3,8 @@ package com.yj2025.basic.web.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.yj2025.basic.web.support.AuthAware;
-import io.swagger.annotations.ApiModelProperty;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.vavr.control.Option;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
@@ -52,9 +52,9 @@ public abstract class PageReq implements AuthAware {
     protected abstract Sort withDefaultSort();
 
 
-    @ApiParam(hidden = true)
+    @Parameter(hidden = true)
     @JsonIgnore
-    @ApiModelProperty(hidden = true)
+    @Schema(hidden = true)
     public final PageRequest getPageRequest() {
         Sort sort = withDefaultSort();
         if (StringUtils.isNotBlank(orderBy)) {

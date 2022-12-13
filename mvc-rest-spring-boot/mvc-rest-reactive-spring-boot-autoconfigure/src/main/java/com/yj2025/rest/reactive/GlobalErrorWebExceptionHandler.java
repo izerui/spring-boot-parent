@@ -1,6 +1,6 @@
 package com.yj2025.rest.reactive;
 
-import org.springframework.boot.autoconfigure.web.ResourceProperties;
+import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.autoconfigure.web.reactive.error.AbstractErrorWebExceptionHandler;
 import org.springframework.boot.web.reactive.error.ErrorAttributes;
 import org.springframework.context.ApplicationContext;
@@ -17,8 +17,8 @@ import static org.springframework.boot.web.error.ErrorAttributeOptions.of;
 
 public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHandler implements Constants {
 
-    public GlobalErrorWebExceptionHandler(ErrorAttributes errorAttributes, ResourceProperties resourceProperties, ApplicationContext applicationContext) {
-        super(errorAttributes, resourceProperties, applicationContext);
+    public GlobalErrorWebExceptionHandler(ErrorAttributes errorAttributes, WebProperties.Resources resources, ApplicationContext applicationContext) {
+        super(errorAttributes, resources, applicationContext);
     }
 
     @Override

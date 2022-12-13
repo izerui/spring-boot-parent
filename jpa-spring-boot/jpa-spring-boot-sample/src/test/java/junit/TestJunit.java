@@ -10,15 +10,13 @@ import com.yj2025.jpa.impl.Conditions;
 import com.yj2025.jpa.repository.AbcdRepository;
 import com.yj2025.jpa.repository.UserRepository;
 import org.assertj.core.util.Lists;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.jdbc.object.BatchSqlUpdate;
 import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
@@ -32,7 +30,6 @@ import java.util.stream.IntStream;
 
 @Transactional
 @Rollback(value = false)
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
 public class TestJunit {
 

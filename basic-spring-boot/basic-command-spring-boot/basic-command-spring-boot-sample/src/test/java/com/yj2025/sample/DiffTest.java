@@ -2,11 +2,10 @@ package com.yj2025.sample;
 
 import com.github.dadiyang.equator.FieldInfo;
 import com.yj2025.basic.support.Context;
-import io.swagger.models.auth.In;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 

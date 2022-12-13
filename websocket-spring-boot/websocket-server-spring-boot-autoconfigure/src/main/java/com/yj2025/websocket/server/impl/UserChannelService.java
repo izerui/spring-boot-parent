@@ -219,7 +219,7 @@ public class UserChannelService {
 
         Set<String> keys = redisTemplate.execute( (RedisCallback<Set<String>>) connection -> {
             Set<byte[]> tmpKeys = new HashSet<>();
-            Cursor<byte[]> cursor = connection.scan(new ScanOptions.ScanOptionsBuilder().match(matchKey).count(Integer.MAX_VALUE).build());
+            Cursor<byte[]> cursor = connection.scan(ScanOptions.scanOptions().match(matchKey).count(Integer.MAX_VALUE).build());
             while (cursor.hasNext()) {
                 tmpKeys.add(cursor.next());
             }

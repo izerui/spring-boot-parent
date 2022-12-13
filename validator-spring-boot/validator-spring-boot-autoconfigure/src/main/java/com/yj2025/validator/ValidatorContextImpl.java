@@ -1,5 +1,6 @@
 package com.yj2025.validator;
 
+import com.google.common.collect.Lists;
 import com.yj2025.validator.parser.Field;
 import com.yj2025.validator.parser.Form;
 import com.yj2025.validator.parser.ValidatorExec;
@@ -20,7 +21,7 @@ import java.util.stream.Collectors;
  */
 public class ValidatorContextImpl implements ValidatorContext {
 
-    private final static List<Validator<?>> DEFAULT_VALIDATORS = List.of(
+    private final static List<Validator<?>> DEFAULT_VALIDATORS = Lists.newArrayList(
             new AfterNowValidator(),
             new BeforeNowValidator(),
             new BlankValidator(),
@@ -83,7 +84,7 @@ public class ValidatorContextImpl implements ValidatorContext {
 
         List<Result> resultList = new ArrayList<>();
 
-        List<Validator<?>> validators = List.of(customizeValidators);
+        List<Validator<?>> validators = Lists.newArrayList(customizeValidators);
         validators.addAll(DEFAULT_VALIDATORS);
 
         for (Field field : validationForm.getFields()) {

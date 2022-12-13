@@ -4,7 +4,7 @@ import com.yj2025.basic.support.CacheWrapperAware;
 import lombok.Builder;
 import lombok.Data;
 import lombok.ToString;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
