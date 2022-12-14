@@ -15,7 +15,7 @@
         <dependency>
             <groupId>com.yj2025</groupId>
             <artifactId>cloud-file-spring-boot-autoconfigure</artifactId>
-            <version>${project.project.parent.version}</version>
+            <version>${project.parent.version}</version>
         </dependency>
     </dependencies>
 
