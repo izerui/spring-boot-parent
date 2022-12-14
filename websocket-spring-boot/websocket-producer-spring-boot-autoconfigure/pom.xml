@@ -31,7 +31,7 @@
         <dependency>
             <groupId>com.yj2025</groupId>
             <artifactId>websocket-core</artifactId>
-            <version>${parent.version}</version>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 </project>
