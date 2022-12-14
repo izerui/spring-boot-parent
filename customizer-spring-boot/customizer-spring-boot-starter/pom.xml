@@ -16,7 +16,7 @@
         <dependency>
             <groupId>com.yj2025</groupId>
             <artifactId>customizer-spring-boot-autoconfigure</artifactId>
-            <version>${parent.version}</version>
+            <version>${project.parent.version}</version>
         </dependency>
     </dependencies>
 
