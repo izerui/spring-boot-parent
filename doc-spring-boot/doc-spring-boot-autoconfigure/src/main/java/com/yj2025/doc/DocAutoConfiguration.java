@@ -23,7 +23,7 @@ public class DocAutoConfiguration implements WebMvcConfigurer {
     private String applicationName;
 
     @Bean
-    public GroupedOpenApi userApi() {
+    public GroupedOpenApi groupedOpenApi() {
         String[] paths = {"/**"};
         return GroupedOpenApi.builder().group("default")
                 .pathsToMatch(paths)
