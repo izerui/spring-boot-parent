@@ -753,6 +753,13 @@ public final class Context {
     /**
      * json反序列化
      */
+    public static <T> T fromJson(String json, TypeReference<T> valueTypeRef) {
+        return tryWith(() -> OBJECT_MAPPER.readValue(json, valueTypeRef));
+    }
+
+    /**
+     * json反序列化
+     */
     public static <T> T fromJson(byte[] json, TypeReference<T> valueTypeRef) {
         return tryWith(() -> OBJECT_MAPPER.readValue(json, valueTypeRef));
     }
