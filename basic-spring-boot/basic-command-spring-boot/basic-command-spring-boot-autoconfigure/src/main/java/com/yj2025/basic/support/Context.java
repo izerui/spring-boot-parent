@@ -228,10 +228,58 @@ public final class Context {
      * @param corePoolSize    核心线程数
      * @param maximumPoolSize 最大线程数
      * @param timeout         每个线程超时时间
+     * @param error           超时触发
+     * @param runnables       runnable方法集合
+     */
+    public static void submitAsyncWaitError(int corePoolSize, int maximumPoolSize, Duration timeout, Runnable error, Runnable... runnables) {
+        submitAsyncWaitError(corePoolSize, maximumPoolSize, timeout, error, Arrays.asList(runnables));
+    }
+
+    /**
+     * 提交一批runnable方法到线程池,并等待所有执行完毕（注意，异步方法需要手动控制事务）
+     *
+     * @param corePoolSize    核心线程数
+     * @param maximumPoolSize 最大线程数
+     * @param timeout         每个线程超时时间
      * @param runnables       runnable方法集合
      */
     public static void submitAsyncWait(int corePoolSize, int maximumPoolSize, Duration timeout, Runnable... runnables) {
         submitAsyncWait(corePoolSize, maximumPoolSize, timeout, Arrays.asList(runnables));
+    }
+
+    /**
+     * 提交一批runnable方法到线程池,并等待所有执行完毕（注意，异步方法需要手动控制事务）
+     *
+     * @param corePoolSize    核心线程数
+     * @param maximumPoolSize 最大线程数
+     * @param timeout         每个线程超时时间
+     * @param error           超时触发
+     * @param runnables       runnable方法集合
+     */
+    public static void submitAsyncWaitError(int corePoolSize, int maximumPoolSize, Duration timeout, Runnable error, Collection<Runnable> runnables) {
+        ThreadPoolExecutor threadPoolExecutor = null;
+        try {
+            threadPoolExecutor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, 0, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(65536), new ThreadPoolExecutor.CallerRunsPolicy());
+            List<Future<?>> futures = new ArrayList<>();
+            for (Runnable runnable : runnables) {
+                Future<?> submit = threadPoolExecutor.submit(runnable);
+                futures.add(submit);
+            }
+            futures.forEach(future -> tryWith(() -> {
+                if (timeout.toSeconds() != 0L) {
+                    future.get(timeout.toSeconds(), TimeUnit.SECONDS);
+                } else {
+                    future.get();
+                }
+            }));
+        } catch (Exception e) {
+            CompletableFuture.runAsync(error);
+            throw new RuntimeException(e.getMessage(), e);
+        } finally {
+            if (threadPoolExecutor != null) {
+                threadPoolExecutor.shutdown();
+            }
+        }
     }
 
     /**
