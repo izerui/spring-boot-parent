@@ -39,6 +39,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 
+import javax.persistence.Column;
 import javax.sql.DataSource;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
@@ -594,12 +595,16 @@ public final class Context {
                     isToJson = annotation != null;
                 }
                 if (pd.getReadMethod() != null) {
-                    String underscoreName = CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, pd.getName());
+                    String dbFieldName = CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, pd.getName());
+                    Column columnDef = field.getAnnotation(Column.class);
+                    if (columnDef != null) {
+                        dbFieldName = columnDef.name();
+                    }
                     Object value = ReflectionUtils.invokeMethod(pd.getReadMethod(), data);
                     if (isToJson) {
-                        map.put(underscoreName, toJson(value));
+                        map.put(dbFieldName, toJson(value));
                     } else {
-                        map.put(underscoreName, value);
+                        map.put(dbFieldName, value);
                     }
 
                 }
@@ -801,9 +806,9 @@ public final class Context {
     /**
      * json反序列化
      * <code>
-     *     TypeReference<List<Auth>> typeReference = new TypeReference<>() {
-     *             };
-     *             List<Auth> list = Context.fromJson(value, typeReference);
+     * TypeReference<List<Auth>> typeReference = new TypeReference<>() {
+     * };
+     * List<Auth> list = Context.fromJson(value, typeReference);
      * </code>
      */
     public static <T> T fromJson(String json, TypeReference<T> valueTypeRef) {
@@ -813,9 +818,9 @@ public final class Context {
     /**
      * json反序列化
      * <code>
-     *     TypeReference<List<Auth>> typeReference = new TypeReference<>() {
-     *             };
-     *             List<Auth> list = Context.fromJson(value, typeReference);
+     * TypeReference<List<Auth>> typeReference = new TypeReference<>() {
+     * };
+     * List<Auth> list = Context.fromJson(value, typeReference);
      * </code>
      */
     public static <T> T fromJson(byte[] json, TypeReference<T> valueTypeRef) {
