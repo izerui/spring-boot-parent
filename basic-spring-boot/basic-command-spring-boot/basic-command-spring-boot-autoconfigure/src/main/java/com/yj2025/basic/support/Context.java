@@ -21,6 +21,7 @@ import io.vavr.CheckedRunnable;
 import io.vavr.control.Try;
 import org.apache.calcite.sql.SqlUpdate;
 import org.apache.calcite.sql.parser.SqlParser;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Type;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.ObjectProvider;
@@ -594,7 +595,7 @@ public final class Context {
                 if (field != null) {
                     // 更改字段名
                     Column columnDef = field.getAnnotation(Column.class);
-                    if (columnDef != null) {
+                    if (columnDef != null && StringUtils.isNotBlank(columnDef.name())) {
                         dbFieldName = columnDef.name();
                     }
                     // 是否是json字段类型
