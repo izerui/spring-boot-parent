@@ -800,6 +800,11 @@ public final class Context {
 
     /**
      * json反序列化
+     * <code>
+     *     TypeReference<List<Auth>> typeReference = new TypeReference<>() {
+     *             };
+     *             List<Auth> list = Context.fromJson(value, typeReference);
+     * </code>
      */
     public static <T> T fromJson(String json, TypeReference<T> valueTypeRef) {
         return tryWith(() -> OBJECT_MAPPER.readValue(json, valueTypeRef));
@@ -807,6 +812,11 @@ public final class Context {
 
     /**
      * json反序列化
+     * <code>
+     *     TypeReference<List<Auth>> typeReference = new TypeReference<>() {
+     *             };
+     *             List<Auth> list = Context.fromJson(value, typeReference);
+     * </code>
      */
     public static <T> T fromJson(byte[] json, TypeReference<T> valueTypeRef) {
         return tryWith(() -> OBJECT_MAPPER.readValue(json, valueTypeRef));
