@@ -588,18 +588,20 @@ public final class Context {
             Map<String, Object> map = new HashMap<>();
             PropertyDescriptor[] propertyDescriptors = BeanUtils.getPropertyDescriptors(data.getClass());
             for (PropertyDescriptor pd : propertyDescriptors) {
+                String dbFieldName = CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, pd.getName());
                 boolean isToJson = false;
                 Field field = ReflectionUtils.findField(data.getClass(), pd.getName());
                 if (field != null) {
-                    Type annotation = field.getAnnotation(Type.class);
-                    isToJson = annotation != null;
-                }
-                if (pd.getReadMethod() != null) {
-                    String dbFieldName = CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, pd.getName());
+                    // 更改字段名
                     Column columnDef = field.getAnnotation(Column.class);
                     if (columnDef != null) {
                         dbFieldName = columnDef.name();
                     }
+                    // 是否是json字段类型
+                    Type annotation = field.getAnnotation(Type.class);
+                    isToJson = annotation != null;
+                }
+                if (pd.getReadMethod() != null) {
                     Object value = ReflectionUtils.invokeMethod(pd.getReadMethod(), data);
                     if (isToJson) {
                         map.put(dbFieldName, toJson(value));
