@@ -10,7 +10,12 @@ public abstract class AbstractMessageSender implements IMessageRouter {
         this.rabbitTemplate = rabbitTemplate;
     }
 
+    @Deprecated
     public final void sendMessage(Object msg) {
         rabbitTemplate.convertAndSend(getExchange(), getRoutingKey(), msg);
+    }
+
+    public final void sendMessage(SourceMessageVO messageVO) {
+        rabbitTemplate.convertAndSend(getExchange(), getRoutingKey(), messageVO);
     }
 }
