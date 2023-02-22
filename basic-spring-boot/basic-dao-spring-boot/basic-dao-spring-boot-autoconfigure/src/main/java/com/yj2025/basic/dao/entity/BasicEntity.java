@@ -41,8 +41,8 @@ public abstract class BasicEntity extends BaseEntity{
     /**
      * 删除人
      */
-    @Column(name = "deleter", columnDefinition = "VARCHAR(64) COMMENT '删除人'")
-    protected String deleter;
+    @Column(name = "deletor", columnDefinition = "VARCHAR(64) COMMENT '删除人'")
+    protected String deletor;
 
     /**
      * 修改更新人、更新时间
@@ -55,11 +55,11 @@ public abstract class BasicEntity extends BaseEntity{
 
     /**
      * 修改删除人、删除时间
-     * @param deleter
+     * @param deletor
      */
-    public void deleteBy(String deleter) {
+    public void deleteBy(String deletor) {
         this.deleted = true;
-        this.deleter = deleter;
+        this.deletor = deletor;
         this.deleteTime = new Date();
     }
 
