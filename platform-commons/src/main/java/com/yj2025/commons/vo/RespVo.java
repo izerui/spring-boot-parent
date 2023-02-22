@@ -50,21 +50,21 @@ public class RespVo<T> {
     /**
      * 成功
      */
-    public static RespVo success() {
+    public static <T> RespVo<T> success() {
         return new RespVo<>(true, null, null, null);
     }
 
     /**
      * 成功
      */
-    public static <T> RespVo success(T data) {
+    public static <T> RespVo<T> success(T data) {
         return new RespVo<>(true, null, null, data);
     }
 
     /**
      * 失败
      */
-    public static RespVo error(String errCode, String errMsg) {
+    public static <T> RespVo<T> error(String errCode, String errMsg) {
         return new RespVo<>(false, errCode, errMsg, null);
     }
 
