@@ -10,4 +10,6 @@ public interface QueryCondition extends AuthAware {
     default Conditions intEntDeletedConditions() {
         return Conditions.where("entCode").is(this.getEntCode()).and("deleted").is(false);
     }
+
+    Conditions getConditions();
 }
