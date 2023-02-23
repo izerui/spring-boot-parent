@@ -9,7 +9,7 @@ import org.springframework.amqp.core.Message;
 import java.nio.charset.StandardCharsets;
 import java.util.function.Consumer;
 
-public class AbstractMessageTaskListener {
+public abstract class AbstractMessageTaskListener {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractMessageTaskListener.class);
 

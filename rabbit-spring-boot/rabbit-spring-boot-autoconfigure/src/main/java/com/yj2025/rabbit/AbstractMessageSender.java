@@ -10,7 +10,11 @@ public abstract class AbstractMessageSender implements IMessageRouter {
         this.rabbitTemplate = rabbitTemplate;
     }
 
-    @Deprecated
+    /**
+     * 业务中无特殊情况不允许自定义消息格式
+     *
+     * @param msg
+     */
     public final void sendMessage(Object msg) {
         rabbitTemplate.convertAndSend(getExchange(), getRoutingKey(), msg);
     }
