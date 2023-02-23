@@ -17,12 +17,12 @@
         <dependency>
             <groupId>org.apache.curator</groupId>
             <artifactId>curator-recipes</artifactId>
-            <version>5.4.0</version>
+            <version>${curator.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.curator</groupId>
             <artifactId>curator-framework</artifactId>
-            <version>5.4.0</version>
+            <version>${curator.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

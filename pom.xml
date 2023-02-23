@@ -67,6 +67,7 @@
         <vavr.version>0.10.4</vavr.version>
         <equator.version>1.0.4</equator.version>
         <lombok.version>1.18.24</lombok.version>
+        <curator.version>5.4.0</curator.version>
     </properties>
 
 
@@ -78,6 +79,16 @@
                 <version>${spring-cloud.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.curator</groupId>
+                <artifactId>curator-recipes</artifactId>
+                <version>${curator.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.curator</groupId>
+                <artifactId>curator-framework</artifactId>
+                <version>${curator.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.google.guava</groupId>
