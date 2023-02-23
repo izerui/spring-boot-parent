@@ -8,7 +8,7 @@ import javax.persistence.Embeddable;
 @Data
 @Embeddable
 public class AuditValueObject {
-    @Column(name = "auditor", columnDefinition = "VARCHAR(64) COMMENT '审核/驳回说明'")
+    @Column(name = "audit_remark", columnDefinition = "VARCHAR(64) COMMENT '审核/驳回说明'")
     private String auditRemark;
     @Column(name = "auditor", columnDefinition = "VARCHAR(64) COMMENT '审核/驳回人'")
     private String auditor;
