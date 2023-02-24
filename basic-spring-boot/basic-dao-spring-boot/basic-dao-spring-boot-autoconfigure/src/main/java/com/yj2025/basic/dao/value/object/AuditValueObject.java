@@ -4,6 +4,7 @@ import lombok.Data;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import java.util.Date;
 
 @Data
 @Embeddable
@@ -13,5 +14,5 @@ public class AuditValueObject {
     @Column(name = "auditor", columnDefinition = "VARCHAR(64) COMMENT '审核/驳回人'")
     private String auditor;
     @Column(name = "audit_time", columnDefinition = "DATETIME(3) COMMENT '审核/驳回时间'")
-    private String auditTime;
+    private Date auditTime;
 }
