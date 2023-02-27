@@ -15,4 +15,20 @@ public class AuditValueObject {
     private String auditor;
     @Column(name = "audit_time", columnDefinition = "DATETIME(3) COMMENT '审核/驳回时间'")
     private Date auditTime;
+    @Column(name = "process_instance_id", columnDefinition = "VARCHAR(64) COMMENT '工作流程id'")
+    private String processInstanceId;
+
+    public AuditValueObject(String auditRemark, String auditor, Date auditTime) {
+        this.auditRemark = auditRemark;
+        this.auditor = auditor;
+        this.auditTime = auditTime;
+    }
+
+    public AuditValueObject(String processInstanceId) {
+        this.processInstanceId = processInstanceId;
+    }
+
+    public AuditValueObject() {
+
+    }
 }

@@ -14,6 +14,8 @@ public class AuditVO {
     private String auditName;
     @Schema(description = "审核/驳回时间")
     private String auditTime;
+    @Schema(description = "工作流程id")
+    private String processInstanceId;
 
     public AuditVO setAuditName(String auditName) {
         this.auditName = auditName;
