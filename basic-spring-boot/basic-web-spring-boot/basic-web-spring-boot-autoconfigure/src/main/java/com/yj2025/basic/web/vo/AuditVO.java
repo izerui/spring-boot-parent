@@ -8,8 +8,15 @@ import lombok.Data;
 public class AuditVO {
     @Schema(description = "审核/驳回说明")
     private String auditRemark;
-    @Schema(description = "审核/驳回人")
+    @Schema(description = "审核/驳回人ID")
     private String auditor;
+    @Schema(description = "审核/驳回人名称")
+    private String auditName;
     @Schema(description = "审核/驳回时间")
     private String auditTime;
+
+    public AuditVO setAuditName(String auditName) {
+        this.auditName = auditName;
+        return this;
+    }
 }
