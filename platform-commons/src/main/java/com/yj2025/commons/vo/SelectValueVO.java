@@ -1,4 +1,4 @@
-package com.yj2025.basic.web.vo;
+package com.yj2025.commons.vo;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
