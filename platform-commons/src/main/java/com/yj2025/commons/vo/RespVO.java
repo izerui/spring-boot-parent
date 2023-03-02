@@ -16,7 +16,7 @@ package com.yj2025.commons.vo;
  * @param <T>
  * @author liuyuhua
  */
-public class RespVo<T> {
+public class RespVO<T> {
     /**
      * 请求处理是否成功
      */
@@ -37,10 +37,10 @@ public class RespVo<T> {
      */
     private T data;
 
-    protected RespVo() {
+    protected RespVO() {
     }
 
-    protected RespVo(boolean success, String errCode, String errMsg, T data) {
+    protected RespVO(boolean success, String errCode, String errMsg, T data) {
         this.success = success;
         this.errCode = errCode;
         this.errMsg = errMsg;
@@ -50,22 +50,22 @@ public class RespVo<T> {
     /**
      * 成功
      */
-    public static <T> RespVo<T> success() {
-        return new RespVo<>(true, null, null, null);
+    public static <T> RespVO<T> success() {
+        return new RespVO<>(true, null, null, null);
     }
 
     /**
      * 成功
      */
-    public static <T> RespVo<T> success(T data) {
-        return new RespVo<>(true, null, null, data);
+    public static <T> RespVO<T> success(T data) {
+        return new RespVO<>(true, null, null, data);
     }
 
     /**
      * 失败
      */
-    public static <T> RespVo<T> error(String errCode, String errMsg) {
-        return new RespVo<>(false, errCode, errMsg, null);
+    public static <T> RespVO<T> error(String errCode, String errMsg) {
+        return new RespVO<>(false, errCode, errMsg, null);
     }
 
     public boolean isSuccess() {

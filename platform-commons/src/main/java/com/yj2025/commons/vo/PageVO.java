@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
  * Created by serv on 2017/6/27.
  */
 @Data
-public class PageVo<T> {
+public class PageVO<T> {
 
     private int totalPages;
 
@@ -27,7 +27,7 @@ public class PageVo<T> {
 
     private boolean hasNext;
 
-    public PageVo(List<T> content, long totalElements, int totalPages, int number, int size) {
+    public PageVO(List<T> content, long totalElements, int totalPages, int number, int size) {
         this.content = content;
         this.totalElements = totalElements;
         this.totalPages = totalPages;
@@ -36,7 +36,7 @@ public class PageVo<T> {
         this.hasNext = this.number + 1 < this.getTotalPages();
     }
 
-    public PageVo(List<T> content, Pageable pageable, long total) {
+    public PageVO(List<T> content, Pageable pageable, long total) {
         this.content = content;
         this.size = pageable.getPageSize();
         this.totalElements = total;
@@ -45,7 +45,7 @@ public class PageVo<T> {
         this.hasNext = this.number + 1 < this.getTotalPages();
     }
 
-    public PageVo() {
+    public PageVO() {
     }
 
     /**
@@ -55,14 +55,14 @@ public class PageVo<T> {
      * @param <S>
      * @return
      */
-    public static <S> PageVo<S> map(Object page) {
+    public static <S> PageVO<S> map(Object page) {
         try {
             Class<?> pageImplClass = Try.of(() -> Class.forName("org.springframework.data.domain.PageImpl")).getOrNull();
             Class<?> pageClass = Try.of(() -> Class.forName("com.baomidou.mybatisplus.extension.plugins.pagination.Page")).getOrNull();
             if (pageImplClass != null && pageImplClass.isAssignableFrom(page.getClass())) {
-                return PageSpringDataVo.map(page);
+                return PageSpringDataVO.map(page);
             } else if (pageClass != null && pageClass.isAssignableFrom(page.getClass())) {
-                return PageBaomidouVo.map(page);
+                return PageBaomidouVO.map(page);
             }
             throw new RuntimeException("不支持");
         } catch (Exception ex) {
@@ -81,14 +81,14 @@ public class PageVo<T> {
      * @param <T>
      * @return
      */
-    public static <S, T> PageVo<T> map(Object page, Function<S, T> mapper, Class<S> clazz) {
+    public static <S, T> PageVO<T> map(Object page, Function<S, T> mapper, Class<S> clazz) {
         try {
             Class<?> pageImplClass = Try.of(() -> Class.forName("org.springframework.data.domain.PageImpl")).getOrNull();
             Class<?> pageClass = Try.of(() -> Class.forName("com.baomidou.mybatisplus.extension.plugins.pagination.Page")).getOrNull();
             if (pageImplClass != null && pageImplClass.isAssignableFrom(page.getClass())) {
-                return PageSpringDataVo.map(page, mapper, clazz);
+                return PageSpringDataVO.map(page, mapper, clazz);
             } else if (pageClass != null && pageClass.isAssignableFrom(page.getClass())) {
-                return PageBaomidouVo.map(page, mapper, clazz);
+                return PageBaomidouVO.map(page, mapper, clazz);
             }
             throw new RuntimeException("未找到jpa或者mybatis-plus的分页类");
         } catch (Exception ex) {
@@ -97,8 +97,8 @@ public class PageVo<T> {
         }
     }
 
-    public static <S, T> PageVo<T> map(Page<S> page, Function<S, T> mapper) {
-        PageVo<T> pageVo = new PageVo<T>();
+    public static <S, T> PageVO<T> map(Page<S> page, Function<S, T> mapper) {
+        PageVO<T> pageVo = new PageVO<T>();
         pageVo.setNumber(page.getNumber());
         pageVo.setSize(page.getSize());
         pageVo.setTotalElements(page.getTotalElements());
@@ -108,8 +108,8 @@ public class PageVo<T> {
         return pageVo;
     }
 
-    public static <S, T> PageVo<T> map(Page<S> page, List<T> list) {
-        PageVo<T> pageVo = new PageVo<T>();
+    public static <S, T> PageVO<T> map(Page<S> page, List<T> list) {
+        PageVO<T> pageVo = new PageVO<T>();
         pageVo.setNumber(page.getNumber());
         pageVo.setSize(page.getSize());
         pageVo.setTotalElements(page.getTotalElements());

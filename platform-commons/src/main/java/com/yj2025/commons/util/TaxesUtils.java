@@ -1,7 +1,7 @@
 package com.yj2025.commons.util;
 
 import com.yj2025.commons.em.MoneyEnum;
-import com.yj2025.commons.vo.TaxRateVo;
+import com.yj2025.commons.vo.TaxRateVO;
 
 import java.math.BigDecimal;
 
@@ -23,11 +23,11 @@ public class TaxesUtils {
      * @param taxRate       税率
      * @return
      */
-    public static TaxRateVo calcTaxes(MoneyEnum moneyEnum, BigDecimal originalValue, Boolean taxIncluded, BigDecimal taxRate) {
+    public static TaxRateVO calcTaxes(MoneyEnum moneyEnum, BigDecimal originalValue, Boolean taxIncluded, BigDecimal taxRate) {
         taxRate = MoneyEnum.TAX_RATE.format(BigDecimalUtils.null2Zero(taxRate));
         originalValue = moneyEnum.format(BigDecimalUtils.null2Zero(originalValue));
         int scale = moneyEnum.getDecimal();
-        TaxRateVo vo = new TaxRateVo(originalValue, taxIncluded, taxRate, moneyEnum);
+        TaxRateVO vo = new TaxRateVO(originalValue, taxIncluded, taxRate, moneyEnum);
         if (BigDecimalUtils.eqZero(originalValue) || BigDecimalUtils.eqZero(taxRate) || taxIncluded == null) {
             return vo;
         }
@@ -52,7 +52,7 @@ public class TaxesUtils {
     }
 
     public static void main(String[] args) {
-        TaxRateVo taxRateVo = TaxesUtils.calcTaxes(MoneyEnum.AMOUNT, new BigDecimal(100), true, new BigDecimal(6.5));
+        TaxRateVO taxRateVo = TaxesUtils.calcTaxes(MoneyEnum.AMOUNT, new BigDecimal(100), true, new BigDecimal(6.5));
         System.out.println(taxRateVo);
     }
 }

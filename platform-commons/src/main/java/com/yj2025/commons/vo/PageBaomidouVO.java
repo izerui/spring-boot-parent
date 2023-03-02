@@ -8,7 +8,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Data
- class PageBaomidouVo<T> {
+class PageBaomidouVO<T> {
 
     private int totalPages;
 
@@ -27,9 +27,9 @@ import java.util.stream.Collectors;
      *
      * @return
      */
-    public static <T> PageVo<T> map(Object obj) {
+    public static <T> PageVO<T> map(Object obj) {
         Page page = (Page) obj;
-        PageVo<T> pageVo = new PageVo<T>();
+        PageVO<T> pageVo = new PageVO<T>();
         pageVo.setNumber((int) page.getCurrent());
         pageVo.setSize((int) page.getSize());
         pageVo.setTotalElements(page.getTotal());
@@ -44,9 +44,9 @@ import java.util.stream.Collectors;
      *
      * @return
      */
-    public static <S, T> PageVo<T> map(Object obj, Function<S, T> mapper, Class<S> clazz) {
+    public static <S, T> PageVO<T> map(Object obj, Function<S, T> mapper, Class<S> clazz) {
         Page<S> page = (Page<S>) obj;
-        PageVo<T> pageVo = new PageVo<T>();
+        PageVO<T> pageVo = new PageVO<T>();
         pageVo.setNumber((int) page.getCurrent());
         pageVo.setSize((int) page.getSize());
         pageVo.setTotalElements(page.getTotal());

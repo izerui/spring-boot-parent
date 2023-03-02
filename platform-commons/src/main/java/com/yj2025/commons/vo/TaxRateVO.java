@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 
 @Data
 @NoArgsConstructor
-public class TaxRateVo implements Serializable {
+public class TaxRateVO implements Serializable {
 
     /**
      * 原始数据
@@ -45,7 +45,7 @@ public class TaxRateVo implements Serializable {
      */
     private BigDecimal noneTaxes;
 
-    public TaxRateVo(BigDecimal originalValue, boolean taxIncluded, BigDecimal taxRate, MoneyEnum moneyEnum) {
+    public TaxRateVO(BigDecimal originalValue, boolean taxIncluded, BigDecimal taxRate, MoneyEnum moneyEnum) {
         this.original = originalValue;
         this.hasTaxes = originalValue;
         this.noneTaxes = originalValue;
