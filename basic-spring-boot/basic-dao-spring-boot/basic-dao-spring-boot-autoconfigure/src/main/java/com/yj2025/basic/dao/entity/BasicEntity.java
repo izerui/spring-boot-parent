@@ -8,7 +8,7 @@ import java.util.UUID;
 
 @Data
 @MappedSuperclass
-public abstract class BasicEntity extends BaseEntity{
+public abstract class BasicEntity extends BaseEntity {
 
     /**
      * 业务主键
@@ -29,14 +29,20 @@ public abstract class BasicEntity extends BaseEntity{
     /**
      * 创建人
      */
-    @Column(name = "creator", columnDefinition = "VARCHAR(64) COMMENT '创建人'")
+    @Column(name = "creator", columnDefinition = "VARCHAR(64) COMMENT '创建人CODE'")
     protected String creator;
+
+    @Column(name = "create_ame", columnDefinition = "VARCHAR(64) COMMENT '创建人名称'")
+    protected String createName;
 
     /**
      * 更新人
      */
     @Column(name = "updater", columnDefinition = "VARCHAR(64) COMMENT '更新人'")
     protected String updater;
+
+    @Column(name = "update_ame", columnDefinition = "VARCHAR(64) COMMENT '更新人名称'")
+    protected String updateName;
 
     /**
      * 删除人
@@ -46,6 +52,7 @@ public abstract class BasicEntity extends BaseEntity{
 
     /**
      * 修改更新人、更新时间
+     *
      * @param updater
      */
     public void updateBy(String updater) {
@@ -53,8 +60,15 @@ public abstract class BasicEntity extends BaseEntity{
         this.updateTime = new Date();
     }
 
+    public void updateBy(String updater, String updateName) {
+        this.updater = updater;
+
+        this.updateTime = new Date();
+    }
+
     /**
      * 修改删除人、删除时间
+     *
      * @param deletor
      */
     public void deleteBy(String deletor) {

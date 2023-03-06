@@ -11,8 +11,10 @@ import java.util.Date;
 public class AuditValueObject {
     @Column(name = "audit_remark", columnDefinition = "VARCHAR(64) COMMENT '审核/驳回说明'")
     private String auditRemark;
-    @Column(name = "auditor", columnDefinition = "VARCHAR(64) COMMENT '审核/驳回人'")
+    @Column(name = "auditor", columnDefinition = "VARCHAR(64) COMMENT '审核/驳回人CODE'")
     private String auditor;
+    @Column(name = "audit_name", columnDefinition = "VARCHAR(64) COMMENT '审核/驳回人名称'")
+    private String auditName;
     @Column(name = "audit_time", columnDefinition = "DATETIME(3) COMMENT '审核/驳回时间'")
     private Date auditTime;
     @Column(name = "process_instance_id", columnDefinition = "VARCHAR(64) COMMENT '工作流程id'")

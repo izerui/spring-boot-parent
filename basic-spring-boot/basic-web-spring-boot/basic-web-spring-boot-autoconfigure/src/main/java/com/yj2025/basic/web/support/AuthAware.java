@@ -49,5 +49,8 @@ public interface AuthAware {
     default String getAccountName() {
         return getHeader("accountName");
     }
+    default String getPostCode() {
+        return getHeader("postCode");
+    }
 
 }
