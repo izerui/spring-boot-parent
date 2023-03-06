@@ -32,7 +32,7 @@ public abstract class BasicEntity extends BaseEntity {
     @Column(name = "creator", columnDefinition = "VARCHAR(64) COMMENT '创建人CODE'")
     protected String creator;
 
-    @Column(name = "create_ame", columnDefinition = "VARCHAR(64) COMMENT '创建人名称'")
+    @Column(name = "create_name", columnDefinition = "VARCHAR(64) COMMENT '创建人名称'")
     protected String createName;
 
     /**
@@ -41,7 +41,7 @@ public abstract class BasicEntity extends BaseEntity {
     @Column(name = "updater", columnDefinition = "VARCHAR(64) COMMENT '更新人'")
     protected String updater;
 
-    @Column(name = "update_ame", columnDefinition = "VARCHAR(64) COMMENT '更新人名称'")
+    @Column(name = "update_name", columnDefinition = "VARCHAR(64) COMMENT '更新人名称'")
     protected String updateName;
 
     /**
