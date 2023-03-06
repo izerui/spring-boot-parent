@@ -5,6 +5,7 @@ public enum ModelApplication {
     ATTENDANCE("考勤系统"),
     CLOUD_FINANCE("财务系统"),
     PROOFING("开发打样"),
+    THIRD_API("公共接口"),
     ;
     private String remark;
 
