@@ -8,7 +8,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Data
-public class PageBaomidouVO<T> {
+class PageBaomidouVO<T> {
 
     private int totalPages;
 

@@ -9,7 +9,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Data
-public class PageSpringDataVO<T> {
+class PageSpringDataVO<T> {
 
     private int totalPages;
 
