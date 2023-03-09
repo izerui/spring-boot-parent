@@ -26,6 +26,11 @@ public class RabbitContextImpl implements WebSocketContext, DisposableBean {
 
     @Override
     public void sendMessage(WebMsg webMsg) {
+        rabbitTemplate.convertAndSend(rabbitWebSocketProperties.getRabbit().getExchange(), rabbitWebSocketProperties.getRabbit().getRoutingKey(), webMsg);
+    }
+
+    @Override
+    public void sendMessageAsync(WebMsg webMsg) {
         POOL_EXECUTOR.execute(() -> {
             rabbitTemplate.convertAndSend(rabbitWebSocketProperties.getRabbit().getExchange(), rabbitWebSocketProperties.getRabbit().getRoutingKey(), webMsg);
         });
