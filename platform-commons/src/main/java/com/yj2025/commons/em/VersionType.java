@@ -6,7 +6,7 @@ import java.util.List;
 
 public enum VersionType {
     MANUFACTURE("智造版", Lists.newArrayList("new-dev", "dev", "test", "uat", "yunji")),
-    TRADE("星链版", Lists.newArrayList("ec-dev", "mlf-test", "ec-yunji")),
+    TRADE("星链版", Lists.newArrayList("ec-dev", "ec-test", "ec-yunji")),
     MACHINE_WORK("数控版", Lists.newArrayList("mlf-dev", "mlf-test", "mlf-yunji")),
     CONNECTION("联通版", List.of()),
     ;
