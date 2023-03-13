@@ -26,6 +26,20 @@ public class AuditValueObject {
         this.auditTime = auditTime;
     }
 
+    public AuditValueObject(String auditRemark, String auditor, String auditName) {
+        this.auditRemark = auditRemark;
+        this.auditor = auditor;
+        this.auditName = auditName;
+        this.auditTime = new Date();
+    }
+
+    public AuditValueObject(String auditRemark, String auditor, String auditName, Date auditTime) {
+        this.auditRemark = auditRemark;
+        this.auditor = auditor;
+        this.auditName = auditName;
+        this.auditTime = auditTime;
+    }
+
     public AuditValueObject(String processInstanceId) {
         this.processInstanceId = processInstanceId;
     }

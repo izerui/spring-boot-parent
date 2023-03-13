@@ -15,4 +15,20 @@ public class SubmitValueObject {
     private String submitName;
     @Column(name = "submit_time", columnDefinition = "DATETIME(3) COMMENT '提交时间'")
     protected Date submitTime;
+
+    public SubmitValueObject(String submitter, String submitName, Date submitTime) {
+        this.submitter = submitter;
+        this.submitName = submitName;
+        this.submitTime = submitTime;
+    }
+
+
+    public SubmitValueObject(String submitter, String submitName) {
+        this.submitter = submitter;
+        this.submitName = submitName;
+        this.submitTime = new Date();
+    }
+
+    public SubmitValueObject() {
+    }
 }

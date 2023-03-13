@@ -62,7 +62,7 @@ public abstract class BasicEntity extends BaseEntity {
 
     public void updateBy(String updater, String updateName) {
         this.updater = updater;
-
+        this.updateName = updateName;
         this.updateTime = new Date();
     }
 
