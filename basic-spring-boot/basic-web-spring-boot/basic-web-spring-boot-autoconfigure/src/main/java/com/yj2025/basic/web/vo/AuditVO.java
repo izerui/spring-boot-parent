@@ -26,6 +26,10 @@ public class AuditVO {
         return this;
     }
 
+    public AuditVO(String processInstanceId) {
+        this.processInstanceId = processInstanceId;
+    }
+
     public AuditVO(String auditRemark, String auditor, String auditName) {
         this.auditRemark = auditRemark;
         this.auditor = auditor;
@@ -33,7 +37,11 @@ public class AuditVO {
         this.auditTime = new Date();
     }
 
-    public AuditVO(String processInstanceId) {
+    public AuditVO(String auditRemark, String auditor, String auditName, String processInstanceId) {
+        this.auditRemark = auditRemark;
+        this.auditor = auditor;
+        this.auditName = auditName;
+        this.auditTime = new Date();
         this.processInstanceId = processInstanceId;
     }
 }
