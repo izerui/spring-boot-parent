@@ -26,6 +26,9 @@ public class AuditVO {
         return this;
     }
 
+    public AuditVO() {
+    }
+
     public AuditVO(String processInstanceId) {
         this.processInstanceId = processInstanceId;
     }
