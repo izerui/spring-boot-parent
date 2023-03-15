@@ -16,7 +16,7 @@ public class AuditVO {
     @Schema(description = "审核/驳回人名称")
     private String auditName;
     @Schema(description = "审核/驳回时间")
-    @JsonFormat(pattern = "yyyy-MM-dd Hh:mm:ss", timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date auditTime;
     @Schema(description = "工作流程id")
     private String processInstanceId;
