@@ -1,6 +1,5 @@
 package com.yj2025.commons.em;
 
-import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
@@ -19,7 +18,7 @@ public enum AgreementType {
         return description;
     }
 
-    public static Optional<AgreementType> of(String description) {
-        return Stream.of(AgreementType.values()).filter(agreementType -> agreementType.getDescription().equals(description)).findFirst();
+    public static AgreementType of(String description) {
+        return Stream.of(AgreementType.values()).filter(agreementType -> agreementType.getDescription().equals(description)).findFirst().orElseThrow(IllegalArgumentException::new);
     }
 }
