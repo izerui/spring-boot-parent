@@ -162,6 +162,24 @@ public final class UnitEnum {
         throw new RuntimeException("计量单位【" + unitName + "】不在系统可用列表");
     }
 
+    public static void initUnits() {
+        try {
+            File file = new File("/data/public/units");
+            if (file.exists()) {
+                List<String> lines = FileUtils.readLines(file, "UTF-8");
+                for (String line : lines) {
+                    String[] split = line.split(",");
+                    if (split == null || split.length != 4) {
+                        throw new RuntimeException(line + " is readed error!");
+                    }
+                    UnitEnum unitEnum = new UnitEnum(split[0], split[1], split[2], Integer.parseInt(split[3]));
+                    units.add(unitEnum);
+                }
+            }
+        } catch (Exception e) {
+            log.warn("/data/public/units " + e.getMessage());
+        }
+    }
 
     public final static List<UnitEnum> units = Lists.newArrayList();
 
