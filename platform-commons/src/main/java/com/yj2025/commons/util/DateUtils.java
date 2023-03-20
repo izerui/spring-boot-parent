@@ -21,6 +21,15 @@ public class DateUtils {
     public final static String DATE_FORMAT = "yyyy-MM-dd";
     public final static String TIME_FORMAT = "HH:mm:ss";
 
+
+    public static Date getStartTimeOfDay(String date) {
+        return new DateTime(parse(date, DATE_FORMAT)).withTimeAtStartOfDay().toDate();
+    }
+
+    public static Date getEndTimeOfDay(String date) {
+        return new DateTime(parse(date, DATE_FORMAT)).plusDays(1).withTimeAtStartOfDay().toDate();
+    }
+
     /**
      * 将日期按指定格式
      *
