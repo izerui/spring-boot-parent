@@ -35,6 +35,12 @@ public class PageVO<T> {
     }
 
     public PageVO() {
+        this.content = List.of();
+        this.totalElements = 0;
+        this.totalPages = 0;
+        this.number = 0;
+        this.size = 0;
+        this.hasNext = false;
     }
 
     public static <S, T> PageVO<T> map(Page<S> page, Function<S, T> mapper) {
