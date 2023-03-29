@@ -34,6 +34,20 @@ public class PageVO<T> {
         this.hasNext = this.number + 1 < this.getTotalPages();
     }
 
+    public PageVO(List<T> content, long totalElements, int number, int size) {
+        int modulo = (int) totalElements % size;
+        int totalPages = ((int) totalElements - modulo) / size;
+        if (modulo > 0) {
+            totalPages = totalPages + 1;
+        }
+        this.content = content;
+        this.totalElements = totalElements;
+        this.totalPages = totalPages;
+        this.number = number;
+        this.size = size;
+        this.hasNext = this.number + 1 < this.getTotalPages();
+    }
+
     public PageVO() {
         this.content = List.of();
         this.totalElements = 0;
