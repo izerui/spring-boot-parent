@@ -37,6 +37,13 @@ public class RespVO<T> {
      */
     private T data;
 
+    /**
+     * 当前做的唯一串，如单号...
+     */
+    private String unique;
+
+    private Exception exception;
+
     protected RespVO() {
     }
 
@@ -47,11 +54,34 @@ public class RespVO<T> {
         this.data = data;
     }
 
+    protected RespVO(boolean success, String errCode, String errMsg, T data, String unique) {
+        this.success = success;
+        this.errCode = errCode;
+        this.errMsg = errMsg;
+        this.data = data;
+        this.unique = unique;
+    }
+
+    protected RespVO(boolean success, String errCode, String errMsg, T data, Exception exception) {
+        this.success = success;
+        this.errCode = errCode;
+        this.errMsg = errMsg;
+        this.data = data;
+        this.exception = exception;
+    }
+
     /**
      * 成功
      */
     public static <T> RespVO<T> success() {
         return new RespVO<>(true, null, null, null);
+    }
+
+    /**
+     * 成功
+     */
+    public static RespVO success(String msg, String unique) {
+        return new RespVO<>(true, null, null, msg, unique);
     }
 
     /**
