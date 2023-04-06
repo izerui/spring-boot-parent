@@ -19,7 +19,6 @@ import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.http.server.ServletServerHttpResponse;
 import org.springframework.util.Base64Utils;
 import org.springframework.util.SerializationUtils;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -99,25 +98,6 @@ public class GlobResponseBodyAdviceAdapter implements ResponseBodyAdvice<Object>
             } else if (throwable.getClass().getName().equals("org.springframework.web.util.NestedServletException") && throwable.getCause() != null) {
                 throwable = throwable.getCause();
             }
-
-//            if (StringUtils.isNotEmpty(applicationName)
-//                    && applicationName.equalsIgnoreCase("bboss-web")) {
-//                ReflectionUtils.handleReflectionException((Exception) throwable);
-//                return null;
-//            }
-
-//            //自定义code异常
-//            if (throwable instanceof BusinessException) {
-//                //自定义异常status为200
-//                resp.put("status", 200);
-//                resp.put("errCode", ((BusinessException) throwable).getErrCode());
-//            } else if (throwable instanceof ExecutionException) {
-//                //自定义异常status为200
-//                resp.put("status", 200);
-//                resp.put("errCode", null);
-//            } else {
-//                resp.put("errCode", null);
-//            }
 
             String errMsg = throwable.getMessage();
             if (throwable instanceof HttpMessageNotWritableException) {
