@@ -270,7 +270,7 @@ public class BigDecimalUtils {
      * @return
      */
     public static final BigDecimal divide100(BigDecimal num) {
-        return divide(num, new BigDecimal("100"), 2);
+        return divide(num, new BigDecimal("100"), num.scale());
     }
 
     /**
