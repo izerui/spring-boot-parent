@@ -127,7 +127,7 @@ public class BigDecimalUtils {
     public static final BigDecimal divide(BigDecimal num1, BigDecimal num2, Integer scale) {
         Assert.notNull(num1, "除法运算的第一个数值不能为空");
         Assert.notNull(num2, "除法运算的第二个数值不能为空");
-        return num1.divide(num2, scale, RoundingMode.CEILING);
+        return num2.compareTo(ZERO) == 0 ? ZERO : num1.divide(num2, scale, RoundingMode.CEILING);
     }
 
     /**
