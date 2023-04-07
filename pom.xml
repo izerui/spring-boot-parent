@@ -68,6 +68,7 @@
         <equator.version>1.0.4</equator.version>
         <lombok.version>1.18.24</lombok.version>
         <curator.version>5.4.0</curator.version>
+        <sentinel.version>2021.1</sentinel.version>
     </properties>
 
 
