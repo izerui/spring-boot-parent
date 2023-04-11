@@ -35,7 +35,6 @@ public class InventoryVO {
             case "3" -> attributeName = "虚拟自制件";
             case "4" -> attributeName = "客供件";
             case "5" -> attributeName = "虚拟件";
-            default -> Assert.isTrue(Boolean.FALSE, "不支持的货品属性");
         }
         return attributeName;
     }
