@@ -30,6 +30,7 @@
         <module>validator-spring-boot</module>
         <module>cloud-file-spring-boot</module>
         <module>elasticsearch-logging-spring-boot</module>
+        <module>jackson-spring-boot</module>
     </modules>
     <!-- spring boot upgrade -->
     <!-- 2.3->2.4: https://thepracticaldeveloper.com/book-update-2.4.0/ -->
@@ -399,6 +400,12 @@
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>cloud-file-spring-boot-starter</artifactId>
+                <version>${base-starter.version}</version>
+            </dependency>
+            <!-- cloud-file -->
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>jackson-spring-boot-starter</artifactId>
                 <version>${base-starter.version}</version>
             </dependency>
 
