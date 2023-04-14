@@ -2,6 +2,7 @@ package com.yj2025.sample.command;
 
 import com.yj2025.basic.command.BasicCommand;
 import com.yj2025.basic.support.Context;
+import com.yj2025.basic.support.DbContext;
 import com.yj2025.performance.BatchConsumer;
 import com.yj2025.performance.Producer;
 import com.yj2025.sample.entity.User;
@@ -27,8 +28,8 @@ public class UserBatchCreate2Cmd extends BasicCommand<Void> {
             @Override
             protected void handlerEvent(List<User> correlationData, long sequence) throws Exception {
                 logger.info("批次执行数量： {}", correlationData.size());
-                Context.executeTransaction(status -> {
-                    Context.batchUpdate($(DataSource.class), "insert into test_user(version, create_time, code, name, email, age) values (:version,:createTime,:code,:name,:email,:age)", correlationData);
+                DbContext.executeTransaction(status -> {
+                    DbContext.batchUpdate($(DataSource.class), "insert into test_user(version, create_time, code, name, email, age) values (:version,:createTime,:code,:name,:email,:age)", correlationData);
                 });
             }
         });

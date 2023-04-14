@@ -3,6 +3,7 @@ package com.yj2025.sample;
 import com.google.common.base.Stopwatch;
 import com.google.common.util.concurrent.*;
 import com.yj2025.basic.support.Context;
+import com.yj2025.basic.support.DbContext;
 import com.yj2025.performance.BatchConsumer;
 import com.yj2025.performance.ClearEvent;
 import com.yj2025.performance.Producer;
@@ -87,7 +88,7 @@ public class UserTest {
     @Test
     public void testQueryPage() {
         Stopwatch stopwatch = Stopwatch.createStarted();
-        Context.pagenationQueryWrap("select id from test_user", 5000, (rs, rowNum) -> {
+        DbContext.pagenationQueryWrap("select id from test_user", 5000, (rs, rowNum) -> {
 //            System.out.println(rs.getLong("id"));
             return null;
         });
@@ -96,8 +97,8 @@ public class UserTest {
 
     @Test
     public void testContextPagenationUpdate() {
-        BatchSqlUpdate batchSqlUpdate = Context.batchUpdate(dataSource, "update test_user set age = 18 where id = ?", List.of(JDBCType.NUMERIC), 5000);
-        Context.pagenationQueryWrap(dataSource, "select id from test_user", 5000,
+        BatchSqlUpdate batchSqlUpdate = DbContext.batchUpdate(dataSource, "update test_user set age = 18 where id = ?", List.of(JDBCType.NUMERIC), 5000);
+        DbContext.pagenationQueryWrap(dataSource, "select id from test_user", 5000,
                 (rs, rowNum) -> rs.getLong("id"),
                 (ids, page) -> {
                     log.debug("第{}页 当前处理数量: {}", page, ids.size());
@@ -112,14 +113,14 @@ public class UserTest {
     @Test
     public void testContextPagenationUpdate2() {
         Stopwatch stopwatch = Stopwatch.createStarted();
-        Context.pagenationQueryWrap(dataSource, "select id from test_user", 5000,
+        DbContext.pagenationQueryWrap(dataSource, "select id from test_user", 5000,
                 (rs, rowNum) -> rs.getLong("id"),
                 (ids, page) -> {
                     log.debug("第{}页 当前处理数量: {}", page, ids.size());
                     List<HashMap> maps = ids.stream().map(aLong -> new HashMap(1) {{
                         put("id", aLong);
                     }}).collect(Collectors.toList());
-                    Context.batchUpdate("update test_user set age = 18 where id = :id", maps);
+                    DbContext.batchUpdate("update test_user set age = 18 where id = :id", maps);
                 });
         System.out.println("耗时：" + stopwatch.elapsed(TimeUnit.MILLISECONDS));
     }
@@ -129,7 +130,7 @@ public class UserTest {
         Stopwatch stopwatch = Stopwatch.createStarted();
         ListeningExecutorService executorService = MoreExecutors.listeningDecorator(new ThreadPoolExecutor(3, 5, 0, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<Runnable>(65536), new ThreadPoolExecutor.CallerRunsPolicy()));
         List<ListenableFuture<?>> futures = new ArrayList<>();
-        Context.pagenationQueryWrap(dataSource, "select id from test_user", 5000,
+        DbContext.pagenationQueryWrap(dataSource, "select id from test_user", 5000,
                 (rs, rowNum) -> rs.getLong("id"),
                 (ids, page) -> {
                     ListenableFuture<?> submit = executorService.submit(() -> {
@@ -137,7 +138,7 @@ public class UserTest {
                         List<HashMap> maps = ids.stream().map(aLong -> new HashMap(1) {{
                             put("id", aLong);
                         }}).collect(Collectors.toList());
-                        Context.batchUpdate("update test_user set age = 18 where id = :id", maps);
+                        DbContext.batchUpdate("update test_user set age = 18 where id = :id", maps);
                     });
                     futures.add(submit);
                 });
@@ -152,7 +153,7 @@ public class UserTest {
         // 分批按主键ID更新
 //        Context.batchUpdateAsync("update test_user set age = 18", "id", 5, 5000);
         // 分批按主键ID更新并且 监控已更新数据
-        Context.batchUpdateAsync("update test_user set age = 18 where age > 16 and code is not null", "id", 5, 5000, (ids, page) -> {
+        DbContext.batchUpdateAsync("update test_user set age = 18 where age > 16 and code is not null", "id", 5, 5000, (ids, page) -> {
 //            log.debug("第{}页 当前处理数量: {}", page, ids.size());
             System.out.println(page);
         });

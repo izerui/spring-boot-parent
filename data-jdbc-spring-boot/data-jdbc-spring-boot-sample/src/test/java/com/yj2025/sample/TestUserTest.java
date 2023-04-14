@@ -2,6 +2,7 @@ package com.yj2025.sample;
 
 import com.google.common.base.Stopwatch;
 import com.yj2025.basic.support.Context;
+import com.yj2025.basic.support.DbContext;
 import com.yj2025.sample.entity.TestUser;
 import com.yj2025.sample.repository.TestUserRepository;
 import com.yj2025.sample.service.TestUserService;
@@ -97,7 +98,7 @@ public class TestUserTest {
         map.put("name", "name" + 2);
         map.put("email", "email" + 2);
 //        map.put("age", 33);
-        Number test_user = Context.insertReturnKey(dataSource, "test_user", map, "id","age");
+        Number test_user = DbContext.insertReturnKey(dataSource, "test_user", map, "id","age");
         System.out.println("首次耗时：" + watch.elapsed(TimeUnit.MILLISECONDS));
         System.out.println("返回主键值：" + test_user);
 
@@ -111,7 +112,7 @@ public class TestUserTest {
         map2.put("email", "email" + 2);
         map2.put("email2", "email" + 2);
         map2.put("age", 33);
-        Context.insert(dataSource, "test_user", map2);
+        DbContext.insert(dataSource, "test_user", map2);
         System.out.println("二次插入耗时：" + watch.elapsed(TimeUnit.MILLISECONDS));
         watch.reset();
         watch.start();
@@ -125,7 +126,7 @@ public class TestUserTest {
             user.setAge(66);
             return user;
         }).collect(Collectors.toList());
-        Context.batchInsert(dataSource, "test_user", users);
+        DbContext.batchInsert(dataSource, "test_user", users);
         System.out.println("批量插入5000条耗时: " + watch.elapsed(TimeUnit.MILLISECONDS));
     }
 

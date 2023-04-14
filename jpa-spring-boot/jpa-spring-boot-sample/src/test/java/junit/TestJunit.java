@@ -2,6 +2,7 @@ package junit;
 
 import com.google.common.base.Stopwatch;
 import com.yj2025.basic.support.Context;
+import com.yj2025.basic.support.DbContext;
 import com.yj2025.jpa.Application;
 import com.yj2025.jpa.entity.Abcd;
 import com.yj2025.jpa.entity.User;
@@ -149,7 +150,7 @@ public class TestJunit {
     @Test
     public void batchInsert2() {
         Stopwatch watch = Stopwatch.createStarted();
-        BatchSqlUpdate batchSqlExecutor = Context.batchUpdate(
+        BatchSqlUpdate batchSqlExecutor = DbContext.batchUpdate(
                 dataSource,
                 "insert into test_user(version, create_time, code, name, email, age) values (?,?,?,?,?,?)",
                 List.of(JDBCType.NUMERIC, JDBCType.TIMESTAMP, JDBCType.VARCHAR, JDBCType.VARCHAR, JDBCType.VARCHAR, JDBCType.NUMERIC),
@@ -192,7 +193,7 @@ public class TestJunit {
             user.setAge(29);
             return user;
         }).collect(Collectors.toList());
-        int[] ints = Context.batchUpdate(dataSource, "insert into test_user(version, create_time, code, name, email, age) values (:version,:createTime,:code,:name,:email,:age)", users);
+        int[] ints = DbContext.batchUpdate(dataSource, "insert into test_user(version, create_time, code, name, email, age) values (:version,:createTime,:code,:name,:email,:age)", users);
         System.out.println(ints);
         System.out.println("耗时: " + watch.elapsed(TimeUnit.MILLISECONDS));
     }
@@ -210,7 +211,7 @@ public class TestJunit {
             user.setAge(29);
             return user;
         }).collect(Collectors.toList());
-        int[] ints = Context.batchInsert(dataSource, "test_user", users);
+        int[] ints = DbContext.batchInsert(dataSource, "test_user", users);
         System.out.println(ints);
         System.out.println("耗时: " + watch.elapsed(TimeUnit.MILLISECONDS));
     }

@@ -2,6 +2,7 @@ package com.yj2025.sample.command;
 
 import com.yj2025.basic.command.BasicCommand;
 import com.yj2025.basic.support.Context;
+import com.yj2025.basic.support.DbContext;
 import org.springframework.jdbc.object.BatchSqlUpdate;
 
 import javax.sql.DataSource;
@@ -21,7 +22,7 @@ public class UserBatchCreate5Cmd extends BasicCommand<Void> {
     @Override
     protected Void doExecute() throws Exception {
         DataSource dataSource = Context.getBean(DataSource.class);
-        BatchSqlUpdate batchSqlUpdate = Context.batchUpdate(
+        BatchSqlUpdate batchSqlUpdate = DbContext.batchUpdate(
                 dataSource,
                 "insert into test_user(version,create_time,code,name,email,age) values (?,?,?,?,?,?)",
                 List.of(JDBCType.NUMERIC,
