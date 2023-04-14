@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 @Schema(description = "税率信息")
 public class TaxVO {
     @Schema(description = "是否含税")
-    private boolean taxIncluded;
+    private boolean taxIncluded = true;
     @Schema(description = "税率")
     private BigDecimal taxRate;
 
