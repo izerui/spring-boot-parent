@@ -56,6 +56,7 @@ public class ContextTest {
     public void testDelay() throws InterruptedException {
         Context.runDelayedAndWait("延迟任务", currentCount -> {
             log.info("{}", currentCount);
+            // 运行到第三次后，就返回false，停止运行
             if (currentCount == 3) {
                 return false;
             }
