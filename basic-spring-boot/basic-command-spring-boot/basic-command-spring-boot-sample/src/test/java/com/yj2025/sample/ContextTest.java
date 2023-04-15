@@ -15,7 +15,7 @@ public class ContextTest {
     public void test001() {
         List<String> alist = null;
         List<Integer> blist = null;
-        Context.matchAndBundleFirst(alist, blist, (s, integer) -> s.equals(integer.toString()),(s, integer) -> {
+        Context.matchAndBundleFirst(alist, blist, (s, integer) -> s.equals(integer.toString()), (s, integer) -> {
             s = integer.toString() + "1";
         });
     }
@@ -50,5 +50,16 @@ public class ContextTest {
     public void testAwait2() {
         List<String> strings = Context.submitAsyncWaitReturn(5, 10, Duration.ofSeconds(60), () -> "1", () -> "2");
         System.out.println(strings);
+    }
+
+    @Test
+    public void testDelay() throws InterruptedException {
+        Context.runDelayedAndWait("延迟任务", currentCount -> {
+            log.info("{}", currentCount);
+            if (currentCount == 3) {
+                return false;
+            }
+            return true;
+        }, 5, 3, 10);
     }
 }

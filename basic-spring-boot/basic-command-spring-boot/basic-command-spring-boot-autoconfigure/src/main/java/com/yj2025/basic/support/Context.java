@@ -18,10 +18,13 @@ import com.yj2025.performance.Producer;
 import io.vavr.CheckedFunction0;
 import io.vavr.CheckedRunnable;
 import io.vavr.control.Try;
+import lombok.extern.slf4j.Slf4j;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.core.ResolvableType;
+import org.springframework.util.Assert;
 
 import java.time.Duration;
 import java.util.*;
@@ -32,6 +35,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+@Slf4j
 public final class Context {
 
     public static ApplicationContext applicationContext;
@@ -469,6 +473,51 @@ public final class Context {
      */
     public static <T> T tryWith(CheckedFunction0<T> tSupplier) {
         return Try.of(tSupplier).get();
+    }
+
+    /**
+     * 延迟运行任务,并等待任务运行结束
+     *
+     * @param taskName      任务名称
+     * @param taskRunner    运行任务, int参数为当前运行的第几次，序号从1开始, 返回结果表示是否继续运行下一次true:继续下一个, false:停止运行
+     * @param delaySeconds  延迟指定秒数后启动第一次
+     * @param periodSeconds 多次任务运行的固定间隔秒数, 仅当[limitCount > 0]时有效
+     * @param limitCount    运行的最大次数, 必须大于等于1
+     * @throws InterruptedException
+     */
+    public static void runDelayedAndWait(String taskName, Function<Integer, Boolean> taskRunner, int delaySeconds, int periodSeconds, int limitCount) throws InterruptedException {
+        Assert.state(limitCount >= 1, "[limitCount]运行次数必须大于等于1");
+        log.info("【延迟运行任务-{}】共运行{}次, {}秒后开始, 间隔{}秒, 当前时间:{}", taskName, limitCount, delaySeconds, periodSeconds, DateTime.now().toString("yyyy-MM-dd HH:mm:ss"));
+        CountDownLatch countDownLatch = new CountDownLatch(limitCount);
+        Timer timer = new Timer();
+        TimerTask timerTask = new TimerTask() {
+            private int count = 1;
+
+            @Override
+            public void run() {
+                if (count <= limitCount) {
+                    try {
+                        log.info("【运行任务-{}】共运行{}次, 当前第{}次, 下次即将运行时间:{}", taskName, limitCount, count, DateTime.now().plusSeconds(periodSeconds).toString("HH:mm:ss"));
+                        Boolean continueNext = taskRunner.apply(count);
+                        if (!continueNext) {
+                            log.info("【手动停止任务-{}】共运行了{}次", taskName, count);
+                            timer.cancel();
+                            while (countDownLatch.getCount() > 0) {
+                                countDownLatch.countDown();
+                            }
+                        }
+                    } catch (Exception ex) {
+                        log.error(ex.getMessage(), ex);
+                    }
+                } else {
+                    timer.cancel();
+                }
+                count++;
+                countDownLatch.countDown();
+            }
+        };
+        timer.schedule(timerTask, delaySeconds * 1000, periodSeconds * 1000);
+        countDownLatch.await();
     }
 
 }
