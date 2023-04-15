@@ -484,6 +484,7 @@ public final class Context {
      * @param delaySeconds  任务执行前的延迟秒数
      * @param periodSeconds 两次任务执行之间的间隔秒数, 仅当[limitCount > 0]时有效
      * @param limitCount    运行的最大次数, 必须大于等于1
+     * @param blockAndWait  是否阻塞并等待完成
      * @throws InterruptedException
      */
     public static void runDelayed(String taskName, Function<Integer, Boolean> taskRunner, int delaySeconds, int periodSeconds, int limitCount, boolean blockAndWait) throws InterruptedException {
