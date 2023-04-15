@@ -29,6 +29,7 @@ import org.springframework.util.Assert;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
@@ -480,15 +481,16 @@ public final class Context {
      *
      * @param taskName      任务名称
      * @param taskRunner    运行任务, int参数为当前运行的第几次，序号从1开始, 返回结果表示是否继续运行下一次true:继续下一个, false:停止运行
-     * @param delaySeconds  延迟指定秒数后启动第一次
-     * @param periodSeconds 多次任务运行的固定间隔秒数, 仅当[limitCount > 0]时有效
+     * @param delaySeconds  任务执行前的延迟秒数
+     * @param periodSeconds 两次任务执行之间的间隔秒数, 仅当[limitCount > 0]时有效
      * @param limitCount    运行的最大次数, 必须大于等于1
      * @throws InterruptedException
      */
     public static void runDelayedAndWait(String taskName, Function<Integer, Boolean> taskRunner, int delaySeconds, int periodSeconds, int limitCount) throws InterruptedException {
         Assert.state(limitCount >= 1, "[limitCount]运行次数必须大于等于1");
-        log.info("【延迟运行任务-{}】共运行{}次, {}秒后开始, 间隔{}秒, 当前时间:{}", taskName, limitCount, delaySeconds, periodSeconds, DateTime.now().toString("yyyy-MM-dd HH:mm:ss"));
+        log.info("【延迟运行任务-{}】共运行{}次, {}秒后开始, 间隔{}秒, 即将运行时间:{}", taskName, limitCount, delaySeconds, periodSeconds, DateTime.now().plusSeconds(delaySeconds).toString("yyyy-MM-dd HH:mm:ss"));
         CountDownLatch countDownLatch = new CountDownLatch(limitCount);
+        AtomicBoolean continueNext = new AtomicBoolean(true);
         Timer timer = new Timer();
         TimerTask timerTask = new TimerTask() {
             private int count = 1;
@@ -497,9 +499,9 @@ public final class Context {
             public void run() {
                 if (count <= limitCount) {
                     try {
-                        log.info("【运行任务-{}】共运行{}次, 当前第{}次, 下次即将运行时间:{}", taskName, limitCount, count, DateTime.now().plusSeconds(periodSeconds).toString("HH:mm:ss"));
-                        Boolean continueNext = taskRunner.apply(count);
-                        if (!continueNext) {
+                        log.info("【间隔运行任务-{}】共运行{}次, 当前第{}次, 下次即将运行时间:{}", taskName, limitCount, count, DateTime.now().plusSeconds(periodSeconds).toString("HH:mm:ss"));
+                        continueNext.set(taskRunner.apply(count));
+                        if (!continueNext.get()) {
                             log.info("【手动停止任务-{}】共运行了{}次", taskName, count);
                             timer.cancel();
                             while (countDownLatch.getCount() > 0) {
