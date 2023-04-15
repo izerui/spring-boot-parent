@@ -477,7 +477,7 @@ public final class Context {
     }
 
     /**
-     * 延迟运行任务,并等待任务运行结束
+     * 延迟运行任务
      *
      * @param taskName      任务名称
      * @param taskRunner    运行任务, int参数为当前运行的第几次，序号从1开始, 返回结果表示是否继续运行下一次true:继续下一个, false:停止运行
