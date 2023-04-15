@@ -486,7 +486,7 @@ public final class Context {
      * @param limitCount    运行的最大次数, 必须大于等于1
      * @throws InterruptedException
      */
-    public static void runDelayedAndWait(String taskName, Function<Integer, Boolean> taskRunner, int delaySeconds, int periodSeconds, int limitCount) throws InterruptedException {
+    public static void runDelayed(String taskName, Function<Integer, Boolean> taskRunner, int delaySeconds, int periodSeconds, int limitCount, boolean blockAndWait) throws InterruptedException {
         Assert.state(limitCount >= 1, "[limitCount]运行次数必须大于等于1");
         log.info("【延迟运行任务-{}】共运行{}次, {}秒后开始, 间隔{}秒, 即将运行时间:{}", taskName, limitCount, delaySeconds, periodSeconds, DateTime.now().plusSeconds(delaySeconds).toString("yyyy-MM-dd HH:mm:ss"));
         CountDownLatch countDownLatch = new CountDownLatch(limitCount);
@@ -504,8 +504,10 @@ public final class Context {
                         if (!continueNext.get()) {
                             log.info("【手动停止任务-{}】共运行了{}次", taskName, count);
                             timer.cancel();
-                            while (countDownLatch.getCount() > 0) {
-                                countDownLatch.countDown();
+                            if (blockAndWait) {
+                                while (countDownLatch.getCount() > 0) {
+                                    countDownLatch.countDown();
+                                }
                             }
                         }
                     } catch (Exception ex) {
@@ -519,7 +521,9 @@ public final class Context {
             }
         };
         timer.schedule(timerTask, delaySeconds * 1000, periodSeconds * 1000);
-        countDownLatch.await();
+        if (blockAndWait) {
+            countDownLatch.await();
+        }
     }
 
 }

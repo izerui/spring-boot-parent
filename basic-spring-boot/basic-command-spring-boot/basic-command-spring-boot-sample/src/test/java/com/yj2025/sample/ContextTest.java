@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 @Slf4j
 public class ContextTest {
@@ -54,13 +55,14 @@ public class ContextTest {
 
     @Test
     public void testDelay() throws InterruptedException {
-        Context.runDelayedAndWait("延迟任务", currentCount -> {
+        Context.runDelayed("延迟任务", currentCount -> {
             log.info("{}", currentCount);
             // 运行到第三次后，就返回false，停止运行
             if (currentCount == 3) {
                 return false;
             }
             return true;
-        }, 5, 3, 10);
+        }, 5, 3, 10, true);
     }
+
 }
