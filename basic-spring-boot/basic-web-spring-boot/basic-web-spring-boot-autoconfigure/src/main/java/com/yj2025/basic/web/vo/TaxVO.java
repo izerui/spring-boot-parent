@@ -10,14 +10,14 @@ import java.math.BigDecimal;
 @Schema(description = "税率信息")
 public class TaxVO {
     @Schema(description = "是否含税")
-    private boolean taxIncluded = true;
+    private Boolean taxIncluded;
     @Schema(description = "税率")
     private BigDecimal taxRate;
 
     public TaxVO() {
     }
 
-    public TaxVO(boolean taxIncluded, BigDecimal taxRate) {
+    public TaxVO(Boolean taxIncluded, BigDecimal taxRate) {
         this.taxIncluded = taxIncluded;
         this.taxRate = taxRate;
     }
@@ -26,6 +26,6 @@ public class TaxVO {
         if (null == tax) {
             return null;
         }
-        return new TaxVO(tax.isTaxIncluded(), tax.getTaxRate());
+        return new TaxVO(tax.getTaxIncluded(), tax.getTaxRate());
     }
 }
