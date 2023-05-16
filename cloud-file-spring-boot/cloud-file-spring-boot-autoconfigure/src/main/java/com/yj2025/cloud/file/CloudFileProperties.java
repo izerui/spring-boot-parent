@@ -2,6 +2,7 @@ package com.yj2025.cloud.file;
 
 import com.qiniu.common.Constants;
 import com.qiniu.storage.Region;
+import com.yj2025.commons.exception.BusinessException;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -98,7 +99,7 @@ public class CloudFileProperties {
      * @return
      */
     public Bucket getBucketByname(String bucket) {
-        return buckets.values().stream().filter(b -> b.getBucketName().equals(bucket)).findFirst().orElseThrow();
+        return buckets.values().stream().filter(b -> b.getBucketName().equals(bucket)).findFirst().orElseThrow(() -> new BusinessException("文件的bucket为空,无法获取文件URL"));
     }
 
     @Data
