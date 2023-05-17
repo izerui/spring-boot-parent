@@ -31,6 +31,7 @@
         <module>cloud-file-spring-boot</module>
         <module>elasticsearch-logging-spring-boot</module>
         <module>jackson-spring-boot</module>
+        <module>batch-processor-spring-boot</module>
     </modules>
     <!-- spring boot upgrade -->
     <!-- 2.3->2.4: https://thepracticaldeveloper.com/book-update-2.4.0/ -->
@@ -327,34 +328,10 @@
                 <artifactId>sequence-number-spring-boot-starter</artifactId>
                 <version>${base-starter.version}</version>
             </dependency>
-            <!-- oauth2 -->
-            <dependency>
-                <groupId>com.yj2025</groupId>
-                <artifactId>oauth2-server-spring-boot-starter</artifactId>
-                <version>${base-starter.version}</version>
-            </dependency>
-            <!-- gateway -->
-            <dependency>
-                <groupId>com.yj2025</groupId>
-                <artifactId>gateway-spring-boot-starter</artifactId>
-                <version>${base-starter.version}</version>
-            </dependency>
             <!-- high-performance -->
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>high-performance-spring-boot-core</artifactId>
-                <version>${base-starter.version}</version>
-            </dependency>
-            <!-- open-gateway -->
-            <dependency>
-                <groupId>com.yj2025</groupId>
-                <artifactId>open-gateway-spring-boot-starter</artifactId>
-                <version>${base-starter.version}</version>
-            </dependency>
-            <!-- open-oauth-server -->
-            <dependency>
-                <groupId>com.yj2025</groupId>
-                <artifactId>open-oauth-server-spring-boot-starter</artifactId>
                 <version>${base-starter.version}</version>
             </dependency>
             <!-- mongo -->
@@ -402,10 +379,15 @@
                 <artifactId>cloud-file-spring-boot-starter</artifactId>
                 <version>${base-starter.version}</version>
             </dependency>
-            <!-- cloud-file -->
+            <!-- jackson -->
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>jackson-spring-boot-starter</artifactId>
+                <version>${base-starter.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>batch-processor-spring-boot-starter</artifactId>
                 <version>${base-starter.version}</version>
             </dependency>
 
