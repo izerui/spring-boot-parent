@@ -1,5 +1,6 @@
 package com.yj2025.basic.web.vo;
 
+import com.yj2025.basic.dao.value.object.InventoryValueObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
@@ -60,5 +61,18 @@ public class InventoryVO {
     public InventoryVO setInventoryCategoryName(String inventoryCategoryName) {
         this.inventoryCategoryName = inventoryCategoryName;
         return this;
+    }
+
+    public InventoryVO fromInventoryValueObject(InventoryValueObject inventoryValueObject) {
+        InventoryVO vo = new InventoryVO();
+        vo.setInventoryId(inventoryValueObject.getInventoryId());
+        vo.setInventoryCode(inventoryValueObject.getInventoryCode());
+        vo.setInventoryName(inventoryValueObject.getInventoryName());
+        vo.setInventorySpec(inventoryValueObject.getInventorySpec());
+        vo.setInventoryCategoryCode(inventoryValueObject.getInventoryCategoryCode());
+        vo.setInventoryType(inventoryValueObject.getInventoryType());
+        vo.setAttributeCode(inventoryValueObject.getAttributeCode());
+        vo.setUnitName(inventoryValueObject.getUnitName());
+        return vo;
     }
 }
