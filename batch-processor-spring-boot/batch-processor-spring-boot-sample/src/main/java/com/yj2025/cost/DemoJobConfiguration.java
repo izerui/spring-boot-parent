@@ -1,4 +1,4 @@
-package com.yj2025.batch001;
+package com.yj2025.cost;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.batch.core.Job;
@@ -88,9 +88,9 @@ public class DemoJobConfiguration {
                 .build();
     }
 
-    @Bean("demoJob")
-    public Job demoJob(@Qualifier("step1") Step step1) {
-        return jobs.get("demoJob")
+    @Bean("costJob")
+    public Job costJob(@Qualifier("step1") Step step1) {
+        return jobs.get("costJob")
                 .incrementer(new RunIdIncrementer())
                 .start(step1)
                 .next(stepTwo())

@@ -79,6 +79,13 @@ public final class Context {
     }
 
     /**
+     * 获取spring上下文中的bean对象
+     */
+    public static <T> T getBean(String beanName) {
+        return (T) Context.applicationContext.getBean(beanName);
+    }
+
+    /**
      * 获取一个或者多个beand的相同对象提供者
      */
     public static <T> ObjectProvider<T> getBeanProvider(Class<T> beanClass, Class... genericTypes) {

@@ -1,4 +1,4 @@
-package com.yj2025.batch001;
+package com.yj2025.cost;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
@@ -19,8 +19,8 @@ public class BatchApplication implements CommandLineRunner {
     private JobLauncher jobLauncher;
 
     @Autowired
-    @Qualifier("demoJob")
-    private Job demoJob;
+    @Qualifier("costJob")
+    private Job costJob;
 
     public static void main(String[] args) {
         SpringApplication.run(BatchApplication.class);
@@ -32,6 +32,6 @@ public class BatchApplication implements CommandLineRunner {
                 .addString("JobID", String.valueOf(System.currentTimeMillis()))
                 .addString("entCode", "sfjsjdfjsdf")
                 .toJobParameters();
-        jobLauncher.run(demoJob, params);
+        jobLauncher.run(costJob, params);
     }
 }

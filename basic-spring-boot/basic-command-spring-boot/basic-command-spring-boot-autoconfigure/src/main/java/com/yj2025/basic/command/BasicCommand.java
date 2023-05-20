@@ -6,8 +6,10 @@ import org.hibernate.validator.HibernateValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.util.ReflectionUtils;
 
+import javax.annotation.Resource;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.ValidationException;
@@ -50,9 +52,14 @@ public abstract class BasicCommand<R> implements Command<R>, ApplicationBeanAwar
             field.setAccessible(true);
             Annotation[] annotations = field.getAnnotations();
             boolean anyMatch = Arrays.asList(annotations).stream().map(Annotation::annotationType)
-                    .anyMatch(aClass -> aClass.isAssignableFrom(Autowired.class));
+                    .anyMatch(aClass -> aClass.isAssignableFrom(Autowired.class) || aClass.isAssignableFrom(Resource.class));
             if (anyMatch) {
-                ReflectionUtils.setField(field, this, $(field.getType()));
+                Qualifier qualifier = field.getAnnotation(Qualifier.class);
+                if (qualifier != null) {
+                    ReflectionUtils.setField(field, this, $(qualifier.value()));
+                } else {
+                    ReflectionUtils.setField(field, this, $(field.getType()));
+                }
             }
         });
     }
