@@ -28,14 +28,9 @@ public class BatchApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        for (int i = 0; i < 100; i++) {
-            JobParameters params = new JobParametersBuilder()
-                    .addString("index", String.valueOf(i))
-                    .addString("JobID", String.valueOf(System.currentTimeMillis()))
-                    .toJobParameters();
-            jobLauncher.run(demoJob, params);
-            log.info("启动: " + i);
-        }
-
+        JobParameters params = new JobParametersBuilder()
+                .addString("JobID", String.valueOf(System.currentTimeMillis()))
+                .toJobParameters();
+        jobLauncher.run(demoJob, params);
     }
 }
