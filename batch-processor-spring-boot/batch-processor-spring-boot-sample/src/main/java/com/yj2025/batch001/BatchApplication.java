@@ -30,6 +30,7 @@ public class BatchApplication implements CommandLineRunner {
     public void run(String... args) throws Exception {
         JobParameters params = new JobParametersBuilder()
                 .addString("JobID", String.valueOf(System.currentTimeMillis()))
+                .addString("entCode", "sfjsjdfjsdf")
                 .toJobParameters();
         jobLauncher.run(demoJob, params);
     }

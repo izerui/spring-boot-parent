@@ -11,6 +11,7 @@ import org.springframework.batch.core.repository.support.JobRepositoryFactoryBea
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
@@ -29,6 +30,7 @@ public class BatchConfiguration {
         jobRepositoryFactoryBean.setTablePrefix("SB_");
         jobRepositoryFactoryBean.setTransactionManager(transactionManager);
         jobRepositoryFactoryBean.setDataSource(dataSource);
+        jobRepositoryFactoryBean.afterPropertiesSet();
         return jobRepositoryFactoryBean;
     }
 
@@ -36,13 +38,14 @@ public class BatchConfiguration {
      * jobLauncher定义
      */
     @Bean
-    public SimpleJobLauncher jobLauncher(JobRepository jobRepository) throws Exception {
+    public SimpleJobLauncher jobLauncher(JobRepository jobRepository, TaskExecutor taskExecutor) throws Exception {
         SimpleJobLauncher jobLauncher = new SimpleJobLauncher();
         // 设置jobRepository
         jobLauncher.setJobRepository(jobRepository);
         jobLauncher.setTaskExecutor(new SimpleAsyncTaskExecutor("job_"));
         return jobLauncher;
     }
+
 
     @Bean
     public SimpleJobOperator jobOperator(JobExplorer jobExplorer,
