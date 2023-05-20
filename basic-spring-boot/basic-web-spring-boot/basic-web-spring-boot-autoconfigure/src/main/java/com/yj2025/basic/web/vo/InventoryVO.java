@@ -2,7 +2,7 @@ package com.yj2025.basic.web.vo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import org.springframework.util.Assert;
+import org.apache.commons.lang3.StringUtils;
 
 @Data
 @Schema(description = "货品信息")
@@ -28,6 +28,9 @@ public class InventoryVO {
 
     public String getAttributeName() {
         String attributeName = "";
+        if (StringUtils.isBlank(this.attributeCode)) {
+            return attributeName;
+        }
         switch (this.attributeCode) {
             case "0" -> attributeName = "采购件";
             case "1" -> attributeName = "自制件";
@@ -39,7 +42,22 @@ public class InventoryVO {
         return attributeName;
     }
 
-    public InventoryVO setInventoryCategoryName(String inventoryCategoryName){
+    public String getInventoryTypeName() {
+        String inventoryTypeName = "";
+        if (StringUtils.isBlank(this.inventoryType)) {
+            return inventoryTypeName;
+        }
+        switch (this.inventoryType) {
+            case "001" -> inventoryTypeName = "成品";
+            case "002" -> inventoryTypeName = "半成品";
+            case "003" -> inventoryTypeName = "原料";
+            case "004" -> inventoryTypeName = "辅料耗材";
+            case "005" -> inventoryTypeName = "模治具";
+        }
+        return inventoryTypeName;
+    }
+
+    public InventoryVO setInventoryCategoryName(String inventoryCategoryName) {
         this.inventoryCategoryName = inventoryCategoryName;
         return this;
     }
