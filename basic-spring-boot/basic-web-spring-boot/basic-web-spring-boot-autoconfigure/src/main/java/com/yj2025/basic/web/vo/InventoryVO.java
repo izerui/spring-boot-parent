@@ -63,16 +63,17 @@ public class InventoryVO {
         return this;
     }
 
-    public InventoryVO fromInventoryValueObject(InventoryValueObject inventoryValueObject) {
-        InventoryVO vo = new InventoryVO();
-        vo.setInventoryId(inventoryValueObject.getInventoryId());
-        vo.setInventoryCode(inventoryValueObject.getInventoryCode());
-        vo.setInventoryName(inventoryValueObject.getInventoryName());
-        vo.setInventorySpec(inventoryValueObject.getInventorySpec());
-        vo.setInventoryCategoryCode(inventoryValueObject.getInventoryCategoryCode());
-        vo.setInventoryType(inventoryValueObject.getInventoryType());
-        vo.setAttributeCode(inventoryValueObject.getAttributeCode());
-        vo.setUnitName(inventoryValueObject.getUnitName());
-        return vo;
+    public InventoryVO() {
+    }
+
+    public InventoryVO(InventoryValueObject inventoryValueObject) {
+        this.inventoryId = inventoryValueObject.getInventoryId();
+        this.inventoryCode = inventoryValueObject.getInventoryCode();
+        this.inventoryName = inventoryValueObject.getInventoryName();
+        this.inventorySpec = inventoryValueObject.getInventorySpec();
+        this.inventoryCategoryCode = inventoryValueObject.getInventoryCategoryCode();
+        this.attributeCode = inventoryValueObject.getAttributeCode();
+        this.unitName = inventoryValueObject.getUnitName();
+        this.inventoryType = inventoryValueObject.getInventoryType();
     }
 }
