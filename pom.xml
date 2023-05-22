@@ -32,6 +32,7 @@
         <module>elasticsearch-logging-spring-boot</module>
         <module>jackson-spring-boot</module>
         <module>batch-processor-spring-boot</module>
+        <module>table-creator-spring-boot</module>
     </modules>
     <!-- spring boot upgrade -->
     <!-- 2.3->2.4: https://thepracticaldeveloper.com/book-update-2.4.0/ -->
@@ -385,9 +386,16 @@
                 <artifactId>jackson-spring-boot-starter</artifactId>
                 <version>${base-starter.version}</version>
             </dependency>
+            <!-- batch -->
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>batch-processor-spring-boot-starter</artifactId>
+                <version>${base-starter.version}</version>
+            </dependency>
+            <!-- table creator -->
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>table-creator-spring-boot-starter</artifactId>
                 <version>${base-starter.version}</version>
             </dependency>
 
