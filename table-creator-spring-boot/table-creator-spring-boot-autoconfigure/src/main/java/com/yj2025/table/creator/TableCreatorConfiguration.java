@@ -57,6 +57,6 @@ public class TableCreatorConfiguration {
         Field field = ReflectionUtils.findField(DatabaseInformationImpl.class, "extractor");
         field.setAccessible(true);
         InformationExtractor extractor = (InformationExtractor) ReflectionUtils.getField(field, databaseInformation);
-        return new TableCreatorTemplate(extractor, jdbcServices.getJdbcEnvironment());
+        return new TableCreatorTemplate(extractor, jdbcServices);
     }
 }

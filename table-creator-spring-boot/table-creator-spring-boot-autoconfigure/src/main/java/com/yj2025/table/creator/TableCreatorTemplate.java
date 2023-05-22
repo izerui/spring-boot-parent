@@ -1,7 +1,7 @@
 package com.yj2025.table.creator;
 
 import org.hibernate.boot.model.naming.Identifier;
-import org.hibernate.engine.jdbc.env.spi.JdbcEnvironment;
+import org.hibernate.engine.jdbc.spi.JdbcServices;
 import org.hibernate.tool.schema.extract.internal.TableInformationImpl;
 import org.hibernate.tool.schema.extract.spi.*;
 import org.springframework.util.ReflectionUtils;
@@ -12,19 +12,19 @@ import java.util.Map;
 public class TableCreatorTemplate {
 
     private InformationExtractor informationExtractor;
-    private JdbcEnvironment jdbcEnvironment;
+    private JdbcServices jdbcServices;
 
-    public TableCreatorTemplate(InformationExtractor informationExtractor, JdbcEnvironment jdbcEnvironment) {
+    public TableCreatorTemplate(InformationExtractor informationExtractor, JdbcServices jdbcServices) {
         this.informationExtractor = informationExtractor;
-        this.jdbcEnvironment = jdbcEnvironment;
+        this.jdbcServices = jdbcServices;
     }
 
     public TableInformation getTable(String tableName) {
-        return informationExtractor.getTable(jdbcEnvironment.getCurrentCatalog(), jdbcEnvironment.getCurrentSchema(), Identifier.toIdentifier(tableName, true));
+        return informationExtractor.getTable(jdbcServices.getJdbcEnvironment().getCurrentCatalog(), jdbcServices.getJdbcEnvironment().getCurrentSchema(), Identifier.toIdentifier(tableName, true));
     }
 
     public Map<String, TableInformation> getTables() {
-        NameSpaceTablesInformation tables = informationExtractor.getTables(jdbcEnvironment.getCurrentCatalog(), jdbcEnvironment.getCurrentSchema());
+        NameSpaceTablesInformation tables = informationExtractor.getTables(jdbcServices.getJdbcEnvironment().getCurrentCatalog(), jdbcServices.getJdbcEnvironment().getCurrentSchema());
         Field field = ReflectionUtils.findField(NameSpaceTablesInformation.class, "tables");
         field.setAccessible(true);
         return (Map<String, TableInformation>) ReflectionUtils.getField(field, tables);
