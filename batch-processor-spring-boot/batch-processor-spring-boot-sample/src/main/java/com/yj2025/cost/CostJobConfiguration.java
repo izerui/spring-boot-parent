@@ -1,6 +1,10 @@
 package com.yj2025.cost;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yj2025.table.creator.TableTemplate;
+import org.hibernate.mapping.Column;
+import org.hibernate.mapping.PrimaryKey;
+import org.hibernate.mapping.Table;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
@@ -13,16 +17,15 @@ import org.springframework.batch.core.listener.ChunkListenerSupport;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
 import org.springframework.batch.item.database.builder.JdbcCursorItemReaderBuilder;
-import org.springframework.batch.item.json.JacksonJsonObjectMarshaller;
-import org.springframework.batch.item.json.builder.JsonFileItemWriterBuilder;
+import org.springframework.batch.item.database.support.ColumnMapItemPreparedStatementSetter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.PathResource;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
 
 import javax.sql.DataSource;
+import java.sql.JDBCType;
 import java.util.Map;
 
 @Configuration
@@ -39,12 +42,14 @@ public class CostJobConfiguration {
 
     @Autowired
     private ObjectMapper objectMapper;
+    @Autowired
+    private TableTemplate tableTemplate;
 
     @Bean("costJob")
     public Job costJob() {
         return jobs.get("costJob")
                 .incrementer(new RunIdIncrementer())
-                .start(findMonthMadeInventoriesStep( null))
+                .start(findMonthMadeInventoriesStep(null))
                 .next(stepTwo())
                 .build();
     }
@@ -53,6 +58,13 @@ public class CostJobConfiguration {
     @Bean("findMonthMageInventoriesStep")
     @JobScope
     public Step findMonthMadeInventoriesStep(@Value("#{jobExecution}") JobExecution jobExecution) {
+        JobParameters jobParameters = jobExecution.getJobParameters();
+        String entCode = jobParameters.getString("entCode");
+        String yearMonth = jobParameters.getString("yearMonth");
+        String tempTableName = String.format("made_invs_%s_%s", entCode, yearMonth);
+        FinishedInventoryTempTableCreator tempTableCreator = new FinishedInventoryTempTableCreator(tempTableName, tableTemplate);
+        tempTableCreator.createTable();
+
         String sql = """
                 SELECT
                 	DATE_FORMAT( r.create_time, '%Y%m' ) as ym,
@@ -71,10 +83,10 @@ public class CostJobConfiguration {
                 GROUP BY
                 	r.bom_id;
                 """;
-        JobParameters jobParameters = jobExecution.getJobParameters();
-        sql = String.format(sql, jobParameters.getString("entCode"), jobParameters.getString("yearMonth"));
+
+        sql = String.format(sql, entCode, yearMonth);
         return steps.get("findMonthMageInventoriesStep")
-                .chunk(10000)
+                .<Map<String, Object>, Map<String, Object>>chunk(10000)
                 .reader(
                         new JdbcCursorItemReaderBuilder<Map<String, Object>>()
                                 .dataSource(dataSource)
@@ -83,29 +95,13 @@ public class CostJobConfiguration {
                                 .rowMapper(new ColumnMapRowMapper())
                                 .build()
                 )
-//                .writer(
-//                        new FlatFileItemWriterBuilder<>()
-//                                .name("stockCenterWriter")
-//                                .lineSeparator("\n")
-//                                .lineAggregator(new PassThroughLineAggregator<>())
-//                                .resource(new PathResource("/Users/liuyuhua/Downloads/stock_center.txt"))
-//                                .build()
-//                )
                 .writer(
-                        new JsonFileItemWriterBuilder<>()
-                                .name("stockCenterWriter")
-                                .jsonObjectMarshaller(new JacksonJsonObjectMarshaller<>(objectMapper))
-                                .resource(new PathResource("/Users/liuyuhua/Downloads/stock_center.json"))
-                                .shouldDeleteIfExists(true)
+                        new JdbcBatchItemWriterBuilder<Map<String, Object>>()
+                                .dataSource(dataSource)
+                                .itemPreparedStatementSetter(new ColumnMapItemPreparedStatementSetter())
+                                .sql(tempTableCreator.getInsertPlaceholderSQL())
                                 .build()
                 )
-//                .writer(
-//                        new JdbcBatchItemWriterBuilder<>()
-//                                .namedParametersJdbcTemplate(new NamedParameterJdbcTemplate(dataSource))
-//                                .itemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>())
-//                                .sql("ddd")
-//                                .build()
-//                )
                 .listener(new ChunkListenerSupport() {
                     @Override
                     public void afterChunk(ChunkContext context) {

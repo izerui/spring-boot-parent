@@ -7,7 +7,6 @@ import org.hibernate.internal.SessionFactoryImpl;
 import org.hibernate.resource.transaction.spi.DdlTransactionIsolator;
 import org.hibernate.service.spi.ServiceRegistryImplementor;
 import org.hibernate.tool.schema.extract.internal.DatabaseInformationImpl;
-import org.hibernate.tool.schema.extract.spi.InformationExtractor;
 import org.hibernate.tool.schema.internal.ExceptionHandlerHaltImpl;
 import org.hibernate.tool.schema.internal.Helper;
 import org.hibernate.tool.schema.internal.HibernateSchemaManagementTool;
@@ -22,15 +21,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.util.ReflectionUtils;
 
-import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
 @AutoConfigureAfter(JpaRepositoriesAutoConfiguration.class)
-public class TableCreatorConfiguration {
+public class TableConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
@@ -41,7 +38,7 @@ public class TableCreatorConfiguration {
 
     @Primary
     @Bean
-    public TableCreatorTemplate tableCreatorTemplate(LocalContainerEntityManagerFactoryBean entityManagerFactoryBean) {
+    public TableTemplate tableCreatorTemplate(LocalContainerEntityManagerFactoryBean entityManagerFactoryBean) {
         SessionFactoryImpl sessionFactory = (SessionFactoryImpl) entityManagerFactoryBean.getNativeEntityManagerFactory();
 
         ServiceRegistryImplementor serviceRegistry = sessionFactory.getServiceRegistry();
@@ -63,6 +60,6 @@ public class TableCreatorConfiguration {
                 sessionFactory.getSqlStringGenerationContext(),
                 tool
         );
-        return new TableCreatorTemplate(databaseInformation, jdbcServices);
+        return new TableTemplate(databaseInformation, jdbcServices);
     }
 }

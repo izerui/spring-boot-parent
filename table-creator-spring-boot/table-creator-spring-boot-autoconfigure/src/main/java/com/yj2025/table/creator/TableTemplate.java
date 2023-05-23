@@ -5,6 +5,7 @@ import org.hibernate.boot.model.relational.SqlStringGenerationContext;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.engine.jdbc.connections.spi.JdbcConnectionAccess;
 import org.hibernate.engine.jdbc.spi.JdbcServices;
+import org.hibernate.mapping.Column;
 import org.hibernate.mapping.Table;
 import org.hibernate.tool.schema.extract.internal.DatabaseInformationImpl;
 import org.hibernate.tool.schema.extract.internal.TableInformationImpl;
@@ -15,30 +16,53 @@ import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
 import java.sql.Connection;
+import java.sql.JDBCType;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Iterator;
 import java.util.Map;
 
-public class TableCreatorTemplate {
+public class TableTemplate {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(TableCreatorTemplate.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(TableTemplate.class);
 
     private final DatabaseInformationImpl databaseInformation;
     private final JdbcServices jdbcServices;
     private final InformationExtractor extractor;
     private final SqlStringGenerationContext sqlStringGenerationContext;
 
-    public TableCreatorTemplate(DatabaseInformationImpl databaseInformation, JdbcServices jdbcServices) {
+    public TableTemplate(DatabaseInformationImpl databaseInformation, JdbcServices jdbcServices) {
         this.databaseInformation = databaseInformation;
         this.jdbcServices = jdbcServices;
-        Field field = ReflectionUtils.findField(DatabaseInformationImpl.class, "extractor");
-        field.setAccessible(true);
-        this.extractor = (InformationExtractor) ReflectionUtils.getField(field, databaseInformation);
+        this.extractor = getPropertyValue(DatabaseInformationImpl.class, databaseInformation, "extractor");
+        this.sqlStringGenerationContext = getPropertyValue(DatabaseInformationImpl.class, databaseInformation, "sqlStringGenerationContext");
+    }
 
-        Field field1 = ReflectionUtils.findField(DatabaseInformationImpl.class, "sqlStringGenerationContext");
-        field1.setAccessible(true);
-        this.sqlStringGenerationContext = (SqlStringGenerationContext) ReflectionUtils.getField(field1, databaseInformation);
+    private <C, T> T getPropertyValue(Class<C> cClass, C target, String property) {
+        Field field = ReflectionUtils.findField(cClass, property);
+        field.setAccessible(true);
+        return (T) ReflectionUtils.getField(field, target);
+    }
+
+    /**
+     * 判断表是否存在
+     *
+     * @return
+     */
+    public boolean existTable(String catalog, String schema, String tableName) {
+        return extractor.getTable(Identifier.toIdentifier(catalog, true),
+                Identifier.toIdentifier(schema, true),
+                Identifier.toIdentifier(tableName, true)) != null;
+    }
+
+    /**
+     * 判断表是否存在
+     *
+     * @param tableName
+     * @return
+     */
+    public boolean existTable(String tableName) {
+        return existTable(null, null, tableName);
     }
 
     /**
@@ -151,6 +175,39 @@ public class TableCreatorTemplate {
         return this.sqlStringGenerationContext.getDialect();
     }
 
+    /**
+     * 根据jdbc类型获取字段数据库类型
+     *
+     * @param type
+     * @return
+     */
+    public String columnType(JDBCType type) {
+        return getDialect().getCastTypeName(type.getVendorTypeNumber());
+    }
+
+    /**
+     * 根据jdbc类型获取字段数据库类型
+     *
+     * @param type      类型
+     * @param length    字段长度
+     * @param precision 精度
+     * @param scale     小数点
+     * @return
+     */
+    public String columnType(JDBCType type, long length, int precision, int scale) {
+        return getDialect().getTypeName(type.getVendorTypeNumber(), length, precision, scale);
+    }
+
+    /**
+     * 根据jdbc类型获取字段数据库类型
+     *
+     * @param type
+     * @return
+     */
+    public String columnType(JDBCType type, long length) {
+        return getDialect().getTypeName(type.getVendorTypeNumber(), length, Column.DEFAULT_PRECISION, Column.DEFAULT_SCALE);
+    }
+
     private void executeSQL(String sql) {
         JdbcConnectionAccess jdbcConnectionAccess = jdbcServices.getBootstrapJdbcConnectionAccess();
         Connection connection = null;
@@ -217,6 +274,16 @@ public class TableCreatorTemplate {
      */
     public void alertTable(Table table) {
         alertTable(null, null, table);
+    }
+
+    /**
+     * 根据表信息获取其所有字段
+     *
+     * @param tableInformation
+     * @return
+     */
+    public Map<Identifier, ColumnInformation> getColumns(TableInformation tableInformation) {
+        return getPropertyValue(TableInformationImpl.class, (TableInformationImpl) tableInformation, "columns");
     }
 
 
