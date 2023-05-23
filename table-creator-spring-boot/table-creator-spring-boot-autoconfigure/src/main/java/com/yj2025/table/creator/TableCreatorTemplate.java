@@ -28,8 +28,6 @@ public class TableCreatorTemplate {
     private final JdbcServices jdbcServices;
     private final InformationExtractor extractor;
     private final SqlStringGenerationContext sqlStringGenerationContext;
-    private final Identifier currentCatalog;
-    private final Identifier currentSchema;
 
     public TableCreatorTemplate(DatabaseInformationImpl databaseInformation, JdbcServices jdbcServices) {
         this.databaseInformation = databaseInformation;
@@ -41,15 +39,17 @@ public class TableCreatorTemplate {
         Field field1 = ReflectionUtils.findField(DatabaseInformationImpl.class, "sqlStringGenerationContext");
         field1.setAccessible(true);
         this.sqlStringGenerationContext = (SqlStringGenerationContext) ReflectionUtils.getField(field1, databaseInformation);
-        this.currentCatalog = jdbcServices.getJdbcEnvironment().getCurrentCatalog();
-        this.currentSchema = jdbcServices.getJdbcEnvironment().getCurrentSchema();
     }
 
-    private String getCurrentString(Identifier identifier) {
-        if (identifier == null) {
-            return null;
-        }
-        return identifier.toString();
+    /**
+     * 根据表名获取表信息
+     *
+     * @return
+     */
+    public TableInformation getTable(String catalog, String schema, String tableName) {
+        return extractor.getTable(Identifier.toIdentifier(catalog, true),
+                Identifier.toIdentifier(schema, true),
+                Identifier.toIdentifier(tableName, true));
     }
 
     /**
@@ -59,7 +59,21 @@ public class TableCreatorTemplate {
      * @return
      */
     public TableInformation getTable(String tableName) {
-        return extractor.getTable(currentCatalog, currentSchema, Identifier.toIdentifier(tableName, true));
+        return extractor.getTable(null,
+                null,
+                Identifier.toIdentifier(tableName, true));
+    }
+
+    /**
+     * 获取所有表信息集合
+     *
+     * @return
+     */
+    public Map<String, TableInformation> getTables(String catalog, String schema) {
+        NameSpaceTablesInformation tables = extractor.getTables(Identifier.toIdentifier(catalog, true), Identifier.toIdentifier(schema, true));
+        Field field = ReflectionUtils.findField(NameSpaceTablesInformation.class, "tables");
+        field.setAccessible(true);
+        return (Map<String, TableInformation>) ReflectionUtils.getField(field, tables);
     }
 
     /**
@@ -68,43 +82,64 @@ public class TableCreatorTemplate {
      * @return
      */
     public Map<String, TableInformation> getTables() {
-        NameSpaceTablesInformation tables = extractor.getTables(currentCatalog, currentSchema);
-        Field field = ReflectionUtils.findField(NameSpaceTablesInformation.class, "tables");
-        field.setAccessible(true);
-        return (Map<String, TableInformation>) ReflectionUtils.getField(field, tables);
+        return this.getTables(null, null);
     }
 
     /**
      * 获取指定表的主键
      *
-     * @param tableName
+     * @return
+     */
+    public PrimaryKeyInformation getPrimaryKey(String catalog, String schema, String tableName) {
+        TableInformation tableInformation = this.getTable(catalog, schema, tableName);
+        return extractor.getPrimaryKey((TableInformationImpl) tableInformation);
+    }
+
+    /**
+     * 获取指定表的主键
+     *
      * @return
      */
     public PrimaryKeyInformation getPrimaryKey(String tableName) {
-        TableInformation tableInformation = this.getTable(tableName);
-        return extractor.getPrimaryKey((TableInformationImpl) tableInformation);
+        return getPrimaryKey(null, null, tableName);
     }
 
     /**
      * 获取指定表的索引
      *
-     * @param tableName
+     * @return
+     */
+    public Iterable<IndexInformation> getIndexes(String catalog, String schema, String tableName) {
+        TableInformation tableInformation = this.getTable(catalog, schema, tableName);
+        return extractor.getIndexes(tableInformation);
+    }
+
+    /**
+     * 获取指定表的索引
+     *
      * @return
      */
     public Iterable<IndexInformation> getIndexes(String tableName) {
-        TableInformation tableInformation = this.getTable(tableName);
-        return extractor.getIndexes(tableInformation);
+        return this.getIndexes(null, null, tableName);
     }
 
     /**
      * 获取指定表的外键
      *
-     * @param tableName
+     * @return
+     */
+    public Iterable<ForeignKeyInformation> getForeignKeys(String catalog, String schema, String tableName) {
+        TableInformation tableInformation = this.getTable(catalog, schema, tableName);
+        return extractor.getForeignKeys(tableInformation);
+    }
+
+    /**
+     * 获取指定表的外键
+     *
      * @return
      */
     public Iterable<ForeignKeyInformation> getForeignKeys(String tableName) {
-        TableInformation tableInformation = this.getTable(tableName);
-        return extractor.getForeignKeys(tableInformation);
+        return getForeignKeys(null, null, tableName);
     }
 
     /**
@@ -144,8 +179,8 @@ public class TableCreatorTemplate {
      * @param table
      * @return
      */
-    public void createTable(Table table) {
-        String createSQL = table.sqlCreateString(null, this.sqlStringGenerationContext, getCurrentString(currentCatalog), getCurrentString(currentSchema));
+    public void createTable(String catalog, String schema, Table table) {
+        String createSQL = table.sqlCreateString(null, this.sqlStringGenerationContext, catalog, schema);
         LOGGER.info("create: {}", createSQL);
         executeSQL(createSQL);
     }
@@ -156,12 +191,32 @@ public class TableCreatorTemplate {
      * @param table
      * @return
      */
-    public void alertTable(Table table) {
-        Iterator<String> sqlAlterStrings = table.sqlAlterStrings(getDialect(), null, getTable(table.getName()), sqlStringGenerationContext);
+    public void createTable(Table table) {
+        createTable(null, null, table);
+    }
+
+    /**
+     * 获取表的创建语句
+     *
+     * @param table
+     * @return
+     */
+    public void alertTable(String catalog, String schema, Table table) {
+        Iterator<String> sqlAlterStrings = table.sqlAlterStrings(getDialect(), null, getTable(catalog, schema, table.getName()), sqlStringGenerationContext);
         sqlAlterStrings.forEachRemaining(s -> {
             LOGGER.info("alert: {}", s);
             executeSQL(s);
         });
+    }
+
+    /**
+     * 获取表的创建语句
+     *
+     * @param table
+     * @return
+     */
+    public void alertTable(Table table) {
+        alertTable(null, null, table);
     }
 
 
