@@ -1,5 +1,6 @@
 package com.yj2025.table.creator;
 
+import org.hibernate.dialect.Dialect;
 import org.hibernate.engine.config.spi.ConfigurationService;
 import org.hibernate.engine.jdbc.internal.JdbcServicesImpl;
 import org.hibernate.internal.SessionFactoryImpl;
@@ -15,6 +16,7 @@ import org.hibernate.tool.schema.spi.ExecutionOptions;
 import org.hibernate.tool.schema.spi.SchemaManagementTool;
 import org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,6 +31,13 @@ import java.util.Map;
 @Configuration
 @AutoConfigureAfter(JpaRepositoriesAutoConfiguration.class)
 public class TableCreatorConfiguration {
+
+    @Bean
+    @ConditionalOnMissingBean
+    public Dialect dialect(LocalContainerEntityManagerFactoryBean entityManagerFactoryBean) {
+        SessionFactoryImpl sessionFactory = (SessionFactoryImpl) entityManagerFactoryBean.getNativeEntityManagerFactory();
+        return sessionFactory.getJdbcServices().getDialect();
+    }
 
     @Primary
     @Bean
@@ -54,9 +63,6 @@ public class TableCreatorConfiguration {
                 sessionFactory.getSqlStringGenerationContext(),
                 tool
         );
-        Field field = ReflectionUtils.findField(DatabaseInformationImpl.class, "extractor");
-        field.setAccessible(true);
-        InformationExtractor extractor = (InformationExtractor) ReflectionUtils.getField(field, databaseInformation);
-        return new TableCreatorTemplate(extractor, jdbcServices);
+        return new TableCreatorTemplate(databaseInformation, jdbcServices);
     }
 }
