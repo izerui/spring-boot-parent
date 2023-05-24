@@ -18,8 +18,14 @@ public class FinishedInventoryTempTableCreator {
     }
 
     public void createTable() {
-        if (!tableTemplate.existTable("test", null, tableName)) {
+        if (!tableTemplate.existTable(null, null, tableName)) {
             Table table = new Table(tableName);
+
+            Column entColumn = new Column("ent_code");
+            entColumn.setSqlType(tableTemplate.columnType(JDBCType.VARCHAR, 128L));
+            entColumn.setNullable(false);
+            entColumn.setComment("ent_code");
+
             Column bomIdColumn = new Column("bom_id");
             bomIdColumn.setSqlType(tableTemplate.columnType(JDBCType.VARCHAR, 128L));
             bomIdColumn.setNullable(false);
@@ -46,6 +52,7 @@ public class FinishedInventoryTempTableCreator {
             primaryKey.addColumn(bomIdColumn);
             primaryKey.setName("bom_id");
 
+            table.addColumn(entColumn);
             table.addColumn(bomIdColumn);
             table.addColumn(invColumn);
             table.addColumn(ymColumn);
@@ -56,9 +63,9 @@ public class FinishedInventoryTempTableCreator {
         }
     }
 
-    public String getInsertPlaceholderSQL() {
+    public String getInsertSQL() {
         return String.format("""
-                insert into %s (bom_id, inventory_id, attribute_code, ym, quantity) values (?, ?, ?, ?, ?)
+                insert into %s (ent_code, bom_id, inventory_id, attribute_code, ym, quantity) values (:ent_code, :bom_id, :inventory_id, :attribute_code, :ym, :quantity)
                 """, tableName);
     }
 

@@ -45,6 +45,32 @@ public class TableTemplate {
     }
 
     /**
+     * 获取当前连接的数据库
+     *
+     * @return
+     */
+    public String getCurrentCatalog() {
+        Identifier currentCatalog = jdbcServices.getJdbcEnvironment().getCurrentCatalog();
+        if (currentCatalog == null) {
+            return null;
+        }
+        return currentCatalog.toString();
+    }
+
+    /**
+     * 获取当前连接的数据库下的模式名
+     *
+     * @return
+     */
+    public String getCurrentSchema() {
+        Identifier currentSchema = jdbcServices.getJdbcEnvironment().getCurrentSchema();
+        if (currentSchema == null) {
+            return null;
+        }
+        return currentSchema.toString();
+    }
+
+    /**
      * 判断表是否存在
      *
      * @return
@@ -62,7 +88,7 @@ public class TableTemplate {
      * @return
      */
     public boolean existTable(String tableName) {
-        return existTable(null, null, tableName);
+        return existTable(getCurrentCatalog(), getCurrentSchema(), tableName);
     }
 
     /**
@@ -83,8 +109,8 @@ public class TableTemplate {
      * @return
      */
     public TableInformation getTable(String tableName) {
-        return extractor.getTable(null,
-                null,
+        return extractor.getTable(jdbcServices.getJdbcEnvironment().getCurrentCatalog(),
+                jdbcServices.getJdbcEnvironment().getCurrentSchema(),
                 Identifier.toIdentifier(tableName, true));
     }
 
@@ -106,7 +132,7 @@ public class TableTemplate {
      * @return
      */
     public Map<String, TableInformation> getTables() {
-        return this.getTables(null, null);
+        return this.getTables(getCurrentCatalog(), getCurrentSchema());
     }
 
     /**
@@ -125,7 +151,7 @@ public class TableTemplate {
      * @return
      */
     public PrimaryKeyInformation getPrimaryKey(String tableName) {
-        return getPrimaryKey(null, null, tableName);
+        return getPrimaryKey(getCurrentCatalog(), getCurrentSchema(), tableName);
     }
 
     /**
@@ -144,7 +170,7 @@ public class TableTemplate {
      * @return
      */
     public Iterable<IndexInformation> getIndexes(String tableName) {
-        return this.getIndexes(null, null, tableName);
+        return this.getIndexes(getCurrentCatalog(), getCurrentSchema(), tableName);
     }
 
     /**
@@ -163,7 +189,7 @@ public class TableTemplate {
      * @return
      */
     public Iterable<ForeignKeyInformation> getForeignKeys(String tableName) {
-        return getForeignKeys(null, null, tableName);
+        return getForeignKeys(getCurrentCatalog(), getCurrentSchema(), tableName);
     }
 
     /**
@@ -249,7 +275,7 @@ public class TableTemplate {
      * @return
      */
     public void createTable(Table table) {
-        createTable(null, null, table);
+        createTable(getCurrentCatalog(), getCurrentSchema(), table);
     }
 
     /**
@@ -273,7 +299,7 @@ public class TableTemplate {
      * @return
      */
     public void alertTable(Table table) {
-        alertTable(null, null, table);
+        alertTable(getCurrentCatalog(), getCurrentSchema(), table);
     }
 
     /**
