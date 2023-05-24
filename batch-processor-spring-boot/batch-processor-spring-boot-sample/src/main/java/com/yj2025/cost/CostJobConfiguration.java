@@ -1,15 +1,17 @@
 package com.yj2025.cost;
 
-import com.yj2025.table.creator.TableTemplate;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.text.StringSubstitutor;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.listener.ChunkListenerSupport;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
+import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
 import org.springframework.batch.item.database.builder.JdbcCursorItemReaderBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,22 +26,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+@Slf4j
 @Configuration
 public class CostJobConfiguration {
 
     private final static Function<String, String> MADE_FINISHED_TABLE = yearMonth -> String.format("made_finished_%s", yearMonth);
-
     @Autowired
     private JobBuilderFactory jobs;
-
     @Autowired
     private StepBuilderFactory steps;
-
     @Autowired
     private DataSource dataSource;
-
-    @Autowired
-    private TableTemplate tableTemplate;
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
@@ -49,20 +46,28 @@ public class CostJobConfiguration {
         return jobs.get("costJob")
                 .incrementer(new RunIdIncrementer())
                 .start(step0(null))
-                .next(stepTwo())
+                .next(step1(null))
                 .build();
     }
 
     // 查询当前月份有过登数的自制件数量
-    @Bean("step0")
-    @StepScope
-    public Step step0(@Value("#{stepExecution}") StepExecution stepExecution) {
-        JobParameters jobParameters = stepExecution.getJobParameters();
-        String entCode = jobParameters.getString("entCode");
-        String yearMonth = jobParameters.getString("yearMonth");
-        FinishedInventoryTempTableCreator tempTableCreator = new FinishedInventoryTempTableCreator(MADE_FINISHED_TABLE.apply(yearMonth), tableTemplate);
-        tempTableCreator.createTable();
+    @Bean
+    @JobScope
+    public Step step0(@Value("#{jobExecution}") JobExecution jobExecution) {
+        return steps.get("从生产获取自制件的当月登数数据")
+                .listener(step0ExeListener(null))
+                .<Map<String, Object>, Map<String, Object>>chunk(10000)
+                .reader(step0Reader(null))
+                .writer(step0Writer(null))
+                .listener(printChunkListener())
+                .build();
+    }
 
+    @Bean
+    @StepScope
+    public JdbcCursorItemReader<Map<String, Object>> step0Reader(@Value("#{stepExecution}") StepExecution stepExecution) {
+        String entCode = stepExecution.getJobParameters().getString("entCode");
+        String yearMonth = stepExecution.getJobParameters().getString("yearMonth");
         String sql = """
                 SELECT
                     r.ent_code,
@@ -86,33 +91,19 @@ public class CostJobConfiguration {
             put("entCode", entCode);
             put("yearMonth", yearMonth);
         }}).replace(sql);
-
-        JdbcBatchItemWriter<Map<String, Object>> batchItemWriter = new JdbcBatchItemWriterBuilder<Map<String, Object>>()
+        return new JdbcCursorItemReaderBuilder<Map<String, Object>>()
+                .name("获取生产本月登数数据")
                 .dataSource(dataSource)
-                .beanMapped()
-                .sql(tempTableCreator.getInsertSQL())
-                .build();
-        batchItemWriter.afterPropertiesSet();
-        return steps.get("findMonthMageInventoriesStep")
-                .listener(step0ExecutionListener(null))
-                .<Map<String, Object>, Map<String, Object>>chunk(10000)
-                .reader(
-                        new JdbcCursorItemReaderBuilder<Map<String, Object>>()
-                                .dataSource(dataSource)
-                                .name("monthMadeInventoriesReader")
-                                .sql(sql)
-                                .rowMapper(new ColumnMapRowMapper())
-                                .build()
-                )
-                .writer(step0Writer(null))
-                .listener(printChunkListener())
+                .name("monthMadeInventoriesReader")
+                .sql(sql)
+                .rowMapper(new ColumnMapRowMapper())
                 .build();
     }
 
 
     @Bean
     @StepScope
-    public JdbcBatchItemWriter step0Writer(@Value("#{stepExecution}") StepExecution stepExecution) {
+    public JdbcBatchItemWriter<Map<String, Object>> step0Writer(@Value("#{stepExecution}") StepExecution stepExecution) {
         String tempTableName = MADE_FINISHED_TABLE.apply(stepExecution.getJobParameters().getString("yearMonth"));
         String insertSQL = """
                 insert into %s (ent_code, bom_id, inventory_id, attribute_code, ym, quantity) values (:ent_code, :bom_id, :inventory_id, :attribute_code, :ym, :quantity)
@@ -128,7 +119,7 @@ public class CostJobConfiguration {
 
     @Bean
     @StepScope
-    public StepExecutionListener step0ExecutionListener(@Value("#{stepExecution}") StepExecution stepExecution) {
+    public StepExecutionListener step0ExeListener(@Value("#{stepExecution}") StepExecution stepExecution) {
         final String entCode = stepExecution.getJobParameters().getString("entCode");
         final String yearMonth = stepExecution.getJobParameters().getString("yearMonth");
         final String tableName = MADE_FINISHED_TABLE.apply(yearMonth);
@@ -167,16 +158,22 @@ public class CostJobConfiguration {
         return new ChunkListenerSupport() {
             @Override
             public void afterChunk(ChunkContext context) {
-                System.out.println("已读取: " + context.getStepContext().getStepExecution().getReadCount());
-                System.out.println("已写入: " + context.getStepContext().getStepExecution().getWriteCount());
+                log.info("{}/{} 已读取: {}", context.getStepContext().getJobName(), context.getStepContext().getStepName(), context.getStepContext().getStepExecution().getReadCount());
+                log.info("{}/{} 已写入: {}", context.getStepContext().getJobName(), context.getStepContext().getStepName(), context.getStepContext().getStepExecution().getWriteCount());
             }
         };
     }
 
+    // 查询当前月份有过登数的自制件数量
     @Bean
-    public Step stepTwo() {
-        return steps.get("stepTwo")
-                .tasklet(new MyTaskTwo())
+    @JobScope
+    public Step step1(@Value("#{jobExecution}") JobExecution jobExecution) {
+        return steps.get("从生产获取自制件的当月登数数据")
+                .listener(step0ExeListener(null))
+                .<Map<String, Object>, Map<String, Object>>chunk(10000)
+                .reader(step0Reader(null))
+                .writer(step0Writer(null))
+                .listener(printChunkListener())
                 .build();
     }
 
