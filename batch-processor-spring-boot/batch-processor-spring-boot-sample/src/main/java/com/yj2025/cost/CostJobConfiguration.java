@@ -10,6 +10,7 @@ import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.listener.ChunkListenerSupport;
 import org.springframework.batch.core.scope.context.ChunkContext;
+import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
@@ -46,6 +47,7 @@ public class CostJobConfiguration {
                 .incrementer(new RunIdIncrementer())
                 .start(step0(null))
                 .next(step1(null))
+                .next(step2(null))
                 .build();
     }
 
@@ -226,6 +228,23 @@ public class CostJobConfiguration {
                 .build();
         return batchItemWriter;
     }
+
+
+    @Bean
+    @JobScope
+    public Step step2(@Value("#{jobExecution}") JobExecution jobExecution) {
+        return steps.get("计算自制件的平均单价")
+                .tasklet(homeMadeCalculationTasklet(null,null))
+                .build();
+    }
+
+    @Bean
+    @StepScope
+    public Tasklet homeMadeCalculationTasklet(@Value("#{stepExecution}") StepExecution stepExecution,
+                                              DataSource dataSource) {
+        return new HomeMadeCalculationTasklet(stepExecution, dataSource);
+    }
+
 
 
 }
