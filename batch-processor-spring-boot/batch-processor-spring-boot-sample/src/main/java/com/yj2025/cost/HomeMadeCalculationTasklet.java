@@ -84,6 +84,9 @@ public class HomeMadeCalculationTasklet implements Tasklet {
         homeMades.addColumns(DoubleColumn.create("amount"));
         // 自制件列表信息增加待计算单价列
         homeMades.addColumns(DoubleColumn.create("price"));
+        Assert.state(homeMades.containsColumn("inventory_id"), "自制件列表必须有[inventory_id]列");
+        Assert.state(homeMades.containsColumn("quantity"), "自制件列表必须有[quantity]列");
+        Assert.state(homeMades.containsColumn("demand_id"), "物料列表必须有[demand_id]列");
     }
 
     /**
@@ -117,6 +120,11 @@ public class HomeMadeCalculationTasklet implements Tasklet {
                 }
             }
         });
+        Assert.state(homeMades.containsColumn("inventory_id"), "物料列表必须有[inventory_id]列");
+        Assert.state(homeMades.containsColumn("attribute_code"), "物料列表必须有[attribute_code]列");
+        Assert.state(homeMades.containsColumn("quantity"), "物料列表必须有[quantity]列");
+        Assert.state(homeMades.containsColumn("init_price"), "物料列表必须有[init_price]列");
+        Assert.state(homeMades.containsColumn("demand_id"), "物料列表必须有[demand_id]列");
     }
 
     /**
