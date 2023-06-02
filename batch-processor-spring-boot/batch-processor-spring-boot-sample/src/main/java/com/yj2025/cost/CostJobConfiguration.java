@@ -71,24 +71,26 @@ public class CostJobConfiguration {
         final String yearMonth = stepExecution.getJobParameters().getString("yearMonth");
         String sql = """
                 SELECT
-                    r.ent_code,
-                    '${yearMonth}' as ym,
-                	r.demand_id,
-                	(SELECT x.inventory_id from manufacture.production_demand x where x.bom_id = r.bom_id limit 1) as inventory_id,
-                	(SELECT x.quantity from manufacture.production_demand x where x.bom_id = r.bom_id limit 1) as production_quantity,
-                	'1' as attribute_code,
-                	sum( r.quantity ) as quantity
+                    r.ent_code, -- 账套编号
+                    '${yearMonth}' as ym, -- 当前年月
+                  r.demand_id, -- 生产需求id
+                  d.inventory_id, -- 货品id
+                  d.quantity as production_quantity, -- 总共需生产数量
+                  (case when d.level_label is null then '0' else d.level_label end) as level_label, -- 在BOM中的层级标签
+                  '1' as attribute_code, -- 货品属性
+                  sum( r.quantity ) as quantity -- 本月登数数量
                 FROM
-                	manufacture.operate_record r
+                  manufacture.operate_record r
+                left join manufacture.production_demand d on r.demand_id = d.record_id
                 WHERE
                     r.ent_code = '${entCode}'
-                	AND r.workflow = '报工'
-                	AND DATE_FORMAT( r.create_time, '%Y%m' ) = '${yearMonth}'
-                	AND r.remark = '报工'
-                	AND r.quantity > 0
+                  AND r.workflow = '报工'
+                  AND DATE_FORMAT( r.create_time, '%Y%m' ) = '${yearMonth}'
+                  AND r.remark = '报工'
+                  AND r.quantity > 0
                 GROUP BY
-                	r.bom_id;
-                """;
+                  r.bom_id;
+                    """;
         sql = new StringSubstitutor(new HashMap<>() {{
             put("entCode", entCode);
             put("yearMonth", yearMonth);
@@ -107,7 +109,7 @@ public class CostJobConfiguration {
     @StepScope
     public JdbcBatchItemWriter<Map<String, Object>> step0Writer(@Value("#{stepExecution}") StepExecution stepExecution) {
         String insertSQL = """
-                insert into manufacture.year_month_made_finished (ent_code, demand_id, inventory_id, attribute_code, ym, quantity, production_quantity) values (:ent_code, :demand_id, :inventory_id, :attribute_code, :ym, :quantity, :production_quantity)
+                insert into manufacture.year_month_made_finished (ent_code, demand_id, inventory_id, attribute_code, ym, quantity, production_quantity, level_label) values (:ent_code, :demand_id, :inventory_id, :attribute_code, :ym, :quantity, :production_quantity, :level_label)
                 """;
         JdbcBatchItemWriter<Map<String, Object>> batchItemWriter = new JdbcBatchItemWriterBuilder<Map<String, Object>>()
                 .dataSource(dataSource)
@@ -184,13 +186,13 @@ public class CostJobConfiguration {
         final String yearMonth = stepExecution.getJobParameters().getString("yearMonth");
         String sql = """
                 SELECT
-                    m.production_demand_id as demand_id,
-                    m.inventory_id,
-                    m.attribute_code,
-                    m.production_quantity,
-                    ((d.quantity / d.production_quantity) * m.production_quantity) as quantity,
-                    '${yearMonth}' as ym,
-                    m.ent_code
+                    m.production_demand_id as demand_id, -- 生产需求id
+                    m.inventory_id, -- 物料货品id
+                    m.attribute_code, -- 物料的货品属性
+                    m.production_quantity, -- 物料的需求总量
+                    ((d.quantity / d.production_quantity) * m.production_quantity) as quantity, -- 物料的实际消耗数量
+                    '${yearMonth}' as ym, -- 当前年月
+                    m.ent_code -- 账套编号
                   FROM
                     manufacture.production_demand_material m
                     LEFT JOIN manufacture.year_month_made_finished d ON d.ent_code = m.ent_code
@@ -234,17 +236,16 @@ public class CostJobConfiguration {
     @JobScope
     public Step step2(@Value("#{jobExecution}") JobExecution jobExecution) {
         return steps.get("计算自制件的平均单价")
-                .tasklet(homeMadeCalculationTasklet(null,null))
+                .tasklet(homeMadeCalculationTasklet(null, null))
                 .build();
     }
 
     @Bean
     @StepScope
     public Tasklet homeMadeCalculationTasklet(@Value("#{stepExecution}") StepExecution stepExecution,
-                                              DataSource dataSource) {
-        return new HomeMadeCalculationTasklet(stepExecution, dataSource);
+                                              JdbcTemplate jdbcTemplate) {
+        return new HomeMadeCalculationTasklet(stepExecution, jdbcTemplate);
     }
-
 
 
 }
