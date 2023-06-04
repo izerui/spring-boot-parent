@@ -10,6 +10,9 @@ import org.apache.calcite.sql.parser.SqlParser;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Type;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -480,5 +483,24 @@ public class DbContext {
         beanPropertyRowMapper.setMappedClass(tClass);
         List<T> list = jdbcTemplate.query(sql, beanPropertyRowMapper, pageSize, offset);
         return list;
+    }
+
+    public static <T> Page<T> paginationQuery(DataSource dataSource, String querySQL, Pageable pageable, Map<String, Object> params, Class<T> tClass) {
+        String sql = "select * from (" + querySQL + ") "+ getSortSqlAndInitParams(pageable, params) +" limit :pageSize offset :offset";
+        String countSQL = "select COUNT(id) from (" + querySQL + ")";
+
+        NamedParameterJdbcTemplate jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+        BeanPropertyRowMapper<T> beanPropertyRowMapper = new BeanPropertyRowMapper<>();
+        beanPropertyRowMapper.setMappedClass(tClass);
+        return new PageImpl<T>(
+                jdbcTemplate.query(sql, params, beanPropertyRowMapper),
+                pageable,
+                jdbcTemplate.queryForObject(countSQL, params, Long.class));
+    }
+
+    private static String getSortSqlAndInitParams(Pageable pageable, Map<String, Object> params) {
+        params.put("pageSize", pageable.getPageSize());
+        params.put("offset", pageable.getOffset());
+        return pageable.getSort().toString().replaceAll("([a-z])([A-Z]+)", "$1_$2").toLowerCase();
     }
 }

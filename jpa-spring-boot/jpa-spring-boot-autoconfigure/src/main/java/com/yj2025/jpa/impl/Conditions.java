@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
@@ -39,18 +40,46 @@ public class Conditions implements Cloneable {
 
     public static Conditions where(String field) {
         Conditions root = where();
-        root.cdList.add(new Condition("", field));
+        root.cdList.add(new Condition(true, "", field));
         return root;
     }
 
+    public static Conditions where(boolean valid, String field) {
+        Conditions root = where();
+        root.cdList.add(new Condition(valid, "", field));
+        return root;
+    }
+
+    public static Conditions where(Supplier<Boolean> valid, String field) {
+        return where(valid.get(), field);
+    }
+
     public Conditions and(String field) {
-        cdList.add(new Condition(cdList.isEmpty() ? "" : "and", field));
+        cdList.add(new Condition(true, cdList.isEmpty() ? "" : "and", field));
         return this;
     }
 
-    public Conditions or(String field) {
-        cdList.add(new Condition(cdList.isEmpty() ? "" : "or", field));
+    public Conditions and(boolean valid, String field) {
+        cdList.add(new Condition(valid, cdList.isEmpty() ? "" : "and", field));
         return this;
+    }
+
+    public Conditions and(Supplier<Boolean> valid, String field) {
+        return and(valid.get(), field);
+    }
+
+    public Conditions or(String field) {
+        cdList.add(new Condition(true, cdList.isEmpty() ? "" : "or", field));
+        return this;
+    }
+
+    public Conditions or(boolean valid, String field) {
+        cdList.add(new Condition(valid, cdList.isEmpty() ? "" : "or", field));
+        return this;
+    }
+
+    public Conditions or(Supplier<Boolean> valid, String field) {
+        return or(valid.get(), field);
     }
 
     public Conditions and(Conditions conditions) {
@@ -58,9 +87,31 @@ public class Conditions implements Cloneable {
         return this;
     }
 
+    public Conditions and(boolean valid, Supplier<Conditions> conditions) {
+        if (valid) {
+            this.combList.add(new CombCondition("and", conditions.get()));
+        }
+        return this;
+    }
+
+    public Conditions and(Supplier<Boolean> valid, Supplier<Conditions> conditions) {
+        return and(valid.get(), conditions);
+    }
+
     public Conditions or(Conditions conditions) {
         this.combList.add(new CombCondition("or", conditions));
         return this;
+    }
+
+    public Conditions or(boolean valid, Supplier<Conditions> conditions) {
+        if (valid) {
+            this.combList.add(new CombCondition("or", conditions.get()));
+        }
+        return this;
+    }
+
+    public Conditions or(Supplier<Boolean> valid, Supplier<Conditions> conditions) {
+        return or(valid.get(), conditions);
     }
 
     private Condition lastCondition() {
@@ -140,13 +191,17 @@ public class Conditions implements Cloneable {
     }
 
     public String toQL(Map<String, Object> params) {
-       return this.toQL(params, true);
+        return this.toQLOrSQL(params, true);
     }
 
-    private String toQL(Map<String, Object> params, boolean isQL) {
+    public String toSQL(Map<String, Object> params) {
+        return this.toQLOrSQL(params, false);
+    }
+
+    private String toQLOrSQL(Map<String, Object> params, boolean isQL) {
         Assert.notNull(params, "参数对象不能为空");
         StringBuilder sb = new StringBuilder("");
-        if (cdList == null || cdList.size() == 0) {
+        if ((cdList == null || cdList.size() == 0) && (combList == null || combList.size() == 0)) {
             return "";
         }
         sb.append(" ( ");
@@ -157,19 +212,11 @@ public class Conditions implements Cloneable {
         if (combList != null) {
             for (CombCondition comb : combList) {
                 sb.append(comb.andOr);
-                sb.append(comb.toQL(params));
+                sb.append(comb.toQLOrSQL(params, isQL));
             }
         }
-
         sb.append(") ");
-
-        String ql = sb.toString();
-        logger.debug(ql);
-        return ql;
-    }
-
-    public String toSQL(Map<String, Object> params) {
-        return this.toQL(params, false);
+        return sb.toString();
     }
 
     private static class CombCondition {
@@ -193,17 +240,14 @@ public class Conditions implements Cloneable {
             return cds;
         }
 
-        public void setCds(Conditions cds) {
-            this.cds = cds;
-        }
-
-        private String toQL(Map<String, Object> params) {
-            return cds.toQL(params);
+        private String toQLOrSQL(Map<String, Object> params, boolean isQL) {
+            return cds.toQLOrSQL(params, isQL) ;
         }
 
     }
 
     private static class Condition {
+        private boolean valid;
         private String andOr;
         //查询字段
         private String field;
@@ -211,16 +255,20 @@ public class Conditions implements Cloneable {
         private String express;
         //值
         private Object value;
-
+        //sql字段
         private String sqlField;
 
-        private Condition(String andOr, String field) {
+        private Condition(boolean valid, String andOr, String field) {
+            this.valid = valid;
             this.andOr = andOr;
             this.field = field;
-            this.sqlField = this.field.replaceAll("([a-z])([A-Z]+)", "$1_$2").toLowerCase();
+            this.sqlField = field.replaceAll("([a-z])([A-Z]+)", "$1_$2").toLowerCase();
         }
 
         private String toQL(Map<String, Object> params) {
+            if (!isValid()) {
+                return isEmpty(andOr) ? "1=1 " : andOr + " 1=1 ";
+            }
             int index = 0;
             String fieldValueKey = StringUtils.replace(this.field, ".", "_");
             String paramsKey = fieldValueKey + "_" + index;
@@ -238,12 +286,18 @@ public class Conditions implements Cloneable {
         }
 
         private String toSQL(Map<String, Object> params) {
-            params.put(this.sqlField, value);
+            if (!isValid()) {
+                return isEmpty(andOr) ? "1=1 " : andOr + " 1=1 ";
+            }
+            if (this.field.contains("\\.")) {
+                throw new IllegalArgumentException("SQL语句不支持嵌套即不支持深拷贝");
+            }
+            params.put(this.field, value);
 
             if (isEmpty(andOr)) {
-                return this.sqlField + " " + (express != null ? express : "") + (value != null ? " :" + this.sqlField : "") + " ";
+                return this.sqlField + " " + (express != null ? express : "") + (value != null ? " :" + this.field : "") + " ";
             } else {
-                return andOr + " " + this.sqlField + " " + (express != null ? express : "") + (value != null ? " :" + this.sqlField : "") + " ";
+                return andOr + " " + this.sqlField + " " + (express != null ? express : "") + (value != null ? " :" + this.field : "") + " ";
             }
         }
 
@@ -265,10 +319,6 @@ public class Conditions implements Cloneable {
             return field;
         }
 
-        public String getSqlField() {
-            return sqlField;
-        }
-
         public String getExpress() {
             return express;
         }
@@ -276,6 +326,11 @@ public class Conditions implements Cloneable {
         public Object getValue() {
             return value;
         }
+
+        public boolean isValid() {
+            return valid;
+        }
+
     }
 
 }
