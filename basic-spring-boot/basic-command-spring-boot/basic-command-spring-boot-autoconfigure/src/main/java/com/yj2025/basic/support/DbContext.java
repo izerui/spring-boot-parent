@@ -10,6 +10,7 @@ import org.apache.calcite.sql.parser.SqlParser;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Type;
 import org.springframework.beans.BeanUtils;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SqlParameter;
@@ -455,5 +456,29 @@ public class DbContext {
             }
             page++;
         }
+    }
+
+    /**
+     * 查询返回指定的分页结果
+     *
+     * @param dataSource
+     * @param querySQL
+     * @param page
+     * @param pageSize
+     * @param tClass
+     * @param <T>
+     * @return
+     */
+    public static <T> List<T> pagenationQuery(DataSource dataSource, String querySQL, int page, int pageSize, Class<T> tClass) {
+        int offset = (page - 1) * pageSize;
+        if (offset < 0) {
+            offset = 0;
+        }
+        String sql = querySQL + " limit ? offset ?";
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+        BeanPropertyRowMapper<T> beanPropertyRowMapper = new BeanPropertyRowMapper<>();
+        beanPropertyRowMapper.setMappedClass(tClass);
+        List<T> list = jdbcTemplate.query(sql, beanPropertyRowMapper, pageSize, offset);
+        return list;
     }
 }

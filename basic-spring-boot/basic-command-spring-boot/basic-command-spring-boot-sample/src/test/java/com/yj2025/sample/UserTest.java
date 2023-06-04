@@ -49,10 +49,10 @@ public class UserTest {
     @SpyBean
     private UserService userService;
 
-    @BeforeAll
-    public void init() throws IOException {
-        BDDMockito.willReturn("测试用户").given(userService).getUserName();
-    }
+//    @BeforeAll
+//    public void init() throws IOException {
+//        BDDMockito.willReturn("测试用户").given(userService).getUserName();
+//    }
 
 
     @Test
@@ -123,6 +123,12 @@ public class UserTest {
                     DbContext.batchUpdate("update test_user set age = 18 where id = :id", maps);
                 });
         System.out.println("耗时：" + stopwatch.elapsed(TimeUnit.MILLISECONDS));
+    }
+
+    @Test
+    public void test0001() {
+        List<UserPO> users = DbContext.pagenationQuery(dataSource, "select * from test_user", 0, 400, UserPO.class);
+        System.out.println(users);
     }
 
     @Test
