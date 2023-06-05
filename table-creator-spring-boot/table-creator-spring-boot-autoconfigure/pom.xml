@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.yj2025</groupId>
         <artifactId>table-creator-spring-boot</artifactId>
-        <version>1.7.1-SNAPSHOT</version>
+        <version>1.7.2-SNAPSHOT</version>
     </parent>
 
     <artifactId>table-creator-spring-boot-autoconfigure</artifactId>
