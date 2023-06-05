@@ -1,7 +1,7 @@
 package com.yj2025.sample;
 
 import com.google.common.base.Stopwatch;
-import com.yj2025.basic.dao.support.DbContext;
+import com.yj2025.basic.support.DbContext;
 import com.yj2025.sample.entity.TestUser;
 import com.yj2025.sample.repository.TestUserRepository;
 import com.yj2025.sample.service.TestUserService;
