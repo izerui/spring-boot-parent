@@ -487,7 +487,7 @@ public class DbContext {
 
     public static <T> Page<T> paginationQuery(DataSource dataSource, String querySQL, Pageable pageable, Map<String, Object> params, Class<T> tClass) {
         String sql = "select * from (" + querySQL + ") "+ getSortSqlAndInitParams(pageable, params) +" limit :pageSize offset :offset";
-        String countSQL = "select COUNT(id) from (" + querySQL + ")";
+        String countSQL = "select COUNT(0) from (" + querySQL + ")";
 
         NamedParameterJdbcTemplate jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
         BeanPropertyRowMapper<T> beanPropertyRowMapper = new BeanPropertyRowMapper<>();
