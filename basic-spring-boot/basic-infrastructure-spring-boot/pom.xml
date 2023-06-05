@@ -2,26 +2,25 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>yj2025-spring-boot-parent</artifactId>
         <groupId>com.yj2025</groupId>
+        <artifactId>basic-spring-boot</artifactId>
         <version>1.7.2-SNAPSHOT</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>basic-spring-boot</artifactId>
+    <artifactId>basic-infrastructure-spring-boot</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>basic-dao-spring-boot</module>
-        <module>basic-command-spring-boot</module>
-        <module>basic-web-spring-boot</module>
-        <module>basic-service-spring-boot</module>
-        <module>basic-infrastructure-spring-boot</module>
+        <module>basic-infrastructure-spring-boot-autoconfigure</module>
+        <module>basic-infrastructure-spring-boot-starter</module>
+        <module>basic-infrastructure-spring-boot-sample</module>
     </modules>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
 </project>

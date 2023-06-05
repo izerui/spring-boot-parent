@@ -1,9 +1,8 @@
-package com.yj2025.basic.command;
+package com.yj2025.basic.dao;
 
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class BasicCommandConfiguration {
-
+public class BasicDaoConfiguration {
 
 }

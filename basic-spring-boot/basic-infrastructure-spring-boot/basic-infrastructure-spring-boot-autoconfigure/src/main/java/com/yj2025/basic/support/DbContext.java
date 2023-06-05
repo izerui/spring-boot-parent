@@ -240,7 +240,11 @@ public class DbContext {
                     });
                     futures.add(future);
                 });
-        Context.tryWith(() -> Futures.allAsList(futures).get());
+        try {
+            Futures.allAsList(futures).get();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         executorService.shutdown();
     }
 
@@ -486,7 +490,7 @@ public class DbContext {
     }
 
     public static <T> Page<T> paginationQuery(DataSource dataSource, String querySQL, Pageable pageable, Map<String, Object> params, Class<T> tClass) {
-        String sql = "select * from (" + querySQL + ") "+ getSortSqlAndInitParams(pageable, params) +" limit :pageSize offset :offset";
+        String sql = "select * from (" + querySQL + ") " + getSortSqlAndInitParams(pageable, params) + " limit :pageSize offset :offset";
         String countSQL = "select COUNT(0) from (" + querySQL + ")";
 
         NamedParameterJdbcTemplate jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);

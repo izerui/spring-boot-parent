@@ -1,8 +1,7 @@
 package junit;
 
 import com.google.common.base.Stopwatch;
-import com.yj2025.basic.support.Context;
-import com.yj2025.basic.support.DbContext;
+import com.yj2025.basic.dao.support.DbContext;
 import com.yj2025.jpa.Application;
 import com.yj2025.jpa.entity.Abcd;
 import com.yj2025.jpa.entity.User;

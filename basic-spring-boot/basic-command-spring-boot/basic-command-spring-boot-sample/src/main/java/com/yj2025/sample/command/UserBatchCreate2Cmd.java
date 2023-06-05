@@ -8,10 +8,8 @@ import com.yj2025.performance.Producer;
 import com.yj2025.sample.entity.User;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.persistence.EntityManager;
 import javax.sql.DataSource;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public class UserBatchCreate2Cmd extends BasicCommand<Void> {

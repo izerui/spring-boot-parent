@@ -1,8 +1,7 @@
 package com.yj2025.sample;
 
 import com.google.common.base.Stopwatch;
-import com.yj2025.basic.support.Context;
-import com.yj2025.basic.support.DbContext;
+import com.yj2025.basic.dao.support.DbContext;
 import com.yj2025.sample.entity.TestUser;
 import com.yj2025.sample.repository.TestUserRepository;
 import com.yj2025.sample.service.TestUserService;
@@ -14,7 +13,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
