@@ -16,12 +16,9 @@ import tech.tablesaw.api.DoubleColumn;
 import tech.tablesaw.api.StringColumn;
 import tech.tablesaw.api.Table;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * 自制件-加权平均单价计算 step scope
@@ -45,6 +42,8 @@ public class HomeMadeCalculationTasklet implements Tasklet {
     private transient Table homeMades;
     // 自制件的物料列表
     private transient Table materials;
+//    // 期初物料单价
+//    private transient Set<InventoryPriceVO> initInventoryPrices;
 
     public HomeMadeCalculationTasklet(StepExecution stepExecution, JdbcTemplate jdbcTemplate) {
         this.stepExecution = stepExecution;
@@ -55,22 +54,10 @@ public class HomeMadeCalculationTasklet implements Tasklet {
         validateData();
     }
 
-    // TODO 获取期初价格信息
-    private List<InventoryPriceVO> getInitPrice(String entCode, List<String> inventoryIds) {
-        return inventoryIds.stream().map(s -> {
-            InventoryPriceVO priceVO = new InventoryPriceVO();
-            priceVO.setInventoryId(s);
-            priceVO.setEntCode(entCode);
-            priceVO.setQuantity(new BigDecimal(RandomUtils.nextDouble(1.0, 50.0)));
-            priceVO.setTotalAmount(new BigDecimal(RandomUtils.nextDouble(1.0, 500.0)));
-            Assert.notNull(priceVO.getPrice(), "单价不能为NULL");
-            return priceVO;
-        }).collect(Collectors.toList());
-    }
-
     private void initData() {
         initHomeMade();
         initMaterials();
+//        initPrices();
     }
 
     /**
@@ -82,8 +69,6 @@ public class HomeMadeCalculationTasklet implements Tasklet {
         homeMades = jdbcTemplate.query(sql0, (ResultSetExtractor<Table>) rs -> Table.read().db(rs));
         // 自制件列表信息增加待计算成本列
         homeMades.addColumns(DoubleColumn.create("amount"));
-        // 自制件列表信息增加待计算单价列
-        homeMades.addColumns(DoubleColumn.create("price"));
         Assert.state(homeMades.containsColumn("inventory_id"), "自制件列表必须有[inventory_id]列");
         Assert.state(homeMades.containsColumn("quantity"), "自制件列表必须有[quantity]列");
         Assert.state(homeMades.containsColumn("demand_id"), "物料列表必须有[demand_id]列");
@@ -120,12 +105,30 @@ public class HomeMadeCalculationTasklet implements Tasklet {
                 }
             }
         });
-        Assert.state(homeMades.containsColumn("inventory_id"), "物料列表必须有[inventory_id]列");
-        Assert.state(homeMades.containsColumn("attribute_code"), "物料列表必须有[attribute_code]列");
-        Assert.state(homeMades.containsColumn("quantity"), "物料列表必须有[quantity]列");
-        Assert.state(homeMades.containsColumn("init_price"), "物料列表必须有[init_price]列");
-        Assert.state(homeMades.containsColumn("demand_id"), "物料列表必须有[demand_id]列");
+        Assert.state(materials.containsColumn("inventory_id"), "物料列表必须有[inventory_id]列");
+        Assert.state(materials.containsColumn("attribute_code"), "物料列表必须有[attribute_code]列");
+        Assert.state(materials.containsColumn("quantity"), "物料列表必须有[quantity]列");
+        Assert.state(materials.containsColumn("init_price"), "物料列表必须有[init_price]列");
+        Assert.state(materials.containsColumn("demand_id"), "物料列表必须有[demand_id]列");
     }
+
+//    // 初始化期初货品单价信息
+//    private void initPrices() {
+//        this.initInventoryPrices = getInitPrice(entCode, materials.stringColumn("inventory_id").asSet());
+//    }
+
+//    // TODO 获取期初价格信息
+//    private Set<InventoryPriceVO> getInitPrice(String entCode, Set<String> inventoryIds) {
+//        return inventoryIds.stream().map(s -> {
+//            InventoryPriceVO priceVO = new InventoryPriceVO();
+//            priceVO.setInventoryId(s);
+//            priceVO.setEntCode(entCode);
+//            priceVO.setQuantity(new BigDecimal(RandomUtils.nextDouble(1.0, 50.0)));
+//            priceVO.setTotalAmount(new BigDecimal(RandomUtils.nextDouble(1.0, 500.0)));
+//            Assert.notNull(priceVO.getPrice(), "单价不能为NULL");
+//            return priceVO;
+//        }).collect(Collectors.toSet());
+//    }
 
     /**
      * 如果自制件没有期初单价，并且本月未发生登数, 则抛出异常
@@ -173,17 +176,10 @@ public class HomeMadeCalculationTasklet implements Tasklet {
                 .divide(amountCompletedTable.doubleColumn("Sum [quantity]"))
                 .setName("price");
         amountCompletedTable.addColumns(priceColumn);
+        // 最终结果: 半成品加权平均后的单价
         Map<String, Double> invPriceMap = new HashMap<>();
         amountCompletedTable.forEach(row -> {
             invPriceMap.put(row.getString("inventory_id"), row.getDouble("price"));
-        });
-
-        // 将计算出单价的货品单价信息回写到自制件列表
-        homeMades.forEach(row -> {
-            String inventoryId = row.getString("inventory_id");
-            if (invPriceMap.containsKey(inventoryId)) {
-                row.setDouble("price", invPriceMap.get(inventoryId));
-            }
         });
 
         // 将单价跟物料表的期初价进行加权平均后，写入price列
@@ -199,9 +195,18 @@ public class HomeMadeCalculationTasklet implements Tasklet {
         if (homeMades.column("amount").countMissing() > 0) {
             return RepeatStatus.CONTINUABLE;
         } else {
+            // 自制件每行计算自身的财务单价
+            DoubleColumn priceCol = homeMades.doubleColumn("amount")
+                    .divide(homeMades.doubleColumn("quantity"))
+                    .setName("price");
+            homeMades.addColumns(priceCol);
+            System.out.println(homeMades);
+            System.out.println(materials);
             System.out.println(homeMades.print());
             // TODO 写入结果
             return RepeatStatus.FINISHED;
         }
     }
+
+
 }
