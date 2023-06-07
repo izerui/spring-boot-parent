@@ -493,6 +493,9 @@ public class DbContext {
         String sql = "select * from (" + querySQL + ") " + getSortSqlAndInitParams(pageable, params) + " limit :pageSize offset :offset";
         String countSQL = "select COUNT(0) from (" + querySQL + ")";
 
+        params.put("pageSize", pageable.getPageSize());
+        params.put("offset", pageable.getOffset());
+
         NamedParameterJdbcTemplate jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
         BeanPropertyRowMapper<T> beanPropertyRowMapper = new BeanPropertyRowMapper<>();
         beanPropertyRowMapper.setMappedClass(tClass);
@@ -503,8 +506,7 @@ public class DbContext {
     }
 
     private static String getSortSqlAndInitParams(Pageable pageable, Map<String, Object> params) {
-        params.put("pageSize", pageable.getPageSize());
-        params.put("offset", pageable.getOffset());
-        return pageable.getSort().toString().replaceAll("([a-z])([A-Z]+)", "$1_$2").toLowerCase();
+        return "SORT BY " + pageable.getSort().toString().replaceAll("([a-z])([A-Z]+)", "$1_$2").toLowerCase();
     }
+
 }
