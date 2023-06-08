@@ -490,7 +490,7 @@ public class DbContext {
     }
 
     public static <T> Page<T> paginationQuery(DataSource dataSource, String querySQL, Pageable pageable, Map<String, Object> params, Class<T> tClass) {
-        String sql = "select * from (" + querySQL + ") " + getSortSqlAndInitParams(pageable, params) + " limit :pageSize offset :offset";
+        String sql = "select * from (" + querySQL + ") " + getSortSqlAndInitParams(pageable) + " limit :pageSize offset :offset";
         String countSQL = "select COUNT(0) from (" + querySQL + ")";
 
         params.put("pageSize", pageable.getPageSize());
@@ -505,8 +505,12 @@ public class DbContext {
                 jdbcTemplate.queryForObject(countSQL, params, Long.class));
     }
 
-    private static String getSortSqlAndInitParams(Pageable pageable, Map<String, Object> params) {
-        return "SORT BY " + pageable.getSort().toString().replaceAll("([a-z])([A-Z]+)", "$1_$2").toLowerCase();
+    private static String getSortSqlAndInitParams(Pageable pageable) {
+        return " ORDER BY " + camel2Sql(pageable.getSort().toString()).replaceAll(":", "");
+    }
+
+    private static String camel2Sql(String sql) {
+        return sql.replaceAll("([a-z])([A-Z]+)", "$1_$2").toLowerCase();
     }
 
 }
