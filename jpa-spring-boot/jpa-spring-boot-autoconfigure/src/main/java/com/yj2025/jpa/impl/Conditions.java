@@ -191,14 +191,14 @@ public class Conditions implements Cloneable {
     }
 
     public String toQL(Map<String, Object> params) {
-        return this.toQLOrSQL(params, true);
+        return this.toQLOrSQL("", params, true);
     }
 
-    public String toSQL(Map<String, Object> params) {
-        return this.toQLOrSQL(params, false);
+    public String toSQL(String prefix, Map<String, Object> params) {
+        return this.toQLOrSQL(prefix, params, false);
     }
 
-    private String toQLOrSQL(Map<String, Object> params, boolean isQL) {
+    private String toQLOrSQL(String prefix, Map<String, Object> params, boolean isQL) {
         Assert.notNull(params, "参数对象不能为空");
         StringBuilder sb = new StringBuilder("");
         if ((cdList == null || cdList.size() == 0) && (combList == null || combList.size() == 0)) {
@@ -206,13 +206,13 @@ public class Conditions implements Cloneable {
         }
         sb.append(" ( ");
         for (Condition condition : cdList) {
-            sb.append(isQL ? condition.toQL(params) : condition.toSQL(params));
+            sb.append(isQL ? condition.toQL(params) : condition.toSQL(prefix, params));
         }
 
         if (combList != null) {
             for (CombCondition comb : combList) {
                 sb.append(comb.andOr);
-                sb.append(comb.toQLOrSQL(params, isQL));
+                sb.append(comb.toQLOrSQL(prefix, params, isQL));
             }
         }
         sb.append(") ");
@@ -240,8 +240,8 @@ public class Conditions implements Cloneable {
             return cds;
         }
 
-        private String toQLOrSQL(Map<String, Object> params, boolean isQL) {
-            return cds.toQLOrSQL(params, isQL) ;
+        private String toQLOrSQL(String prefix, Map<String, Object> params, boolean isQL) {
+            return cds.toQLOrSQL(prefix, params, isQL) ;
         }
 
     }
@@ -285,7 +285,7 @@ public class Conditions implements Cloneable {
             }
         }
 
-        private String toSQL(Map<String, Object> params) {
+        private String toSQL(String prefix, Map<String, Object> params) {
             if (!isValid()) {
                 return isEmpty(andOr) ? "1=1 " : andOr + " 1=1 ";
             }
@@ -295,10 +295,17 @@ public class Conditions implements Cloneable {
             params.put(this.field, value);
 
             if (isEmpty(andOr)) {
-                return this.sqlField + " " + (express != null ? express : "") + (value != null ? " :" + this.field : "") + " ";
+                return this.getSqlField(prefix) + " " + (express != null ? express : "") + (value != null ? " :" + this.field : "") + " ";
             } else {
-                return andOr + " " + this.sqlField + " " + (express != null ? express : "") + (value != null ? " :" + this.field : "") + " ";
+                return andOr + " " + this.getSqlField(prefix) + " " + (express != null ? express : "") + (value != null ? " :" + this.field : "") + " ";
             }
+        }
+
+        private String getSqlField(String prefix) {
+            if (StringUtils.isNotBlank(prefix)) {
+                return prefix + "." + this.sqlField;
+            }
+            return this.sqlField;
         }
 
         private Condition express(String express) {
