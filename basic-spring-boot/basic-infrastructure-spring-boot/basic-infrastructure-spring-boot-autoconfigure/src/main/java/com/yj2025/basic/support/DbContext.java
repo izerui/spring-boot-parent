@@ -490,7 +490,7 @@ public class DbContext {
     }
 
     public static <T> Page<T> paginationQuery(DataSource dataSource, String querySQL, Pageable pageable, Map<String, Object> params, Class<T> tClass) {
-        String sql = "select * from (" + querySQL + ") " + getSortSqlAndInitParams(pageable) + " limit :pageSize offset :offset";
+        String sql = querySQL + getSortSqlAndInitParams(pageable) + " limit :pageSize offset :offset";
         String countSQL = "select COUNT(0) from (" + querySQL + ")";
 
         params.put("pageSize", pageable.getPageSize());
@@ -506,11 +506,10 @@ public class DbContext {
     }
 
     public static <T> List<T> findAll(DataSource dataSource, String querySQL, Map<String, Object> params, Class<T> tClass) {
-        String sql = "select * from (" + querySQL + ") ";
         NamedParameterJdbcTemplate jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
         BeanPropertyRowMapper<T> beanPropertyRowMapper = new BeanPropertyRowMapper<>();
         beanPropertyRowMapper.setMappedClass(tClass);
-        return jdbcTemplate.query(sql, params, beanPropertyRowMapper);
+        return jdbcTemplate.query(querySQL, params, beanPropertyRowMapper);
     }
 
     private static String getSortSqlAndInitParams(Pageable pageable) {
