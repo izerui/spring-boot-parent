@@ -505,6 +505,14 @@ public class DbContext {
                 jdbcTemplate.queryForObject(countSQL, params, Long.class));
     }
 
+    public static <T> List<T> findAll(DataSource dataSource, String querySQL, Map<String, Object> params, Class<T> tClass) {
+        String sql = "select * from (" + querySQL + ") ";
+        NamedParameterJdbcTemplate jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+        BeanPropertyRowMapper<T> beanPropertyRowMapper = new BeanPropertyRowMapper<>();
+        beanPropertyRowMapper.setMappedClass(tClass);
+        return jdbcTemplate.query(sql, params, beanPropertyRowMapper);
+    }
+
     private static String getSortSqlAndInitParams(Pageable pageable) {
         return " ORDER BY " + camel2Sql(pageable.getSort().toString()).replaceAll(":", "");
     }
