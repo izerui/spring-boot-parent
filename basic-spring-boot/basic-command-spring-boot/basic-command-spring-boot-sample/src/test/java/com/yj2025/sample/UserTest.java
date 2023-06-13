@@ -1,7 +1,10 @@
 package com.yj2025.sample;
 
 import com.google.common.base.Stopwatch;
-import com.google.common.util.concurrent.*;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
 import com.yj2025.basic.support.Context;
 import com.yj2025.basic.support.DbContext;
 import com.yj2025.performance.BatchConsumer;
@@ -124,7 +127,7 @@ public class UserTest {
 
     @Test
     public void test0001() {
-        List<UserPO> users = DbContext.pagenationQuery(dataSource, "select * from test_user", 0, 400, UserPO.class);
+        List<UserPO> users = DbContext.paginationQuery(dataSource, "select * from test_user", 0, 400, UserPO.class);
         System.out.println(users);
     }
 
