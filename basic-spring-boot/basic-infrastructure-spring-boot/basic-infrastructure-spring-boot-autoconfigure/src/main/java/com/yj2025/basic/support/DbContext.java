@@ -491,7 +491,7 @@ public class DbContext {
 
     public static <T> Page<T> paginationQuery(DataSource dataSource, String querySQL, Pageable pageable, Map<String, Object> params, Class<T> tClass) {
         String sql = querySQL + getSortSqlAndInitParams(pageable) + " limit :pageSize offset :offset";
-        String countSQL = "select COUNT(0) from (" + querySQL + ")";
+        String countSQL = "select COUNT(0) from " + querySQL;
 
         params.put("pageSize", pageable.getPageSize());
         params.put("offset", pageable.getOffset());
