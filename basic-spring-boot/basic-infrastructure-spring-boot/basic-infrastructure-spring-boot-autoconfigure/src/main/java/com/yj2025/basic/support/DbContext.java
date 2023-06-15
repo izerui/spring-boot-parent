@@ -509,7 +509,7 @@ public class DbContext {
         NamedParameterJdbcTemplate jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
         BeanPropertyRowMapper<T> beanPropertyRowMapper = new BeanPropertyRowMapper<>();
         beanPropertyRowMapper.setMappedClass(tClass);
-        return jdbcTemplate.query(querySQL, params, beanPropertyRowMapper);
+        return jdbcTemplate.query("SELECT * " + querySQL, params, beanPropertyRowMapper);
     }
 
     private static String getSortSqlAndInitParams(Pageable pageable) {
