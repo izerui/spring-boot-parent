@@ -33,6 +33,7 @@
         <module>jackson-spring-boot</module>
         <module>batch-processor-spring-boot</module>
         <module>table-creator-spring-boot</module>
+        <module>sharding-table-spring-boot</module>
     </modules>
     <!-- spring boot upgrade -->
     <!-- 2.3->2.4: https://thepracticaldeveloper.com/book-update-2.4.0/ -->
@@ -401,6 +402,12 @@
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>table-creator-spring-boot-starter</artifactId>
+                <version>${base-starter.version}</version>
+            </dependency>
+            <!-- sharding-table -->
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>sharding-table-spring-boot-starter</artifactId>
                 <version>${base-starter.version}</version>
             </dependency>
 
