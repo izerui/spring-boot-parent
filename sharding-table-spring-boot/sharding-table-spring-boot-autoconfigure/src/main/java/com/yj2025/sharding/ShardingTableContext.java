@@ -32,6 +32,6 @@ public class ShardingTableContext {
                 return rule.getTableName(tableProperties, dataSource, tablePrefix, entCode, params);
             }
         }
-        return tablePrefix;
+        throw new RuntimeException("[" + tablePrefix + "]未找到分表路由配置");
     }
 }
