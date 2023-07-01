@@ -5,7 +5,7 @@
     <parent>
         <artifactId>doc-spring-boot</artifactId>
         <groupId>com.yj2025</groupId>
-        <version>1.7.2-SNAPSHOT</version>
+        <version>3.1.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -20,19 +20,7 @@
         </dependency>
         <dependency>
             <groupId>com.github.xiaoymin</groupId>
-            <artifactId>knife4j-springdoc-ui</artifactId>
-            <version>3.0.3</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-ui</artifactId>
-            <version>1.6.13</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>swagger-ui</artifactId>
-                    <groupId>org.webjars</groupId>
-                </exclusion>
-            </exclusions>
+            <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

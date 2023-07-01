@@ -26,7 +26,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 
-import javax.persistence.Column;
+import jakarta.persistence.Column;
 import javax.sql.DataSource;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;

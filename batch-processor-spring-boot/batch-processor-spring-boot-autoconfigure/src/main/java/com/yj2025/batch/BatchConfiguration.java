@@ -1,7 +1,8 @@
 package com.yj2025.batch;
 
+import org.springframework.batch.core.configuration.BatchConfigurationException;
 import org.springframework.batch.core.configuration.JobRegistry;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
+import org.springframework.batch.core.configuration.support.DefaultBatchConfiguration;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.launch.support.SimpleJobLauncher;
@@ -17,8 +18,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import javax.sql.DataSource;
 
 @Configuration
-@EnableBatchProcessing
-public class BatchConfiguration {
+public class BatchConfiguration extends DefaultBatchConfiguration {
 
     /**
      * JobRepository定义：设置数据库，注册Job容器
@@ -38,14 +38,10 @@ public class BatchConfiguration {
      * jobLauncher定义
      */
     @Bean
-    public SimpleJobLauncher jobLauncher(JobRepository jobRepository, TaskExecutor taskExecutor) throws Exception {
-        SimpleJobLauncher jobLauncher = new SimpleJobLauncher();
-        // 设置jobRepository
-        jobLauncher.setJobRepository(jobRepository);
-        jobLauncher.setTaskExecutor(new SimpleAsyncTaskExecutor("job_"));
-        return jobLauncher;
+    @Override
+    public JobLauncher jobLauncher() throws BatchConfigurationException {
+        return super.jobLauncher();
     }
-
 
     @Bean
     public SimpleJobOperator jobOperator(JobExplorer jobExplorer,

@@ -6,17 +6,18 @@ import com.yj2025.sample.repository.UserRepository;
 import com.yj2025.sample.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
+
 import javax.annotation.concurrent.ThreadSafe;
 import javax.inject.Inject;
 
 @ThreadSafe
 public class UserDeleteCmd extends BasicVoidCommand {
 
-    @Inject
+    @Autowired
     private UserRepository userRepository;
 
-    @Inject
+    @Autowired
     private UserService userService;
 
     private String s;

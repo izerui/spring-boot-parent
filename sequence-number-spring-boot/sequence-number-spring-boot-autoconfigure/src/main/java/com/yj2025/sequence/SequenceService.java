@@ -34,7 +34,7 @@ public class SequenceService {
                 numberStorage.recycleNumber(groupId, period, number);
                 throw ex;
             }
-        }, e -> new RuntimeException("在地方就是"));
+        }, e -> new RuntimeException("获取序号失败: " + e.getMessage()));
     }
 
     /**

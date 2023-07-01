@@ -3,7 +3,7 @@ package com.yj2025.websocket.server.impl.kafka;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 @Configuration
 @ConditionalOnProperty(name = "websocket.server.listener-type", havingValue = "kafka")

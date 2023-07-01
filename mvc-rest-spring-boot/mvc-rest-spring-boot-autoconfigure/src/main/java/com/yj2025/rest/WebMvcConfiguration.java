@@ -1,9 +1,9 @@
 package com.yj2025.rest;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
@@ -11,8 +11,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  */
 @Configuration
 @ConditionalOnWebApplication
-@ConditionalOnProperty(name = "rest.cors.allowed", havingValue = "true")
-public class CorsWebMvcConfiguration implements WebMvcConfigurer {
+public class WebMvcConfiguration implements WebMvcConfigurer {
 
     /**
      * 全局允许跨域
@@ -26,5 +25,15 @@ public class CorsWebMvcConfiguration implements WebMvcConfigurer {
                 .allowedOrigins("*");
     }
 
+    /**
+     * 升级boot 3.1.1后暂时兼容写法 地址类似： /a /a/
+     *
+     * @param configurer
+     */
+    @Deprecated
+    @Override
+    public void configurePathMatch(PathMatchConfigurer configurer) {
+        configurer.setUseTrailingSlashMatch(true);
+    }
 
 }

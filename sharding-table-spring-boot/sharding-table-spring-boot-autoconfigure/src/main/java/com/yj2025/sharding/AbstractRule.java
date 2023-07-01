@@ -26,7 +26,7 @@ public abstract class AbstractRule {
         if (cacheTables.contains(tableName)) {
             return tableName;
         } else {
-            log.warn("路由目的表: [{}] 在数据库中不存在, 故使用指定表: [{}]", tableName, properties.getOtherwise());
+            log.debug("路由目的表: [{}] 在数据库中不存在, 故使用指定表: [{}]", tableName, properties.getOtherwise());
             return properties.getOtherwise();
         }
     }

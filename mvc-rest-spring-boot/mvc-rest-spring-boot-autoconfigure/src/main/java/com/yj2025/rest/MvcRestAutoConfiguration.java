@@ -6,19 +6,19 @@ import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * Created by serv on 2016/10/18.
  */
 @Configuration
 @ConditionalOnWebApplication
-@Import({CorsWebMvcConfiguration.class, FeignConfiguration.class})
-public class MvcRestAutoConfiguration extends WebMvcConfigurerAdapter{
+@Import({WebMvcConfiguration.class, FeignConfiguration.class})
+public class MvcRestAutoConfiguration implements WebMvcConfigurer {
 
     @Bean
     @ConditionalOnMissingBean
-    public GlobResponseBodyAdviceAdapter globRequestBodyAdviceAdapter(ErrorAttributes errorAttributes){
+    public GlobResponseBodyAdviceAdapter globRequestBodyAdviceAdapter(ErrorAttributes errorAttributes) {
         return new GlobResponseBodyAdviceAdapter(errorAttributes);
     }
 

@@ -5,7 +5,7 @@ import com.yj2025.basic.command.BasicCommand;
 import com.yj2025.basic.support.Context;
 import com.yj2025.sample.entity.User;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;

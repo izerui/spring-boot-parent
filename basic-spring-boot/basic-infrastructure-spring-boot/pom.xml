@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.yj2025</groupId>
         <artifactId>basic-spring-boot</artifactId>
-        <version>1.7.2-SNAPSHOT</version>
+        <version>3.1.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>basic-infrastructure-spring-boot</artifactId>

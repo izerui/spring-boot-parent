@@ -3,8 +3,8 @@ package com.yj2025.basic.dao.value.object;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 
 @Data
 @Embeddable

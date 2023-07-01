@@ -11,7 +11,7 @@
         <module>jpa-spring-boot</module>
         <module>lock-spring-boot</module>
         <module>mvc-rest-spring-boot</module>
-        <module>mybatis-spring-boot</module>
+        <!--        <module>mybatis-spring-boot</module>-->
         <module>nacos-spring-boot</module>
         <module>rabbit-spring-boot</module>
         <module>redis-spring-boot</module>
@@ -31,8 +31,8 @@
         <module>cloud-file-spring-boot</module>
         <module>elasticsearch-logging-spring-boot</module>
         <module>jackson-spring-boot</module>
-        <module>batch-processor-spring-boot</module>
-        <module>table-creator-spring-boot</module>
+        <!--        <module>batch-processor-spring-boot</module>-->
+        <!--        <module>table-creator-spring-boot</module>-->
         <module>sharding-table-spring-boot</module>
     </modules>
     <!-- spring boot upgrade -->
@@ -44,35 +44,44 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.5</version>
+        <version>3.1.1</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
     <groupId>com.yj2025</groupId>
     <artifactId>yj2025-spring-boot-parent</artifactId>
 
-    <version>1.7.2-SNAPSHOT</version>
+    <version>3.1.1-SNAPSHOT</version>
 
     <properties>
         <java.version>17</java.version>
-        <spring-cloud.version>2021.0.5</spring-cloud.version>
+        <spring-cloud.version>2022.0.3</spring-cloud.version>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        <base-starter.version>1.7.2-SNAPSHOT</base-starter.version>
-        <org.mapstruct.version>1.5.2.Final</org.mapstruct.version>
-        <m2e.apt.activation>jdt_apt</m2e.apt.activation>
-        <commons.version>2.8.0</commons.version>
-        <commons.collections.version>3.2.2</commons.collections.version>
-        <commons.text.version>1.9</commons.text.version>
-        <easyexcel.version>3.1.1</easyexcel.version>
+        <base-starter.version>3.1.1-SNAPSHOT</base-starter.version>
+        <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
+        <commons.io.version>2.12.0</commons.io.version>
+        <commons.collections4.version>4.4</commons.collections4.version>
+        <commons-collections.version>3.2.2</commons-collections.version>
+        <commons.text.version>1.10.0</commons.text.version>
+        <easyexcel.version>3.3.2</easyexcel.version>
         <pinyin4j.version>2.5.1</pinyin4j.version>
-        <joda.time.version>2.10.2</joda.time.version>
+        <joda.time.version>2.12.5</joda.time.version>
         <poi.ooxml.version>4.1.2</poi.ooxml.version>
         <vavr.version>0.10.4</vavr.version>
         <equator.version>1.0.4</equator.version>
-        <lombok.version>1.18.24</lombok.version>
-        <curator.version>5.4.0</curator.version>
-        <sentinel.version>2021.1</sentinel.version>
+        <lombok.version>1.18.28</lombok.version>
+        <curator.version>5.5.0</curator.version>
+        <jakarta.validation-api.version>3.0.2</jakarta.validation-api.version>
+        <mysql-connector-j.version>8.0.33</mysql-connector-j.version>
+        <spring-data.version>2023.0.1</spring-data.version>
+        <guava.version>32.0.0-jre</guava.version>
+        <cloud-alibaba.version>2022.0.0.0-RC2</cloud-alibaba.version>
+        <commons-beanutils.version>1.9.4</commons-beanutils.version>
+        <dom4j.version>2.1.4</dom4j.version>
+        <knife4j.version>4.1.0</knife4j.version>
+        <work-weixin.version>1.2.0</work-weixin.version>
+        <swagger-annotations.version>2.2.8</swagger-annotations.version>
     </properties>
 
 
@@ -84,6 +93,78 @@
                 <version>${spring-cloud.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.data</groupId>
+                <artifactId>spring-data-bom</artifactId>
+                <version>${spring-data.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+                <version>${cloud-alibaba.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+                <version>${cloud-alibaba.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>${jackson-bom.version}</version>
+            </dependency>
+            <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-annotations</artifactId>
+            <version>${swagger-annotations.version}</version>
+        </dependency>
+            <dependency>
+                <groupId>commons-beanutils</groupId>
+                <artifactId>commons-beanutils</artifactId>
+                <version>${commons-beanutils.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-all</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.izerui</groupId>
+                <artifactId>work-weixin-spring-boot-starter</artifactId>
+                <version>${work-weixin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.xiaoymin</groupId>
+                <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
+                <version>${knife4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.dom4j</groupId>
+                <artifactId>dom4j</artifactId>
+                <version>${dom4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson-bom.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>${jackson-bom.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.mysql</groupId>
+                <artifactId>mysql-connector-j</artifactId>
+                <version>${mysql-connector-j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.validation</groupId>
+                <artifactId>jakarta.validation-api</artifactId>
+                <version>${jakarta.validation-api.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.curator</groupId>
@@ -98,12 +179,17 @@
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>31.1-jre</version>
+                <version>${guava.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.mapstruct</groupId>
                 <artifactId>mapstruct</artifactId>
                 <version>${org.mapstruct.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-validator</groupId>
+                <artifactId>commons-validator</artifactId>
+                <version>1.7</version>
             </dependency>
             <dependency>
                 <groupId>org.mapstruct</groupId>
@@ -113,12 +199,17 @@
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
-                <version>${commons.version}</version>
+                <version>${commons.io.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-collections4</artifactId>
+                <version>${commons.collections4.version}</version>
             </dependency>
             <dependency>
                 <groupId>commons-collections</groupId>
                 <artifactId>commons-collections</artifactId>
-                <version>${commons.collections.version}</version>
+                <version>${commons-collections.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
@@ -156,6 +247,11 @@
                 <version>${vavr.version}</version>
             </dependency>
             <dependency>
+                <groupId>commons-beanutils</groupId>
+                <artifactId>commons-beanutils</artifactId>
+                <version>${commons-beanutils.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>com.github.dadiyang</groupId>
                 <artifactId>equator</artifactId>
                 <version>${equator.version}</version>
@@ -182,11 +278,11 @@
             </dependency>
 
             <!-- mybatis -->
-            <dependency>
-                <groupId>com.yj2025</groupId>
-                <artifactId>mybatis-spring-boot-starter</artifactId>
-                <version>${base-starter.version}</version>
-            </dependency>
+            <!--            <dependency>-->
+            <!--                <groupId>com.yj2025</groupId>-->
+            <!--                <artifactId>mybatis-spring-boot-starter</artifactId>-->
+            <!--                <version>${base-starter.version}</version>-->
+            <!--            </dependency>-->
 
             <!-- nacos config -->
             <dependency>
@@ -393,17 +489,17 @@
                 <version>${base-starter.version}</version>
             </dependency>
             <!-- batch -->
-            <dependency>
-                <groupId>com.yj2025</groupId>
-                <artifactId>batch-processor-spring-boot-starter</artifactId>
-                <version>${base-starter.version}</version>
-            </dependency>
+            <!--            <dependency>-->
+            <!--                <groupId>com.yj2025</groupId>-->
+            <!--                <artifactId>batch-processor-spring-boot-starter</artifactId>-->
+            <!--                <version>${base-starter.version}</version>-->
+            <!--            </dependency>-->
             <!-- table creator -->
-            <dependency>
-                <groupId>com.yj2025</groupId>
-                <artifactId>table-creator-spring-boot-starter</artifactId>
-                <version>${base-starter.version}</version>
-            </dependency>
+            <!--            <dependency>-->
+            <!--                <groupId>com.yj2025</groupId>-->
+            <!--                <artifactId>table-creator-spring-boot-starter</artifactId>-->
+            <!--                <version>${base-starter.version}</version>-->
+            <!--            </dependency>-->
             <!-- sharding-table -->
             <dependency>
                 <groupId>com.yj2025</groupId>
@@ -475,6 +571,7 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven-compiler-plugin.version}</version>
                 <configuration>
+                    <release>17</release>
                     <source>${maven.compiler.source}</source>
                     <target>${maven.compiler.target}</target>
                 </configuration>

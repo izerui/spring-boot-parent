@@ -1,6 +1,6 @@
 package com.yj2025.jpa.entity;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "abcd")

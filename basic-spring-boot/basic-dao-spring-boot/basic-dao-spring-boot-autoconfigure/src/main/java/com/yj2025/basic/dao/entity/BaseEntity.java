@@ -2,7 +2,7 @@ package com.yj2025.basic.dao.entity;
 
 import lombok.Data;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Date;
 
 @Data

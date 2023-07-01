@@ -5,7 +5,7 @@
     <parent>
         <artifactId>basic-command-spring-boot</artifactId>
         <groupId>com.yj2025</groupId>
-        <version>1.7.2-SNAPSHOT</version>
+        <version>3.1.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -20,6 +20,12 @@
         <dependency>
             <groupId>com.yj2025</groupId>
             <artifactId>basic-web-spring-boot-starter</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>audit-spring-boot-starter</artifactId>
+                    <groupId>com.yj2025</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.yj2025</groupId>

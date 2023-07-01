@@ -19,7 +19,7 @@ public class CloudFileApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        String filePath = "/Users/liuyuhua/Downloads/0b55f88d5f9efa155e634702c0098355_512_512.jpg";
+        String filePath = "/Users/serv/ecworking/yj2025-spring-boot-parent/cloud-file-spring-boot/cloud-file-spring-boot-sample/src/main/java/com/yj2025/cloud/file/CloudFileApplication.java";
 //        String bucket = "sz-yunji-test";
         String bucket = "sz-yunji-test-private";
         String key = UUID.randomUUID().toString() + ".jpg";

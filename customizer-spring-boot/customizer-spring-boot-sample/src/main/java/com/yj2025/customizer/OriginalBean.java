@@ -1,8 +1,8 @@
 package com.yj2025.customizer;
 
+import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 
 @Component
 public class OriginalBean {

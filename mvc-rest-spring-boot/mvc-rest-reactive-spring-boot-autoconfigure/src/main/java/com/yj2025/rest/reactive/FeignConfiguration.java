@@ -33,12 +33,12 @@ public class FeignConfiguration {
     private String applicationName;
 
     @Bean
-    public Decoder feignDecoder() {
-        return new ResponseEntityDecoder(new SpringDecoder(feignHttpMessageConverter()));
+    public Decoder feignDecoder(ObjectMapper objectMapper) {
+        return new ResponseEntityDecoder(new SpringDecoder(feignHttpMessageConverter(objectMapper)));
     }
 
-    public ObjectFactory<HttpMessageConverters> feignHttpMessageConverter() {
-        final HttpMessageConverters httpMessageConverters = new HttpMessageConverters(new MappingJackson2HttpMessageConverter());
+    public ObjectFactory<HttpMessageConverters> feignHttpMessageConverter(ObjectMapper objectMapper) {
+        final HttpMessageConverters httpMessageConverters = new HttpMessageConverters(new MappingJackson2HttpMessageConverter(objectMapper));
         return () -> httpMessageConverters;
     }
 
@@ -60,8 +60,8 @@ public class FeignConfiguration {
     }
 
     @Bean
-    public FeignErrorDecoder errorDecoder() {
-        return new FeignErrorDecoder(new ObjectMapper());
+    public FeignErrorDecoder errorDecoder(ObjectMapper objectMapper) {
+        return new FeignErrorDecoder(objectMapper);
     }
 
     @Bean

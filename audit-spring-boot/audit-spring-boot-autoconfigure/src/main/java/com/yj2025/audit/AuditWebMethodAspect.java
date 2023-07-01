@@ -3,6 +3,8 @@ package com.yj2025.audit;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.yj2025.performance.BatchConsumer;
+import com.yj2025.performance.ClearEvent;
 import com.yj2025.performance.Consumer;
 import com.yj2025.performance.Producer;
 import io.swagger.annotations.Api;
@@ -19,8 +21,8 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import java.net.URLDecoder;
 import java.util.*;
@@ -49,28 +51,28 @@ public class AuditWebMethodAspect implements DisposableBean {
     public AuditWebMethodAspect(ObjectProvider<AuditContext> auditContextProvider, String application) throws Exception {
         this.auditContextProvider = auditContextProvider;
         this.application = application;
-        Consumer[] consumers = new Consumer<Record>() {
-            @Override
-            protected void handlerEvent(Record event) throws Exception {
-                auditContextProvider.forEach(auditContext -> {
-                    auditContext.record(event);
-                });
-            }
-        }.cloneSelfToMulti(8);
-//        BatchConsumer<Record> batchConsumer = new BatchConsumer<Record>(100) {
+//        Consumer[] consumers = new Consumer<Record>() {
 //            @Override
-//            protected void handlerEvent(List<Record> batchDatas, long sequence) throws Exception {
-//                for (Record event : batchDatas) {
-//                    auditContextProvider.forEach(auditContext -> {
-//                        log.info(event.getName());
-//                        auditContext.record(event);
-//                    });
-//                }
+//            protected void handlerEvent(Record event) throws Exception {
+//                auditContextProvider.forEach(auditContext -> {
+//                    auditContext.record(event);
+//                });
 //            }
-//        };
+//        }.cloneSelfToMulti(8);
+        BatchConsumer<Record> batchConsumer = new BatchConsumer<Record>() {
+            @Override
+            protected void handlerEvent(List<Record> batchDatas, long sequence) throws Exception {
+                for (Record event : batchDatas) {
+                    auditContextProvider.forEach(auditContext -> {
+                        log.info(event.getName());
+                        auditContext.record(event);
+                    });
+                }
+            }
+        };
         this.recordProducer = Producer.builder()
                 .requiredDataType(Record.class)
-                .requiredConsumers(consumers)
+                .requiredConsumers(5, 200, batchConsumer)
                 .build();
     }
 

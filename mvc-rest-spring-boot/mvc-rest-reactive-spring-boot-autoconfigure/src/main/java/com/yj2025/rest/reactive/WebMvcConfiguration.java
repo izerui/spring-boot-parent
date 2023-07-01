@@ -1,9 +1,9 @@
 package com.yj2025.rest.reactive;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.config.CorsRegistry;
+import org.springframework.web.reactive.config.PathMatchConfigurer;
 import org.springframework.web.reactive.config.WebFluxConfigurer;
 
 /**
@@ -11,8 +11,7 @@ import org.springframework.web.reactive.config.WebFluxConfigurer;
  */
 @Configuration
 @ConditionalOnWebApplication
-@ConditionalOnProperty(name = "rest.cors.allowed", havingValue = "true")
-public class CorsWebMvcConfiguration implements WebFluxConfigurer {
+public class WebMvcConfiguration implements WebFluxConfigurer {
 
     /**
      * 全局允许跨域
@@ -24,6 +23,17 @@ public class CorsWebMvcConfiguration implements WebFluxConfigurer {
         registry.addMapping("/**").allowedHeaders("*")
                 .allowedMethods("*")
                 .allowedOrigins("*");
+    }
+
+    /**
+     * 升级boot 3.1.1后暂时兼容写法
+     *
+     * @param configurer
+     */
+    @Deprecated
+    @Override
+    public void configurePathMatching(PathMatchConfigurer configurer) {
+        configurer.setUseTrailingSlashMatch(true);
     }
 
 
