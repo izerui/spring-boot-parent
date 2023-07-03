@@ -1,6 +1,7 @@
 package com.yj2025.sample.entity;
 
 import lombok.Data;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
 
@@ -13,6 +14,7 @@ public class TestUser {
     private Long id;
     @Version
     private int version;
+    @CreatedDate
     private Date createTime = new Date();
     private String code;
     private String name;
