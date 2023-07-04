@@ -67,23 +67,26 @@ public class TestUserTest {
         System.out.println("耗时: " + watch.elapsed(TimeUnit.MILLISECONDS));
     }
 
-//    @Test
-//    public void testInsert2() {
-//        Stopwatch watch = Stopwatch.createStarted();
-//        List<Map<String, Object>> users = IntStream.range(0, 5000).mapToObj(value -> {
-//            Map<String, Object> map = new HashMap<>();
-//            map.put("version", 0);
-//            map.put("create_time", new Date());
-//            map.put("code", "code" + value);
-//            map.put("name", "name" + value);
-//            map.put("email", "email" + value);
-//            map.put("age", 28);
-//            return map;
-//        }).collect(Collectors.toList());
-//        jdbcTemplate.batchUpdate("insert into test_user(version, create_time, code, name, email, age) values (:version,:create_time,:code,:name,:email,:age)",
-//                users.toArray(new HashMap[users.size()]));
-//        System.out.println("耗时: " + watch.elapsed(TimeUnit.MILLISECONDS));
-//    }
+    @Test
+    public void testInsert2() {
+        List<Map<String, Object>> users = IntStream.range(0, 18000).mapToObj(value -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("version", 0);
+            map.put("create_time", new Date());
+            map.put("code", "code" + value);
+            map.put("name", "name" + value);
+            map.put("email", "email" + value);
+            map.put("age", 28);
+            return map;
+        }).collect(Collectors.toList());
+        Stopwatch watch = Stopwatch.createStarted();
+        jdbcTemplate.batchUpdate("insert into test_user(version, create_time, code, name, email, age) values (:version,:create_time,:code,:name,:email,:age)",
+                users.toArray(new HashMap[users.size()]));
+        System.out.println("jdbcTemplate.batchUpdate 耗时: " + watch.elapsed(TimeUnit.MILLISECONDS));
+
+        System.out.println("总数: " + userRepository.count());;
+
+    }
 
 //    @Test
 //    public void testInsert3() {
