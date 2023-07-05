@@ -15,10 +15,7 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -49,26 +46,33 @@ public class TestUserTest {
         Page<TestUser> byPage = testUserService.findByPage(PageRequest.of(0, 55));
         System.out.println(byPage);
     }
+    @Test
+    public void testList() {
+        List<TestUser> copy1 = userRepository.findList("copy1");
+        System.out.println(copy1);
+    }
 
     @Test
     public void testInsert() {
+
+    }
+
+    @Test
+    public void testSave() {
         Stopwatch watch = Stopwatch.createStarted();
-        List<TestUser> users = IntStream.range(0, 5000).mapToObj(value -> {
-            TestUser user = new TestUser();
-            user.setVersion(0);
-            user.setCreateTime(new Date());
-            user.setCode("code" + value);
-            user.setName("name" + value);
-            user.setEmail("email" + value);
-            user.setAge(20);
-            return user;
-        }).collect(Collectors.toList());
-        userRepository.saveAll(users);
+        TestUser user = new TestUser();
+        user.setVersion(0);
+        user.setCreateTime(new Date());
+        user.setCode("code" + UUID.randomUUID().toString());
+        user.setName("name" + UUID.randomUUID().toString());
+        user.setEmail("email" + UUID.randomUUID().toString());
+        user.setAge(20);
+        userRepository.save(user);
         System.out.println("耗时: " + watch.elapsed(TimeUnit.MILLISECONDS));
     }
 
     @Test
-    public void testInsert2() {
+    public void testSaveAll() {
         List<Map<String, Object>> users = IntStream.range(0, 18000).mapToObj(value -> {
             Map<String, Object> map = new HashMap<>();
             map.put("version", 0);

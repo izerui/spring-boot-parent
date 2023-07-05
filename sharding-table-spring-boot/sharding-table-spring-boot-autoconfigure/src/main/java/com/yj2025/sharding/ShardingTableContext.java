@@ -22,7 +22,7 @@ public class ShardingTableContext {
      * @param params      其他参数
      * @return 新的表名
      */
-    public String getTableName(DataSource dataSource, String tablePrefix, String entCode, String... params) {
+    public String getTableName(DataSource dataSource, String tablePrefix, String entCode, Object... params) {
         Map<String, ShardingTableProperties> tables = shardingProperties.getTables();
         if (tables != null) {
             ShardingTableProperties tableProperties = tables.get(tablePrefix);
