@@ -16,7 +16,6 @@
 package com.yj2025.jdbc.override;
 
 import org.springframework.data.relational.core.mapping.*;
-import org.springframework.util.Assert;
 
 /**
  * The default naming strategy used by Spring Data Relational. Names are in {@code SNAKE_CASE}.
@@ -26,48 +25,33 @@ import org.springframework.util.Assert;
  */
 public class OverrideDefaultNamingStrategy implements NamingStrategy {
 
-	/**
-	 * Static immutable instance of the class. It is made immutable by letting
-	 * {@link #setForeignKeyNaming(ForeignKeyNaming)} throw an exception.
-	 * <p>
-	 * Using this avoids creating essentially the same class over and over again.
-	 */
-	public static NamingStrategy INSTANCE = new OverrideDefaultNamingStrategy() {
-		@Override
-		public void setForeignKeyNaming(ForeignKeyNaming foreignKeyNaming) {
-			throw new UnsupportedOperationException("Cannot update immutable DefaultNamingStrategy");
-		}
-	};
+    private ForeignKeyNaming foreignKeyNaming = ForeignKeyNaming.APPLY_RENAMING;
 
-	private ForeignKeyNaming foreignKeyNaming = ForeignKeyNaming.APPLY_RENAMING;
+    @Override
+    public String getTableName(Class<?> type) {
+        return NamingStrategy.super.getTableName(type);
+    }
 
-	public void setForeignKeyNaming(ForeignKeyNaming foreignKeyNaming) {
+    @Override
+    public String getReverseColumnName(RelationalPersistentProperty property) {
 
-		Assert.notNull(foreignKeyNaming, "foreignKeyNaming must not be null");
+        return getColumnNameReferencing(property.getOwner());
+    }
 
-		this.foreignKeyNaming = foreignKeyNaming;
-	}
+    @Override
+    public String getReverseColumnName(PersistentPropertyPathExtension path) {
 
-	@Override
-	public String getReverseColumnName(RelationalPersistentProperty property) {
+        RelationalPersistentEntity<?> leafEntity = path.getIdDefiningParentPath().getRequiredLeafEntity();
 
-		return getColumnNameReferencing(property.getOwner());
-	}
+        return getColumnNameReferencing(leafEntity);
+    }
 
-	@Override
-	public String getReverseColumnName(PersistentPropertyPathExtension path) {
+    private String getColumnNameReferencing(RelationalPersistentEntity<?> leafEntity) {
 
-		RelationalPersistentEntity<?> leafEntity = path.getIdDefiningParentPath().getRequiredLeafEntity();
+        if (foreignKeyNaming == ForeignKeyNaming.IGNORE_RENAMING) {
+            return getTableName(leafEntity.getType());
+        }
 
-		return getColumnNameReferencing(leafEntity);
-	}
-
-	private String getColumnNameReferencing(RelationalPersistentEntity<?> leafEntity) {
-
-		if (foreignKeyNaming == ForeignKeyNaming.IGNORE_RENAMING) {
-			return getTableName(leafEntity.getType());
-		}
-
-		return leafEntity.getTableName().getReference();
-	}
+        return leafEntity.getTableName().getReference();
+    }
 }

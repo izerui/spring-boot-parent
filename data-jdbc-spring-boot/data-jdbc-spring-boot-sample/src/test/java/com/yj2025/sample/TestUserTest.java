@@ -8,8 +8,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.expression.BeanFactoryAccessor;
+import org.springframework.context.expression.BeanFactoryResolver;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.expression.Expression;
+import org.springframework.expression.ParserContext;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
+import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +41,8 @@ public class TestUserTest {
     private NamedParameterJdbcTemplate jdbcTemplate;
     @Autowired
     private DataSource dataSource;
+    @Autowired
+    private ApplicationContext applicationContext;
 
     @Test
     public void testFindAll() {
@@ -48,13 +57,14 @@ public class TestUserTest {
     }
     @Test
     public void testList() {
-        List<TestUser> copy1 = userRepository.findList("copy1");
+        List<TestUser> copy1 = userRepository.findList("copy1", "code10");
         System.out.println(copy1);
     }
 
     @Test
-    public void testInsert() {
-
+    public void testFindCode() {
+        List<TestUser> users = testUserService.findByCode("copy1", "code10");
+        System.out.println(users);
     }
 
     @Test
@@ -66,9 +76,25 @@ public class TestUserTest {
         user.setCode("code" + UUID.randomUUID().toString());
         user.setName("name" + UUID.randomUUID().toString());
         user.setEmail("email" + UUID.randomUUID().toString());
+        user.setEntCode("copy1");
         user.setAge(20);
-        userRepository.save(user);
+        testUserService.insertUser(user);
         System.out.println("耗时: " + watch.elapsed(TimeUnit.MILLISECONDS));
+    }
+
+    @Test
+    public void testSpel() {
+        String nameStr = "test_user_#{T(java.lang.Math).random()}";
+
+        StandardEvaluationContext context = new StandardEvaluationContext();
+        context.addPropertyAccessor(new BeanFactoryAccessor());
+        context.setBeanResolver(new BeanFactoryResolver(applicationContext));
+        context.setRootObject(applicationContext);
+
+        SpelExpressionParser parser = new SpelExpressionParser();
+        Expression expression = parser.parseExpression(nameStr, ParserContext.TEMPLATE_EXPRESSION);
+        String value = expression.getValue(context, String.class);
+        System.out.println(value);
     }
 
     @Test

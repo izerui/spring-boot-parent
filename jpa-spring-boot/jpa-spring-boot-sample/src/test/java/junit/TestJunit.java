@@ -41,6 +41,12 @@ public class TestJunit {
     private DataSource dataSource;
 
     @Test
+    public void testList() {
+        List<User> list = userRepository.findList("code10");
+        System.out.println(list);
+    }
+
+    @Test
     public void testSelectSql() {
         Conditions conditions = Conditions.where("name").is("张无忌");
         Map<String, Object> aggregate = userRepository.aggregate(conditions, "sum(id) as sumId", "count(id) as countId");

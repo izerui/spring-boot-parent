@@ -1,6 +1,5 @@
 package com.yj2025.sample.entity;
 
-import com.yj2025.jdbc.sharding.ShardingTable;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
@@ -11,11 +10,13 @@ import java.util.Date;
 
 //用户
 @Data
+@Table("#{@tenantSharding.getTable('test_user')}")
 public class TestUser {
     @Id
     private Long id;
     @Version
     private int version;
+    private String entCode;
     @CreatedDate
     private Date createTime = new Date();
     private String code;

@@ -82,6 +82,7 @@
         <knife4j.version>4.1.0</knife4j.version>
         <work-weixin.version>1.2.0</work-weixin.version>
         <swagger-annotations.version>2.2.8</swagger-annotations.version>
+        <spring-data-jdbc.version>3.1.2-SNAPSHOT</spring-data-jdbc.version>
     </properties>
 
 
@@ -100,7 +101,47 @@
                 <version>${spring-data.version}</version>
                 <scope>import</scope>
                 <type>pom</type>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>spring-data-jdbc</artifactId>
+                        <groupId>org.springframework.data</groupId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-data-jdbc-distribution</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-data-r2dbc</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-data-relational</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
+            <!-- spring-data-jdbc override begin -->
+            <dependency>
+                <groupId>org.springframework.data</groupId>
+                <artifactId>spring-data-jdbc</artifactId>
+                <version>${spring-data-jdbc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.data</groupId>
+                <artifactId>spring-data-jdbc-distribution</artifactId>
+                <version>${spring-data-jdbc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.data</groupId>
+                <artifactId>spring-data-r2dbc</artifactId>
+                <version>${spring-data-jdbc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.data</groupId>
+                <artifactId>spring-data-relational</artifactId>
+                <version>${spring-data-jdbc.version}</version>
+            </dependency>
+            <!-- spring-data-jdbc override end -->
             <dependency>
                 <groupId>com.alibaba.cloud</groupId>
                 <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
@@ -117,10 +158,10 @@
                 <version>${jackson-bom.version}</version>
             </dependency>
             <dependency>
-            <groupId>io.swagger.core.v3</groupId>
-            <artifactId>swagger-annotations</artifactId>
-            <version>${swagger-annotations.version}</version>
-        </dependency>
+                <groupId>io.swagger.core.v3</groupId>
+                <artifactId>swagger-annotations</artifactId>
+                <version>${swagger-annotations.version}</version>
+            </dependency>
             <dependency>
                 <groupId>commons-beanutils</groupId>
                 <artifactId>commons-beanutils</artifactId>
@@ -504,6 +545,12 @@
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>sharding-table-spring-boot-starter</artifactId>
+                <version>${base-starter.version}</version>
+            </dependency>
+            <!-- data-jdbc -->
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>data-jdbc-spring-boot-starter</artifactId>
                 <version>${base-starter.version}</version>
             </dependency>
 

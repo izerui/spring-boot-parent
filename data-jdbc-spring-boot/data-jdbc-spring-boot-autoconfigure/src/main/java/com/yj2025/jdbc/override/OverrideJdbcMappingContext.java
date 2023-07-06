@@ -23,6 +23,7 @@ public class OverrideJdbcMappingContext extends JdbcMappingContext {
 
     @Override
     protected <T> RelationalPersistentEntity<T> createPersistentEntity(TypeInformation<T> typeInformation) {
+        // 替换默认的 RelationalPersistentEntityImpl
         OverrideRelationalPersistentEntityImpl<T> entity = new OverrideRelationalPersistentEntityImpl<>(typeInformation,
                 this.getNamingStrategy());
         entity.setForceQuote(isForceQuote());

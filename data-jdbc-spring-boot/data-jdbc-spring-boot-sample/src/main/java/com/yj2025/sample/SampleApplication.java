@@ -6,7 +6,6 @@ import org.springframework.data.jdbc.repository.config.EnableJdbcAuditing;
 import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
 
 @SpringBootApplication
-@EnableJdbcRepositories
 @EnableJdbcAuditing
 public class SampleApplication {
 
