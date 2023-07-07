@@ -12,6 +12,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
 public @interface TenantThreadLocal {
-    String value() default "#{#entCode}";
+    String value();
     Class holder() default TenantThreadLocalHolder.class;
 }

@@ -21,7 +21,8 @@ public class TestUserService {
     @Autowired
     private TestUserRepository testUserRepository;
 
-    public Iterable<TestUser> findAll() {
+    @TenantThreadLocal("#{#entCode}")
+    public Iterable<TestUser> findAll(String entCode) {
         log.info("tx: {}", TransactionSynchronizationManager.isActualTransactionActive());
         return testUserRepository.findAll();
     }

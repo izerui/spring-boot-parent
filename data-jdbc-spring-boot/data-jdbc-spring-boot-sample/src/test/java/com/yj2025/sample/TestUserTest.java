@@ -46,7 +46,7 @@ public class TestUserTest {
 
     @Test
     public void testFindAll() {
-        Iterable<TestUser> all = testUserService.findAll();
+        Iterable<TestUser> all = testUserService.findAll("copy1");
         log.info(all.toString());
     }
 
