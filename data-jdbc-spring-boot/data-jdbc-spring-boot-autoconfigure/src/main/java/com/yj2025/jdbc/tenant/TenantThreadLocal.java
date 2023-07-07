@@ -12,6 +12,10 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
 public @interface TenantThreadLocal {
+    /**
+     * 返回 spel表达式结果, 将会放入 TenantThreadLocalHolder 中
+     * @return
+     */
     String value();
     Class holder() default TenantThreadLocalHolder.class;
 }
