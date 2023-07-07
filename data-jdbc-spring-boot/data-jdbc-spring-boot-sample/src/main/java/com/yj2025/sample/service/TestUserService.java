@@ -27,7 +27,8 @@ public class TestUserService {
         return testUserRepository.findAll();
     }
 
-    public Page<TestUser> findByPage(Pageable pageable) {
+    @TenantThreadLocal("#{#entCode}")
+    public Page<TestUser> findByPage(String entCode, Pageable pageable) {
         return testUserRepository.findAll(pageable);
     }
 

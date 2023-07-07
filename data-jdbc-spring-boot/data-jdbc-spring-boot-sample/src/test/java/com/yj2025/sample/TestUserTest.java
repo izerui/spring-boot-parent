@@ -52,7 +52,7 @@ public class TestUserTest {
 
     @Test
     public void testPage() {
-        Page<TestUser> byPage = testUserService.findByPage(PageRequest.of(0, 55));
+        Page<TestUser> byPage = testUserService.findByPage("copy1", PageRequest.of(0, 55));
         System.out.println(byPage);
     }
     @Test
