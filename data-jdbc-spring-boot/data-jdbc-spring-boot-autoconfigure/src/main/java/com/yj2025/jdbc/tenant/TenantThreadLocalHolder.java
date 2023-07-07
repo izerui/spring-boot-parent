@@ -15,11 +15,7 @@ public class TenantThreadLocalHolder {
      * @return
      */
     public static String getTenantId() {
-        String tenantId = tenantLocal.get();
-        if (!StringUtils.hasText(tenantId)) {
-            throw new IllegalArgumentException("入口方法未正确声明@TenantThreadLocal(\"#{#entCode}\")注解, 或者无法获取有效的tenantId");
-        }
-        return tenantId;
+        return tenantLocal.get();
     }
 
 }

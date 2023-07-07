@@ -1,7 +1,6 @@
 package com.yj2025.jdbc;
 
 import com.yj2025.jdbc.override.OverrideDefaultNamingStrategy;
-import com.yj2025.jdbc.override.OverrideJdbcMappingContext;
 import com.yj2025.jdbc.tenant.TenantMethodAspect;
 import com.yj2025.jdbc.tenant.TenantSharding;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
@@ -10,18 +9,13 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.data.jdbc.core.convert.JdbcCustomConversions;
-import org.springframework.data.jdbc.core.mapping.JdbcMappingContext;
 import org.springframework.data.jdbc.repository.config.AbstractJdbcConfiguration;
-import org.springframework.data.relational.RelationalManagedTypes;
-import org.springframework.data.relational.core.mapping.DefaultNamingStrategy;
 import org.springframework.data.relational.core.mapping.NamingStrategy;
 import org.springframework.data.relational.core.mapping.Table;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
-import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -68,23 +62,4 @@ public class JdbcConfiguration extends AbstractJdbcConfiguration {
         return new EntityScanner(this.applicationContext).scan(Table.class);
     }
 
-    /**
-     * 覆盖: {@link JdbcMappingContext}
-     *
-     * @param namingStrategy    optional {@link NamingStrategy}. Use {@link org.springframework.data.relational.core.mapping.DefaultNamingStrategy#INSTANCE} as fallback.
-     * @param customConversions see {@link #jdbcCustomConversions()}.
-     * @param jdbcManagedTypes  JDBC managed types, typically discovered through {@link #jdbcManagedTypes() an entity
-     *                          scan}.
-     * @return
-     */
-    @Override
-    @Bean
-    public JdbcMappingContext jdbcMappingContext(Optional<NamingStrategy> namingStrategy,
-                                                 JdbcCustomConversions customConversions, RelationalManagedTypes jdbcManagedTypes) {
-        OverrideJdbcMappingContext overrideJdbcMappingContext = new OverrideJdbcMappingContext(namingStrategy.orElse(DefaultNamingStrategy.INSTANCE));
-        overrideJdbcMappingContext.setSimpleTypeHolder(customConversions.getSimpleTypeHolder());
-        overrideJdbcMappingContext.setManagedTypes(jdbcManagedTypes);
-
-        return overrideJdbcMappingContext;
-    }
 }
