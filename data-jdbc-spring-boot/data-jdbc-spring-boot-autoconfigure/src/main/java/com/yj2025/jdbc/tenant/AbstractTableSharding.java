@@ -18,7 +18,7 @@ public abstract class AbstractTableSharding {
 
     private ApplicationContext applicationContext;
 
-    protected Map<DataSource, List<String>> cacheDataSourceTablesMap = new ConcurrentHashMap<>();
+    protected final static Map<DataSource, List<String>> cacheDataSourceTablesMap = new ConcurrentHashMap<>();
 
     public AbstractTableSharding(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
