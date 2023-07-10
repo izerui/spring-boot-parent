@@ -194,6 +194,18 @@ public class DbContext {
         batchUpdateAsync(Context.getBean(DataSource.class), updateSQL, primaryKey, poolSize, batchNum, null);
     }
 
+        /**
+     * 批量异步执行更新语句
+     *
+     * @param updateSQL  更新语句
+     * @param primaryKey 按批次根据主键更新
+     * @param poolSize   执行线程个数
+     * @param batchNum   每批次数量
+     */
+    public static void batchUpdateAsync(DataSource dataSource, String updateSQL, String primaryKey, int poolSize, int batchNum) {
+        batchUpdateAsync(dataSource, updateSQL, primaryKey, poolSize, batchNum, null);
+    }
+
     /**
      * 批量异步执行更新语句
      *

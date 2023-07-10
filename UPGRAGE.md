@@ -22,6 +22,7 @@
 * 移除 `ureport(javax.servlet)`
 * 配置 自动装配模式改变 `spring.factories` 替换成 `org.springframework.boot.autoconfigure.AutoConfiguration.imports`
 * bean定义 全局使用 `jackson-spring-boot-starter` 模块中定义的 `ObjectMapper`
+* 依赖 `basic-dao-spring-boot-starter` 不再默认包含 `jpa-spring-boot-starter`, jpa请手动添加`jpa-spring-boot-starter`、jdbc请手动添加 `data-jdbc-spring-boot-starter`、mybatis请手动添加`mybatis-spring-boot-starter`
 * 版本升级:
   * `spring-boot:2.7.5` -> `spring-boot:3.1.1`
   * `spring-cloud:2021.0.5` -> `spring-cloud:2021.0.5`

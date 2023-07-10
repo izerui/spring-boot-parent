@@ -30,21 +30,17 @@
         <dependency>
             <groupId>com.yj2025</groupId>
             <artifactId>jpa-spring-boot-starter</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>io.hypersistence</groupId>
-            <artifactId>hypersistence-utils-hibernate-62</artifactId>
-            <version>3.5.0</version>
+            <groupId>com.yj2025</groupId>
+            <artifactId>data-jdbc-spring-boot-starter</artifactId>
+            <optional>true</optional>
         </dependency>
 <!--        <dependency>-->
 <!--            <groupId>com.fasterxml.jackson.module</groupId>-->
 <!--            <artifactId>jackson-module-jakarta-xmlbind-annotations</artifactId>-->
 <!--        </dependency>-->
-        <dependency>
-            <groupId>org.apache.calcite</groupId>
-            <artifactId>calcite-core</artifactId>
-            <version>1.30.0</version>
-        </dependency>
     </dependencies>
 
 </project>
