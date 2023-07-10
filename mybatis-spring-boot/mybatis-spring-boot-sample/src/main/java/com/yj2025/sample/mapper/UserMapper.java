@@ -9,7 +9,7 @@ import org.springframework.data.domain.PageRequest;
 
 public interface UserMapper extends BasePageMapper<User> {
 
-    @Select("select * from user where ent_code = #{entCode} order by email desc")
+    @Select("select * from test_user where ent_code = #{entCode} order by email desc")
     Page<User> findByOrigin(@Param("entCode") String entCode,
                             @Param("page") PageRequest page);
 }

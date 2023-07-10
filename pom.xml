@@ -11,7 +11,7 @@
         <module>jpa-spring-boot</module>
         <module>lock-spring-boot</module>
         <module>mvc-rest-spring-boot</module>
-        <!--        <module>mybatis-spring-boot</module>-->
+        <module>mybatis-spring-boot</module>
         <module>nacos-spring-boot</module>
         <module>rabbit-spring-boot</module>
         <module>redis-spring-boot</module>
@@ -83,6 +83,7 @@
         <work-weixin.version>1.2.0</work-weixin.version>
         <swagger-annotations.version>2.2.8</swagger-annotations.version>
         <spring-data-jdbc.version>3.1.2-SNAPSHOT</spring-data-jdbc.version>
+        <mybatis-plus.version>3.5.3.2-SNAPSHOT</mybatis-plus.version>
     </properties>
 
 
@@ -142,6 +143,11 @@
                 <version>${spring-data-jdbc.version}</version>
             </dependency>
             <!-- spring-data-jdbc override end -->
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
             <dependency>
                 <groupId>com.alibaba.cloud</groupId>
                 <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
@@ -319,11 +325,11 @@
             </dependency>
 
             <!-- mybatis -->
-            <!--            <dependency>-->
-            <!--                <groupId>com.yj2025</groupId>-->
-            <!--                <artifactId>mybatis-spring-boot-starter</artifactId>-->
-            <!--                <version>${base-starter.version}</version>-->
-            <!--            </dependency>-->
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>mybatis-spring-boot-starter</artifactId>
+                <version>${base-starter.version}</version>
+            </dependency>
 
             <!-- nacos config -->
             <dependency>

@@ -35,20 +35,24 @@ public class SimpleTest {
             Simple simple = new Simple();
             simple.setWord("word" + value);
             simple.setSimple("smp" + value);
-            simple.setType("type" + value);
+            if (value >= 100) {
+                simple.setType("type100");
+            } else {
+                simple.setType("type" + value);
+            }
             simpleMapper.insert(simple);
         });
     }
 
     @Test
     public void selectPage() {
-        Page<Simple> simples = simpleMapper.selectPage(PageRequest.of(1, 15, Sort.Direction.DESC,"word"), Wrappers.emptyWrapper());
+        Page<Simple> simples = simpleMapper.selectPage(PageRequest.of(1, 15, Sort.Direction.DESC, "word"), Wrappers.emptyWrapper());
         System.out.println(simples.getTotalElements());
     }
 
     @Test
     public void testPageOrigin() {
-        Page<Simple> simples = simpleMapper.findByOrigin(PageRequest.of(1, 15), "n.");
+        Page<Simple> simples = simpleMapper.findByOrigin(PageRequest.of(0, 15), "type100");
         System.out.println(simples.getTotalElements());
     }
 
@@ -61,7 +65,7 @@ public class SimpleTest {
     @Test
     public void testPageWrapper() {
         LambdaQueryWrapper<Simple> wrapper = Wrappers.lambdaQuery(Simple.class);
-        wrapper.eq(Simple::getType, "n.");
+        wrapper.eq(Simple::getType, "type100");
         wrapper.orderByAsc(Simple::getWord);
         Page<Simple> simples = simpleMapper.selectPage(PageRequest.of(0, 15), wrapper);
         System.out.println(simples.getTotalElements());
@@ -70,7 +74,7 @@ public class SimpleTest {
     @Test
     public void testPageMap() {
         LambdaQueryWrapper<Simple> wrapper = Wrappers.lambdaQuery(Simple.class);
-        wrapper.eq(Simple::getType, "n.");
+        wrapper.eq(Simple::getType, "type100");
         wrapper.orderByAsc(Simple::getWord);
         Page<Map<String, Object>> simples = simpleMapper.selectMapsPage(PageRequest.of(0, 15), wrapper);
         System.out.println(simples.getTotalElements());
@@ -78,7 +82,7 @@ public class SimpleTest {
 
     @Test
     public void testSelectOne() {
-        Simple simple = simpleMapper.selectOne(Wrappers.lambdaQuery(Simple.class).eq(Simple::getWord, "1"));
+        Simple simple = simpleMapper.selectOne(Wrappers.lambdaQuery(Simple.class).eq(Simple::getWord, "word136"));
         System.out.println(simple);
     }
 
@@ -86,7 +90,7 @@ public class SimpleTest {
         User u = new User();
         u.setName("111");
 
-        ReflectionUtil.setPropertyValue(User.class,u,"name","222");
+        ReflectionUtil.setPropertyValue(User.class, u, "name", "222");
         System.out.println(u.getName());
     }
 
