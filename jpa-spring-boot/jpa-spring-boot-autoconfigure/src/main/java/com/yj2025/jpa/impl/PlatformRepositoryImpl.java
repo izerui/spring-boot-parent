@@ -16,6 +16,9 @@
 package com.yj2025.jpa.impl;
 
 import com.yj2025.jpa.PlatformJpaRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -28,9 +31,6 @@ import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.Query;
-import jakarta.persistence.TypedQuery;
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
@@ -47,7 +47,6 @@ public class PlatformRepositoryImpl<T, ID extends Serializable> extends SimpleJp
 
     private final EntityManager entityManager;
     private final JpaEntityInformation<T, ?> entityInformation;
-    private final Map<Class, JpaEntityInformation<?, ?>> entityInformationMap = new HashMap<>();
 
     public PlatformRepositoryImpl(JpaEntityInformation<T, ?> entityInformation, EntityManager entityManager) {
         super(entityInformation, entityManager);
@@ -217,7 +216,7 @@ public class PlatformRepositoryImpl<T, ID extends Serializable> extends SimpleJp
         Assert.notNull(pageable);
         Long total;
         if (1 == groupFields.size()) {
-            total = count(conditions, "distinct " + groupFields.get(0) );
+            total = count(conditions, "distinct " + groupFields.get(0));
         } else {
             total = count(conditions, "distinct concat(" + StringUtils.join(groupFields, ",") + ") ");
         }
