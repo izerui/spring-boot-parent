@@ -13,7 +13,7 @@ import java.util.Map;
 @Data
 @Entity
 @Table(name = "test_user")
-public class User implements ClearEvent {
+public class JpaUser implements ClearEvent {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

@@ -2,14 +2,14 @@ package com.yj2025.sample.command;
 
 import com.yj2025.basic.command.BasicCommand;
 import com.yj2025.basic.support.Context;
-import com.yj2025.sample.entity.User;
+import com.yj2025.sample.entity.JpaUser;
 import com.yj2025.sample.repository.UserRepository;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class UserBatchCreateCmd extends BasicCommand<List<User>> {
+public class UserBatchCreateCmd extends BasicCommand<List<JpaUser>> {
 
     private int[] integers;
 
@@ -18,10 +18,10 @@ public class UserBatchCreateCmd extends BasicCommand<List<User>> {
     }
 
     @Override
-    protected List<User> doExecute() throws Exception {
+    protected List<JpaUser> doExecute() throws Exception {
         UserRepository userRepository = Context.getBean(UserRepository.class);
-        List<User> userlist = Arrays.stream(integers).mapToObj(operand -> {
-            User user = new User();
+        List<JpaUser> userlist = Arrays.stream(integers).mapToObj(operand -> {
+            JpaUser user = new JpaUser();
             user.setCode("code" + operand);
             user.setName("张三丰");
             user.setEmail("张三丰@qq.com");

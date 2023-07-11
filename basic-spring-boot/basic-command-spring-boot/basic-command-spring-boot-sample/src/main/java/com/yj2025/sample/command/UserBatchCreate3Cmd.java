@@ -4,9 +4,7 @@ import com.yj2025.basic.command.BasicCommand;
 import com.yj2025.basic.support.Context;
 import com.yj2025.performance.Consumer;
 import com.yj2025.performance.Producer;
-import com.yj2025.sample.entity.User;
-import com.yj2025.sample.repository.UserRepository;
-import org.springframework.jdbc.core.JdbcTemplate;
+import com.yj2025.sample.entity.JpaUser;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 
 import javax.sql.DataSource;
@@ -22,9 +20,9 @@ public class UserBatchCreate3Cmd extends BasicCommand<Void> {
 
     @Override
     protected Void doExecute() throws Exception {
-        Producer<User> producer = Context.multiConsumer(User.class, 5, new Consumer<User>() {
+        Producer<JpaUser> producer = Context.multiConsumer(JpaUser.class, 5, new Consumer<JpaUser>() {
             @Override
-            protected void handlerEvent(User event) throws Exception {
+            protected void handlerEvent(JpaUser event) throws Exception {
                 SimpleJdbcInsert insert = new SimpleJdbcInsert($(DataSource.class));
                 insert.setTableName("test_user");
                 insert.execute(event.toMap());
