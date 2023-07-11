@@ -25,6 +25,7 @@ public class UserBatchCreateCmd extends BasicCommand<List<User>> {
             user.setCode("code" + operand);
             user.setName("张三丰");
             user.setEmail("张三丰@qq.com");
+            user.setEntCode("ent001");
             return user;
         }).collect(Collectors.toList());
         userRepository.saveAll(userlist);

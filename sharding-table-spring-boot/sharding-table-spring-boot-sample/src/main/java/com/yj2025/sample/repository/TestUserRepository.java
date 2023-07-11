@@ -18,4 +18,6 @@ public interface TestUserRepository extends ListCrudRepository<TestUser, Long>, 
     @TenantThreadLocal("#{#entCode}")
     List<TestUser> findByCode(String entCode, String code);
 
+    @Query("select * from test_user_#{#entCode} ")
+    List<TestUser> findList1(String entCode);
 }

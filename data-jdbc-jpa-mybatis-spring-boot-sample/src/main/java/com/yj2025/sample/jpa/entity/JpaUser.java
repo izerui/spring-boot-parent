@@ -1,15 +1,15 @@
-package com.yj2025.jpa.entity;
-
-import lombok.Data;
+package com.yj2025.sample.jpa.entity;
 
 import jakarta.persistence.*;
+import lombok.Data;
+
 import java.util.Date;
 
 //用户
 @Data
 @Entity
-@Table(name = "test_user")
-public class User {
+@jakarta.persistence.Table(name = "test_user")
+public class JpaUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

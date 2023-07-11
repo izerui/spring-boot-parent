@@ -1,4 +1,4 @@
-package com.yj2025.jdbc.tenant;
+package com.yj2025.sharding.tenant;
 
 import jdk.jfr.Description;
 

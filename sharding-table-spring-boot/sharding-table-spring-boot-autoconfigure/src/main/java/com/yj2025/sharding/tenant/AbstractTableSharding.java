@@ -1,5 +1,6 @@
-package com.yj2025.jdbc.tenant;
+package com.yj2025.sharding.tenant;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -24,7 +25,8 @@ public abstract class AbstractTableSharding {
         this.applicationContext = applicationContext;
     }
 
-    public final String getTable(String sourceTable) throws Exception {
+    @SneakyThrows
+    public final String getTable(String sourceTable) {
         Assert.state(!StringUtils.isEmpty(sourceTable), "AbstractRule: [tablePrefix]不能为空");
         String tenantId = TenantThreadLocalHolder.getTenantId();
         if (!StringUtils.hasText(tenantId)) {
@@ -61,5 +63,11 @@ public abstract class AbstractTableSharding {
         return tables;
     }
 
+    /**
+     * 不开放给public调用，因为必须经过缓存列表验证一道
+     * @param sourceTable
+     * @param tenantId
+     * @return
+     */
     protected abstract String getTable(String sourceTable, String tenantId);
 }

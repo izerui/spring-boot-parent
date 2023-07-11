@@ -1,8 +1,8 @@
 package com.yj2025.sample.service;
 
-import com.yj2025.jdbc.tenant.TenantThreadLocal;
 import com.yj2025.sample.entity.TestUser;
 import com.yj2025.sample.repository.TestUserRepository;
+import com.yj2025.sharding.tenant.TenantThreadLocal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

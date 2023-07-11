@@ -26,6 +26,7 @@ public class User implements ClearEvent {
     private String name;
     private String email;
     private Integer age;
+    private String entCode;
 
     @Override
     public void clear() {
@@ -45,6 +46,7 @@ public class User implements ClearEvent {
         map.put("code", code);
         map.put("name", name);
         map.put("email", email);
+        map.put("ent_code", email);
         return map;
     }
 }

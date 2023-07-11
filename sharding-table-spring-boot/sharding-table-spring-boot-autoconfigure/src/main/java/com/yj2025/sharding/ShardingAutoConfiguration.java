@@ -1,16 +1,28 @@
 package com.yj2025.sharding;
 
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import com.yj2025.sharding.tenant.TenantMethodAspect;
+import com.yj2025.sharding.tenant.TenantSharding;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@EnableConfigurationProperties(ShardingProperties.class)
 public class ShardingAutoConfiguration {
 
-    @Bean
-    public ShardingTableContext shardingTablesContext() {
-        return new ShardingTableContext();
+    private final ApplicationContext applicationContext;
+
+    public ShardingAutoConfiguration(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
     }
 
+
+    @Bean
+    public TenantMethodAspect repositoryQueryAspect() {
+        return new TenantMethodAspect(applicationContext);
+    }
+
+    @Bean
+    public TenantSharding tenantSharding() {
+        return new TenantSharding(applicationContext);
+    }
 }

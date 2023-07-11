@@ -21,7 +21,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.sql.DataSource;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -40,8 +39,6 @@ public class TestUserTest {
     @Autowired
     private NamedParameterJdbcTemplate jdbcTemplate;
     @Autowired
-    private DataSource dataSource;
-    @Autowired
     private ApplicationContext applicationContext;
 
     @Test
@@ -55,6 +52,7 @@ public class TestUserTest {
         Page<TestUser> byPage = testUserService.findByPage("copy1", PageRequest.of(0, 55));
         System.out.println(byPage);
     }
+
     @Test
     public void testList() {
         List<TestUser> copy1 = userRepository.findList("copy1", "code10");
@@ -114,7 +112,8 @@ public class TestUserTest {
                 users.toArray(new HashMap[users.size()]));
         System.out.println("jdbcTemplate.batchUpdate 耗时: " + watch.elapsed(TimeUnit.MILLISECONDS));
 
-        System.out.println("总数: " + userRepository.count());;
+        System.out.println("总数: " + userRepository.count());
+        ;
 
     }
 

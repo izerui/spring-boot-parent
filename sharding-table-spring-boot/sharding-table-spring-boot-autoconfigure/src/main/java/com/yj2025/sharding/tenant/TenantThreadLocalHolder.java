@@ -1,6 +1,4 @@
-package com.yj2025.jdbc.tenant;
-
-import org.springframework.util.StringUtils;
+package com.yj2025.sharding.tenant;
 
 public class TenantThreadLocalHolder {
 
@@ -12,6 +10,7 @@ public class TenantThreadLocalHolder {
 
     /**
      * 调用该方法之前请先在入口方法上面声明{@link TenantThreadLocal}注解
+     *
      * @return
      */
     public static String getTenantId() {

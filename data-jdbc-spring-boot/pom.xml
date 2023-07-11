@@ -15,7 +15,6 @@
         <module>data-jdbc-spring-boot-autoconfigure</module>
         <module>data-jdbc-spring-boot-starter</module>
         <module>data-jdbc-spring-boot-sample</module>
-        <module>data-jdbc-jpa-mybatis-spring-boot-sample</module>
     </modules>
 
     <properties>
