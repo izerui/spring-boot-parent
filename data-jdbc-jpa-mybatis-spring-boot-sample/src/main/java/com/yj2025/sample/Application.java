@@ -28,7 +28,7 @@ public class Application implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        log.info("jpa插入到test_user: " + userService.addByJpa(300));
+        log.info("jpa插入到test_user: " + userService.addByJpa( 300));
         log.info("jpa查询test_user: " + userService.findListByJpa("ent001").size());
 
         log.info("jdbc插入到test_user_ent001: " + userService.addByJdbc("ent001", 500));
