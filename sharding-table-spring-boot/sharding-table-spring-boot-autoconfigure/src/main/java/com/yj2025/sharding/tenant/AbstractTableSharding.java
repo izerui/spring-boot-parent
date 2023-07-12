@@ -28,9 +28,6 @@ public abstract class AbstractTableSharding {
     public final String getTable(String sourceTable) {
         Assert.state(!StringUtils.isEmpty(sourceTable), "AbstractRule: [tablePrefix]不能为空");
         String tenantId = TenantThreadLocalHolder.getTenantId();
-        if (!StringUtils.hasText(tenantId)) {
-            throw new IllegalArgumentException("因为@Table使用了sharding分表表达式,但是入口方法未正确声明@TenantThreadLocal(\"#{#entCode}\")注解, 或者无法获取有效的tenantId");
-        }
         return this.getTable(sourceTable, tenantId);
     }
 
@@ -40,6 +37,9 @@ public abstract class AbstractTableSharding {
 
     @SneakyThrows
     public final String getTable(DataSource dataSource, String sourceTable, String tenantId) {
+        if (!StringUtils.hasText(tenantId)) {
+            throw new IllegalArgumentException("使用sharding获取分表结果,但是入口方法未正确声明@TenantThreadLocal(\"#{#entCode}\")注解, 或者无法获取有效的tenantId");
+        }
         String tableName = this.tableName(sourceTable, tenantId);
         if (dataSource.getClass().getName().equals("com.baomidou.dynamic.datasource.DynamicRoutingDataSource")) {
             Method determineMethod = ReflectionUtils.findMethod(Class.forName("com.baomidou.dynamic.datasource.DynamicRoutingDataSource"), "determineDataSource");
