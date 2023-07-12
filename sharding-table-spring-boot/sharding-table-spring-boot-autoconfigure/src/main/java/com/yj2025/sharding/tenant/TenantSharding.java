@@ -9,7 +9,7 @@ public class TenantSharding extends AbstractTableSharding {
     }
 
     @Override
-    protected String getTable(String sourceTable, String tenantId) {
+    protected String tableName(String sourceTable, String tenantId) {
         return sourceTable.concat("_").concat(tenantId);
     }
 }
