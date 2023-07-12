@@ -34,10 +34,13 @@ public abstract class AbstractTableSharding {
         return this.getTable(sourceTable, tenantId);
     }
 
-    @SneakyThrows
     public final String getTable(String sourceTable, String tenantId) {
+        return this.getTable(applicationContext.getBean(DataSource.class), sourceTable, tenantId);
+    }
+
+    @SneakyThrows
+    public final String getTable(DataSource dataSource, String sourceTable, String tenantId) {
         String tableName = this.tableName(sourceTable, tenantId);
-        DataSource dataSource = applicationContext.getBean(DataSource.class);
         if (dataSource.getClass().getName().equals("com.baomidou.dynamic.datasource.DynamicRoutingDataSource")) {
             Method determineMethod = ReflectionUtils.findMethod(Class.forName("com.baomidou.dynamic.datasource.DynamicRoutingDataSource"), "determineDataSource");
             dataSource = (DataSource) ReflectionUtils.invokeMethod(determineMethod, dataSource);
