@@ -1,15 +1,19 @@
 package com.yj2025.jdbc.impl;
 
 import com.yj2025.jdbc.PlatformJdbcRepository;
+import com.yj2025.jdbc.utils.CriteriaUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jdbc.core.JdbcAggregateOperations;
 import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
 import org.springframework.data.jdbc.core.convert.JdbcConverter;
 import org.springframework.data.jdbc.repository.support.SimpleJdbcRepository;
 import org.springframework.data.mapping.PersistentEntity;
+import org.springframework.data.relational.core.query.Criteria;
 import org.springframework.data.relational.core.query.Query;
 
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -71,5 +75,42 @@ public class PlatformJdbcRepositoryImpl<T, ID> extends SimpleJdbcRepository<T, I
     @Override
     public Page<T> findAll(Query query, Pageable pageable) {
         return jdbcAggregateTemplate.findAll(query, entity.getType(), pageable);
+    }
+
+    @Override
+    public long count(Map<String, Object> map) {
+        return jdbcAggregateTemplate.count(Query.query(CriteriaUtils.joinToCriteria(Criteria.empty(), map)), entity.getType());
+    }
+
+    @Override
+    public boolean exists(Map<String, Object> map) {
+        return jdbcAggregateTemplate.exists(Query.query(CriteriaUtils.joinToCriteria(Criteria.empty(), map)), entity.getType());
+    }
+
+    @Override
+    public Optional<T> findOne(Map<String, Object> map) {
+        return jdbcAggregateTemplate.findOne(Query.query(CriteriaUtils.joinToCriteria(Criteria.empty(), map)), entity.getType());
+    }
+
+    @Override
+    public Optional<T> findOne(Map<String, Object> map, Sort sort) {
+        Query query = Query.query(CriteriaUtils.joinToCriteria(Criteria.empty(), map));
+        return jdbcAggregateTemplate.findOne(query.sort(sort), entity.getType());
+    }
+
+    @Override
+    public Iterable<T> findAll(Map<String, Object> map) {
+        return jdbcAggregateTemplate.findAll(Query.query(CriteriaUtils.joinToCriteria(Criteria.empty(), map)), entity.getType());
+    }
+
+    @Override
+    public Iterable<T> findAll(Map<String, Object> map, Sort sort) {
+        Query query = Query.query(CriteriaUtils.joinToCriteria(Criteria.empty(), map));
+        return jdbcAggregateTemplate.findAll(query.sort(sort), entity.getType());
+    }
+
+    @Override
+    public Page<T> findAll(Map<String, Object> map, Pageable pageable) {
+        return jdbcAggregateTemplate.findAll(Query.query(CriteriaUtils.joinToCriteria(Criteria.empty(), map)), entity.getType(), pageable);
     }
 }

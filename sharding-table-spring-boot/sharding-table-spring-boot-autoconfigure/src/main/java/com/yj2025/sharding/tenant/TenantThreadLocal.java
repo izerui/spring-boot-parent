@@ -13,7 +13,7 @@ import java.lang.annotation.*;
 @Target({ElementType.METHOD})
 public @interface TenantThreadLocal {
     /**
-     * 返回 spel表达式结果, 将会放入 TenantThreadLocalHolder 中
+     * 返回 spel表达式结果将作为tenantId, 将会放入 TenantThreadLocalHolder 中
      * @return
      */
     String value();

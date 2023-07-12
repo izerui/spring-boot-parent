@@ -7,6 +7,8 @@ import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public interface TestUserRepository extends PlatformJdbcRepository<TestUser, Long> {
 
@@ -17,4 +19,11 @@ public interface TestUserRepository extends PlatformJdbcRepository<TestUser, Lon
     @TenantThreadLocal("#{#entCode}")
     List<TestUser> findByCode(String entCode, String code);
 
+    @TenantThreadLocal("#{#map['ent_code']}")
+    @Override
+    Optional<TestUser> findOne(Map<String, Object> map);
+
+    @TenantThreadLocal("#{#map['ent_code']}")
+    @Override
+    Iterable<TestUser> findAll(Map<String, Object> map);
 }
