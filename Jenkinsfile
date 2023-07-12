@@ -14,7 +14,7 @@ pipeline {
                         echo "=================================================="
                         sh "mvn -version"
                         echo "=================================================="
-                        sh "clean compile deploy -T 8C -DskipTests=true -B -e -U -s /root/.m2/settings.xml"
+                        sh "mvn clean compile deploy -T 8C -DskipTests=true -B -e -U -s /root/.m2/settings.xml"
                     }
                 }
             }
