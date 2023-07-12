@@ -13,6 +13,9 @@ import org.springframework.context.expression.BeanFactoryAccessor;
 import org.springframework.context.expression.BeanFactoryResolver;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
+import org.springframework.data.relational.core.query.Criteria;
+import org.springframework.data.relational.core.query.Query;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ParserContext;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
@@ -40,6 +43,8 @@ public class TestUserTest {
     private NamedParameterJdbcTemplate jdbcTemplate;
     @Autowired
     private ApplicationContext applicationContext;
+    @Autowired
+    private JdbcAggregateTemplate jdbcAggregateTemplate;
 
     @Test
     public void testFindAll() {
@@ -115,6 +120,15 @@ public class TestUserTest {
         System.out.println("总数: " + userRepository.count());
         ;
 
+    }
+
+    @Test
+    public void testQuery() {
+        Criteria criteria = Criteria.where("ent_code").is("ent001").and("age").greaterThan(10);
+        Page<TestUser> users = testUserService.findByQuery("ent001", Query.query(criteria));
+        Page<TestUser> users2 = testUserService.findByQuery2("ent001", Query.query(criteria));
+        System.out.println(users);
+        System.out.println(users2);
     }
 
 //    @Test

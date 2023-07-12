@@ -1,5 +1,6 @@
 package com.yj2025.sample;
 
+import com.yj2025.jdbc.impl.PlatformJdbcRepositoryImpl;
 import com.yj2025.jpa.impl.PlatformRepositoryImpl;
 import com.yj2025.sample.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +15,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @Slf4j
 @SpringBootApplication
 @EnableJpaRepositories(repositoryBaseClass = PlatformRepositoryImpl.class)
-@EnableJdbcRepositories
+@EnableJdbcRepositories(repositoryBaseClass = PlatformJdbcRepositoryImpl.class)
 @MapperScan("com.yj2025.sample.mybatis.mapper")
 public class Application implements CommandLineRunner {
 

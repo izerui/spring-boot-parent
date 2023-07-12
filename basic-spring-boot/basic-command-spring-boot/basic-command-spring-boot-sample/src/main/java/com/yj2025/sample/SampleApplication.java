@@ -1,5 +1,6 @@
 package com.yj2025.sample;
 
+import com.yj2025.jdbc.impl.PlatformJdbcRepositoryImpl;
 import com.yj2025.jpa.impl.PlatformRepositoryImpl;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.CommandLineRunner;
@@ -10,7 +11,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
 @EnableJpaRepositories(repositoryBaseClass = PlatformRepositoryImpl.class)
-@EnableJdbcRepositories
+@EnableJdbcRepositories(repositoryBaseClass = PlatformJdbcRepositoryImpl.class)
 @MapperScan("com.yj2025.sample.mapper")
 public class SampleApplication implements CommandLineRunner {
 

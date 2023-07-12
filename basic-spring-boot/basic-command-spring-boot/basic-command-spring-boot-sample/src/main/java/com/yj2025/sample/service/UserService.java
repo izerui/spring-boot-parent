@@ -106,6 +106,11 @@ public class UserService extends BasicService implements AuthAware {
         return executeReturn(new JdbcUserListCmd(entCode));
     }
 
+    @TenantThreadLocal("#{#entCode}")
+    public Page<JdbcUser> findByQuery(String entCode, Integer age) {
+        return executeReturn(new JdbcUserQueryCmd(entCode, age));
+    }
+
 
     public void addMyUser() {
         Faker faker = new Faker(Locale.CHINA);
