@@ -5,6 +5,7 @@ import com.yj2025.sample.repository.TestUserRepository;
 import com.yj2025.sharding.tenant.TenantThreadLocal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -30,6 +31,11 @@ public class TestUserService {
     public Iterable<TestUser> findAll(String entCode) {
         log.info("tx: {}", TransactionSynchronizationManager.isActualTransactionActive());
         return testUserRepository.findAll();
+    }
+
+    @TenantThreadLocal("#{#entCode}")
+    public Iterable<TestUser> findAll(String entCode, Example example) {
+        return testUserRepository.findAll(example);
     }
 
     @TenantThreadLocal("#{#entCode}")

@@ -11,6 +11,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.expression.BeanFactoryAccessor;
 import org.springframework.context.expression.BeanFactoryResolver;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
@@ -129,6 +131,14 @@ public class TestUserTest {
         Page<TestUser> users2 = testUserService.findByQuery2("ent001", Query.query(criteria));
         System.out.println(users);
         System.out.println(users2);
+    }
+
+    @Test
+    public void testExample() {
+        TestUser user = new TestUser();
+        user.setEntCode("ent001");
+        Iterable<TestUser> ent001 = testUserService.findAll("ent001", Example.of(user));
+        System.out.println(ent001);
     }
 
 //    @Test
