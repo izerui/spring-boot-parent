@@ -78,39 +78,39 @@ public class PlatformJdbcRepositoryImpl<T, ID> extends SimpleJdbcRepository<T, I
     }
 
     @Override
-    public long count(Map<String, Object> map) {
-        return jdbcAggregateTemplate.count(Query.query(CriteriaUtils.joinToCriteria(Criteria.empty(), map)), entity.getType());
+    public long count(Map<String, Object> simpleMap) {
+        return jdbcAggregateTemplate.count(Query.query(CriteriaUtils.joinToCriteria(Criteria.empty(), simpleMap)), entity.getType());
     }
 
     @Override
-    public boolean exists(Map<String, Object> map) {
-        return jdbcAggregateTemplate.exists(Query.query(CriteriaUtils.joinToCriteria(Criteria.empty(), map)), entity.getType());
+    public boolean exists(Map<String, Object> simpleMap) {
+        return jdbcAggregateTemplate.exists(Query.query(CriteriaUtils.joinToCriteria(Criteria.empty(), simpleMap)), entity.getType());
     }
 
     @Override
-    public Optional<T> findOne(Map<String, Object> map) {
-        return jdbcAggregateTemplate.findOne(Query.query(CriteriaUtils.joinToCriteria(Criteria.empty(), map)), entity.getType());
+    public Optional<T> findOne(Map<String, Object> simpleMap) {
+        return jdbcAggregateTemplate.findOne(Query.query(CriteriaUtils.joinToCriteria(Criteria.empty(), simpleMap)), entity.getType());
     }
 
     @Override
-    public Optional<T> findOne(Map<String, Object> map, Sort sort) {
-        Query query = Query.query(CriteriaUtils.joinToCriteria(Criteria.empty(), map));
+    public Optional<T> findOne(Map<String, Object> simpleMap, Sort sort) {
+        Query query = Query.query(CriteriaUtils.joinToCriteria(Criteria.empty(), simpleMap));
         return jdbcAggregateTemplate.findOne(query.sort(sort), entity.getType());
     }
 
     @Override
-    public Iterable<T> findAll(Map<String, Object> map) {
-        return jdbcAggregateTemplate.findAll(Query.query(CriteriaUtils.joinToCriteria(Criteria.empty(), map)), entity.getType());
+    public Iterable<T> findAll(Map<String, Object> simpleMap) {
+        return jdbcAggregateTemplate.findAll(Query.query(CriteriaUtils.joinToCriteria(Criteria.empty(), simpleMap)), entity.getType());
     }
 
     @Override
-    public Iterable<T> findAll(Map<String, Object> map, Sort sort) {
-        Query query = Query.query(CriteriaUtils.joinToCriteria(Criteria.empty(), map));
+    public Iterable<T> findAll(Map<String, Object> simpleMap, Sort sort) {
+        Query query = Query.query(CriteriaUtils.joinToCriteria(Criteria.empty(), simpleMap));
         return jdbcAggregateTemplate.findAll(query.sort(sort), entity.getType());
     }
 
     @Override
-    public Page<T> findAll(Map<String, Object> map, Pageable pageable) {
-        return jdbcAggregateTemplate.findAll(Query.query(CriteriaUtils.joinToCriteria(Criteria.empty(), map)), entity.getType(), pageable);
+    public Page<T> findAll(Map<String, Object> simpleMap, Pageable pageable) {
+        return jdbcAggregateTemplate.findAll(Query.query(CriteriaUtils.joinToCriteria(Criteria.empty(), simpleMap)), entity.getType(), pageable);
     }
 }
