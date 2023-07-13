@@ -53,7 +53,7 @@ public interface PlatformJdbcRepository<T, ID> extends CrudRepository<T, ID>, Pa
 
     /**
      * 通过命名SQL执行批量插入或者更新
-     * @param namedSQL 命名SQL 变量使用类似 :code, :name
+     * @param namedSQL 命名SQL 变量使用类似 `update test_user set age = 18 where id = :id`
      * @param batchValues value数组
      * @param <U> 任何对象或者map对象
      */
