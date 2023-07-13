@@ -73,4 +73,9 @@ public class TestUserService {
     public Page<TestUser> findByMapPage(Map map, Pageable pageable) {
         return testUserRepository.findAll(map, pageable);
     }
+
+    @TenantThreadLocal("#{#entCode}")
+    public void batchInsert(String entCode, List<TestUser> users) {
+        testUserRepository.batchInsert(users, "id");
+    }
 }

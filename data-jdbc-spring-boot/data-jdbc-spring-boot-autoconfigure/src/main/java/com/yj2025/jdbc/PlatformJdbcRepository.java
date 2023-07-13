@@ -9,6 +9,7 @@ import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.QueryByExampleExecutor;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 
@@ -42,6 +43,29 @@ public interface PlatformJdbcRepository<T, ID> extends CrudRepository<T, ID>, Pa
      * @since 3.1
      */
     Iterable<T> insertAll(Iterable<T> instances);
+
+    /**
+     * 批量插入,效率高
+     * @param instances 要插入的实例集合。 不能为空
+     * @param generatedKeys 自动生成的列
+     */
+    void batchInsert(Collection<T> instances, String... generatedKeys);
+
+    /**
+     * 通过命名SQL执行批量插入或者更新
+     * @param namedSQL 命名SQL 变量使用类似 :code, :name
+     * @param batchValues value数组
+     * @param <U> 任何对象或者map对象
+     */
+    <U> void batchUpdate(String namedSQL, Collection<U> batchValues);
+
+    /**
+     * 通过命名SQL执行批量插入或者更新
+     * @param namedSQL 命名SQL 变量使用类似 :code, :name
+     * @param batchValues Map数组
+     * @param <U> map对象数组
+     */
+    <U> void batchUpdate(String namedSQL, Map<String, ?>[] batchValues);
 
     /**
      * 专用更新功能。这将跳过聚合根是否为新根的测试，并始终执行更新操作。
@@ -169,8 +193,8 @@ public interface PlatformJdbcRepository<T, ID> extends CrudRepository<T, ID>, Pa
      * 返回一个{@link Page}的实体，匹配给定的{@link Query}。
      * 如果找不到匹配项，则返回一个空{@link Page}。
      *
-     * @param simpleMap    查询条件，不能为空
-     * @param pageable 分页对象，不能为空
+     * @param simpleMap 查询条件，不能为空
+     * @param pageable  分页对象，不能为空
      * @return 返回匹配给定 {@link Query} 条件的Page对象
      * @since 3.0
      */

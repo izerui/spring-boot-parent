@@ -1,5 +1,6 @@
 package com.yj2025.jdbc.impl;
 
+import com.yj2025.basic.support.DbContext;
 import com.yj2025.jdbc.PlatformJdbcRepository;
 import com.yj2025.jdbc.utils.CriteriaUtils;
 import org.springframework.data.domain.Page;
@@ -10,9 +11,12 @@ import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
 import org.springframework.data.jdbc.core.convert.JdbcConverter;
 import org.springframework.data.jdbc.repository.support.SimpleJdbcRepository;
 import org.springframework.data.mapping.PersistentEntity;
+import org.springframework.data.relational.core.mapping.RelationalPersistentEntity;
 import org.springframework.data.relational.core.query.Criteria;
 import org.springframework.data.relational.core.query.Query;
+import org.springframework.data.relational.core.sql.SqlIdentifier;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 
@@ -40,6 +44,22 @@ public class PlatformJdbcRepositoryImpl<T, ID> extends SimpleJdbcRepository<T, I
     @Override
     public Iterable<T> insertAll(Iterable<T> instances) {
         return jdbcAggregateTemplate.insertAll(instances);
+    }
+
+    @Override
+    public void batchInsert(Collection<T> instances, String... generatedKeys) {
+        SqlIdentifier identifier = ((RelationalPersistentEntity<T>) entity).getTableName();
+        DbContext.batchInsert(identifier.getReference(), instances, generatedKeys);
+    }
+
+    @Override
+    public <U> void batchUpdate(String namedSQL, Collection<U> batchValues) {
+        DbContext.batchUpdate(namedSQL, batchValues);
+    }
+
+    @Override
+    public <U> void batchUpdate(String namedSQL, Map<String, ?>[] batchValues) {
+        DbContext.batchUpdate(namedSQL, batchValues);
     }
 
     @Override

@@ -2,7 +2,6 @@ package com.yj2025.sample;
 
 import com.google.common.base.Stopwatch;
 import com.yj2025.jdbc.utils.Comparator;
-import com.yj2025.jdbc.utils.CriteriaUtils;
 import com.yj2025.sample.entity.TestUser;
 import com.yj2025.sample.repository.TestUserRepository;
 import com.yj2025.sample.service.TestUserService;
@@ -122,9 +121,27 @@ public class TestUserTest {
         System.out.println("jdbcTemplate.batchUpdate 耗时: " + watch.elapsed(TimeUnit.MILLISECONDS));
 
         System.out.println("总数: " + userRepository.count());
-        ;
 
     }
+
+    @Test
+    public void testBatchInsert() {
+        List<TestUser> users = IntStream.range(0, 18000).mapToObj(value -> {
+            TestUser user = new TestUser();
+            user.setCreateTime(new Date());
+            user.setCode("code" + value);
+            user.setName("name" + value);
+            user.setEmail("email" + value);
+            user.setVersion(1);
+            user.setAge(28);
+            user.setEntCode("ent001");
+            return user;
+        }).collect(Collectors.toList());
+        Stopwatch watch = Stopwatch.createStarted();
+        testUserService.batchInsert("ent001", users);
+        System.out.println("batchInsert 耗时: " + watch.elapsed(TimeUnit.MILLISECONDS));
+    }
+
 
     @Test
     public void testQuery() {

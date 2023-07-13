@@ -7,8 +7,6 @@ import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 import org.apache.calcite.sql.SqlUpdate;
 import org.apache.calcite.sql.parser.SqlParser;
-import org.apache.commons.lang3.StringUtils;
-import org.hibernate.annotations.Type;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -26,10 +24,8 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 
-import jakarta.persistence.Column;
 import javax.sql.DataSource;
 import java.beans.PropertyDescriptor;
-import java.lang.reflect.Field;
 import java.sql.JDBCType;
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -136,12 +132,11 @@ public class DbContext {
             PropertyDescriptor[] propertyDescriptors = BeanUtils.getPropertyDescriptors(data.getClass());
             for (PropertyDescriptor pd : propertyDescriptors) {
                 if (pd.getReadMethod() != null) {
-                    String originName = pd.getName();
-//                        String camelName = pd.getName();
-//                        String underscoreName = CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, pd.getName());
+                    String camelName = pd.getName();
+                    String underscoreName = CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, pd.getName());
                     Object value = ReflectionUtils.invokeMethod(pd.getReadMethod(), data);
-//                        map.put(camelName, value);
-                    map.put(originName, value);
+                    map.put(camelName, value);
+                    map.put(underscoreName, value);
                 }
             }
             return map;
@@ -194,7 +189,7 @@ public class DbContext {
         batchUpdateAsync(Context.getBean(DataSource.class), updateSQL, primaryKey, poolSize, batchNum, null);
     }
 
-        /**
+    /**
      * 批量异步执行更新语句
      *
      * @param updateSQL  更新语句
@@ -295,26 +290,9 @@ public class DbContext {
             PropertyDescriptor[] propertyDescriptors = BeanUtils.getPropertyDescriptors(data.getClass());
             for (PropertyDescriptor pd : propertyDescriptors) {
                 String dbFieldName = CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, pd.getName());
-                boolean isToJson = false;
-                Field field = ReflectionUtils.findField(data.getClass(), pd.getName());
-                if (field != null) {
-                    // 更改字段名
-                    Column columnDef = field.getAnnotation(Column.class);
-                    if (columnDef != null && StringUtils.isNotBlank(columnDef.name())) {
-                        dbFieldName = columnDef.name();
-                    }
-                    // 是否是json字段类型
-                    Type annotation = field.getAnnotation(Type.class);
-                    isToJson = annotation != null;
-                }
                 if (pd.getReadMethod() != null) {
                     Object value = ReflectionUtils.invokeMethod(pd.getReadMethod(), data);
-                    if (isToJson) {
-                        map.put(dbFieldName, Context.toJson(value));
-                    } else {
-                        map.put(dbFieldName, value);
-                    }
-
+                    map.put(dbFieldName, value);
                 }
             }
             return map;
