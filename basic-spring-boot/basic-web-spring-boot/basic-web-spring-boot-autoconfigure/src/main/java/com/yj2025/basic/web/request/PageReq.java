@@ -59,9 +59,9 @@ public abstract class PageReq implements AuthAware {
         Sort sort = withDefaultSort();
         if (StringUtils.isNotBlank(orderBy)) {
             if (StringUtils.isNotBlank(orderByDirection)) {
-                sort = Sort.by(Sort.Direction.fromString(orderByDirection), orderBy);
+                sort = Sort.by(Sort.Direction.fromString(orderByDirection), orderBy, "id");
             } else {
-                sort = Sort.by(orderBy);
+                sort = Sort.by(orderBy, "id");
             }
         }
         return PageRequest.of(this.pageIndex, this.pageSize, sort);
