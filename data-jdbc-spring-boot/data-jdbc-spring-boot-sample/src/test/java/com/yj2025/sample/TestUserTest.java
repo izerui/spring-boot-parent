@@ -1,6 +1,8 @@
 package com.yj2025.sample;
 
 import com.google.common.base.Stopwatch;
+import com.yj2025.jdbc.utils.Comparator;
+import com.yj2025.jdbc.utils.CriteriaUtils;
 import com.yj2025.sample.entity.TestUser;
 import com.yj2025.sample.repository.TestUserRepository;
 import com.yj2025.sample.service.TestUserService;
@@ -172,7 +174,7 @@ public class TestUserTest {
     public void testMapPage() {
         Map map = new HashMap();
         map.put("ent_code", "ent001");
-        map.put("code", "code100");
+        map.put(Comparator.GTE.wrap("code"), "code100");
         Page<TestUser> page = testUserService.findByMapPage(map, PageRequest.of(0, 200, Sort.by("code")));
         System.out.println(page);
     }

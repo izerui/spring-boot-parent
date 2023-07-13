@@ -9,20 +9,43 @@ public final class CriteriaUtils {
 
     /**
      * 通过map连接到指定的criteria实例
+     *
      * @param criteria 要连接的实例
-     * @param map 连接的kv映射
+     * @param map      连接的kv映射
      * @return 返回一个新的criteria实例
      */
     public static Criteria joinToCriteria(Criteria criteria, Map<String, Object> map) {
         Assert.notNull(map, "map must not be null");
         for (String key : map.keySet()) {
-            Object value = map.get(key);
-            if (value == null) {
-                criteria = criteria.and(key).isNull();
-            } else {
-                criteria = criteria.and(key).is(value);
-            }
+            criteria = join(criteria, key, map.get(key));
         }
         return criteria;
     }
+
+    /**
+     * 使用指定的表达式表示当前查询匹配方式
+     *
+     * @param key
+     * @param comparator
+     * @return
+     */
+    public static String wrap(String key, Comparator comparator) {
+        return comparator.wrap(key);
+    }
+
+    private static Criteria join(Criteria criteria, String key, Object value) {
+        if (key.startsWith("$")) {
+            for (Comparator comparator : Comparator.values()) {
+                if (comparator.match(key)) {
+                    return comparator.join(criteria, key, value);
+                }
+            }
+        }
+        if (value == null) {
+            return criteria.and(key).isNull();
+        } else {
+            return criteria.and(key).is(value);
+        }
+    }
+
 }
