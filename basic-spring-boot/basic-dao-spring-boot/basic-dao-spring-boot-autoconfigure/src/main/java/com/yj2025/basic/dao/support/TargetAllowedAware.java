@@ -1,6 +1,5 @@
 package com.yj2025.basic.dao.support;
 
-import org.springframework.transaction.annotation.Propagation;
 
 import java.util.List;
 

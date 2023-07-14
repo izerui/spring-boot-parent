@@ -1,14 +1,15 @@
-package com.yj2025.basic.dao.entity;
+package com.yj2025.basic.dao.entity.jpa;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.MappedSuperclass;
 import lombok.Data;
 
-import jakarta.persistence.*;
 import java.util.Date;
 import java.util.UUID;
 
 @Data
 @MappedSuperclass
-public abstract class BasicEntity extends BaseEntity {
+public abstract class BasicJpaEntity extends BaseJpaEntity {
 
     /**
      * 业务主键
@@ -32,17 +33,11 @@ public abstract class BasicEntity extends BaseEntity {
     @Column(name = "creator", columnDefinition = "VARCHAR(64) COMMENT '创建人CODE'")
     protected String creator;
 
-    @Column(name = "create_name", columnDefinition = "VARCHAR(64) COMMENT '创建人名称'")
-    protected String createName;
-
     /**
      * 更新人
      */
     @Column(name = "updater", columnDefinition = "VARCHAR(64) COMMENT '更新人'")
     protected String updater;
-
-    @Column(name = "update_name", columnDefinition = "VARCHAR(64) COMMENT '更新人名称'")
-    protected String updateName;
 
     /**
      * 删除人
@@ -60,12 +55,6 @@ public abstract class BasicEntity extends BaseEntity {
         this.updateTime = new Date();
     }
 
-    public void updateBy(String updater, String updateName) {
-        this.updater = updater;
-        this.updateName = updateName;
-        this.updateTime = new Date();
-    }
-
     /**
      * 修改删除人、删除时间
      *
@@ -77,10 +66,10 @@ public abstract class BasicEntity extends BaseEntity {
         this.deleteTime = new Date();
     }
 
-    public BasicEntity() {
+    public BasicJpaEntity() {
     }
 
-    public BasicEntity(String entCode, String creator) {
+    public BasicJpaEntity(String entCode, String creator) {
         this.entCode = entCode;
         this.creator = creator;
     }

@@ -1,4 +1,4 @@
-package com.yj2025.basic.dao.entity;
+package com.yj2025.basic.dao.entity.jpa;
 
 import lombok.Data;
 
@@ -7,7 +7,7 @@ import java.util.Date;
 
 @Data
 @MappedSuperclass
-public abstract class BaseEntity {
+public abstract class BaseJpaEntity {
 
     /**
      * 主键
