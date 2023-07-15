@@ -1,6 +1,7 @@
 package com.yj2025.jdbc.support;
 
 import com.google.common.base.CaseFormat;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.relational.core.query.Criteria;
 import org.springframework.util.Assert;
 
@@ -41,10 +42,19 @@ public final class CriteriaUtils {
                     return comparator.join(criteria, key, value);
                 }
             }
-        } else if (value != null) {
+        } else if (!isBlank(value)) {
             return criteria.and(CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, key)).is(value);
         }
         return criteria;
+    }
+
+    private static boolean isBlank(Object value) {
+        if (value == null) {
+            return true;
+        }
+        if (value instanceof String) {
+            return StringUtils.isBlank(value);
+        }
     }
 
 }
