@@ -1,5 +1,6 @@
 package com.yj2025.jdbc.utils;
 
+import com.google.common.base.CaseFormat;
 import org.springframework.data.relational.core.query.Criteria;
 import org.springframework.util.Assert;
 
@@ -11,7 +12,7 @@ public final class CriteriaUtils {
      * 通过map连接到指定的criteria实例
      *
      * @param criteria 要连接的实例
-     * @param map      连接的kv映射
+     * @param map      连接的kv映射 , key会进行相应的替换，和驼峰转下划线
      * @return 返回一个新的criteria实例
      */
     public static Criteria joinToCriteria(Criteria criteria, Map<String, Object> map) {
@@ -42,9 +43,9 @@ public final class CriteriaUtils {
             }
         }
         if (value == null) {
-            return criteria.and(key).isNull();
+            return criteria.and(CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, key)).isNull();
         } else {
-            return criteria.and(key).is(value);
+            return criteria.and(CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, key)).is(value);
         }
     }
 
