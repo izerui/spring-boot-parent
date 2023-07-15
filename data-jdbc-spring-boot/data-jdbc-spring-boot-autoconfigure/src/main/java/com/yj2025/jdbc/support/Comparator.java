@@ -26,7 +26,7 @@ public enum Comparator {
             if (value.getClass().isAssignableFrom(List.class)) {
                 return criteria.and(replacedLowerUnderscoreKey).between(((List) value).get(0), ((List) value).get(1));
             }
-            throw new IllegalArgumentException("BETWEEN 的参数必须是数组或者list并且为两个值, key: " + key);
+            throw new IllegalArgumentException("BETWEEN 的参数必须是数组或者list并且为两个值, key: " + replacedLowerUnderscoreKey);
         }
     }, NOT_BETWEEN("NOT BETWEEN") {
         @Override
