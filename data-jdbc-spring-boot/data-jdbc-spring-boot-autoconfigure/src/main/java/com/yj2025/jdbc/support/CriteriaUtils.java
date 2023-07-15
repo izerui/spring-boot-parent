@@ -42,7 +42,8 @@ public final class CriteriaUtils {
                     return comparator.join(criteria, key, value);
                 }
             }
-        } else if (!isBlank(value)) {
+        }
+        if (!isBlank(value)) {
             return criteria.and(CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, key)).is(value);
         }
         return criteria;
