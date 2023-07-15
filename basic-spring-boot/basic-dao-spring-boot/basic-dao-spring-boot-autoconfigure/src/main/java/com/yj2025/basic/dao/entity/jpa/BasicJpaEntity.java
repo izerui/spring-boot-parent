@@ -33,11 +33,19 @@ public abstract class BasicJpaEntity extends BaseJpaEntity {
     @Column(name = "creator", columnDefinition = "VARCHAR(64) COMMENT '创建人CODE'")
     protected String creator;
 
+    @Deprecated(since = "3.1", forRemoval = true)
+    @Column(name = "create_name", columnDefinition = "VARCHAR(64) COMMENT '创建人名称'")
+    protected String createName;
+
     /**
      * 更新人
      */
     @Column(name = "updater", columnDefinition = "VARCHAR(64) COMMENT '更新人'")
     protected String updater;
+
+    @Deprecated(since = "3.1", forRemoval = true)
+    @Column(name = "update_name", columnDefinition = "VARCHAR(64) COMMENT '更新人名称'")
+    protected String updateName;
 
     /**
      * 删除人
@@ -52,6 +60,13 @@ public abstract class BasicJpaEntity extends BaseJpaEntity {
      */
     public void updateBy(String updater) {
         this.updater = updater;
+        this.updateTime = new Date();
+    }
+
+    @Deprecated(since = "3.1", forRemoval = true)
+    public void updateBy(String updater, String updateName) {
+        this.updater = updater;
+        this.updateName = updateName;
         this.updateTime = new Date();
     }
 
