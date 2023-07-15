@@ -55,6 +55,7 @@ public final class CriteriaUtils {
         if (value instanceof String) {
             return StringUtils.isBlank((String) value);
         }
+        return false;
     }
 
 }
