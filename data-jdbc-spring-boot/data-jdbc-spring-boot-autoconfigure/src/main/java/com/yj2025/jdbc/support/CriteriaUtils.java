@@ -44,6 +44,7 @@ public final class CriteriaUtils {
         } else if (value != null) {
             return criteria.and(CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, key)).is(value);
         }
+        return criteria;
     }
 
 }
