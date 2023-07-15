@@ -53,7 +53,7 @@ public final class CriteriaUtils {
             return true;
         }
         if (value instanceof String) {
-            return StringUtils.isBlank(value);
+            return StringUtils.isBlank((String) value);
         }
     }
 
