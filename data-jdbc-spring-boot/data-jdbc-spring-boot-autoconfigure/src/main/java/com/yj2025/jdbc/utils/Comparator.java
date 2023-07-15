@@ -9,22 +9,22 @@ import java.util.List;
 public enum Comparator {
     EQ("=") {
         @Override
-        protected Criteria value(Criteria criteria, String key, Object value) {
-            return criteria.and(key).is(value);
+        protected Criteria value(Criteria criteria, String replacedLowerUnderscoreKey, Object value) {
+            return criteria.and(replacedLowerUnderscoreKey).is(value);
         }
     }, NEQ("!=") {
         @Override
-        protected Criteria value(Criteria criteria, String key, Object value) {
-            return criteria.and(key).not(value);
+        protected Criteria value(Criteria criteria, String replacedLowerUnderscoreKey, Object value) {
+            return criteria.and(replacedLowerUnderscoreKey).not(value);
         }
     }, BETWEEN("BETWEEN") {
         @Override
         protected Criteria value(Criteria criteria, String replacedLowerUnderscoreKey, Object value) {
             if (value.getClass().isArray()) {
-                return criteria.and(key).between(Array.get(value, 0), Array.get(value, 1));
+                return criteria.and(replacedLowerUnderscoreKey).between(Array.get(value, 0), Array.get(value, 1));
             }
             if (value.getClass().isAssignableFrom(List.class)) {
-                return criteria.and(key).between(((List) value).get(0), ((List) value).get(1));
+                return criteria.and(replacedLowerUnderscoreKey).between(((List) value).get(0), ((List) value).get(1));
             }
             throw new IllegalArgumentException("BETWEEN 的参数必须是数组或者list并且为两个值, key: " + key);
         }
@@ -32,72 +32,72 @@ public enum Comparator {
         @Override
         protected Criteria value(Criteria criteria, String replacedLowerUnderscoreKey, Object value) {
             if (value.getClass().isArray()) {
-                return criteria.and(key).notBetween(Array.get(value, 0), Array.get(value, 1));
+                return criteria.and(replacedLowerUnderscoreKey).notBetween(Array.get(value, 0), Array.get(value, 1));
             }
             if (value.getClass().isAssignableFrom(List.class)) {
-                return criteria.and(key).notBetween(((List) value).get(0), ((List) value).get(1));
+                return criteria.and(replacedLowerUnderscoreKey).notBetween(((List) value).get(0), ((List) value).get(1));
             }
             throw new IllegalArgumentException("NOT_BETWEEN 的参数必须是数组或者list并且为两个值, key: " + key);
         }
     }, LT("<") {
         @Override
         protected Criteria value(Criteria criteria, String replacedLowerUnderscoreKey, Object value) {
-            return criteria.and(key).lessThan(value);
+            return criteria.and(replacedLowerUnderscoreKey).lessThan(value);
         }
     }, LTE("<=") {
         @Override
         protected Criteria value(Criteria criteria, String replacedLowerUnderscoreKey, Object value) {
-            return criteria.and(key).lessThanOrEquals(value);
+            return criteria.and(replacedLowerUnderscoreKey).lessThanOrEquals(value);
         }
     }, GT(">") {
         @Override
         protected Criteria value(Criteria criteria, String replacedLowerUnderscoreKey, Object value) {
-            return criteria.and(key).greaterThan(value);
+            return criteria.and(replacedLowerUnderscoreKey).greaterThan(value);
         }
     }, GTE(">=") {
         @Override
         protected Criteria value(Criteria criteria, String replacedLowerUnderscoreKey, Object value) {
-            return criteria.and(key).greaterThanOrEquals(value);
+            return criteria.and(replacedLowerUnderscoreKey).greaterThanOrEquals(value);
         }
     }, IS_NULL("IS NULL") {
         @Override
         protected Criteria value(Criteria criteria, String replacedLowerUnderscoreKey, Object value) {
-            return criteria.and(key).isNull();
+            return criteria.and(replacedLowerUnderscoreKey).isNull();
         }
     }, IS_NOT_NULL("IS NOT NULL") {
         @Override
         protected Criteria value(Criteria criteria, String replacedLowerUnderscoreKey, Object value) {
-            return criteria.and(key).isNotNull();
+            return criteria.and(replacedLowerUnderscoreKey).isNotNull();
         }
     }, LIKE("LIKE") {
         @Override
         protected Criteria value(Criteria criteria, String replacedLowerUnderscoreKey, Object value) {
-            return criteria.and(key).like(value);
+            return criteria.and(replacedLowerUnderscoreKey).like(value);
         }
     }, NOT_LIKE("NOT LIKE") {
         @Override
         protected Criteria value(Criteria criteria, String replacedLowerUnderscoreKey, Object value) {
-            return criteria.and(key).notLike(value);
+            return criteria.and(replacedLowerUnderscoreKey).notLike(value);
         }
     }, NOT_IN("NOT IN") {
         @Override
         protected Criteria value(Criteria criteria, String replacedLowerUnderscoreKey, Object value) {
-            return criteria.and(key).notIn(value);
+            return criteria.and(replacedLowerUnderscoreKey).notIn(value);
         }
     }, IN("IN") {
         @Override
         protected Criteria value(Criteria criteria, String replacedLowerUnderscoreKey, Object value) {
-            return criteria.and(key).in(value);
+            return criteria.and(replacedLowerUnderscoreKey).in(value);
         }
     }, IS_TRUE("IS TRUE") {
         @Override
         protected Criteria value(Criteria criteria, String replacedLowerUnderscoreKey, Object value) {
-            return criteria.and(key).isTrue();
+            return criteria.and(replacedLowerUnderscoreKey).isTrue();
         }
     }, IS_FALSE("IS FALSE") {
         @Override
         protected Criteria value(Criteria criteria, String replacedLowerUnderscoreKey, Object value) {
-            return criteria.and(key).isFalse();
+            return criteria.and(replacedLowerUnderscoreKey).isFalse();
         }
     };
 
