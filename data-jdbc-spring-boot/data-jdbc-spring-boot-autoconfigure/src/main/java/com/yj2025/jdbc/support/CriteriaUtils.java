@@ -41,10 +41,7 @@ public final class CriteriaUtils {
                     return comparator.join(criteria, key, value);
                 }
             }
-        }
-        if (value == null) {
-            return criteria.and(CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, key)).isNull();
-        } else {
+        } else if (value != null) {
             return criteria.and(CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, key)).is(value);
         }
     }
