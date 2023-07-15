@@ -1,4 +1,4 @@
-package com.yj2025.jdbc.utils;
+package com.yj2025.jdbc.support;
 
 import com.google.common.base.CaseFormat;
 import org.springframework.data.relational.core.query.Criteria;

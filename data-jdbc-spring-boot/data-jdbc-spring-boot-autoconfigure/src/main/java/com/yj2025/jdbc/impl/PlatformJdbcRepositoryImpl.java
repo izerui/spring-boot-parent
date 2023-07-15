@@ -2,7 +2,7 @@ package com.yj2025.jdbc.impl;
 
 import com.yj2025.basic.support.DbContext;
 import com.yj2025.jdbc.PlatformJdbcRepository;
-import com.yj2025.jdbc.utils.CriteriaUtils;
+import com.yj2025.jdbc.support.CriteriaUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
