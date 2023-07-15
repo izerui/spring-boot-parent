@@ -16,7 +16,7 @@ import org.springframework.data.domain.Sort;
  * @author liuyuhua
  */
 @Data
-public abstract class PageReq implements AuthAware {
+public abstract class PageQueryRequestVO implements AuthAware {
 
     /**
      * 页码
