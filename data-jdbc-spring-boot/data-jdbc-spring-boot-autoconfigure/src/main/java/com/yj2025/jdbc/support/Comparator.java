@@ -22,7 +22,7 @@ public enum Comparator {
             if (value.getClass().isArray()) {
                 return criteria.and(key).between(Array.get(value, 0), Array.get(value, 1));
             }
-            if (value.getClass().isAssignableFrom(List.class)) {
+            if (List.class.isInstance(value)) {
                 return criteria.and(key).between(((List) value).get(0), ((List) value).get(1));
             }
             throw new IllegalArgumentException("BETWEEN 的参数必须是数组或者list并且为两个值, key: " + key);
@@ -33,7 +33,7 @@ public enum Comparator {
             if (value.getClass().isArray()) {
                 return criteria.and(key).notBetween(Array.get(value, 0), Array.get(value, 1));
             }
-            if (value.getClass().isAssignableFrom(List.class)) {
+            if (List.class.isInstance(value)) {
                 return criteria.and(key).notBetween(((List) value).get(0), ((List) value).get(1));
             }
             throw new IllegalArgumentException("NOT_BETWEEN 的参数必须是数组或者list并且为两个值, key: " + key);
