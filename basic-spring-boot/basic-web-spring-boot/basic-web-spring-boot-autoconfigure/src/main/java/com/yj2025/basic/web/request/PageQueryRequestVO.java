@@ -12,6 +12,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
+import java.util.*;
+
 /**
  * @author liuyuhua
  */
@@ -71,6 +73,10 @@ public abstract class PageQueryRequestVO implements AuthAware {
             }
         }
         return PageRequest.of(this.pageIndex, this.pageSize, sort);
+    }
+
+    public Map<String, Object> getQueryMap() {
+        return new LinkedHashMap<>();
     }
 
 }
