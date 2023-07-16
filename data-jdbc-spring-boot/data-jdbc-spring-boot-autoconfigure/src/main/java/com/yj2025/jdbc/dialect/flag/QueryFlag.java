@@ -13,9 +13,25 @@ import java.lang.annotation.*;
 @Target({ElementType.METHOD})
 public @interface QueryFlag {
     /**
-     * 内容会以注释的形式跟随在查询的table后面
+     * 会在自动生成的sql的表名后跟随spel解析后的内容
+     *
      * @return
      */
-    String value();
+    String value() default "";
+
+    /**
+     * 是否使用注释包裹起来
+     *
+     * @return
+     */
+    boolean isComment() default true;
+
+    /**
+     * 前面是否增加一个空格
+     *
+     * @return
+     */
+    boolean isPreWhitespace() default true;
+
     Class holder() default QueryFlagThreadLocalHolder.class;
 }

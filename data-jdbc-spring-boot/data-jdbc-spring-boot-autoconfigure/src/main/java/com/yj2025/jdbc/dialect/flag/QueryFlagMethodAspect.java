@@ -16,7 +16,6 @@ import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.ParserContext;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
-import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Method;
 
@@ -49,11 +48,9 @@ public class QueryFlagMethodAspect {
         Expression expression = parser.parseExpression(queryFlag.value(), ParserContext.TEMPLATE_EXPRESSION);
         // 放入租户信息到本地线程
         String queryFlagValue = expression.getValue(context, String.class);
-        if (!StringUtils.hasText(queryFlagValue)) {
-            log.warn("通过spel表达式解析@QueryFlag异常, class:{} method:{}", method);
-        } else {
-            QueryFlagThreadLocalHolder.setQueryFlag(queryFlagValue);
-        }
+        QueryFlagThreadLocalHolder.setQueryFlag(queryFlagValue);
+        QueryFlagThreadLocalHolder.setComment(queryFlag.isComment());
+        QueryFlagThreadLocalHolder.setPreWhitespace(queryFlag.isPreWhitespace());
         // return
         return pjp.proceed();
     }
