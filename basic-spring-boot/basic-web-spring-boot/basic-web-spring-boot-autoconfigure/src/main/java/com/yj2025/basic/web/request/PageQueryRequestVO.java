@@ -2,6 +2,7 @@ package com.yj2025.basic.web.request;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.yj2025.basic.support.Context;
 import com.yj2025.basic.web.support.AuthAware;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -12,7 +13,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * @author liuyuhua
@@ -77,6 +79,10 @@ public abstract class PageQueryRequestVO implements AuthAware {
 
     public Map<String, Object> getQueryMap() {
         return new LinkedHashMap<>();
+    }
+
+    protected final <T> T getBean(Class<T> beanClass, Class... genericTypes) {
+        return Context.getBean(beanClass, genericTypes);
     }
 
 }
