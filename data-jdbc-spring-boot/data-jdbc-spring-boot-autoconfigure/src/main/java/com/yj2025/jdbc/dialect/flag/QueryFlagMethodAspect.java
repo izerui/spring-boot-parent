@@ -50,7 +50,6 @@ public class QueryFlagMethodAspect {
         String queryFlagValue = expression.getValue(context, String.class);
         QueryFlagThreadLocalHolder.setQueryFlag(queryFlagValue);
         QueryFlagThreadLocalHolder.setComment(queryFlag.isComment());
-        QueryFlagThreadLocalHolder.setPreWhitespace(queryFlag.isPreWhitespace());
         // return
         return pjp.proceed();
     }

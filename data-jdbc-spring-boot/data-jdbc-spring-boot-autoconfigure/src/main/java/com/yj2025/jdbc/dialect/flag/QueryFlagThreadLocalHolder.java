@@ -22,12 +22,4 @@ public class QueryFlagThreadLocalHolder {
         return THREAD_LOCAL1.get() != null ? THREAD_LOCAL1.get() : false;
     }
 
-    public static void setPreWhitespace(boolean isPreWhitespace) {
-        THREAD_LOCAL2.set(isPreWhitespace);
-    }
-
-    public static boolean isPreWhitespace() {
-        return THREAD_LOCAL2.get() != null ? THREAD_LOCAL2.get() : false;
-    }
-
 }

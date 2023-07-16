@@ -26,12 +26,5 @@ public @interface QueryFlag {
      */
     boolean isComment() default true;
 
-    /**
-     * 前面是否增加一个空格
-     *
-     * @return
-     */
-    boolean isPreWhitespace() default true;
-
     Class holder() default QueryFlagThreadLocalHolder.class;
 }

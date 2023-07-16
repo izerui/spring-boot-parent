@@ -7,7 +7,8 @@ import org.springframework.data.relational.core.sql.Select;
 
 import java.util.function.Function;
 
-import static com.yj2025.jdbc.dialect.flag.QueryFlagThreadLocalHolder.*;
+import static com.yj2025.jdbc.dialect.flag.QueryFlagThreadLocalHolder.getQueryFlag;
+import static com.yj2025.jdbc.dialect.flag.QueryFlagThreadLocalHolder.isComment;
 
 public class CustormJdbcMySqlDialect extends JdbcMySqlDialect {
     public CustormJdbcMySqlDialect(IdentifierProcessing identifierProcessing) {
@@ -18,10 +19,10 @@ public class CustormJdbcMySqlDialect extends JdbcMySqlDialect {
     protected Function<Select, CharSequence> getAfterFromTable() {
         return super.getAfterFromTable().andThen(charSequence -> {
             String queryFlag = getQueryFlag();
-            if (StringUtils.isNotBlank(queryFlag)) {
-                return (isPreWhitespace() ? " " : "").concat(isComment() ? "/* " + queryFlag + " */" : queryFlag);
+            if (StringUtils.isNotEmpty(queryFlag)) {
+                return "\n".concat(isComment() ? "/* " + queryFlag + " */" : queryFlag);
             }
-            return "";
+            return "\n";
         });
     }
 
