@@ -2,7 +2,7 @@ package com.yj2025.basic.web.request;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.yj2025.basic.support.Context;
+import com.yj2025.basic.support.ApplicationBeanAware;
 import com.yj2025.basic.web.support.AuthAware;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -20,7 +20,7 @@ import java.util.Map;
  * @author liuyuhua
  */
 @Data
-public abstract class PageQueryRequestVO implements AuthAware {
+public abstract class PageQueryRequestVO implements AuthAware, ApplicationBeanAware {
 
     /**
      * 页码
@@ -80,10 +80,6 @@ public abstract class PageQueryRequestVO implements AuthAware {
     @JsonIgnore
     public Map<String, Object> getQueryMap() {
         return new LinkedHashMap<>();
-    }
-
-    protected final <T> T getBean(Class<T> beanClass, Class... genericTypes) {
-        return Context.getBean(beanClass, genericTypes);
     }
 
 }
