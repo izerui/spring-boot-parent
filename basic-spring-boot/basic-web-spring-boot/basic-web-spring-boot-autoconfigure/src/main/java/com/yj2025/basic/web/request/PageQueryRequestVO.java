@@ -77,6 +77,7 @@ public abstract class PageQueryRequestVO implements AuthAware {
         return PageRequest.of(this.pageIndex, this.pageSize, sort);
     }
 
+    @JsonIgnore
     public Map<String, Object> getQueryMap() {
         return new LinkedHashMap<>();
     }
