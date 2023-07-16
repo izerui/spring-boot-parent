@@ -4,6 +4,8 @@ import com.yj2025.jdbc.converter.BooleanToIntegerConverter;
 import com.yj2025.jdbc.converter.BooleanToStringConverter;
 import com.yj2025.jdbc.converter.IntegerToBooleanConverter;
 import com.yj2025.jdbc.converter.StringToBooleanConverter;
+import com.yj2025.jdbc.dialect.CustormDialectProvider;
+import com.yj2025.jdbc.dialect.flag.QueryFlagMethodAspect;
 import com.yj2025.jdbc.impl.PlatformJdbcRepositoryImpl;
 import com.yj2025.jdbc.override.OverrideDefaultNamingStrategy;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
@@ -32,6 +34,11 @@ public class DataJdbcConfiguration extends AbstractJdbcConfiguration {
 
     public DataJdbcConfiguration(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
+    }
+
+    @Bean
+    public QueryFlagMethodAspect queryFlagMethodAspect() {
+        return new QueryFlagMethodAspect(applicationContext);
     }
 
     @Bean

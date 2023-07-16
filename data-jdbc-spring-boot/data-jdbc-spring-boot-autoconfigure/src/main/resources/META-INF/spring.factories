@@ -1,1 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.yj2025.jdbc.DataJdbcConfiguration
+org.springframework.data.jdbc.repository.config.DialectResolver$JdbcDialectProvider=com.yj2025.jdbc.dialect.CustormDialectProvider

@@ -1,6 +1,7 @@
 package com.yj2025.sample.repository;
 
 import com.yj2025.jdbc.PlatformJdbcRepository;
+import com.yj2025.jdbc.dialect.flag.QueryFlag;
 import com.yj2025.sample.entity.TestUser;
 import com.yj2025.sharding.tenant.TenantThreadLocal;
 import org.springframework.data.jdbc.repository.query.Query;
@@ -17,6 +18,7 @@ public interface TestUserRepository extends PlatformJdbcRepository<TestUser, Lon
 
 
     @TenantThreadLocal("#{#entCode}")
+    @QueryFlag("query标注: #{#code}")
     List<TestUser> findByCode(String entCode, String code);
 
     @TenantThreadLocal("#{#map['ent_code']}")

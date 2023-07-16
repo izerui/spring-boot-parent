@@ -64,7 +64,7 @@ public class TestUserTest {
     @Test
     public void testList() {
         List<TestUser> copy1 = userRepository.findList("copy1", "code10");
-        System.out.println(copy1);
+        System.out.println(copy1.size());
     }
 
     @Test
