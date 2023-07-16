@@ -2,8 +2,6 @@ package com.yj2025.basic.web.request;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.yj2025.basic.support.ApplicationBeanAware;
-import com.yj2025.basic.web.support.AuthAware;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Max;
@@ -13,14 +11,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 /**
  * @author liuyuhua
  */
 @Data
-public abstract class PageQueryRequestVO implements AuthAware, ApplicationBeanAware {
+public abstract class PageQueryRequestVO extends BaseQueryRequestVO {
 
     /**
      * 页码
@@ -75,11 +70,6 @@ public abstract class PageQueryRequestVO implements AuthAware, ApplicationBeanAw
             }
         }
         return PageRequest.of(this.pageIndex, this.pageSize, sort);
-    }
-
-    @JsonIgnore
-    public Map<String, Object> getQueryMap() {
-        return new LinkedHashMap<>();
     }
 
 }
