@@ -149,29 +149,16 @@ public final class UnitEnum {
             File file = new File("/data/public/units");
             if (file.exists()) {
                 List<String> lines = FileUtils.readLines(file, "UTF-8");
-                for (String line : lines) {
-                    String[] split = line.split(",");
-                    if (split == null || split.length != 4) {
-                        throw new RuntimeException(line + " is readed error!");
-                    }
-                    UnitEnum unitEnum = new UnitEnum(split[0], split[1], split[2], Integer.parseInt(split[3]));
-                    units.add(unitEnum);
-                    if (unitEnum.getName().equalsIgnoreCase(unitName) || unitEnum.getSymbol().equalsIgnoreCase(unitName)) {
-                        return unitEnum;
-                    }
-                }
+                UnitEnum unitEnum = getUnitEnum(unitName, lines);
+                if (unitEnum != null) return unitEnum;
             }else {
                 InputStream in = UnitEnum.class.getResourceAsStream("/units");
                 if(in != null){
                     List<String> lines = IOUtils.readLines(in, "UTF-8");
-                    for (String line : lines) {
-                        String[] split = line.split(",");
-                        if (split == null || split.length != 4) {
-                            throw new RuntimeException(line + " is readed error!");
-                        }
-                        UnitEnum unitEnum = new UnitEnum(split[0], split[1], split[2], Integer.parseInt(split[3]));
-                        units.add(unitEnum);
-                    }
+                    UnitEnum unitEnum = getUnitEnum(unitName, lines);
+                    if (unitEnum != null) return unitEnum;
+                }else {
+                    log.error("读取不到jar中的单位 配置文件............");
                 }
             }
         } catch (Exception e) {
@@ -179,6 +166,21 @@ public final class UnitEnum {
         }
 
         throw new RuntimeException("计量单位【" + unitName + "】不在系统可用列表");
+    }
+
+    private static UnitEnum getUnitEnum(String unitName, List<String> lines) {
+        for (String line : lines) {
+            String[] split = line.split(",");
+            if (split == null || split.length != 4) {
+                throw new RuntimeException(line + " is readed error!");
+            }
+            UnitEnum unitEnum = new UnitEnum(split[0], split[1], split[2], Integer.parseInt(split[3]));
+            units.add(unitEnum);
+            if (unitEnum.getName().equalsIgnoreCase(unitName) || unitEnum.getSymbol().equalsIgnoreCase(unitName)) {
+                return unitEnum;
+            }
+        }
+        return null;
     }
 
     public static void initUnits() {
