@@ -34,12 +34,12 @@ public class QueryFlagMethodAspect {
     }
 
     @Pointcut(value = "@annotation(queryFlag)")
-    public void pointcut(QueryFlag queryFlag) {
+    public void pointcut(QueryFlagAfterTable queryFlag) {
 
     }
 
     @Around(value = "pointcut(queryFlag)")
-    public Object around(ProceedingJoinPoint pjp, QueryFlag queryFlag) throws Throwable {
+    public Object around(ProceedingJoinPoint pjp, QueryFlagAfterTable queryFlag) throws Throwable {
         Method method = this.getInterfaceMethod(pjp);
 //        String methodName = method.toString();
         // 获取方法的参数值

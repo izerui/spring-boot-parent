@@ -11,7 +11,7 @@ import java.lang.annotation.*;
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
-public @interface QueryFlag {
+public @interface QueryFlagAfterTable {
     /**
      * 会在自动生成的sql的表名后跟随spel解析后的内容
      *
