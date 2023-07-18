@@ -78,4 +78,15 @@ public abstract class PageQueryRequestVO extends BaseQueryRequestVO {
         }
         return sort;
     }
+
+    /**
+     * 填充排序信息
+     *
+     * @param orderBy
+     * @param orderByDirection
+     */
+    public final void fillSortInfo(String orderBy, String orderByDirection) {
+        this.orderBy = orderBy;
+        this.orderByDirection = orderByDirection;
+    }
 }
