@@ -61,15 +61,21 @@ public abstract class PageQueryRequestVO extends BaseQueryRequestVO {
     @JsonIgnore
     @Schema(hidden = true)
     public final PageRequest getPageRequest() {
+        return PageRequest.of(this.pageIndex, this.pageSize, getSort());
+    }
+
+    @Parameter(hidden = true)
+    @JsonIgnore
+    @Schema(hidden = true)
+    public final Sort getSort() {
         Sort sort = withDefaultSort();
         if (StringUtils.isNotBlank(orderBy)) {
             if (StringUtils.isNotBlank(orderByDirection)) {
-                sort = Sort.by(Sort.Direction.fromString(orderByDirection), orderBy).and(withFixedSort());
+                sort = Sort.by(Sort.Direction.fromString(orderByDirection), orderBy, "id");
             } else {
-                sort = Sort.by(orderBy).and(withFixedSort());
+                sort = Sort.by(orderBy, "id");
             }
         }
-        return PageRequest.of(this.pageIndex, this.pageSize, sort);
+        return sort;
     }
-
 }
