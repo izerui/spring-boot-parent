@@ -1,30 +1,26 @@
 package com.yj2025.jdbc;
 
-import com.yj2025.jdbc.converter.BooleanToIntegerConverter;
-import com.yj2025.jdbc.converter.BooleanToStringConverter;
-import com.yj2025.jdbc.converter.IntegerToBooleanConverter;
-import com.yj2025.jdbc.converter.StringToBooleanConverter;
 import com.yj2025.jdbc.dialect.flag.QueryFlagMethodAspect;
+import com.yj2025.jdbc.impl.PlatformJdbcRepositoryImpl;
 import com.yj2025.jdbc.override.OverrideDefaultNamingStrategy;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.jdbc.repository.config.AbstractJdbcConfiguration;
+import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
 import org.springframework.data.relational.core.mapping.NamingStrategy;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * @see org.springframework.boot.autoconfigure.data.jdbc.JdbcRepositoriesAutoConfiguration
  */
 @Configuration
 @EnableTransactionManagement(proxyTargetClass = true)
-public class DataJdbcConfiguration extends AbstractJdbcConfiguration {
+@EnableJdbcRepositories(repositoryBaseClass = PlatformJdbcRepositoryImpl.class)
+public class DataJdbcConfiguration {
 
     private final ApplicationContext applicationContext;
 
@@ -50,14 +46,4 @@ public class DataJdbcConfiguration extends AbstractJdbcConfiguration {
         return new OverrideDefaultNamingStrategy();
     }
 
-
-    @Override
-    protected List<?> userConverters() {
-        return Arrays.asList(
-                new BooleanToStringConverter(),
-                new StringToBooleanConverter(),
-                new BooleanToIntegerConverter(),
-                new IntegerToBooleanConverter()
-        );
-    }
 }
