@@ -4,12 +4,13 @@ package com.yj2025.basic.web.request;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+
+import javax.validation.constraints.Max;
+import javax.validation.constraints.NotNull;
 
 /**
  * @author liuyuhua
@@ -70,12 +71,17 @@ public abstract class PageQueryRequestVO extends BaseQueryRequestVO {
     public final Sort getSort() {
         Sort sort = withDefaultSort();
         if (StringUtils.isNotBlank(orderBy)) {
+            String[] orders = (orderBy + ",id").split(",");
             if (StringUtils.isNotBlank(orderByDirection)) {
-                sort = Sort.by(Sort.Direction.fromString(orderByDirection), orderBy, "id");
+                sort = Sort.by(Sort.Direction.fromString(orderByDirection), orders);
             } else {
-                sort = Sort.by(orderBy, "id");
+                sort = Sort.by(orders);
             }
         }
+        return wrapSort(sort);
+    }
+
+    protected Sort wrapSort(Sort sort) {
         return sort;
     }
 
