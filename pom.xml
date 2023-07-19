@@ -32,8 +32,6 @@
         <module>elasticsearch-logging-spring-boot</module>
         <module>jackson-spring-boot</module>
         <module>data-jdbc-jpa-mybatis-spring-boot-sample</module>
-        <!--        <module>batch-processor-spring-boot</module>-->
-        <!--        <module>table-creator-spring-boot</module>-->
         <module>sharding-table-spring-boot</module>
     </modules>
     <!-- spring boot upgrade -->
