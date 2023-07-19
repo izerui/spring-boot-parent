@@ -37,11 +37,18 @@ public abstract class PageQueryRequestVO extends BaseQueryRequestVO {
     private String orderByDirection;
 
     /**
+     * 是否需要拼接id排序
+     */
+    private boolean withId = true;
+
+    /**
      * 默认的排序方式
      *
      * @return
      */
-    protected abstract Sort withDefaultSort();
+    protected Sort withDefaultSort() {
+        return withId ? Sort.by("id") : Sort.unsorted();
+    }
 
     /**
      * 所有排序后面跟随的固定排序, 默认为空
@@ -66,7 +73,7 @@ public abstract class PageQueryRequestVO extends BaseQueryRequestVO {
     public final Sort getSort() {
         Sort sort = withDefaultSort();
         if (StringUtils.isNotBlank(orderBy)) {
-            String[] orders = (orderBy + ",id").split(",");
+            String[] orders = (orderBy + (withId ? ",id" : "")).split(",");
             if (StringUtils.isNotBlank(orderByDirection)) {
                 sort = Sort.by(Sort.Direction.fromString(orderByDirection), orders);
             } else {
@@ -89,5 +96,17 @@ public abstract class PageQueryRequestVO extends BaseQueryRequestVO {
     public final void fillSortInfo(String orderBy, String orderByDirection) {
         this.orderBy = orderBy;
         this.orderByDirection = orderByDirection;
+    }
+
+    /**
+     * 填充排序信息
+     *
+     * @param orderBy
+     * @param orderByDirection
+     */
+    public final void fillSortInfo(String orderBy, String orderByDirection, boolean withId) {
+        this.orderBy = orderBy;
+        this.orderByDirection = orderByDirection;
+        this.withId = withId;
     }
 }
