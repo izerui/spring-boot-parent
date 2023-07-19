@@ -9,8 +9,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.NotNull;
 
 /**
  * @author liuyuhua
@@ -19,16 +17,13 @@ import javax.validation.constraints.NotNull;
 public abstract class PageQueryRequestVO extends BaseQueryRequestVO {
 
     /**
-     * 页码
+     * 页码不能为空,起始页从0开始
      */
-    @NotNull(message = "页码不能为空,起始页从0开始")
     private Integer pageIndex = 0;
 
     /**
-     * 每页条目数
+     * 每页条目数不能为空 每页条目数最大不能超过2000条
      */
-    @NotNull(message = "每页条目数不能为空")
-    @Max(value = 2000, message = "每页条目数最大不能超过2000条")
     private Integer pageSize = 20;
 
     /**
