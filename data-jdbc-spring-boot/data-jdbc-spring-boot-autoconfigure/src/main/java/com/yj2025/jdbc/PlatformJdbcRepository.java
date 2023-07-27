@@ -12,6 +12,7 @@ import org.springframework.data.repository.query.QueryByExampleExecutor;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -231,5 +232,14 @@ public interface PlatformJdbcRepository<T, ID> extends CrudRepository<T, ID>, Pa
     @Deprecated(since = "3.1", forRemoval = true)
     @Override
     void deleteAll();
+
+    /**
+     * 执行{@code SELECT}查询并将结果项转换为已排序的{@link Iterable}。
+     *
+     * @param query 查询条件，不能为空
+     * @return 包含所有匹配结果的非空排序列表。
+     * @since 3.0
+     */
+    <S> Iterable<S> groupAll(Query query, List<String> columns, List<String> groups);
 
 }
