@@ -2,8 +2,8 @@ package com.yj2025.sample2;
 
 import com.google.common.base.Stopwatch;
 import com.yj2025.jdbc.support.Comparator;
-import com.yj2025.sample2.SampleApplication;
 import com.yj2025.sample2.entity.TestUser;
+import com.yj2025.sample2.mapping.GroupMapping;
 import com.yj2025.sample2.repository.TestUserRepository;
 import com.yj2025.sample2.service.TestUserService;
 import lombok.extern.slf4j.Slf4j;
@@ -151,6 +151,14 @@ public class TestUserTest {
         Page<TestUser> users2 = testUserService.findByQuery2("ent001", Query.query(criteria));
         System.out.println(users);
         System.out.println(users2);
+    }
+
+    @Test
+    public void testGroup() {
+        Criteria criteria = Criteria.where("ent_code").is("ent001").and("age").greaterThan(10);
+        Query query = Query.query(criteria);
+        Iterable<GroupMapping> groupList = testUserService.groupList("ent001", query, List.of("age", "count(0) as count"), List.of("age"));
+        System.out.println(groupList);
     }
 
     @Test

@@ -12,7 +12,6 @@ import org.springframework.data.repository.query.QueryByExampleExecutor;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -240,6 +239,6 @@ public interface PlatformJdbcRepository<T, ID> extends CrudRepository<T, ID>, Pa
      * @return 包含所有匹配结果的非空排序列表。
      * @since 3.0
      */
-    <S> Iterable<S> groupAll(Query query, List<String> columns, List<String> groups);
+    <S> Iterable<S> groupAll(Query query, Collection<String> selectColumns, Collection<String> groupColumns, Class<S> mappingClass);
 
 }

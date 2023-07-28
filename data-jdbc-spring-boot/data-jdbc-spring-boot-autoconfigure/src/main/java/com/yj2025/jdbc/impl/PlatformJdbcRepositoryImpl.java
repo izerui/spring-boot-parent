@@ -8,17 +8,18 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jdbc.core.JdbcAggregateOperations;
 import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
-import org.springframework.data.jdbc.core.convert.*;
+import org.springframework.data.jdbc.core.convert.DefaultDataAccessStrategy;
+import org.springframework.data.jdbc.core.convert.JdbcConverter;
+import org.springframework.data.jdbc.core.convert.SqlGeneratorSource;
 import org.springframework.data.jdbc.repository.support.SimpleJdbcRepository;
 import org.springframework.data.mapping.PersistentEntity;
 import org.springframework.data.relational.core.dialect.Dialect;
+import org.springframework.data.relational.core.mapping.RelationalMappingContext;
 import org.springframework.data.relational.core.mapping.RelationalPersistentEntity;
 import org.springframework.data.relational.core.query.Criteria;
 import org.springframework.data.relational.core.query.Query;
-import org.springframework.data.relational.core.sql.OrderByField;
-import org.springframework.data.relational.core.sql.SelectBuilder;
 import org.springframework.data.relational.core.sql.SqlIdentifier;
-import org.springframework.data.relational.core.sql.Table;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -26,7 +27,6 @@ import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -38,12 +38,12 @@ public class PlatformJdbcRepositoryImpl<T, ID> extends SimpleJdbcRepository<T, I
 
     private final JdbcAggregateTemplate jdbcAggregateTemplate;
     private final PersistentEntity<T, ?> entity;
-    private final QueryMapper queryMapper;
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     private final JdbcTemplate jdbcTemplate;
     private final SqlGeneratorSource sqlGeneratorSource;
     private final Dialect dialect;
     private final JdbcConverter jdbcConverter;
+    private final RelationalMappingContext relationalMappingContext;
 
     public PlatformJdbcRepositoryImpl(JdbcAggregateOperations entityOperations, PersistentEntity<T, ?> entity, JdbcConverter converter) throws IllegalAccessException {
         super(entityOperations, entity, converter);
@@ -53,8 +53,8 @@ public class PlatformJdbcRepositoryImpl<T, ID> extends SimpleJdbcRepository<T, I
         DefaultDataAccessStrategy dataAccessStrategy = getRefFieldValue(this.jdbcAggregateTemplate, "accessStrategy");
         this.namedParameterJdbcTemplate = getRefFieldValue(dataAccessStrategy, "operations");
         this.sqlGeneratorSource = getRefFieldValue(dataAccessStrategy, "sqlGeneratorSource");
+        this.relationalMappingContext = getRefFieldValue(dataAccessStrategy, "context");
         this.dialect = getRefFieldValue(sqlGeneratorSource, "dialect");
-        this.queryMapper = new QueryMapper(this.dialect, this.jdbcConverter);
         this.jdbcTemplate = namedParameterJdbcTemplate.getJdbcTemplate();
     }
 
@@ -164,11 +164,11 @@ public class PlatformJdbcRepositoryImpl<T, ID> extends SimpleJdbcRepository<T, I
     }
 
     @Override
-    public <S> Iterable<S> groupAll(Query query, List<String> columns, List<String> groups) {
-//        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-//		String sqlQuery = sqlGeneratorSource.selectByQuery(query, parameterSource);
-//		return namedParameterJdbcTemplate.query(sqlQuery, parameterSource, getEntityRowMapper(domainType));
-        return null;
+    public <S> Iterable<S> groupAll(Query query, Collection<String> selectColumns, Collection<String> groupColumns, Class<S> mappingClass) {
+        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+        CustomSqlGenerator generator = new CustomSqlGenerator(relationalMappingContext, jdbcConverter, relationalMappingContext.getRequiredPersistentEntity(entity.getType()), dialect);
+        String sql = generator.getGroupSql(selectColumns, groupColumns, query, parameterSource);
+        return namedParameterJdbcTemplate.query(sql, parameterSource, new BeanPropertyRowMapper<>(mappingClass));
     }
 
 }
