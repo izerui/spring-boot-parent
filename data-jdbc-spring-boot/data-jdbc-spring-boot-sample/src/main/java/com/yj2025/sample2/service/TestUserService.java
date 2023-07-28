@@ -78,7 +78,12 @@ public class TestUserService {
     }
 
     @TenantThreadLocal("#{#entCode}")
-    public Iterable<GroupMapping> groupList(String entCode, Query query, List<String> columns, List<String> groups) {
-        return testUserRepository.groupAll(query, columns, groups, GroupMapping.class);
+    public List<GroupMapping> groupList(String entCode, Query query, List<String> columns, List<String> groups) {
+        return testUserRepository.groupAll(columns, groups, GroupMapping.class, query);
+    }
+
+    @TenantThreadLocal("#{#entCode}")
+    public List<Map> groupList2(String entCode, Query query, List<String> columns, List<String> groups) {
+        return testUserRepository.groupAll(columns, groups, Map.class, query);
     }
 }

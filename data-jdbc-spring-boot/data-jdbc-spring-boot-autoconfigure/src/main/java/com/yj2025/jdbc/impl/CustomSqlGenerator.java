@@ -48,38 +48,32 @@ public class CustomSqlGenerator {
 
     public String getGroupSql(Collection<String> selectColumns, Collection<String> groupColumns, Query query, MapSqlParameterSource parameterSource) {
         Assert.notNull(selectColumns, "查询的字段不能为空!");
-        Collection<Expression> columnExpressions = selectColumns.stream().map(s -> new OriginalSqlIdentifier(s)).collect(Collectors.toList());
         Table table = getTable();
-        SelectBuilder.SelectWhere selectBuilder = selectBuilder(columnExpressions, table);
+        SelectBuilder.SelectWhere selectWhere = StatementBuilder
+                .select(selectColumns.stream().map(s -> new OriginalSqlIdentifier(s)).collect(Collectors.toList()))
+                .from(table);
         SelectBuilder.SelectOrdered selectOrdered = query //
                 .getCriteria() //
-                .map(item -> this.applyCriteria(item, selectBuilder, parameterSource, table)) //
-                .orElse(selectBuilder);
-
+                .map(item -> this.applyCriteria(item, selectWhere, parameterSource, table)) //
+                .orElse(selectWhere);
         if (query.isSorted()) {
             List<OrderByField> sort = this.queryMapper.getMappedSort(table, query.getSort(), entity);
-            selectOrdered = selectBuilder.orderBy(sort);
+            selectOrdered = selectWhere.orderBy(sort);
         }
         Select select = selectOrdered.build();
-
         String sql = sqlRenderer.render(select);
         sql += " group by " + StringUtils.join(groupColumns, ",");
         return sql;
     }
 
-    private SelectBuilder.SelectWhere selectBuilder(Collection<Expression> keyColumns, Table table) {
-        SelectBuilder.SelectAndFrom selectBuilder = StatementBuilder.select(keyColumns);
-        SelectBuilder.SelectJoin baseSelect = selectBuilder.from(table);
-        return (SelectBuilder.SelectWhere) baseSelect;
-    }
-
-
-    SelectBuilder.SelectOrdered applyCriteria(@Nullable CriteriaDefinition criteria,
-                                              SelectBuilder.SelectWhere whereBuilder, MapSqlParameterSource parameterSource, Table table) {
-
+    /**
+     * 添加条件
+     */
+    private SelectBuilder.SelectOrdered applyCriteria(@Nullable CriteriaDefinition criteria,
+                                                      SelectBuilder.SelectWhere selectWhere, MapSqlParameterSource parameterSource, Table table) {
         return criteria == null || criteria.isEmpty() // Check for null and empty criteria
-                ? whereBuilder //
-                : whereBuilder.where(queryMapper.getMappedObject(parameterSource, criteria, table, entity));
+                ? selectWhere //
+                : selectWhere.where(queryMapper.getMappedObject(parameterSource, criteria, table, entity));
     }
 
 

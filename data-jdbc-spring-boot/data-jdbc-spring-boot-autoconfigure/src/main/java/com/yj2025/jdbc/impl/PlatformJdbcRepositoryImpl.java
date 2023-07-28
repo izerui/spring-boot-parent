@@ -20,6 +20,7 @@ import org.springframework.data.relational.core.query.Criteria;
 import org.springframework.data.relational.core.query.Query;
 import org.springframework.data.relational.core.sql.SqlIdentifier;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -27,6 +28,7 @@ import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -44,6 +46,7 @@ public class PlatformJdbcRepositoryImpl<T, ID> extends SimpleJdbcRepository<T, I
     private final Dialect dialect;
     private final JdbcConverter jdbcConverter;
     private final RelationalMappingContext relationalMappingContext;
+    private final CustomSqlGenerator generator;
 
     public PlatformJdbcRepositoryImpl(JdbcAggregateOperations entityOperations, PersistentEntity<T, ?> entity, JdbcConverter converter) throws IllegalAccessException {
         super(entityOperations, entity, converter);
@@ -56,6 +59,7 @@ public class PlatformJdbcRepositoryImpl<T, ID> extends SimpleJdbcRepository<T, I
         this.relationalMappingContext = getRefFieldValue(dataAccessStrategy, "context");
         this.dialect = getRefFieldValue(sqlGeneratorSource, "dialect");
         this.jdbcTemplate = namedParameterJdbcTemplate.getJdbcTemplate();
+        this.generator = new CustomSqlGenerator(relationalMappingContext, jdbcConverter, relationalMappingContext.getRequiredPersistentEntity(entity.getType()), dialect);
     }
 
 
@@ -164,11 +168,17 @@ public class PlatformJdbcRepositoryImpl<T, ID> extends SimpleJdbcRepository<T, I
     }
 
     @Override
-    public <S> Iterable<S> groupAll(Query query, Collection<String> selectColumns, Collection<String> groupColumns, Class<S> mappingClass) {
+    public <S> List<S> groupAll(Collection<String> selectColumns, Collection<String> groupColumns, Class<S> mappingClass, Query query) {
         MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-        CustomSqlGenerator generator = new CustomSqlGenerator(relationalMappingContext, jdbcConverter, relationalMappingContext.getRequiredPersistentEntity(entity.getType()), dialect);
         String sql = generator.getGroupSql(selectColumns, groupColumns, query, parameterSource);
+        if (Map.class.isAssignableFrom(mappingClass)) {
+            return (List<S>) namedParameterJdbcTemplate.query(sql, parameterSource, new ColumnMapRowMapper());
+        }
         return namedParameterJdbcTemplate.query(sql, parameterSource, new BeanPropertyRowMapper<>(mappingClass));
     }
 
+    @Override
+    public <S> List<S> groupAll(Collection<String> selectColumns, Collection<String> groupColumns, Class<S> mappingClass, Query query, Pageable pageable) {
+       return null;
+    }
 }
