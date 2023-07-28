@@ -47,7 +47,7 @@ public abstract class PageQueryRequestVO extends BaseQueryRequestVO {
      * @return
      */
     protected Sort withDefaultSort() {
-        return withId ? Sort.by("id") : Sort.unsorted();
+        return Sort.unsorted();
     }
 
     /**
