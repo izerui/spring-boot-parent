@@ -1,4 +1,4 @@
-package com.yj2025.sample.entity;
+package com.yj2025.sample2.entity;
 
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;

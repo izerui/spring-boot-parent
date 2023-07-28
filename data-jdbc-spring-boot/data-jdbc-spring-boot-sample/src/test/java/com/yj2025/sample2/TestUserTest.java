@@ -1,10 +1,11 @@
-package com.yj2025.sample;
+package com.yj2025.sample2;
 
 import com.google.common.base.Stopwatch;
 import com.yj2025.jdbc.support.Comparator;
-import com.yj2025.sample.entity.TestUser;
-import com.yj2025.sample.repository.TestUserRepository;
-import com.yj2025.sample.service.TestUserService;
+import com.yj2025.sample2.SampleApplication;
+import com.yj2025.sample2.entity.TestUser;
+import com.yj2025.sample2.repository.TestUserRepository;
+import com.yj2025.sample2.service.TestUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

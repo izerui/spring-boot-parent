@@ -1,22 +1,19 @@
-package com.yj2025.sample.service;
+package com.yj2025.sample2.service;
 
-import com.yj2025.sample.entity.TestUser;
-import com.yj2025.sample.repository.TestUserRepository;
+import com.yj2025.sample2.entity.TestUser;
+import com.yj2025.sample2.repository.TestUserRepository;
 import com.yj2025.sharding.tenant.TenantThreadLocal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
-import org.springframework.data.relational.core.query.Criteria;
 import org.springframework.data.relational.core.query.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Slf4j
 @Service

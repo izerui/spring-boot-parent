@@ -1,4 +1,4 @@
-package com.yj2025.sample;
+package com.yj2025.sample2;
 
 import com.yj2025.jdbc.impl.PlatformJdbcRepositoryImpl;
 import org.springframework.boot.SpringApplication;

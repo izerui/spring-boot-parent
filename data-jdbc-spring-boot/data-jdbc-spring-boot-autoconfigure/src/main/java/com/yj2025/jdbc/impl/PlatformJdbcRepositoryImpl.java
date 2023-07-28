@@ -8,15 +8,25 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jdbc.core.JdbcAggregateOperations;
 import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
-import org.springframework.data.jdbc.core.convert.JdbcConverter;
+import org.springframework.data.jdbc.core.convert.*;
 import org.springframework.data.jdbc.repository.support.SimpleJdbcRepository;
 import org.springframework.data.mapping.PersistentEntity;
+import org.springframework.data.relational.core.dialect.Dialect;
 import org.springframework.data.relational.core.mapping.RelationalPersistentEntity;
 import org.springframework.data.relational.core.query.Criteria;
 import org.springframework.data.relational.core.query.Query;
+import org.springframework.data.relational.core.sql.OrderByField;
+import org.springframework.data.relational.core.sql.SelectBuilder;
 import org.springframework.data.relational.core.sql.SqlIdentifier;
+import org.springframework.data.relational.core.sql.Table;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.util.ReflectionUtils;
 
+import java.lang.reflect.Field;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -28,13 +38,32 @@ public class PlatformJdbcRepositoryImpl<T, ID> extends SimpleJdbcRepository<T, I
 
     private final JdbcAggregateTemplate jdbcAggregateTemplate;
     private final PersistentEntity<T, ?> entity;
+    private final QueryMapper queryMapper;
+    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
+    private final SqlGeneratorSource sqlGeneratorSource;
+    private final Dialect dialect;
+    private final JdbcConverter jdbcConverter;
 
-    public PlatformJdbcRepositoryImpl(JdbcAggregateOperations entityOperations, PersistentEntity<T, ?> entity, JdbcConverter converter) {
+    public PlatformJdbcRepositoryImpl(JdbcAggregateOperations entityOperations, PersistentEntity<T, ?> entity, JdbcConverter converter) throws IllegalAccessException {
         super(entityOperations, entity, converter);
         this.jdbcAggregateTemplate = (JdbcAggregateTemplate) entityOperations;
         this.entity = entity;
+        this.jdbcConverter = converter;
+        DefaultDataAccessStrategy dataAccessStrategy = getRefFieldValue(this.jdbcAggregateTemplate, "accessStrategy");
+        this.namedParameterJdbcTemplate = getRefFieldValue(dataAccessStrategy, "operations");
+        this.sqlGeneratorSource = getRefFieldValue(dataAccessStrategy, "sqlGeneratorSource");
+        this.dialect = getRefFieldValue(sqlGeneratorSource, "dialect");
+        this.queryMapper = new QueryMapper(this.dialect, this.jdbcConverter);
+        this.jdbcTemplate = namedParameterJdbcTemplate.getJdbcTemplate();
     }
 
+
+    private <S> S getRefFieldValue(Object delegatedTarget, String propertyName) throws IllegalAccessException {
+        Field field = ReflectionUtils.findField(delegatedTarget.getClass(), propertyName);
+        field.setAccessible(true);
+        return (S) field.get(delegatedTarget);
+    }
 
     @Override
     public T insert(T instance) {
@@ -133,4 +162,13 @@ public class PlatformJdbcRepositoryImpl<T, ID> extends SimpleJdbcRepository<T, I
     public Page<T> findAll(Map<String, Object> simpleMap, Pageable pageable) {
         return jdbcAggregateTemplate.findAll(Query.query(CriteriaUtils.joinToCriteria(Criteria.empty(), simpleMap)), entity.getType(), pageable);
     }
+
+    @Override
+    public <S> Iterable<S> groupAll(Query query, List<String> columns, List<String> groups) {
+//        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+//		String sqlQuery = sqlGeneratorSource.selectByQuery(query, parameterSource);
+//		return namedParameterJdbcTemplate.query(sqlQuery, parameterSource, getEntityRowMapper(domainType));
+        return null;
+    }
+
 }

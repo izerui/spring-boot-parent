@@ -241,7 +241,7 @@ public class Conditions implements Cloneable {
         }
 
         private String toQLOrSQL(String prefix, Map<String, Object> params, boolean isQL) {
-            return cds.toQLOrSQL(prefix, params, isQL) ;
+            return cds.toQLOrSQL(prefix, params, isQL);
         }
 
     }
@@ -294,11 +294,17 @@ public class Conditions implements Cloneable {
             }
             params.put(this.field, value);
 
-            if (isEmpty(andOr)) {
-                return this.getSqlField(prefix) + " " + (express != null ? express : "") + (value != null ? " :" + this.field : "") + " ";
-            } else {
-                return andOr + " " + this.getSqlField(prefix) + " " + (express != null ? express : "") + (value != null ? " :" + this.field : "") + " ";
+
+            String sql = (isEmpty(andOr) ? "" : andOr + " ") + this.getSqlField(prefix) + " " + (express != null ? express : "");
+            if (value != null) {
+                if ("in".equals(express) || "not in".equals(express)) {
+                    sql += " (" + " :" + this.field + " )";
+                } else {
+                    sql += " :" + this.field;
+                }
             }
+            sql += " ";
+            return sql;
         }
 
         private String getSqlField(String prefix) {
