@@ -83,6 +83,11 @@ public class TestUserService {
     }
 
     @TenantThreadLocal("#{#entCode}")
+    public Page<GroupMapping> groupPage(String entCode, Query query, List<String> columns, List<String> groups, Pageable pageable) {
+        return testUserRepository.groupAll(columns, groups, GroupMapping.class, query, pageable);
+    }
+
+    @TenantThreadLocal("#{#entCode}")
     public List<Map> groupList2(String entCode, Query query, List<String> columns, List<String> groups) {
         return testUserRepository.groupAll(columns, groups, Map.class, query);
     }

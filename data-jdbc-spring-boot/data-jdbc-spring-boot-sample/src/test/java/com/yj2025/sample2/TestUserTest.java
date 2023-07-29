@@ -163,6 +163,14 @@ public class TestUserTest {
     }
 
     @Test
+    public void testGroupPage() {
+        Criteria criteria = Criteria.where("ent_code").is("ent001").and("age").greaterThan(10);
+        Query query = Query.query(criteria);
+        Page<GroupMapping> groupList = testUserService.groupPage("ent001", query, List.of("age", "count(0) as count"), List.of("age"), PageRequest.of(0, 20));
+        System.out.println(groupList);
+    }
+
+    @Test
     public void testExample() {
         TestUser user = new TestUser();
         user.setEntCode("ent001");

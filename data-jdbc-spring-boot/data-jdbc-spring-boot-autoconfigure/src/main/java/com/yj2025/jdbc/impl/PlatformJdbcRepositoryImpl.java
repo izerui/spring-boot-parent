@@ -3,6 +3,7 @@ package com.yj2025.jdbc.impl;
 import com.yj2025.basic.support.DbContext;
 import com.yj2025.jdbc.PlatformJdbcRepository;
 import com.yj2025.jdbc.support.CriteriaUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -19,6 +20,7 @@ import org.springframework.data.relational.core.mapping.RelationalPersistentEnti
 import org.springframework.data.relational.core.query.Criteria;
 import org.springframework.data.relational.core.query.Query;
 import org.springframework.data.relational.core.sql.SqlIdentifier;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -178,7 +180,21 @@ public class PlatformJdbcRepositoryImpl<T, ID> extends SimpleJdbcRepository<T, I
     }
 
     @Override
-    public <S> List<S> groupAll(Collection<String> selectColumns, Collection<String> groupColumns, Class<S> mappingClass, Query query, Pageable pageable) {
-       return null;
+    public <S> Page<S> groupAll(Collection<String> selectColumns, Collection<String> groupColumns, Class<S> mappingClass, Query query, Pageable pageable) {
+        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+        String sql = generator.getGroupSql(selectColumns, groupColumns, query, parameterSource);
+        String pageSql = "select x.* from (" + sql + ") x ";
+        String countSql = "select count(0) from (" + sql + ") x";
+        if (pageable.getSort().isSorted()) {
+            pageSql += " order by " + StringUtils.join(pageable.getSort().stream().map(order -> order.getProperty() + " " + order.getDirection().name()), ",");
+        }
+        pageSql += dialect.limit().getLimitOffset(pageable.getPageSize(), pageable.getOffset());
+        List<S> content;
+        if (Map.class.isAssignableFrom(mappingClass)) {
+            content = (List<S>) namedParameterJdbcTemplate.query(pageSql, parameterSource, new ColumnMapRowMapper());
+        } else {
+            content = namedParameterJdbcTemplate.query(pageSql, parameterSource, new BeanPropertyRowMapper<>(mappingClass));
+        }
+        return PageableExecutionUtils.getPage(content, pageable, () -> namedParameterJdbcTemplate.queryForObject(countSql, parameterSource, Long.class));
     }
 }
