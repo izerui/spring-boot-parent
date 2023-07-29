@@ -186,7 +186,7 @@ public class PlatformJdbcRepositoryImpl<T, ID> extends SimpleJdbcRepository<T, I
         String pageSql = "select x.* from (" + sql + ") x ";
         String countSql = "select count(0) from (" + sql + ") x";
         if (pageable.getSort().isSorted()) {
-            pageSql += " order by " + StringUtils.join(pageable.getSort().stream().map(order -> order.getProperty() + " " + order.getDirection().name()), ",");
+            pageSql += " order by " + StringUtils.join(pageable.getSort().stream().map(order -> "x." + order.getProperty() + " " + order.getDirection().name()), ",");
         }
         pageSql += dialect.limit().getLimitOffset(pageable.getPageSize(), pageable.getOffset());
         List<S> content;
