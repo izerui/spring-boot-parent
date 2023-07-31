@@ -197,4 +197,16 @@ public class PlatformJdbcRepositoryImpl<T, ID> extends SimpleJdbcRepository<T, I
         }
         return PageableExecutionUtils.getPage(content, pageable, () -> namedParameterJdbcTemplate.queryForObject(countSql, parameterSource, Long.class));
     }
+
+    @Override
+    public <S> List<S> groupAll(Collection<String> selectColumns, Collection<String> groupColumns, Class<S> mappingClass, Map<String, Object> simpleMap) {
+        Query query = Query.query(CriteriaUtils.joinToCriteria(Criteria.empty(), simpleMap));
+        return this.groupAll(selectColumns, groupColumns, mappingClass, query);
+    }
+
+    @Override
+    public <S> Page<S> groupAll(Collection<String> selectColumns, Collection<String> groupColumns, Class<S> mappingClass, Map<String, Object> simpleMap, Pageable pageable) {
+        Query query = Query.query(CriteriaUtils.joinToCriteria(Criteria.empty(), simpleMap));
+        return this.groupAll(selectColumns, groupColumns, mappingClass, query, pageable);
+    }
 }
