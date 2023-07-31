@@ -16,7 +16,7 @@ public class JacksonAutoConfiguration {
             jacksonObjectMapperBuilder.postConfigurer(objectMapper -> {
                 objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
                 objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-                objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+//                objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
                 objectMapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
                 objectMapper.findAndRegisterModules();
             });
