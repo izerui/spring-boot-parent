@@ -144,7 +144,7 @@ public class UserChannelService {
      */
     public int onlines() {
         String keyParten = getRedisKey("", "*", "");
-        Set<String> scanUsers = scan(keyParten);
+        Set<String> scanUsers = redisTemplate.keys(keyParten);
         Set<String> users = new HashSet<>();
         for (String scanUser : scanUsers) {
             users.add(scanUser.substring(0, scanUser.lastIndexOf(".")-2));
@@ -161,7 +161,7 @@ public class UserChannelService {
      */
     public Set<String> onlineUsers(String entCode) {
         String keyParten = getRedisKey(entCode, "*", "");
-        Set<String> scanUsers = scan(keyParten);
+        Set<String> scanUsers = redisTemplate.keys(keyParten);
         Set<String> userNames = new HashSet<>();
         for (String userKey : scanUsers) {
             String tmpKey = userKey.replaceAll(serverProperties.getUserIdPrefix() + entCode + "-", "");
@@ -181,7 +181,7 @@ public class UserChannelService {
      */
     public Set<String> onlineUserMap(String entCode) {
         String keyParten = getRedisKey(entCode, "*", "");
-        Set<String> scanUsers = scan(keyParten);
+        Set<String> scanUsers = redisTemplate.keys(keyParten);
         Set<String> users = new HashSet<>();
         for (String userKey : scanUsers) {
             String tmpKey = userKey.replaceAll(serverProperties.getUserIdPrefix() + entCode + "-", "");
@@ -219,16 +219,16 @@ public class UserChannelService {
         return _keyParten;
     }
 
-    private Set<String> scan(final String matchKey) {
-
-        Set<String> keys = redisTemplate.execute((RedisCallback<Set<String>>) connection -> {
-            Set<byte[]> tmpKeys = new HashSet<>();
-            Cursor<byte[]> cursor = connection.scan(ScanOptions.scanOptions().match(matchKey).count(Integer.MAX_VALUE).build());
-            while (cursor.hasNext()) {
-                tmpKeys.add(cursor.next());
-            }
-            return (Set<String>) SerializationUtils.deserialize(tmpKeys, redisTemplate.getKeySerializer());
-        });
-        return keys;
-    }
+//    private Set<String> scan(final String matchKey) {
+//
+//        Set<String> keys = redisTemplate.execute((RedisCallback<Set<String>>) connection -> {
+//            Set<byte[]> tmpKeys = new HashSet<>();
+//            Cursor<byte[]> cursor = connection.scan(ScanOptions.scanOptions().match(matchKey).count(Integer.MAX_VALUE).build());
+//            while (cursor.hasNext()) {
+//                tmpKeys.add(cursor.next());
+//            }
+//            return (Set<String>) SerializationUtils.deserialize(tmpKeys, redisTemplate.getKeySerializer());
+//        });
+//        return keys;
+//    }
 }
