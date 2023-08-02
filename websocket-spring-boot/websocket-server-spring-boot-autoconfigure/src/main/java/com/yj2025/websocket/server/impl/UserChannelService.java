@@ -143,9 +143,13 @@ public class UserChannelService {
      * @return
      */
     public int onlines() {
-        String keyParten = getRedisKey("", "", "");
+        String keyParten = getRedisKey("", "*", "");
         Set<String> scanUsers = scan(keyParten);
-        return scanUsers.size();
+        Set<String> users = new HashSet<>();
+        for (String scanUser : scanUsers) {
+            users.add(scanUser.substring(0, scanUser.lastIndexOf("-")));
+        }
+        return users.size();
     }
 
     /**
@@ -158,9 +162,9 @@ public class UserChannelService {
     public Set<String> onlineUsers(String entCode) {
         String keyParten = getRedisKey(entCode, "*", "");
         Set<String> scanUsers = scan(keyParten);
-        Set<String> userNames = new HashSet<>(scanUsers.size());
+        Set<String> userNames = new HashSet<>();
         for (String userKey : scanUsers) {
-            String tmpKey = userKey.replaceAll(entCode + "-", "");
+            String tmpKey = userKey.replaceAll(serverProperties.getUserIdPrefix() + entCode + "-", "");
             String userCode = tmpKey.substring(0, tmpKey.lastIndexOf("-"));
             userNameLoaderObjectProvider.ifAvailable(userNameLoader -> {
                 userNames.add(userNameLoader.getUserName(userCode));
@@ -178,9 +182,9 @@ public class UserChannelService {
     public Set<String> onlineUserMap(String entCode) {
         String keyParten = getRedisKey(entCode, "*", "");
         Set<String> scanUsers = scan(keyParten);
-        Set<String> users = new HashSet<>(scanUsers.size());
+        Set<String> users = new HashSet<>();
         for (String userKey : scanUsers) {
-            String tmpKey = userKey.replaceAll(entCode + "-", "");
+            String tmpKey = userKey.replaceAll(serverProperties.getUserIdPrefix() + entCode + "-", "");
             users.add(tmpKey.substring(0, tmpKey.lastIndexOf("-")));
         }
         return users;
