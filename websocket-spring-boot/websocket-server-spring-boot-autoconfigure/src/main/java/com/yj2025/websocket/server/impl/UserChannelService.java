@@ -192,7 +192,7 @@ public class UserChannelService {
 
     private List<Channel> findChannels(String entCode, String userCode, String random) {
         String keyParten = getRedisKey(entCode, userCode, random);
-        Set<String> keys = scan(keyParten);
+        Set<String> keys = redisTemplate.keys(keyParten);
         List<Channel> channels = new ArrayList<>();
         for (String key : keys) {
             ChannelId channelId = redisTemplate.boundValueOps(key).get();
