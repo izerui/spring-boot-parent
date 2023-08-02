@@ -147,7 +147,7 @@ public class UserChannelService {
         Set<String> scanUsers = scan(keyParten);
         Set<String> users = new HashSet<>();
         for (String scanUser : scanUsers) {
-            users.add(scanUser.substring(0, scanUser.lastIndexOf("-")));
+            users.add(scanUser.substring(0, scanUser.lastIndexOf(".")-2));
         }
         return users.size();
     }
@@ -165,7 +165,7 @@ public class UserChannelService {
         Set<String> userNames = new HashSet<>();
         for (String userKey : scanUsers) {
             String tmpKey = userKey.replaceAll(serverProperties.getUserIdPrefix() + entCode + "-", "");
-            String userCode = tmpKey.substring(0, tmpKey.lastIndexOf("-"));
+            String userCode = tmpKey.substring(0, tmpKey.lastIndexOf(".")-2);
             userNameLoaderObjectProvider.ifAvailable(userNameLoader -> {
                 userNames.add(userNameLoader.getUserName(userCode));
             });
@@ -185,7 +185,7 @@ public class UserChannelService {
         Set<String> users = new HashSet<>();
         for (String userKey : scanUsers) {
             String tmpKey = userKey.replaceAll(serverProperties.getUserIdPrefix() + entCode + "-", "");
-            users.add(tmpKey.substring(0, tmpKey.lastIndexOf("-")));
+            users.add(tmpKey.substring(0, tmpKey.lastIndexOf(".")-2));
         }
         return users;
     }
