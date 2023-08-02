@@ -138,11 +138,12 @@ public class UserChannelService {
     }
 
     /**
-     * 在线连接的客户端ip地址列表
+     * 在线连接的客户端连接数
      *
      * @return
      */
     public int onlines() {
+        // TODO 从 onlineUsers 方法里面获取用户数
         return channelGroup.size();
     }
 
@@ -153,18 +154,19 @@ public class UserChannelService {
      * @return
      */
     public Set<String> onlineUsers(String entCode) {
-        List<Channel> channels = findChannels(entCode, "*", "");
-        Set<String> users = new LinkedHashSet<>();
-        for (Channel channel : channels) {
-            String userCode = (String) channel.attr(AttributeKey.valueOf("userCode")).get();
-            AtomicReference<String> userName = new AtomicReference<>((String) channel.attr(AttributeKey.valueOf("userName")).get());
-            if (StringUtils.isEmpty(userName.get())) {
-                userNameLoaderObjectProvider.ifAvailable(userNameLoader -> {
-                    userName.set(userNameLoader.getUserName(userCode));
-                });
-            }
-            users.add(userName.get());
-        }
+        String keyParten = getRedisKey(entCode, "*", "");
+        Set<String> users = scan(keyParten);
+        // TODO 处理下，从 users里面截断字符串解析出userCode集合 并转换成用户名集合
+//        for (Channel channel : channels) {
+//            String userCode = (String) channel.attr(AttributeKey.valueOf("userCode")).get();
+//            AtomicReference<String> userName = new AtomicReference<>((String) channel.attr(AttributeKey.valueOf("userName")).get());
+//            if (StringUtils.isEmpty(userName.get())) {
+//                userNameLoaderObjectProvider.ifAvailable(userNameLoader -> {
+//                    userName.set(userNameLoader.getUserName(userCode));
+//                });
+//            }
+//            users.add(userName.get());
+//        }
         return users;
     }
 
@@ -175,14 +177,9 @@ public class UserChannelService {
      * @return
      */
     public Set<String> onlineUserMap(String entCode) {
-        List<Channel> channels = findChannels(entCode, "*", "");
-        Set<String> users = new LinkedHashSet<>();
-        for (Channel channel : channels) {
-            String userCode = (String) channel.attr(AttributeKey.valueOf("userCode")).get();
-            if (StringUtils.isNotBlank(userCode)) {
-                users.add(userCode);
-            }
-        }
+        String keyParten = getRedisKey(entCode, "*", "");
+        Set<String> users = scan(keyParten);
+        // TODO 处理下，从 users里面截断字符串解析出userCode集合并返回
         return users;
     }
 
