@@ -143,31 +143,30 @@ public class UserChannelService {
      * @return
      */
     public int onlines() {
-        // TODO 从 onlineUsers 方法里面获取用户数
-        return channelGroup.size();
+        String keyParten = getRedisKey("", "", "");
+        Set<String> scanUsers = scan(keyParten);
+        return scanUsers.size();
     }
 
     /**
      * 获取账套下登陆的用户编号集合
+     * 返回名称
      *
      * @param entCode
      * @return
      */
     public Set<String> onlineUsers(String entCode) {
         String keyParten = getRedisKey(entCode, "*", "");
-        Set<String> users = scan(keyParten);
-        // TODO 处理下，从 users里面截断字符串解析出userCode集合 并转换成用户名集合
-//        for (Channel channel : channels) {
-//            String userCode = (String) channel.attr(AttributeKey.valueOf("userCode")).get();
-//            AtomicReference<String> userName = new AtomicReference<>((String) channel.attr(AttributeKey.valueOf("userName")).get());
-//            if (StringUtils.isEmpty(userName.get())) {
-//                userNameLoaderObjectProvider.ifAvailable(userNameLoader -> {
-//                    userName.set(userNameLoader.getUserName(userCode));
-//                });
-//            }
-//            users.add(userName.get());
-//        }
-        return users;
+        Set<String> scanUsers = scan(keyParten);
+        Set<String> userNames = new HashSet<>(scanUsers.size());
+        for (String userKey : scanUsers) {
+            String tmpKey = userKey.replaceAll(entCode + "-", "");
+            String userCode = tmpKey.substring(0, tmpKey.lastIndexOf("-"));
+            userNameLoaderObjectProvider.ifAvailable(userNameLoader -> {
+                userNames.add(userNameLoader.getUserName(userCode));
+            });
+        }
+        return userNames;
     }
 
     /**
@@ -178,8 +177,12 @@ public class UserChannelService {
      */
     public Set<String> onlineUserMap(String entCode) {
         String keyParten = getRedisKey(entCode, "*", "");
-        Set<String> users = scan(keyParten);
-        // TODO 处理下，从 users里面截断字符串解析出userCode集合并返回
+        Set<String> scanUsers = scan(keyParten);
+        Set<String> users = new HashSet<>(scanUsers.size());
+        for (String userKey : scanUsers) {
+            String tmpKey = userKey.replaceAll(entCode + "-", "");
+            users.add(tmpKey.substring(0, tmpKey.lastIndexOf("-")));
+        }
         return users;
     }
 
@@ -214,14 +217,14 @@ public class UserChannelService {
 
     private Set<String> scan(final String matchKey) {
 
-        Set<String> keys = redisTemplate.execute( (RedisCallback<Set<String>>) connection -> {
+        Set<String> keys = redisTemplate.execute((RedisCallback<Set<String>>) connection -> {
             Set<byte[]> tmpKeys = new HashSet<>();
             Cursor<byte[]> cursor = connection.scan(ScanOptions.scanOptions().match(matchKey).count(Integer.MAX_VALUE).build());
             while (cursor.hasNext()) {
                 tmpKeys.add(cursor.next());
             }
-            return (Set<String>) SerializationUtils.deserialize(tmpKeys, redisTemplate.getKeySerializer()) ;
-        } );
+            return (Set<String>) SerializationUtils.deserialize(tmpKeys, redisTemplate.getKeySerializer());
+        });
         return keys;
     }
 }
