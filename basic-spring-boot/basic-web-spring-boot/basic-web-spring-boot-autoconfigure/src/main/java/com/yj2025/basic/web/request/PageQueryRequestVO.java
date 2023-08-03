@@ -50,16 +50,6 @@ public abstract class PageQueryRequestVO extends BaseQueryRequestVO {
         return Sort.unsorted();
     }
 
-    /**
-     * 所有排序后面跟随的固定排序, 默认为空
-     *
-     * @return
-     */
-    protected Sort withFixedSort() {
-        return Sort.unsorted();
-    }
-
-
     @Parameter(hidden = true)
     @JsonIgnore
     @Schema(hidden = true)
