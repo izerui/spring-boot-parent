@@ -243,4 +243,6 @@ public interface PlatformJdbcRepository<T, ID> extends CrudRepository<T, ID>, Pa
 
     Optional<T> findByRecordId(String recordId);
 
+    Iterable<T> findByRecordIds(Iterable<String> recordIds);
+
 }
