@@ -209,4 +209,13 @@ public class PlatformJdbcRepositoryImpl<T, ID> extends SimpleJdbcRepository<T, I
         Query query = Query.query(CriteriaUtils.joinToCriteria(Criteria.empty(), simpleMap));
         return this.groupAll(selectColumns, groupColumns, mappingClass, query, pageable);
     }
+
+    @Override
+    public Optional<T> findByRecordId(String recordId) {
+        Query query = Query.query(
+                Criteria.where("record_id").is(recordId)
+        );
+        return jdbcAggregateTemplate.findOne(query, entity.getType());
+    }
+
 }
