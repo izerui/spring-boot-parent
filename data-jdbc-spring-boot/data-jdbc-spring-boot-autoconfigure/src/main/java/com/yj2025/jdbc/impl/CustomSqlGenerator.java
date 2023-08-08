@@ -42,7 +42,7 @@ public class CustomSqlGenerator {
         this.dialect = dialect;
     }
 
-    private Table getTable() {
+    public Table getTable() {
         return Table.create(entity.getQualifiedTableName());
     }
 
