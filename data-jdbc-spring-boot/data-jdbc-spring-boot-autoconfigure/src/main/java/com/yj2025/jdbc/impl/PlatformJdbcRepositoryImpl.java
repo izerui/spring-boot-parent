@@ -169,23 +169,6 @@ public class PlatformJdbcRepositoryImpl<T, ID> extends SimpleJdbcRepository<T, I
         return jdbcAggregateTemplate.findAll(Query.query(CriteriaUtils.joinToCriteria(Criteria.empty(), simpleMap)), entity.getType(), pageable);
     }
 
-//    @Override
-//    public <S> S group(Collection<String> selectColumns, Collection<String> groupColumns, Class<S> mappingClass, Query query) {
-//        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-//        String sql = generator.getGroupSql(selectColumns, groupColumns, query, parameterSource);
-//        if (Map.class.isAssignableFrom(mappingClass)) {
-//            return (S) namedParameterJdbcTemplate.query(sql, parameterSource, new ColumnMapRowMapper());
-//        }
-//        return namedParameterJdbcTemplate.queryForObject(sql,parameterSource,mappingClass);
-//    }
-//
-//    @Override
-//    public <S> S group(Collection<String> selectColumns, Collection<String> groupColumns, Class<S> mappingClass, Map<String, Object> simpleMap) {
-//        Query query = Query.query(CriteriaUtils.joinToCriteria(Criteria.empty(), simpleMap));
-//        return this.group(selectColumns,groupColumns,mappingClass,query);
-//    }
-
-
     @Override
     public <S> S aggregate(Collection<String> aggregateColumns, Class<S> mappingClass, Query query) {
         MapSqlParameterSource parameterSource = new MapSqlParameterSource();
