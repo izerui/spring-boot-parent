@@ -180,6 +180,12 @@ public class PlatformJdbcRepositoryImpl<T, ID> extends SimpleJdbcRepository<T, I
     }
 
     @Override
+    public <S> S group(Collection<String> selectColumns, Collection<String> groupColumns, Class<S> mappingClass, Map<String, Object> simpleMap) {
+        Query query = Query.query(CriteriaUtils.joinToCriteria(Criteria.empty(), simpleMap));
+        return this.group(selectColumns,groupColumns,mappingClass,query);
+    }
+
+    @Override
     public <S> List<S> groupAll(Collection<String> selectColumns, Collection<String> groupColumns, Class<S> mappingClass, Query query) {
         MapSqlParameterSource parameterSource = new MapSqlParameterSource();
         String sql = generator.getGroupSql(selectColumns, groupColumns, query, parameterSource);
