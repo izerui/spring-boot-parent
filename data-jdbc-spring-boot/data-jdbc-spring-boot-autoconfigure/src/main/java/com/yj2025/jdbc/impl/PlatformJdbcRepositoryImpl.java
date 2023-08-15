@@ -191,9 +191,9 @@ public class PlatformJdbcRepositoryImpl<T, ID> extends SimpleJdbcRepository<T, I
         MapSqlParameterSource parameterSource = new MapSqlParameterSource();
         String sql = generator.getSelectWhereSql(aggregateColumns, query, parameterSource);
         if (Map.class.isAssignableFrom(mappingClass)) {
-            return (S) namedParameterJdbcTemplate.queryForObject(sql, parameterSource, new ColumnMapRowMapper());
+            return (S) namedParameterJdbcTemplate.query(sql, parameterSource, new ColumnMapRowMapper()).get(0);
         }
-        return namedParameterJdbcTemplate.queryForObject(sql, parameterSource, mappingClass);
+        return namedParameterJdbcTemplate.query(sql, parameterSource, new BeanPropertyRowMapper<>(mappingClass)).get(0);
     }
 
     @Override
