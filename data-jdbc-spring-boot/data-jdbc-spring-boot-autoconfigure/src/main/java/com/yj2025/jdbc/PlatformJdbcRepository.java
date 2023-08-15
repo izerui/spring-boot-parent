@@ -233,6 +233,8 @@ public interface PlatformJdbcRepository<T, ID> extends CrudRepository<T, ID>, Pa
     @Override
     void deleteAll();
 
+    <S> S group(Collection<String> selectColumns, Collection<String> groupColumns, Class<S> mappingClass, Query query);
+
     <S> List<S> groupAll(Collection<String> selectColumns, Collection<String> groupColumns, Class<S> mappingClass, Query query);
 
     <S> List<S> groupAll(Collection<String> selectColumns, Collection<String> groupColumns, Class<S> mappingClass, Map<String,Object> simpleMap);

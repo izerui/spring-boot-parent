@@ -170,6 +170,16 @@ public class PlatformJdbcRepositoryImpl<T, ID> extends SimpleJdbcRepository<T, I
     }
 
     @Override
+    public <S> S group(Collection<String> selectColumns, Collection<String> groupColumns, Class<S> mappingClass, Query query) {
+        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+        String sql = generator.getGroupSql(selectColumns, groupColumns, query, parameterSource);
+        if (Map.class.isAssignableFrom(mappingClass)) {
+            return (S) namedParameterJdbcTemplate.query(sql, parameterSource, new ColumnMapRowMapper());
+        }
+        return namedParameterJdbcTemplate.queryForObject(sql,parameterSource,mappingClass);
+    }
+
+    @Override
     public <S> List<S> groupAll(Collection<String> selectColumns, Collection<String> groupColumns, Class<S> mappingClass, Query query) {
         MapSqlParameterSource parameterSource = new MapSqlParameterSource();
         String sql = generator.getGroupSql(selectColumns, groupColumns, query, parameterSource);
