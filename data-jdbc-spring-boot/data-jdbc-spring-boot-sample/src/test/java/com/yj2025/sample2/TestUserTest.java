@@ -163,6 +163,14 @@ public class TestUserTest {
     }
 
     @Test
+    public void testGroup2() {
+        Criteria criteria = Criteria.where("ent_code").is("ent001").and("age").greaterThan(10);
+        Query query = Query.query(criteria);
+        Iterable<GroupMapping> groupList = testUserService.groupList("ent001", query, List.of("age", "count(0) as count"), null);
+        System.out.println(groupList);
+    }
+
+    @Test
     public void testGroupPage() {
         Criteria criteria = Criteria.where("ent_code").is("ent001").and("age").greaterThan(10);
         Query query = Query.query(criteria);
