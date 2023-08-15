@@ -16,7 +16,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -62,7 +61,9 @@ public class CustomSqlGenerator {
         }
         Select select = selectOrdered.build();
         String sql = sqlRenderer.render(select);
-        sql += " group by " + StringUtils.join(groupColumns, ",");
+        if (groupColumns != null && !groupColumns.isEmpty()) {
+            sql += " group by " + StringUtils.join(groupColumns, ",");
+        }
         return sql;
     }
 
