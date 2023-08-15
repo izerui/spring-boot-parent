@@ -45,7 +45,7 @@ public class CustomSqlGenerator {
         return Table.create(entity.getQualifiedTableName());
     }
 
-    public String getGroupSql(Collection<String> selectColumns, Collection<String> groupColumns, Query query, MapSqlParameterSource parameterSource) {
+    public String getSelectWhereSql(Collection<String> selectColumns, Query query, MapSqlParameterSource parameterSource) {
         Assert.notNull(selectColumns, "查询的字段不能为空!");
         Table table = getTable();
         SelectBuilder.SelectWhere selectWhere = StatementBuilder
@@ -61,6 +61,11 @@ public class CustomSqlGenerator {
         }
         Select select = selectOrdered.build();
         String sql = sqlRenderer.render(select);
+        return sql;
+    }
+
+    public String getGroupSql(Collection<String> selectColumns, Collection<String> groupColumns, Query query, MapSqlParameterSource parameterSource) {
+        String sql = getSelectWhereSql(selectColumns, query, parameterSource);
         if (groupColumns != null && !groupColumns.isEmpty()) {
             sql += " group by " + StringUtils.join(groupColumns, ",");
         }
