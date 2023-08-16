@@ -4,7 +4,6 @@ public class QueryFlagThreadLocalHolder {
 
     private final static ThreadLocal<String> THREAD_LOCAL0 = new InheritableThreadLocal<>();
     private final static ThreadLocal<Boolean> THREAD_LOCAL1 = new InheritableThreadLocal<>();
-    private final static ThreadLocal<Boolean> THREAD_LOCAL2 = new InheritableThreadLocal<>();
 
     public static void setQueryFlag(String queryFlag) {
         THREAD_LOCAL0.set(queryFlag);
