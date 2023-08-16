@@ -118,8 +118,8 @@ public class PlatformJdbcRepositoryImpl<T, ID> extends SimpleJdbcRepository<T, I
     }
 
     @Override
-    public Optional<T> findOne(Query query) {
-        return jdbcAggregateTemplate.findOne(query, entity.getType());
+    public T findOne(Query query) {
+        return jdbcAggregateTemplate.findOne(query, entity.getType()).orElse(null);
     }
 
     @Override
@@ -143,14 +143,14 @@ public class PlatformJdbcRepositoryImpl<T, ID> extends SimpleJdbcRepository<T, I
     }
 
     @Override
-    public Optional<T> findOne(Map<String, Object> simpleMap) {
-        return jdbcAggregateTemplate.findOne(Query.query(CriteriaUtils.joinToCriteria(Criteria.empty(), simpleMap)), entity.getType());
+    public T findOne(Map<String, Object> simpleMap) {
+        return jdbcAggregateTemplate.findOne(Query.query(CriteriaUtils.joinToCriteria(Criteria.empty(), simpleMap)), entity.getType()).orElse(null);
     }
 
     @Override
-    public Optional<T> findOne(Map<String, Object> simpleMap, Sort sort) {
+    public T findOne(Map<String, Object> simpleMap, Sort sort) {
         Query query = Query.query(CriteriaUtils.joinToCriteria(Criteria.empty(), simpleMap));
-        return jdbcAggregateTemplate.findOne(query.sort(sort), entity.getType());
+        return jdbcAggregateTemplate.findOne(query.sort(sort), entity.getType()).orElse(null);
     }
 
     @Override
@@ -227,11 +227,11 @@ public class PlatformJdbcRepositoryImpl<T, ID> extends SimpleJdbcRepository<T, I
     }
 
     @Override
-    public Optional<T> findByRecordId(String recordId) {
+    public T findByRecordId(String recordId) {
         Query query = Query.query(
                 Criteria.where("record_id").is(recordId)
         );
-        return jdbcAggregateTemplate.findOne(query, entity.getType());
+        return jdbcAggregateTemplate.findOne(query, entity.getType()).orElse(null);
     }
 
     @Override

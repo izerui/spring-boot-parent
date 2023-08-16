@@ -1,6 +1,7 @@
 package com.yj2025.jdbc.support;
 
 import org.springframework.data.relational.core.query.Criteria;
+import org.springframework.data.relational.core.query.CriteriaDefinition;
 
 import java.lang.reflect.Array;
 import java.util.List;
@@ -101,7 +102,7 @@ public enum Comparator {
     }, CRITERIA("Criteria Condition") {
         @Override
         protected Criteria value(Criteria criteria, String key, Object value) {
-            Criteria condition = (Criteria) value;
+            CriteriaDefinition condition = (CriteriaDefinition) value;
             return criteria.and(condition);
         }
     };

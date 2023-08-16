@@ -164,7 +164,10 @@ public class TestUserTest {
 
     @Test
     public void testGroup2() {
-        Criteria criteria = Criteria.where("ent_code").is("ent001").and("age").greaterThan(10);
+        Criteria criteria = Criteria
+                .where("ent_code")
+                .is("ent001")
+                .and(Criteria.just("code != name"));
         Query query = Query.query(criteria);
         Iterable<GroupMapping> groupList = testUserService.groupList("ent001", query, List.of("age", "count(0) as count"), null);
         System.out.println(groupList);
@@ -191,8 +194,8 @@ public class TestUserTest {
         Map map = new HashMap();
         map.put("ent_code", "ent001");
         map.put("code", "code100");
-        Optional one = userRepository.findOne(map);
-        System.out.println(one.get());
+        TestUser one = userRepository.findOne(map);
+        System.out.println(one);
     }
 
     @Test
@@ -200,6 +203,7 @@ public class TestUserTest {
         Map map = new HashMap();
         map.put("ent_code", "ent001");
         map.put("code", "code100");
+        map.put(Comparator.CRITERIA.wrap(""), Criteria.just("code != name"));
         Iterable iterable = userRepository.findAll(map);
         System.out.println(iterable);
     }

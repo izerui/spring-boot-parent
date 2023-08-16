@@ -4,6 +4,7 @@ import com.yj2025.jdbc.PlatformJdbcRepository;
 import com.yj2025.jdbc.dialect.flag.QueryFlagAfterTable;
 import com.yj2025.sample2.entity.TestUser;
 import com.yj2025.sharding.tenant.TenantThreadLocal;
+import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -23,10 +24,7 @@ public interface TestUserRepository extends PlatformJdbcRepository<TestUser, Lon
 
     @TenantThreadLocal("#{#map['ent_code']}")
     @Override
-    Optional<TestUser> findOne(Map<String, Object> map);
-
-    @TenantThreadLocal("#{#map['ent_code']}")
-    @Override
     @QueryFlagAfterTable("query标注: #{#code}")
     Iterable<TestUser> findAll(Map<String, Object> map);
+
 }

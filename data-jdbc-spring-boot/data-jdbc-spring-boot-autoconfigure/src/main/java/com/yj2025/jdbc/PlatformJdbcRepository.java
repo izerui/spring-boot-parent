@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * @author liuyuhua
@@ -120,11 +119,11 @@ public interface PlatformJdbcRepository<T, ID> extends CrudRepository<T, ID>, Pa
      * 执行{@code SELECT}查询并将结果项转换为确保一个结果的实体。
      *
      * @param query 查询条件，不能为空
-     * @return 如果没有找到匹配项，则为{@link Optional#empty()}。
+     * @return 如果没有找到匹配项，则为{@link null}。
      * @throws org.springframework.dao.IncorrectResultSizeDataAccessException 如果找到多个.
      * @since 3.0
      */
-    Optional<T> findOne(Query query);
+    T findOne(Query query);
 
     /**
      * 执行{@code SELECT}查询并将结果项转换为已排序的{@link Iterable}。
@@ -168,21 +167,21 @@ public interface PlatformJdbcRepository<T, ID> extends CrudRepository<T, ID>, Pa
      * 执行{@code SELECT}查询并将结果项转换为确保一个结果的实体。
      *
      * @param simpleMap 查询条件，不能为空
-     * @return 如果没有找到匹配项，则为{@link Optional#empty()}。
+     * @return 如果没有找到匹配项，则为{@link null}。
      * @throws org.springframework.dao.IncorrectResultSizeDataAccessException 如果找到多个.
      * @since 3.0
      */
-    Optional<T> findOne(Map<String, Object> simpleMap);
+    T findOne(Map<String, Object> simpleMap);
 
     /**
      * 执行{@code SELECT}查询并将结果项转换为确保一个结果的实体。
      *
      * @param simpleMap 查询条件，不能为空
-     * @return 如果没有找到匹配项，则为{@link Optional#empty()}。
+     * @return 如果没有找到匹配项，则为{@link null}。
      * @throws org.springframework.dao.IncorrectResultSizeDataAccessException 如果找到多个.
      * @since 3.0
      */
-    Optional<T> findOne(Map<String, Object> simpleMap, Sort sort);
+    T findOne(Map<String, Object> simpleMap, Sort sort);
 
     /**
      * 执行{@code SELECT}查询并将结果项转换为已排序的{@link Iterable}。
@@ -239,13 +238,13 @@ public interface PlatformJdbcRepository<T, ID> extends CrudRepository<T, ID>, Pa
 
     <S> List<S> groupAll(Collection<String> selectColumns, Collection<String> groupColumns, Class<S> mappingClass, Query query);
 
-    <S> List<S> groupAll(Collection<String> selectColumns, Collection<String> groupColumns, Class<S> mappingClass, Map<String,Object> simpleMap);
+    <S> List<S> groupAll(Collection<String> selectColumns, Collection<String> groupColumns, Class<S> mappingClass, Map<String, Object> simpleMap);
 
     <S> Page<S> groupAll(Collection<String> selectColumns, Collection<String> groupColumns, Class<S> mappingClass, Query query, Pageable pageable);
 
-    <S> Page<S> groupAll(Collection<String> selectColumns, Collection<String> groupColumns, Class<S> mappingClass, Map<String,Object> simpleMap, Pageable pageable);
+    <S> Page<S> groupAll(Collection<String> selectColumns, Collection<String> groupColumns, Class<S> mappingClass, Map<String, Object> simpleMap, Pageable pageable);
 
-    Optional<T> findByRecordId(String recordId);
+    T findByRecordId(String recordId);
 
     Iterable<T> findByRecordIds(Iterable<String> recordIds);
 
