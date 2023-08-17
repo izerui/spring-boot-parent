@@ -38,6 +38,18 @@ public class ProcessorChain {
     }
 
     /**
+     * 添加处理器到处理列表的最后
+     *
+     * @param pss
+     * @return
+     */
+    public final ProcessorChain addProcessor(List<AbstractProcessor> pss) {
+        Assert.notNull(pss, "pss 不能为空");
+        processors.addAll(pss);
+        return this;
+    }
+
+    /**
      * 开始处理
      *
      * @param request
