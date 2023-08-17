@@ -1,5 +1,7 @@
 package com.yj2025.sample2.service;
 
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.yj2025.sample2.entity.TestUser;
 import com.yj2025.sample2.mapping.GroupMapping;
 import com.yj2025.sample2.repository.TestUserRepository;
@@ -13,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -90,5 +94,10 @@ public class TestUserService {
     @TenantThreadLocal("#{#entCode}")
     public List<Map> groupList2(String entCode, Query query, List<String> columns, List<String> groups) {
         return testUserRepository.groupAll(columns, groups, Map.class, query);
+    }
+
+    @TenantThreadLocal("#{#entCode}")
+    public Iterable<TestUser> findByRecordIds(String entCode, List<Long> ids) {
+        return testUserRepository.findAllById(ids);
     }
 }

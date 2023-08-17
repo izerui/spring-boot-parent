@@ -24,4 +24,6 @@ public class TestUser {
     private String name;
     private String email;
     private Integer age;
+    private Boolean flag;
+    private Boolean flagString;
 }

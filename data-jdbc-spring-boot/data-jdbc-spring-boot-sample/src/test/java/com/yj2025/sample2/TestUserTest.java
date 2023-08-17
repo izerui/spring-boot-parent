@@ -1,6 +1,7 @@
 package com.yj2025.sample2;
 
 import com.google.common.base.Stopwatch;
+import com.google.common.collect.Lists;
 import com.yj2025.jdbc.support.Comparator;
 import com.yj2025.sample2.entity.TestUser;
 import com.yj2025.sample2.mapping.GroupMapping;
@@ -143,6 +144,15 @@ public class TestUserTest {
         System.out.println("batchInsert 耗时: " + watch.elapsed(TimeUnit.MILLISECONDS));
     }
 
+
+    @Test
+    public void testQueryBoolean() {
+        ArrayList<Long> ids = Lists.newArrayList(12574L, 12575L, 12576L, 12577L);
+        Iterable<TestUser> users = testUserService.findByRecordIds("ent001", ids);
+        for (TestUser user : users) {
+            System.out.println(String.format("flag: %s, flag_string: %s", user.getFlag(), user.getFlagString()));
+        }
+    }
 
     @Test
     public void testQuery() {
