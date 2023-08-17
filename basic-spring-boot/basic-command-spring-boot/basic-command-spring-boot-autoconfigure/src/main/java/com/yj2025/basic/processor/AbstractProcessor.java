@@ -3,11 +3,6 @@ package com.yj2025.basic.processor;
 import com.yj2025.basic.support.ApplicationBeanAware;
 import com.yj2025.basic.support.ColorOutput;
 import jakarta.annotation.Resource;
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validation;
-import jakarta.validation.ValidationException;
-import jakarta.validation.Validator;
-import org.hibernate.validator.HibernateValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +12,10 @@ import org.springframework.util.ReflectionUtils;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.Arrays;
-import java.util.Set;
 
 /**
  * 抽象处理器
+ *
  * @param <T>
  */
 public abstract class AbstractProcessor<T> implements ApplicationBeanAware {
@@ -28,7 +23,6 @@ public abstract class AbstractProcessor<T> implements ApplicationBeanAware {
     private boolean executed = false;
     private Long executeTimeMillis;
 
-    protected static final Validator validatorFast = Validation.byProvider(HibernateValidator.class).configure().failFast(true).buildValidatorFactory().getValidator();
     protected final Logger logger = LoggerFactory.getLogger(getClass().getSimpleName());
 
     public AbstractProcessor() {
@@ -78,18 +72,6 @@ public abstract class AbstractProcessor<T> implements ApplicationBeanAware {
                 }
             }
         });
-    }
-
-    /**
-     * 使用jsr303校验参数： 如果需要嵌套校验在相应的字段属性增加 @Valid
-     */
-    protected <T> void validateAndThrow(T request, Class<?>... groups) {
-        Set<ConstraintViolation<T>> errors = validatorFast.validate(request, groups);
-        if (errors != null) {
-            for (ConstraintViolation<T> error : errors) {
-                throw new ValidationException(error.getMessage());
-            }
-        }
     }
 
     /**

@@ -4,13 +4,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.Assert;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
 public class ProcessorChain {
 
-    private List<AbstractProcessor> processors = new ArrayList<>();
-    private int index = 0;
+    protected final List<AbstractProcessor> processors = new ArrayList<>();
+    protected transient int index = 0;
 
     /**
      * 添加处理器到处理列表的最后
@@ -18,9 +19,21 @@ public class ProcessorChain {
      * @param processor
      * @return
      */
-    public ProcessorChain addProcessor(AbstractProcessor processor) {
+    public final ProcessorChain addProcessor(AbstractProcessor processor) {
         Assert.notNull(processor, "processor 不能为空");
         processors.add(processor);
+        return this;
+    }
+
+    /**
+     * 添加处理器到处理列表的最后
+     *
+     * @param pss
+     * @return
+     */
+    public final ProcessorChain addProcessor(AbstractProcessor... pss) {
+        Assert.notNull(pss, "pss 不能为空");
+        processors.addAll(Arrays.asList(pss));
         return this;
     }
 
