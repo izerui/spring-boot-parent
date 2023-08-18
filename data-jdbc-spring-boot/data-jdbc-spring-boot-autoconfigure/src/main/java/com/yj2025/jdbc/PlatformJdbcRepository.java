@@ -244,8 +244,8 @@ public interface PlatformJdbcRepository<T, ID> extends CrudRepository<T, ID>, Pa
 
     <S> Page<S> groupAll(Collection<String> selectColumns, Collection<String> groupColumns, Class<S> mappingClass, Map<String, Object> simpleMap, Pageable pageable);
 
-    T findByRecordId(String recordId);
+    T findByRecordId(String entCode, String recordId);
 
-    Iterable<T> findByRecordIds(Iterable<String> recordIds);
+    Iterable<T> findByRecordIds(String entCode, Iterable<String> recordIds);
 
 }

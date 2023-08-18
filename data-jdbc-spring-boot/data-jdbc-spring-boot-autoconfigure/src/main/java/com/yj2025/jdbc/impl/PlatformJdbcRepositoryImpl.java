@@ -32,7 +32,6 @@ import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * @author liuyuhua
@@ -227,17 +226,17 @@ public class PlatformJdbcRepositoryImpl<T, ID> extends SimpleJdbcRepository<T, I
     }
 
     @Override
-    public T findByRecordId(String recordId) {
+    public T findByRecordId(String entCode, String recordId) {
         Query query = Query.query(
-                Criteria.where("record_id").is(recordId)
+                Criteria.where("ent_code").is(entCode).and("record_id").is(recordId)
         );
         return jdbcAggregateTemplate.findOne(query, entity.getType()).orElse(null);
     }
 
     @Override
-    public Iterable<T> findByRecordIds(Iterable<String> recordIds) {
+    public Iterable<T> findByRecordIds(String entCode, Iterable<String> recordIds) {
         Query query = Query.query(
-                Criteria.where("record_id").in(recordIds)
+                Criteria.where("ent_code").is(entCode).and("record_id").in(recordIds)
         );
         return jdbcAggregateTemplate.findAll(query, entity.getType());
     }
