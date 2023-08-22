@@ -1,5 +1,6 @@
 package com.yj2025.jdbc.impl;
 
+import com.google.common.collect.Lists;
 import com.yj2025.basic.support.DbContext;
 import com.yj2025.jdbc.PlatformJdbcRepository;
 import com.yj2025.jdbc.support.CriteriaUtils;
@@ -29,9 +30,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author liuyuhua
@@ -122,8 +121,8 @@ public class PlatformJdbcRepositoryImpl<T, ID> extends SimpleJdbcRepository<T, I
     }
 
     @Override
-    public Iterable<T> findAll(Query query) {
-        return jdbcAggregateTemplate.findAll(query, entity.getType());
+    public List<T> findAll(Query query) {
+        return Lists.newArrayList(jdbcAggregateTemplate.findAll(query, entity.getType()));
     }
 
     @Override
@@ -153,14 +152,15 @@ public class PlatformJdbcRepositoryImpl<T, ID> extends SimpleJdbcRepository<T, I
     }
 
     @Override
-    public Iterable<T> findAll(Map<String, Object> simpleMap) {
-        return jdbcAggregateTemplate.findAll(Query.query(CriteriaUtils.joinToCriteria(Criteria.empty(), simpleMap)), entity.getType());
+    public List<T> findAll(Map<String, Object> simpleMap) {
+        Iterable<T> iterable = jdbcAggregateTemplate.findAll(Query.query(CriteriaUtils.joinToCriteria(Criteria.empty(), simpleMap)), entity.getType());
+        return Lists.newArrayList(iterable);
     }
 
     @Override
-    public Iterable<T> findAll(Map<String, Object> simpleMap, Sort sort) {
+    public List<T> findAll(Map<String, Object> simpleMap, Sort sort) {
         Query query = Query.query(CriteriaUtils.joinToCriteria(Criteria.empty(), simpleMap));
-        return jdbcAggregateTemplate.findAll(query.sort(sort), entity.getType());
+        return Lists.newArrayList(jdbcAggregateTemplate.findAll(query.sort(sort), entity.getType()));
     }
 
     @Override
@@ -234,10 +234,10 @@ public class PlatformJdbcRepositoryImpl<T, ID> extends SimpleJdbcRepository<T, I
     }
 
     @Override
-    public Iterable<T> findByRecordIds(String entCode, Iterable<String> recordIds) {
+    public List<T> findByRecordIds(String entCode, Iterable<String> recordIds) {
         Query query = Query.query(
                 Criteria.where("ent_code").is(entCode).and("record_id").in(recordIds)
         );
-        return jdbcAggregateTemplate.findAll(query, entity.getType());
+        return Lists.newArrayList(jdbcAggregateTemplate.findAll(query, entity.getType()));
     }
 }

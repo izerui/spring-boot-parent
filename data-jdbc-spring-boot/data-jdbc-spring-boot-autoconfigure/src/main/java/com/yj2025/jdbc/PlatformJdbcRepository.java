@@ -132,7 +132,7 @@ public interface PlatformJdbcRepository<T, ID> extends CrudRepository<T, ID>, Pa
      * @return 包含所有匹配结果的非空排序列表。
      * @since 3.0
      */
-    Iterable<T> findAll(Query query);
+    List<T> findAll(Query query);
 
     /**
      * 返回一个{@link Page}的实体，匹配给定的{@link Query}。
@@ -190,7 +190,7 @@ public interface PlatformJdbcRepository<T, ID> extends CrudRepository<T, ID>, Pa
      * @return 包含所有匹配结果的非空排序列表。
      * @since 3.0
      */
-    Iterable<T> findAll(Map<String, Object> simpleMap);
+    List<T> findAll(Map<String, Object> simpleMap);
 
     /**
      * 执行{@code SELECT}查询并将结果项转换为已排序的{@link Iterable}。
@@ -199,7 +199,7 @@ public interface PlatformJdbcRepository<T, ID> extends CrudRepository<T, ID>, Pa
      * @return 包含所有匹配结果的非空排序列表。
      * @since 3.0
      */
-    Iterable<T> findAll(Map<String, Object> simpleMap, Sort sort);
+    List<T> findAll(Map<String, Object> simpleMap, Sort sort);
 
     /**
      * 返回一个{@link Page}的实体，匹配给定的{@link Query}。
@@ -246,6 +246,6 @@ public interface PlatformJdbcRepository<T, ID> extends CrudRepository<T, ID>, Pa
 
     T findByRecordId(String entCode, String recordId);
 
-    Iterable<T> findByRecordIds(String entCode, Iterable<String> recordIds);
+    List<T> findByRecordIds(String entCode, Iterable<String> recordIds);
 
 }
