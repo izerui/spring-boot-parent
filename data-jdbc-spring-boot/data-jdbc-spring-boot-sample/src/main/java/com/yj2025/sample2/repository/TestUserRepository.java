@@ -25,6 +25,6 @@ public interface TestUserRepository extends PlatformJdbcRepository<TestUser, Lon
     @TenantThreadLocal("#{#map['ent_code']}")
     @Override
     @QueryFlagAfterTable("query标注: #{#code}")
-    Iterable<TestUser> findAll(Map<String, Object> map);
+    List<TestUser> findAll(Map<String, Object> map);
 
 }
