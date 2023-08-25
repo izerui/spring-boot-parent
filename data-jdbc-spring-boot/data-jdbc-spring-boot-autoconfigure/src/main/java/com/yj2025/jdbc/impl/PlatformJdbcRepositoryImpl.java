@@ -31,6 +31,7 @@ import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author liuyuhua
@@ -201,7 +202,8 @@ public class PlatformJdbcRepositoryImpl<T, ID> extends SimpleJdbcRepository<T, I
         String pageSql = "select x.* from (" + sql + ") x ";
         String countSql = "select count(0) from (" + sql + ") x";
         if (pageable.getSort().isSorted()) {
-            pageSql += " order by " + StringUtils.join(pageable.getSort().stream().map(order -> "x." + order.getProperty() + " " + order.getDirection().name()), ",");
+            List<String> orderList = pageable.getSort().stream().map(order -> "x." + order.getProperty() + " " + order.getDirection().name()).collect(Collectors.toList());
+            pageSql += " order by " + StringUtils.join(orderList, ",") +" ";
         }
         pageSql += dialect.limit().getLimitOffset(pageable.getPageSize(), pageable.getOffset());
         List<S> content;
