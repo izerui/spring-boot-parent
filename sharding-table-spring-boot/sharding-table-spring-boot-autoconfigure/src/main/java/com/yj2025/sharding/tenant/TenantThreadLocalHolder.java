@@ -9,7 +9,7 @@ public class TenantThreadLocalHolder {
     }
 
     /**
-     * 调用该方法之前请先在入口方法上面声明{@link TenantThreadLocal}注解
+     * 调用该方法之前请先在入口方法上面声明{@link ShardingTenant}注解
      *
      * @return
      */

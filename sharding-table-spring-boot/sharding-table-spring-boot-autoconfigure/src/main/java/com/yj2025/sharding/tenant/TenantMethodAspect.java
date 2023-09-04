@@ -32,12 +32,12 @@ public class TenantMethodAspect {
     }
 
     @Pointcut(value = "@annotation(tenant)")
-    public void pointcut(TenantThreadLocal tenant) {
+    public void pointcut(ShardingTenant tenant) {
 
     }
 
     @Around(value = "pointcut(tenant)")
-    public Object around(ProceedingJoinPoint pjp, TenantThreadLocal tenant) throws Throwable {
+    public Object around(ProceedingJoinPoint pjp, ShardingTenant tenant) throws Throwable {
         Method method = this.getInterfaceMethod(pjp);
 //        String methodName = method.toString();
         // 获取方法的参数值

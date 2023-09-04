@@ -1,11 +1,9 @@
 package com.yj2025.sample2.service;
 
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.yj2025.sample2.entity.TestUser;
 import com.yj2025.sample2.mapping.GroupMapping;
 import com.yj2025.sample2.repository.TestUserRepository;
-import com.yj2025.sharding.tenant.TenantThreadLocal;
+import com.yj2025.sharding.tenant.ShardingTenant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -15,8 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -30,23 +26,23 @@ public class TestUserService {
     @Autowired
     private JdbcAggregateTemplate jdbcAggregateTemplate;
 
-    @TenantThreadLocal("#{#entCode}")
+    @ShardingTenant("#{#entCode}")
     public Iterable<TestUser> findAll(String entCode) {
         log.info("tx: {}", TransactionSynchronizationManager.isActualTransactionActive());
         return testUserRepository.findAll();
     }
 
-    @TenantThreadLocal("#{#entCode}")
+    @ShardingTenant("#{#entCode}")
     public Iterable<TestUser> findAll(String entCode, Example example) {
         return testUserRepository.findAll(example);
     }
 
-    @TenantThreadLocal("#{#entCode}")
+    @ShardingTenant("#{#entCode}")
     public Page<TestUser> findByPage(String entCode, Pageable pageable) {
         return testUserRepository.findAll(pageable);
     }
 
-    @TenantThreadLocal("#{#user.entCode}")
+    @ShardingTenant("#{#user.entCode}")
     public void insertUser(TestUser user) {
         testUserRepository.save(user);
     }
@@ -56,47 +52,47 @@ public class TestUserService {
         return users;
     }
 
-    @TenantThreadLocal("#{#entCode}")
+    @ShardingTenant("#{#entCode}")
     public Page<TestUser> findByQuery(String entCode, Query query) {
         return testUserRepository.findAll(query, PageRequest.of(0, 200));
     }
 
-    @TenantThreadLocal("#{#entCode}")
+    @ShardingTenant("#{#entCode}")
     public Page<TestUser> findByQuery2(String entCode, Query query) {
         return jdbcAggregateTemplate.findAll(query, TestUser.class, PageRequest.of(0, 200));
     }
 
-    @TenantThreadLocal("#{#map['ent_code']}")
+    @ShardingTenant("#{#map['ent_code']}")
     public Iterable findByMap(Map map, Sort sort) {
         return testUserRepository.findAll(map, sort);
     }
 
-    @TenantThreadLocal("#{#map['ent_code']}")
+    @ShardingTenant("#{#map['ent_code']}")
     public Page<TestUser> findByMapPage(Map map, Pageable pageable) {
         return testUserRepository.findAll(map, pageable);
     }
 
-    @TenantThreadLocal("#{#entCode}")
+    @ShardingTenant("#{#entCode}")
     public void batchInsert(String entCode, List<TestUser> users) {
         testUserRepository.batchInsert(users, "id");
     }
 
-    @TenantThreadLocal("#{#entCode}")
+    @ShardingTenant("#{#entCode}")
     public List<GroupMapping> groupList(String entCode, Query query, List<String> columns, List<String> groups) {
         return testUserRepository.groupAll(columns, groups, GroupMapping.class, query);
     }
 
-    @TenantThreadLocal("#{#entCode}")
+    @ShardingTenant("#{#entCode}")
     public Page<GroupMapping> groupPage(String entCode, Query query, List<String> columns, List<String> groups, Pageable pageable) {
         return testUserRepository.groupAll(columns, groups, GroupMapping.class, query, pageable);
     }
 
-    @TenantThreadLocal("#{#entCode}")
+    @ShardingTenant("#{#entCode}")
     public List<Map> groupList2(String entCode, Query query, List<String> columns, List<String> groups) {
         return testUserRepository.groupAll(columns, groups, Map.class, query);
     }
 
-    @TenantThreadLocal("#{#entCode}")
+    @ShardingTenant("#{#entCode}")
     public Iterable<TestUser> findByRecordIds(String entCode, List<Long> ids) {
         return testUserRepository.findAllById(ids);
     }

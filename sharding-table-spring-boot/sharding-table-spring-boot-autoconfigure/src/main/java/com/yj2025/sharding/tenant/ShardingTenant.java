@@ -11,7 +11,7 @@ import java.lang.annotation.*;
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
-public @interface TenantThreadLocal {
+public @interface ShardingTenant {
     /**
      * 返回 spel表达式结果将作为tenantId, 将会放入 TenantThreadLocalHolder 中
      * @return

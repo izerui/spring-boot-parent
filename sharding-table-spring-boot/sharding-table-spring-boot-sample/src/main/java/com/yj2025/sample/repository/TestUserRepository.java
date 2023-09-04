@@ -1,7 +1,7 @@
 package com.yj2025.sample.repository;
 
 import com.yj2025.sample.entity.TestUser;
-import com.yj2025.sharding.tenant.TenantThreadLocal;
+import com.yj2025.sharding.tenant.ShardingTenant;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.ListCrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -15,7 +15,7 @@ public interface TestUserRepository extends ListCrudRepository<TestUser, Long>, 
     List<TestUser> findList(@Param("entCode") String entCode, @Param("code") String code);
 
 
-    @TenantThreadLocal("#{#entCode}")
+    @ShardingTenant("#{#entCode}")
     List<TestUser> findByCode(String entCode, String code);
 
     @Query("select * from test_user_#{#entCode} ")

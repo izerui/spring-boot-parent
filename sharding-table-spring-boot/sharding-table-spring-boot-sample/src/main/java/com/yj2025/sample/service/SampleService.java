@@ -2,7 +2,7 @@ package com.yj2025.sample.service;
 
 import com.yj2025.sample.entity.TestUser;
 import com.yj2025.sample.repository.TestUserRepository;
-import com.yj2025.sharding.tenant.TenantThreadLocal;
+import com.yj2025.sharding.tenant.ShardingTenant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +16,7 @@ public class SampleService {
     @Autowired
     private TestUserRepository testUserRepository;
 
-    @TenantThreadLocal("#{#entCode}")
+    @ShardingTenant("#{#entCode}")
     public List<TestUser> findList(String entCode) {
         return testUserRepository.findAll();
     }
