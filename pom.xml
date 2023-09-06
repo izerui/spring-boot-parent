@@ -33,7 +33,7 @@
         <module>jackson-spring-boot</module>
         <module>data-jdbc-jpa-mybatis-spring-boot-sample</module>
         <module>sharding-table-spring-boot</module>
-        <module>sharding-datasource-spring-boot</module>
+        <module>dynamic-datasource-spring-boot</module>
     </modules>
     <!-- spring boot upgrade -->
     <!-- 2.3->2.4: https://thepracticaldeveloper.com/book-update-2.4.0/ -->

@@ -4,19 +4,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.yj2025</groupId>
-        <artifactId>yj2025-spring-boot-parent</artifactId>
+        <groupId>com.github.izerui</groupId>
+        <artifactId>dynamic-datasource-spring-boot</artifactId>
         <version>3.1.1-SNAPSHOT</version>
     </parent>
 
-    <groupId>com.github.izerui</groupId>
-    <artifactId>sharding-datasource-spring-boot</artifactId>
-    <packaging>pom</packaging>
-    <modules>
-        <module>sharding-datasource-spring-boot-autoconfigure</module>
-        <module>sharding-datasource-spring-boot-starter</module>
-        <module>sharding-datasource-spring-boot-sample</module>
-    </modules>
+    <artifactId>dynamic-datasource-spring-boot-sample</artifactId>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>

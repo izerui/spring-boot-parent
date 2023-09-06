@@ -5,11 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.github.izerui</groupId>
-        <artifactId>sharding-datasource-spring-boot</artifactId>
+        <artifactId>dynamic-datasource-spring-boot</artifactId>
         <version>3.1.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>sharding-datasource-spring-boot-autoconfigure</artifactId>
+    <artifactId>dynamic-datasource-spring-boot-autoconfigure</artifactId>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
