@@ -1,7 +1,7 @@
 package com.yj2025.sample.repository;
 
 import com.yj2025.sample.entity.TestUser;
-import com.yj2025.dynamic.tenant.Tenant;
+import com.yj2025.tenant.Tenant;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.ListCrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;

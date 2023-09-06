@@ -3,12 +3,16 @@ package com.yj2025.dynamic;
 import com.baomidou.dynamic.datasource.DynamicRoutingDataSource;
 import com.baomidou.dynamic.datasource.creator.DataSourceProperty;
 import com.baomidou.dynamic.datasource.creator.DefaultDataSourceCreator;
+import com.yj2025.tenant.TenantHolder;
 
 import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * @author liuyuhua
+ */
 public class TenantDynamicDataSource extends DynamicRoutingDataSource {
 
     private final DefaultDataSourceCreator defaultDataSourceCreator;
@@ -25,6 +29,20 @@ public class TenantDynamicDataSource extends DynamicRoutingDataSource {
         this.properties = properties;
     }
 
+
+    @Override
+    public DataSource determineDataSource() {
+        DataSource dataSource = null;
+        String tenantId = TenantHolder.getTenantId();
+        if (tenantId != null && !"".equals(tenantId)) {
+            dataSource = getTenantDatasource(tenantId);
+        }
+        return dataSource != null ? dataSource : super.determineDataSource();
+    }
+
+    private DataSource getTenantDatasource(String tenantId) {
+        return tenantDataSourceMap.get(tenantId);
+    }
 
     @Override
     public void afterPropertiesSet() throws Exception {

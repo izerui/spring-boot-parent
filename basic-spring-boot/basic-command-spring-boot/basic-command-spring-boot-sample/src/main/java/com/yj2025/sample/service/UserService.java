@@ -8,7 +8,7 @@ import com.yj2025.sample.command.*;
 import com.yj2025.sample.entity.JdbcUser;
 import com.yj2025.sample.entity.JpaUser;
 import com.yj2025.sample.entity.MyUser;
-import com.yj2025.dynamic.tenant.Tenant;
+import com.yj2025.tenant.Tenant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;

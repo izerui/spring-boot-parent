@@ -2,7 +2,7 @@ package com.yj2025.sample.service;
 
 import com.yj2025.sample.entity.TestUser;
 import com.yj2025.sample.repository.TestUserRepository;
-import com.yj2025.dynamic.tenant.Tenant;
+import com.yj2025.tenant.Tenant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

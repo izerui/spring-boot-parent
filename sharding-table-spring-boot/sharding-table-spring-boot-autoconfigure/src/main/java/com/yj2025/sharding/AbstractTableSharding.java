@@ -1,6 +1,6 @@
 package com.yj2025.sharding;
 
-import com.yj2025.dynamic.tenant.TenantHolder;
+import com.yj2025.tenant.TenantHolder;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;

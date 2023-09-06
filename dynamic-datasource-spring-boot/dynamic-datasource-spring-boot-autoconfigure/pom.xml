@@ -46,7 +46,7 @@
         </dependency>
         <dependency>
             <groupId>com.yj2025</groupId>
-            <artifactId>dynamic-datasource-commons</artifactId>
+            <artifactId>tenant-spring-boot-starter</artifactId>
         </dependency>
     </dependencies>
 

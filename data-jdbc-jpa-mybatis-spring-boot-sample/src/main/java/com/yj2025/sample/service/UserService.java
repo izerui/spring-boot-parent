@@ -6,7 +6,7 @@ import com.yj2025.sample.jpa.entity.JpaUser;
 import com.yj2025.sample.jpa.repository.JpaUserRepository;
 import com.yj2025.sample.mybatis.entity.User;
 import com.yj2025.sample.mybatis.mapper.UserMapper;
-import com.yj2025.dynamic.tenant.Tenant;
+import com.yj2025.tenant.Tenant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

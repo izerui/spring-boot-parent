@@ -16,7 +16,6 @@
         <module>dynamic-datasource-spring-boot-autoconfigure</module>
         <module>dynamic-datasource-spring-boot-starter</module>
         <module>dynamic-datasource-spring-boot-sample</module>
-        <module>dynamic-datasource-commons</module>
     </modules>
 
     <properties>

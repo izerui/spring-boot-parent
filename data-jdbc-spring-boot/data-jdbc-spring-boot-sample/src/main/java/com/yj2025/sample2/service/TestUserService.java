@@ -3,7 +3,7 @@ package com.yj2025.sample2.service;
 import com.yj2025.sample2.entity.TestUser;
 import com.yj2025.sample2.mapping.GroupMapping;
 import com.yj2025.sample2.repository.TestUserRepository;
-import com.yj2025.dynamic.tenant.Tenant;
+import com.yj2025.tenant.Tenant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
