@@ -5,19 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.yj2025</groupId>
-        <artifactId>yj2025-spring-boot-parent</artifactId>
+        <artifactId>dynamic-datasource-spring-boot</artifactId>
         <version>3.1.1-SNAPSHOT</version>
     </parent>
 
-    <groupId>com.yj2025</groupId>
-    <artifactId>dynamic-datasource-spring-boot</artifactId>
-    <packaging>pom</packaging>
-    <modules>
-        <module>dynamic-datasource-spring-boot-autoconfigure</module>
-        <module>dynamic-datasource-spring-boot-starter</module>
-        <module>dynamic-datasource-spring-boot-sample</module>
-        <module>dynamic-datasource-commons</module>
-    </modules>
+    <artifactId>dynamic-datasource-commons</artifactId>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>

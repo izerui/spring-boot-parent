@@ -1,4 +1,4 @@
-package com.yj2025.sharding.tenant;
+package com.yj2025.sharding;
 
 import org.springframework.context.ApplicationContext;
 

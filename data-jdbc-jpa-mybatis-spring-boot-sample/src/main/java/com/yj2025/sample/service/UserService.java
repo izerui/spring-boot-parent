@@ -6,7 +6,7 @@ import com.yj2025.sample.jpa.entity.JpaUser;
 import com.yj2025.sample.jpa.repository.JpaUserRepository;
 import com.yj2025.sample.mybatis.entity.User;
 import com.yj2025.sample.mybatis.mapper.UserMapper;
-import com.yj2025.sharding.tenant.ShardingTenant;
+import com.yj2025.dynamic.tenant.Tenant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -44,7 +44,7 @@ public class UserService {
         return jpaUserRepository.findList(entCode);
     }
 
-    @ShardingTenant("#{#entCode}")
+    @Tenant("#{#entCode}")
     public Integer addByJdbc(String entCode, Integer count) {
         for (int i = 0; i < count; i++) {
             TestUser user = new TestUser();
@@ -57,7 +57,7 @@ public class UserService {
         return count;
     }
 
-    @ShardingTenant("#{#entCode}")
+    @Tenant("#{#entCode}")
     public List<TestUser> findListByJdbc(String entCode, String codeLike) {
         return testUserRepository.findList(entCode, codeLike);
     }

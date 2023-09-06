@@ -8,7 +8,7 @@ import com.yj2025.sample.command.*;
 import com.yj2025.sample.entity.JdbcUser;
 import com.yj2025.sample.entity.JpaUser;
 import com.yj2025.sample.entity.MyUser;
-import com.yj2025.sharding.tenant.ShardingTenant;
+import com.yj2025.dynamic.tenant.Tenant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -86,7 +86,7 @@ public class UserService extends BasicService implements AuthAware {
         execute(new UserBatchCreate5Cmd(IntStream.range(0, 20000).toArray()));
     }
 
-    @ShardingTenant("#{#entCode}")
+    @Tenant("#{#entCode}")
     public void addJdbcUser(String entCode) {
         Faker faker = new Faker(Locale.CHINA);
         List<JdbcUser> users = IntStream.range(0, 200).mapToObj(value -> {
@@ -101,12 +101,12 @@ public class UserService extends BasicService implements AuthAware {
         execute(new JdbcUserInsertCmd(users));
     }
 
-    @ShardingTenant("#{#entCode}")
+    @Tenant("#{#entCode}")
     public List<JdbcUser> findByList(String entCode) {
         return executeReturn(new JdbcUserListCmd(entCode));
     }
 
-    @ShardingTenant("#{#entCode}")
+    @Tenant("#{#entCode}")
     public Page<JdbcUser> findByQuery(String entCode, Integer age) {
         return executeReturn(new JdbcUserQueryCmd(entCode, age));
     }

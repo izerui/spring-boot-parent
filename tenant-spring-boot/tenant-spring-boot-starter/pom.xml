@@ -5,24 +5,30 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.yj2025</groupId>
-        <artifactId>yj2025-spring-boot-parent</artifactId>
+        <artifactId>tenant-spring-boot</artifactId>
         <version>3.1.1-SNAPSHOT</version>
     </parent>
 
     <groupId>com.yj2025</groupId>
-    <artifactId>dynamic-datasource-spring-boot</artifactId>
-    <packaging>pom</packaging>
-    <modules>
-        <module>dynamic-datasource-spring-boot-autoconfigure</module>
-        <module>dynamic-datasource-spring-boot-starter</module>
-        <module>dynamic-datasource-spring-boot-sample</module>
-        <module>dynamic-datasource-commons</module>
-    </modules>
+    <artifactId>tenant-spring-boot-starter</artifactId>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.yj2025</groupId>
+            <artifactId>tenant-spring-boot-autoconfigure</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-properties-migrator</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+    </dependencies>
 
 </project>

@@ -10,13 +10,12 @@
     </parent>
 
     <groupId>com.yj2025</groupId>
-    <artifactId>dynamic-datasource-spring-boot</artifactId>
+    <artifactId>tenant-spring-boot</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>dynamic-datasource-spring-boot-autoconfigure</module>
-        <module>dynamic-datasource-spring-boot-starter</module>
-        <module>dynamic-datasource-spring-boot-sample</module>
-        <module>dynamic-datasource-commons</module>
+        <module>tenant-spring-boot-autoconfigure</module>
+        <module>tenant-spring-boot-starter</module>
+        <module>tenant-spring-boot-sample</module>
     </modules>
 
     <properties>

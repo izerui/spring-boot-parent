@@ -1,5 +1,6 @@
-package com.yj2025.sharding.tenant;
+package com.yj2025.sharding;
 
+import com.yj2025.dynamic.tenant.TenantHolder;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
@@ -27,7 +28,7 @@ public abstract class AbstractTableSharding {
 
     public final String getTable(String sourceTable) {
         Assert.state(!StringUtils.isEmpty(sourceTable), "AbstractRule: [tablePrefix]不能为空");
-        String tenantId = TenantThreadLocalHolder.getTenantId();
+        String tenantId = TenantHolder.getTenantId();
         return this.getTable(sourceTable, tenantId);
     }
 

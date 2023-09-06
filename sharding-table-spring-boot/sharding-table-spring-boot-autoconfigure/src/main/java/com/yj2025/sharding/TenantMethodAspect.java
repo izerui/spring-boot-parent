@@ -1,5 +1,7 @@
-package com.yj2025.sharding.tenant;
+package com.yj2025.sharding;
 
+import com.yj2025.dynamic.tenant.Tenant;
+import com.yj2025.dynamic.tenant.TenantHolder;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -32,12 +34,12 @@ public class TenantMethodAspect {
     }
 
     @Pointcut(value = "@annotation(tenant)")
-    public void pointcut(ShardingTenant tenant) {
+    public void pointcut(Tenant tenant) {
 
     }
 
     @Around(value = "pointcut(tenant)")
-    public Object around(ProceedingJoinPoint pjp, ShardingTenant tenant) throws Throwable {
+    public Object around(ProceedingJoinPoint pjp, Tenant tenant) throws Throwable {
         Method method = this.getInterfaceMethod(pjp);
 //        String methodName = method.toString();
         // 获取方法的参数值
@@ -50,7 +52,7 @@ public class TenantMethodAspect {
         if (!StringUtils.hasText(tenantId)) {
             throw new AnnotationTypeMismatchException(method, "无法从参数中获取有效的tenantId值");
         }
-        TenantThreadLocalHolder.setTenantId(tenantId);
+        TenantHolder.setTenantId(tenantId);
         // return
         return pjp.proceed();
     }

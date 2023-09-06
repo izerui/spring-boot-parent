@@ -3,7 +3,7 @@ package com.yj2025.sample2.repository;
 import com.yj2025.jdbc.PlatformJdbcRepository;
 import com.yj2025.jdbc.dialect.flag.QueryFlagAfterTable;
 import com.yj2025.sample2.entity.TestUser;
-import com.yj2025.sharding.tenant.ShardingTenant;
+import com.yj2025.dynamic.tenant.Tenant;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -16,11 +16,11 @@ public interface TestUserRepository extends PlatformJdbcRepository<TestUser, Lon
     List<TestUser> findList(@Param("entCode") String entCode, @Param("code") String code);
 
 
-    @ShardingTenant("#{#entCode}")
+    @Tenant("#{#entCode}")
     @QueryFlagAfterTable("query标注: #{#code}")
     List<TestUser> findByCode(String entCode, String code);
 
-    @ShardingTenant("#{#map['ent_code']}")
+    @Tenant("#{#map['ent_code']}")
     @Override
     @QueryFlagAfterTable("query标注: #{#code}")
     List<TestUser> findAll(Map<String, Object> map);

@@ -1,6 +1,6 @@
-package com.yj2025.sharding.tenant;
+package com.yj2025.dynamic.tenant;
 
-public class TenantThreadLocalHolder {
+public class TenantHolder {
 
     private final static ThreadLocal<String> tenantLocal = new InheritableThreadLocal<>();
 
@@ -9,7 +9,7 @@ public class TenantThreadLocalHolder {
     }
 
     /**
-     * 调用该方法之前请先在入口方法上面声明{@link ShardingTenant}注解
+     * 调用该方法之前请先在入口方法上面声明{@link Tenant}注解
      *
      * @return
      */
