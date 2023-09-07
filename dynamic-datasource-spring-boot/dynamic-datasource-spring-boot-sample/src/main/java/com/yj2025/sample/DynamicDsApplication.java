@@ -17,9 +17,13 @@ public class DynamicDsApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+        // 使用master数据源
         dynamicDsService.testMaster("test222");
+        // 使用sharding001数据源
         dynamicDsService.testMaster("sharding001");
+        // 使用read数据源
         dynamicDsService.testRead("test222");
+        // 使用sharding001数据源
         dynamicDsService.testRead("sharding001");
     }
 }
