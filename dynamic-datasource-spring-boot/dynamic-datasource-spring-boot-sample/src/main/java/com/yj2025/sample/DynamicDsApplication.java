@@ -17,6 +17,9 @@ public class DynamicDsApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        dynamicDsService.testDs("dddsss");
+        dynamicDsService.testMaster("test222");
+        dynamicDsService.testMaster("sharding001");
+        dynamicDsService.testRead("test222");
+        dynamicDsService.testRead("sharding001");
     }
 }
