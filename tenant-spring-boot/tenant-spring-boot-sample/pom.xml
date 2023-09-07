@@ -22,6 +22,14 @@
             <groupId>com.yj2025</groupId>
             <artifactId>tenant-spring-boot-starter</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.yj2025</groupId>
+            <artifactId>basic-web-spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.yj2025</groupId>
+            <artifactId>doc-spring-boot-starter</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

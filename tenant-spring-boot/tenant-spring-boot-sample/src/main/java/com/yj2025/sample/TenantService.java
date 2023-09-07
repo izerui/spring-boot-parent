@@ -12,4 +12,9 @@ public class TenantService {
         System.out.println("tenantId: " + tenantId);
         System.out.println("tenantHolder: " + TenantHolder.getTenantId());
     }
+
+    @Tenant("#{webRequestContext.getEntCode()}")
+    public String testTenant2() {
+        return "tenantHolder: " + TenantHolder.getTenantId();
+    }
 }

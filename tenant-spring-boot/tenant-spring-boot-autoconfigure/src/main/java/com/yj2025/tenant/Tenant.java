@@ -9,6 +9,7 @@ import java.lang.annotation.*;
  */
 @Description("""
         将租户信息放入本地ThreadLocal中
+        * 支持方法入参作为变量，支持调用bean、静态方法等 例如获取web请求的header信息: #{webRequestContext.getEntCode()}
         * 支持通过spring.datasource.tenant.* 配置动态分库。
         * 支持在Entity中声明@Table(\"#{@tenantSharding.getTable('test_user')}\")即可实现根据租户动态分表
         """)

@@ -48,7 +48,7 @@ public class TenantMethodAspect {
         // 放入租户信息到本地线程
         String tenantId = expression.getValue(context, String.class);
         if (!StringUtils.hasText(tenantId)) {
-            throw new AnnotationTypeMismatchException(method, "无法从参数中获取有效的tenantId值");
+            throw new AnnotationTypeMismatchException(method, "无法从参数中获取有效的tenantId值, 表达式: " + tenant.value());
         }
         TenantHolder.setTenantId(tenantId);
         // return
