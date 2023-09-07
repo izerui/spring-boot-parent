@@ -89,7 +89,6 @@ public class TenantMethodAspect {
 
         for (int len = 0; len < params.length; len++) {
             context.setVariable(params[len], args[len]);
-
         }
         return context;
     }
