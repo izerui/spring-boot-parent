@@ -22,5 +22,4 @@ public @interface Tenant {
      * @return
      */
     String value();
-    Class holder() default TenantHolder.class;
 }
