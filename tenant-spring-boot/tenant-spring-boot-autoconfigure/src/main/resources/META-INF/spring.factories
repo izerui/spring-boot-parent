@@ -1,3 +1,4 @@
 # Auto Configure
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.yj2025.tenant.TenantAutoConfiguration
+com.yj2025.tenant.TenantAutoConfiguration,\
+com.yj2025.tenant.web.TenantWebConfiguration

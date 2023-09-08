@@ -549,11 +549,6 @@
             <!-- dynamic -->
             <dependency>
                 <groupId>com.yj2025</groupId>
-                <artifactId>dynamic-datasource-commons</artifactId>
-                <version>${base-starter.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.yj2025</groupId>
                 <artifactId>dynamic-datasource-spring-boot-starter</artifactId>
                 <version>${base-starter.version}</version>
             </dependency>

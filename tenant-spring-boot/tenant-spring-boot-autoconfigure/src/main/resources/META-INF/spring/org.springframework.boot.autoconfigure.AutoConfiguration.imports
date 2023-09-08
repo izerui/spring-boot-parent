@@ -1,1 +1,2 @@
 com.yj2025.tenant.TenantAutoConfiguration
+com.yj2025.tenant.web.TenantWebConfiguration
