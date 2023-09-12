@@ -158,24 +158,29 @@ public interface PlatformJdbcRepository<T, ID> extends CrudRepository<T, ID>, Pa
     Page<T> findAll(Query query, Pageable pageable);
 
     /**
+     * <b>请使用Query</b> <br />
      * 根据<code>查询条件<code>匹配聚合计数。
      *
      * @param simpleMap 查询条件，不能为空
      * @return 数据库中存储的实例数量。不能为空
      * @since 3.0
      */
+    @Deprecated(since = "3.1", forRemoval = true)
     long count(Map<String, Object> simpleMap);
 
     /**
+     * <b>请使用Query</b> <br />
      * 确定是否有与{@link Query}匹配的聚合
      *
      * @param simpleMap 查询条件，不能为空
      * @return {@literal true} 如果对象存在.
      * @since 3.0
      */
+    @Deprecated(since = "3.1", forRemoval = true)
     boolean exists(Map<String, Object> simpleMap);
 
     /**
+     * <b>请使用Query</b> <br />
      * 执行{@code SELECT}查询并将结果项转换为确保一个结果的实体。
      *
      * @param simpleMap 查询条件，不能为空
@@ -183,9 +188,12 @@ public interface PlatformJdbcRepository<T, ID> extends CrudRepository<T, ID>, Pa
      * @throws org.springframework.dao.IncorrectResultSizeDataAccessException 如果找到多个.
      * @since 3.0
      */
+    @Deprecated(since = "3.1", forRemoval = true)
     T findOne(Map<String, Object> simpleMap);
 
     /**
+     * <b>请使用Query</b> <br />
+     *
      * 执行{@code SELECT}查询并将结果项转换为确保一个结果的实体。
      *
      * @param simpleMap 查询条件，不能为空
@@ -193,44 +201,29 @@ public interface PlatformJdbcRepository<T, ID> extends CrudRepository<T, ID>, Pa
      * @throws org.springframework.dao.IncorrectResultSizeDataAccessException 如果找到多个.
      * @since 3.0
      */
-    Optional<T> getOne(Map<String, Object> simpleMap);
-
-    /**
-     * 执行{@code SELECT}查询并将结果项转换为确保一个结果的实体。
-     *
-     * @param simpleMap 查询条件，不能为空
-     * @return 如果没有找到匹配项，则为{@link null}。
-     * @throws org.springframework.dao.IncorrectResultSizeDataAccessException 如果找到多个.
-     * @since 3.0
-     */
+    @Deprecated(since = "3.1", forRemoval = true)
     T findOne(Map<String, Object> simpleMap, Sort sort);
 
     /**
-     * 执行{@code SELECT}查询并将结果项转换为确保一个结果的实体。
-     *
-     * @param simpleMap 查询条件，不能为空
-     * @return 如果没有找到匹配项，则为{@link null}。
-     * @throws org.springframework.dao.IncorrectResultSizeDataAccessException 如果找到多个.
-     * @since 3.0
-     */
-    Optional<T> getOne(Map<String, Object> simpleMap, Sort sort);
-
-    /**
+     * <b>请使用Query</b> <br />
      * 执行{@code SELECT}查询并将结果项转换为已排序的{@link Iterable}。
      *
      * @param simpleMap 查询条件，不能为空
      * @return 包含所有匹配结果的非空排序列表。
      * @since 3.0
      */
+    @Deprecated(since = "3.1", forRemoval = true)
     List<T> findAll(Map<String, Object> simpleMap);
 
     /**
+     * <b>请使用Query</b> <br />
      * 执行{@code SELECT}查询并将结果项转换为已排序的{@link Iterable}。
      *
      * @param simpleMap 查询条件，不能为空
      * @return 包含所有匹配结果的非空排序列表。
      * @since 3.0
      */
+    @Deprecated(since = "3.1", forRemoval = true)
     List<T> findAll(Map<String, Object> simpleMap, Sort sort);
 
     /**
@@ -242,6 +235,7 @@ public interface PlatformJdbcRepository<T, ID> extends CrudRepository<T, ID>, Pa
      * @return 返回匹配给定 {@link Query} 条件的Page对象
      * @since 3.0
      */
+    @Deprecated(since = "3.1", forRemoval = true)
     Page<T> findAll(Map<String, Object> simpleMap, Pageable pageable);
 
     @Deprecated(since = "3.1", forRemoval = true)
@@ -264,19 +258,36 @@ public interface PlatformJdbcRepository<T, ID> extends CrudRepository<T, ID>, Pa
     @Override
     void deleteAll();
 
-    <S> S aggregate(Collection<String> aggregateColumns, Class<S> mappingClass, Query query);
+    <S> S aggregate(Collection<String> aggregateColumns,
+                    Class<S> mappingClass, Query query);
 
-    <S> S aggregate(Collection<String> aggregateColumns, Class<S> mappingClass, Map<String, Object> simpleMap);
+    <S> S aggregate(Collection<String> aggregateColumns,
+                    Class<S> mappingClass, Map<String, Object> simpleMap);
 
-    <S> List<S> groupAll(Collection<String> selectColumns, Collection<String> groupColumns, Class<S> mappingClass, Query query);
+    <S> List<S> groupAll(Collection<String> selectColumns,
+                         Collection<String> groupColumns,
+                         Class<S> mappingClass, Query query);
 
-    <S> List<S> groupAll(Collection<String> selectColumns, Collection<String> groupColumns, Class<S> mappingClass, Map<String, Object> simpleMap);
+    <S> List<S> groupAll(Collection<String> selectColumns,
+                         Collection<String> groupColumns,
+                         Class<S> mappingClass, Map<String, Object> simpleMap);
 
-    <S> Page<S> groupAll(Collection<String> selectColumns, Collection<String> groupColumns, Class<S> mappingClass, Query query, Pageable pageable);
+    <S> Page<S> groupAll(Collection<String> selectColumns,
+                         Collection<String> groupColumns,
+                         Class<S> mappingClass, Query query, Pageable pageable);
 
-    <S> Page<S> groupAll(Collection<String> selectColumns, Collection<String> groupColumns, Class<S> mappingClass, Map<String, Object> simpleMap, Pageable pageable);
+    <S> Page<S> groupAll(Collection<String> selectColumns,
+                         Collection<String> groupColumns,
+                         Class<S> mappingClass, Map<String, Object> simpleMap
+            , Pageable pageable);
 
+    /**
+     * <b>请使用getByRecordId</b> <br />
+     */
+    @Deprecated(since = "3.1", forRemoval = true)
     T findByRecordId(String entCode, String recordId);
+
+    Optional<T> getByRecordId(String entCode, String recordId);
 
     List<T> findByRecordIds(String entCode, Iterable<String> recordIds);
 

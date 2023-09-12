@@ -30,7 +30,10 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -152,20 +155,9 @@ public class PlatformJdbcRepositoryImpl<T, ID> extends SimpleJdbcRepository<T, I
     }
 
     @Override
-    public Optional<T> getOne(Map<String, Object> simpleMap) {
-        return jdbcAggregateTemplate.findOne(Query.query(CriteriaUtils.joinToCriteria(Criteria.empty(), simpleMap)), entity.getType());
-    }
-
-    @Override
     public T findOne(Map<String, Object> simpleMap, Sort sort) {
         Query query = Query.query(CriteriaUtils.joinToCriteria(Criteria.empty(), simpleMap));
         return jdbcAggregateTemplate.findOne(query.sort(sort), entity.getType()).orElse(null);
-    }
-
-    @Override
-    public Optional<T> getOne(Map<String, Object> simpleMap, Sort sort) {
-        Query query = Query.query(CriteriaUtils.joinToCriteria(Criteria.empty(), simpleMap));
-        return jdbcAggregateTemplate.findOne(query.sort(sort), entity.getType());
     }
 
     @Override
@@ -239,8 +231,11 @@ public class PlatformJdbcRepositoryImpl<T, ID> extends SimpleJdbcRepository<T, I
 
     @Override
     public <S> Page<S> groupAll(Collection<String> selectColumns, Collection<String> groupColumns, Class<S> mappingClass, Map<String, Object> simpleMap, Pageable pageable) {
-        Query query = Query.query(CriteriaUtils.joinToCriteria(Criteria.empty(), simpleMap));
-        return this.groupAll(selectColumns, groupColumns, mappingClass, query, pageable);
+        Query query =
+                Query.query(CriteriaUtils.joinToCriteria(Criteria.empty(),
+                        simpleMap));
+        return this.groupAll(selectColumns, groupColumns, mappingClass, query
+                , pageable);
     }
 
     @Override
@@ -252,10 +247,19 @@ public class PlatformJdbcRepositoryImpl<T, ID> extends SimpleJdbcRepository<T, I
     }
 
     @Override
+    public Optional<T> getByRecordId(String entCode, String recordId) {
+        Query query = Query.query(
+                Criteria.where("ent_code").is(entCode).and("record_id").is(recordId)
+        );
+        return jdbcAggregateTemplate.findOne(query, entity.getType());
+    }
+
+    @Override
     public List<T> findByRecordIds(String entCode, Iterable<String> recordIds) {
         Query query = Query.query(
                 Criteria.where("ent_code").is(entCode).and("record_id").in(recordIds)
         );
-        return Lists.newArrayList(jdbcAggregateTemplate.findAll(query, entity.getType()));
+        return Lists.newArrayList(jdbcAggregateTemplate.findAll(query,
+                entity.getType()));
     }
 }
