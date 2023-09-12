@@ -122,6 +122,11 @@ public class PlatformJdbcRepositoryImpl<T, ID> extends SimpleJdbcRepository<T, I
     }
 
     @Override
+    public Optional<T> getOne(Query query) {
+        return jdbcAggregateTemplate.findOne(query, entity.getType());
+    }
+
+    @Override
     public List<T> findAll(Query query) {
         return Lists.newArrayList(jdbcAggregateTemplate.findAll(query, entity.getType()));
     }
@@ -147,9 +152,20 @@ public class PlatformJdbcRepositoryImpl<T, ID> extends SimpleJdbcRepository<T, I
     }
 
     @Override
+    public Optional<T> getOne(Map<String, Object> simpleMap) {
+        return jdbcAggregateTemplate.findOne(Query.query(CriteriaUtils.joinToCriteria(Criteria.empty(), simpleMap)), entity.getType());
+    }
+
+    @Override
     public T findOne(Map<String, Object> simpleMap, Sort sort) {
         Query query = Query.query(CriteriaUtils.joinToCriteria(Criteria.empty(), simpleMap));
         return jdbcAggregateTemplate.findOne(query.sort(sort), entity.getType()).orElse(null);
+    }
+
+    @Override
+    public Optional<T> getOne(Map<String, Object> simpleMap, Sort sort) {
+        Query query = Query.query(CriteriaUtils.joinToCriteria(Criteria.empty(), simpleMap));
+        return jdbcAggregateTemplate.findOne(query.sort(sort), entity.getType());
     }
 
     @Override
