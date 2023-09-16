@@ -300,9 +300,7 @@ public class DbContext {
                                 ReflectionUtils.findMethod(value.getClass(),
                                         "name");
                         map.put(dbFieldName,
-                                ReflectionUtils.invokeMethod(method,
-                                        ReflectionUtils.invokeMethod(method,
-                                                value)));
+                                ReflectionUtils.invokeMethod(method, value));
                     } else {
                         map.put(dbFieldName, value);
                     }
