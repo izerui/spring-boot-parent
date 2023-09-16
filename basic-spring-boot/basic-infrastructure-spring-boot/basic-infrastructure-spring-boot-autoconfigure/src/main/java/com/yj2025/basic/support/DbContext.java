@@ -26,6 +26,7 @@ import org.springframework.util.ReflectionUtils;
 
 import javax.sql.DataSource;
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.Method;
 import java.sql.JDBCType;
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -291,8 +292,20 @@ public class DbContext {
             for (PropertyDescriptor pd : propertyDescriptors) {
                 String dbFieldName = CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, pd.getName());
                 if (pd.getReadMethod() != null) {
-                    Object value = ReflectionUtils.invokeMethod(pd.getReadMethod(), data);
-                    map.put(dbFieldName, value);
+                    Object value =
+                            ReflectionUtils.invokeMethod(pd.getReadMethod(),
+                                    data);
+                    if (pd.getPropertyType().isEnum()) {
+                        Method method =
+                                ReflectionUtils.findMethod(value.getClass(),
+                                        "name");
+                        map.put(dbFieldName,
+                                ReflectionUtils.invokeMethod(method,
+                                        ReflectionUtils.invokeMethod(method,
+                                                value)));
+                    } else {
+                        map.put(dbFieldName, value);
+                    }
                 }
             }
             return map;
