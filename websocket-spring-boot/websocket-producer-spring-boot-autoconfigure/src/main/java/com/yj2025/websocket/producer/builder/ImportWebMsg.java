@@ -11,6 +11,10 @@ import org.springframework.util.StringUtils;
 
 import java.util.List;
 
+/**
+ * 封住成业务主键，平台移除
+ */
+@Deprecated(since = "3.1", forRemoval = true)
 public class ImportWebMsg {
 
     private static final ObjectMapper OBJECT_MAPPER;
