@@ -24,12 +24,10 @@ public interface AuthAware {
         return RequestHeaderHolder.getUserName();
     }
 
-    @JsonIgnore
     default String getAccountCode() {
         return RequestHeaderHolder.getAccountCode();
     }
 
-    @JsonIgnore
     default String getAccountName() {
         return RequestHeaderHolder.getAccountName();
     }
