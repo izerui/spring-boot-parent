@@ -7,6 +7,7 @@ import com.yj2025.websocket.WebMsg;
 import com.yj2025.websocket.producer.WebSocketContext;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -37,6 +38,11 @@ public class ImportWebMsg {
      */
     protected WebMsgStatusEnum status;
 
+    /**
+     * 请求唯一标识，用于第一次导入还未结束，产生第二次导入。导致错误消息显示到第二次上。
+     */
+    protected String requestID;
+
     protected ImportWebMsg(WebMsgStatusEnum status) {
         this.status = status;
     }
@@ -63,6 +69,11 @@ public class ImportWebMsg {
         return (T) this;
     }
 
+    public <T extends ImportWebMsg> T requestID(String requestID) {
+        this.requestID = requestID;
+        return (T) this;
+    }
+
     public <T extends ImportWebMsg> T type(String type) {
         this.type = type;
         return (T) this;
@@ -71,6 +82,9 @@ public class ImportWebMsg {
     protected WebMsg build() {
         WebMsg webMsg = new WebMsg(entCode, userCode, type);
         webMsg.set("status", status.name());
+        if (StringUtils.hasText(requestID)) {
+            webMsg.set("requestID", requestID);
+        }
         return webMsg;
     }
 
