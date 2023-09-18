@@ -118,7 +118,7 @@ public class ImportWebMsg {
         }
 
         @Override
-        public <T extends ImportWebMsg> T requestID(String requestID) {
+        public PendingWebMsg requestID(String requestID) {
             return super.requestID(requestID);
         }
     }
@@ -153,7 +153,7 @@ public class ImportWebMsg {
         }
 
         @Override
-        public <T extends ImportWebMsg> T requestID(String requestID) {
+        public PendingWebMsg requestID(String requestID) {
             return super.requestID(requestID);
         }
 
@@ -207,7 +207,7 @@ public class ImportWebMsg {
         }
 
         @Override
-        public <T extends ImportWebMsg> T requestID(String requestID) {
+        public ErrorWebMsg requestID(String requestID) {
             return super.requestID(requestID);
         }
 
