@@ -69,13 +69,13 @@ public class ImportWebMsg {
         return (T) this;
     }
 
-    public <T extends ImportWebMsg> T requestID(String requestID) {
-        this.requestID = requestID;
+    public <T extends ImportWebMsg> T type(String type) {
+        this.type = type;
         return (T) this;
     }
 
-    public <T extends ImportWebMsg> T type(String type) {
-        this.type = type;
+    public <T extends ImportWebMsg> T requestID(String requestID) {
+        this.requestID = requestID;
         return (T) this;
     }
 
@@ -91,7 +91,6 @@ public class ImportWebMsg {
     public void send(WebSocketContext context) {
         context.sendMessage(build());
     }
-
 
     public static class SuccessWebMsg extends ImportWebMsg {
 
@@ -112,6 +111,11 @@ public class ImportWebMsg {
         @Override
         public SuccessWebMsg type(String type) {
             return super.type(type);
+        }
+
+        @Override
+        public <T extends ImportWebMsg> T requestID(String requestID) {
+            return super.requestID(requestID);
         }
     }
 
@@ -142,6 +146,11 @@ public class ImportWebMsg {
         @Override
         public PendingWebMsg type(String type) {
             return super.type(type);
+        }
+
+        @Override
+        public <T extends ImportWebMsg> T requestID(String requestID) {
+            return super.requestID(requestID);
         }
 
         public PendingWebMsg totalRowNum(String totalRowNum) {
@@ -193,6 +202,11 @@ public class ImportWebMsg {
             return super.type(type);
         }
 
+        @Override
+        public <T extends ImportWebMsg> T requestID(String requestID) {
+            return super.requestID(requestID);
+        }
+
         public ErrorWebMsg errorTitle(String errorTitle) {
             this.errorTitle = errorTitle;
             return this;
@@ -224,6 +238,4 @@ public class ImportWebMsg {
             this.rowError = rowError;
         }
     }
-
-
 }
