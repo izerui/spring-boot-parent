@@ -7,9 +7,14 @@ import com.yj2025.websocket.WebMsg;
 import com.yj2025.websocket.producer.WebSocketContext;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
+/**
+ * 封装成业务主键，平台移除
+ */
+@Deprecated(since = "3.1", forRemoval = true)
 public class ImportWebMsg {
 
     private static final ObjectMapper OBJECT_MAPPER;
@@ -36,6 +41,11 @@ public class ImportWebMsg {
      * 导入的状态
      */
     protected WebMsgStatusEnum status;
+
+    /**
+     * 请求唯一标识，用于第一次导入还未结束，产生第二次导入。导致错误消息显示到第二次上。
+     */
+    protected String requestID;
 
     protected ImportWebMsg(WebMsgStatusEnum status) {
         this.status = status;
@@ -68,16 +78,23 @@ public class ImportWebMsg {
         return (T) this;
     }
 
+    public <T extends ImportWebMsg> T requestID(String requestID) {
+        this.requestID = requestID;
+        return (T) this;
+    }
+
     protected WebMsg build() {
         WebMsg webMsg = new WebMsg(entCode, userCode, type);
         webMsg.set("status", status.name());
+        if (StringUtils.hasText(requestID)) {
+            webMsg.set("requestID", requestID);
+        }
         return webMsg;
     }
 
     public void send(WebSocketContext context) {
         context.sendMessage(build());
     }
-
 
     public static class SuccessWebMsg extends ImportWebMsg {
 
@@ -98,6 +115,11 @@ public class ImportWebMsg {
         @Override
         public SuccessWebMsg type(String type) {
             return super.type(type);
+        }
+
+        @Override
+        public PendingWebMsg requestID(String requestID) {
+            return super.requestID(requestID);
         }
     }
 
@@ -128,6 +150,11 @@ public class ImportWebMsg {
         @Override
         public PendingWebMsg type(String type) {
             return super.type(type);
+        }
+
+        @Override
+        public PendingWebMsg requestID(String requestID) {
+            return super.requestID(requestID);
         }
 
         public PendingWebMsg totalRowNum(String totalRowNum) {
@@ -179,6 +206,11 @@ public class ImportWebMsg {
             return super.type(type);
         }
 
+        @Override
+        public ErrorWebMsg requestID(String requestID) {
+            return super.requestID(requestID);
+        }
+
         public ErrorWebMsg errorTitle(String errorTitle) {
             this.errorTitle = errorTitle;
             return this;
@@ -210,6 +242,4 @@ public class ImportWebMsg {
             this.rowError = rowError;
         }
     }
-
-
 }
