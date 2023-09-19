@@ -53,6 +53,8 @@ public abstract class AbstractTableSharding {
         List<String> cacheTables = cacheDataSourceTablesMap.get(dataSource);
         if (cacheTables != null && cacheTables.contains(tableName)) {
             return tableName;
+        } else if (cacheTables != null && cacheTables.contains(sourceTable + "_runtime")) {
+            return sourceTable + "_runtime";
         } else {
             log.debug("路由目的表: [{}] 在数据库中不存在, 故使用源表: [{}]", tableName, sourceTable);
             return sourceTable;
