@@ -72,14 +72,7 @@ public abstract class TreeMapper<S, T> {
      * @return
      */
     public T map(final List<S> sourceList) {
-        List<T> results = new ArrayList<T>();
-        for (S source : sourceList) {
-            if (isRoot(source)) {
-                T node = map(source, null);
-                assemblyChildren(sourceList, node);
-                results.add(node);
-            }
-        }
+        List<T> results = treeMap(sourceList);
         Assert.isTrue(results != null && results.size() == 1, "集合转成树状结构出错!");
         return results.get(0);
     }
