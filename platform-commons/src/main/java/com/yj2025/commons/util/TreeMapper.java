@@ -1,5 +1,7 @@
 package com.yj2025.commons.util;
 
+import org.springframework.util.Assert;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +31,7 @@ public abstract class TreeMapper<S, T> {
     /**
      * 转换源对象到目标对象
      *
-     * @param item 源对象
+     * @param item   源对象
      * @param parent 父对象 第一级为 null
      * @return 目标对象
      */
@@ -41,7 +43,7 @@ public abstract class TreeMapper<S, T> {
      * @param child  子对象
      * @param parent 父对象
      */
-    protected abstract void addChild(T child , T parent);
+    protected abstract void addChild(T child, T parent);
 
 
     /**
@@ -53,8 +55,8 @@ public abstract class TreeMapper<S, T> {
     public List<T> treeMap(final List<S> sourceList) {
         List<T> results = new ArrayList<T>();
         for (S source : sourceList) {
-            if(isRoot(source)){
-                T node = map(source,null);
+            if (isRoot(source)) {
+                T node = map(source, null);
                 assemblyChildren(sourceList, node);
                 results.add(node);
             }
@@ -63,15 +65,34 @@ public abstract class TreeMapper<S, T> {
 
     }
 
+    /**
+     * 映射集合到嵌套结构的集合中
+     *
+     * @param sourceList 源集合
+     * @return
+     */
+    public T map(final List<S> sourceList) {
+        List<T> results = new ArrayList<T>();
+        for (S source : sourceList) {
+            if (isRoot(source)) {
+                T node = map(source, null);
+                assemblyChildren(sourceList, node);
+                results.add(node);
+            }
+        }
+        Assert.isTrue(results != null && results.size() == 1, "集合转成树状结构出错!");
+        return results.get(0);
+    }
+
 
     //组装子分类
     private void assemblyChildren(final List<S> sourceList, T parent) {
         for (S source : sourceList) {
-            if(isParent(source, parent)){
-                T tChild = map(source,parent);
+            if (isParent(source, parent)) {
+                T tChild = map(source, parent);
                 //继续添加node 的下级node
                 assemblyChildren(sourceList, tChild);
-                addChild(tChild,parent);
+                addChild(tChild, parent);
             }
         }
     }
