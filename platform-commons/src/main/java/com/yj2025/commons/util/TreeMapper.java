@@ -71,7 +71,7 @@ public abstract class TreeMapper<S, T> {
      * @param sourceList 源集合
      * @return
      */
-    public T map(final List<S> sourceList) {
+    public T treeMapToOne(final List<S> sourceList) {
         List<T> results = treeMap(sourceList);
         Assert.isTrue(results != null && results.size() == 1, "集合转成树状结构出错!");
         return results.get(0);
