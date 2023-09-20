@@ -147,6 +147,15 @@ public interface PlatformJdbcRepository<T, ID> extends CrudRepository<T, ID>, Pa
     List<T> findAll(Query query);
 
     /**
+     * 执行{@code SELECT}查询并将结果项转换为已排序的{@link Iterable}。
+     *
+     * @param query 查询条件，不能为空
+     * @return 包含所有匹配结果的非空排序列表。
+     * @since 3.0
+     */
+    List<T> findAll(Query query,Sort sort);
+
+    /**
      * 返回一个{@link Page}的实体，匹配给定的{@link Query}。
      * 如果找不到匹配项，则返回一个空{@link Page}。
      *
