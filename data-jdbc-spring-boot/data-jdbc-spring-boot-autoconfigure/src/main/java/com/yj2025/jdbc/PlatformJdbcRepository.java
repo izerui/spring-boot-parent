@@ -124,7 +124,6 @@ public interface PlatformJdbcRepository<T, ID> extends CrudRepository<T, ID>, Pa
      * @throws org.springframework.dao.IncorrectResultSizeDataAccessException 如果找到多个.
      * @since 3.0
      */
-    @Deprecated(since = "3.1", forRemoval = true)
     T findOne(Query query);
 
     /**
