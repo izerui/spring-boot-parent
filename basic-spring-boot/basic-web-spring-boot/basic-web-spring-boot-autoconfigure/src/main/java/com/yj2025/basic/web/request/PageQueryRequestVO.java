@@ -63,7 +63,7 @@ public abstract class PageQueryRequestVO extends BaseQueryRequestVO {
     public final Sort getSort() {
         Sort sort = withDefaultSort();
         if (StringUtils.isNotBlank(orderBy)) {
-            String[] orders = (orderBy + (withId ? ",id" : "")).split(",");
+            String[] orders = (orderBy + (this.isWithId() ? ",id" : "")).split(",");
             if (StringUtils.isNotBlank(orderByDirection)) {
                 sort = Sort.by(Sort.Direction.fromString(orderByDirection), orders);
             } else {
