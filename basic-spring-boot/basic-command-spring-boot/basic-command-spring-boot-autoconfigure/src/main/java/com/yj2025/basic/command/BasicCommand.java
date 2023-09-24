@@ -2,6 +2,11 @@ package com.yj2025.basic.command;
 
 import com.yj2025.basic.support.ApplicationBeanAware;
 import com.yj2025.basic.support.ColorOutput;
+import jakarta.annotation.Resource;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.ValidationException;
+import jakarta.validation.Validator;
 import org.hibernate.validator.HibernateValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,14 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.util.ReflectionUtils;
 
-import jakarta.annotation.Resource;
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validation;
-import jakarta.validation.ValidationException;
-import jakarta.validation.Validator;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -46,9 +48,22 @@ public abstract class BasicCommand<R> implements Command<R>, ApplicationBeanAwar
         /** no op */
     }
 
+    protected List<Field> getAllFieldsIncludeSuperClass(
+            final Class<?> clazz) {
+        List<Field> lf = new ArrayList<>();
+        for (Class<?> superClass = clazz; superClass != Object.class; superClass = superClass
+                .getSuperclass()) {
+            Field[] f = superClass.getDeclaredFields();
+            for (int j = 0; j < f.length; j++) {
+                lf.add(f[j]);
+            }
+        }
+        return lf;
+    }
+
     protected void autowiredBean() {
-        Field[] declaredFields = this.getClass().getDeclaredFields();
-        Arrays.asList(declaredFields).forEach(field -> {
+        List<Field> declaredFields = getAllFieldsIncludeSuperClass(getClass());
+        declaredFields.forEach(field -> {
             field.setAccessible(true);
             Annotation[] annotations = field.getAnnotations();
             boolean anyMatch = Arrays.asList(annotations).stream().map(Annotation::annotationType)

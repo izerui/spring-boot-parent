@@ -201,15 +201,6 @@ public class TableTemplate {
         return this.sqlStringGenerationContext.getDialect();
     }
 
-    /**
-     * 根据jdbc类型获取字段数据库类型
-     *
-     * @param type
-     * @return
-     */
-    public String columnType(JDBCType type) {
-        return getDialect().getCastTypeName(type.getVendorTypeNumber());
-    }
 
     /**
      * 根据jdbc类型获取字段数据库类型
