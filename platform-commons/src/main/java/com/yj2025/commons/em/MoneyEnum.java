@@ -23,7 +23,7 @@ public enum MoneyEnum {
     /**
      * 汇率
      */
-    EXCHANGE_RATE(8, "#,###.########");
+    EXCHANGE_RATE(6, "#,###.######");
 
     private int decimal;
 
