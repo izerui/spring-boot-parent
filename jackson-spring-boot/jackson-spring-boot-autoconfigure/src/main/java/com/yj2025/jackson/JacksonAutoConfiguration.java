@@ -3,7 +3,9 @@ package com.yj2025.jackson;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,8 +22,10 @@ public class JacksonAutoConfiguration {
 //                objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
                 objectMapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
                 objectMapper.findAndRegisterModules();
-                objectMapper.registerModule(new JavaTimeModule());
-                objectMapper.registerModule(new GuavaModule());
+                objectMapper.registerModule(new ParameterNamesModule())
+                        .registerModule(new Jdk8Module())
+                        .registerModule(new JavaTimeModule())
+                        .registerModule(new GuavaModule());
             });
         };
     }
