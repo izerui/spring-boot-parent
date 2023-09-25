@@ -15,6 +15,9 @@ public interface TestUserRepository extends PlatformJdbcRepository<TestUser, Lon
     @Query("select * from test_user_#{#entCode} where code like CONCAT('%', :code,'%') ")
     List<TestUser> findList(@Param("entCode") String entCode, @Param("code") String code);
 
+    @Query("select * from test_user_#{#entCode} where code in (:codes)")
+    List<TestUser> findList(String entCode, List<String> codes);
+
 
     @Tenant("#{#entCode}")
     @QueryFlagAfterTable("query标注: #{#code}")

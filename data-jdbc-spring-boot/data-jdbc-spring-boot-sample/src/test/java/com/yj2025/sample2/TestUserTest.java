@@ -69,6 +69,12 @@ public class TestUserTest {
         System.out.println(copy1.size());
     }
 
+     @Test
+    public void testList2() {
+        List<TestUser> copy1 = userRepository.findList("copy1", Lists.newArrayList("code10","code102"));
+        System.out.println(copy1.size());
+    }
+
     @Test
     public void testFindCode() {
         List<TestUser> users = testUserService.findByCode("copy1", "code10");
