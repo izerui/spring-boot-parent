@@ -11,6 +11,7 @@ import org.springframework.util.StringUtils;
 
 import javax.sql.DataSource;
 import java.lang.reflect.Method;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -141,6 +142,8 @@ public abstract class AbstractTableSharding {
     private List<String> getTables(DataSource dataSource) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
         List<String> tables = jdbcTemplate.queryForList("/* 缓存当前" + dataSource + "所有表,用来分表路由 */ show tables", String.class);
+        Collections.sort(tables);
+        tables.forEach(s -> log.info("{}", s));
         return tables;
     }
 
