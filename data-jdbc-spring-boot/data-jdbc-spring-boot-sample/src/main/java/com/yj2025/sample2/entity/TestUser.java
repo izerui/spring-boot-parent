@@ -11,7 +11,7 @@ import java.util.Date;
 
 //用户
 @Data
-@Table("#{@tenantSharding.getTable('test_user')}")
+@Table("#{@sharding.getTable('test_user')}")
 public class TestUser {
     @Id
     private Long id;

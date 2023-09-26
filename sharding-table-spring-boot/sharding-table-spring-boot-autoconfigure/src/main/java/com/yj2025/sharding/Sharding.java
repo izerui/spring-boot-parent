@@ -2,9 +2,9 @@ package com.yj2025.sharding;
 
 import org.springframework.context.ApplicationContext;
 
-public class TenantSharding extends AbstractTableSharding {
+public class Sharding extends AbstractTableSharding {
 
-    public TenantSharding(ApplicationContext applicationContext) {
+    public Sharding(ApplicationContext applicationContext) {
         super(applicationContext);
     }
 

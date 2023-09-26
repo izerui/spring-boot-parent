@@ -10,7 +10,7 @@ import java.util.Date;
 
 //用户 注意这里的Table 跟 jpa的Table 类不一样
 @Data
-@Table("#{@tenantSharding.getTable('test_user')}")
+@Table("#{@sharding.getTable('test_user')}")
 public class TestUser {
     @Id
     private Long id;

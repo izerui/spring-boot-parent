@@ -15,7 +15,7 @@ public class ShardingAutoConfiguration {
 
 
     @Bean
-    public TenantSharding tenantSharding() {
-        return new TenantSharding(applicationContext);
+    public Sharding sharding() {
+        return new Sharding(applicationContext);
     }
 }
