@@ -71,7 +71,7 @@ public abstract class AbstractTableSharding {
      * @return
      */
     public final String getYearTable(String sourceTable, String tenantId, String year) {
-        return this.getTable(applicationContext.getBean(DataSource.class), sourceTable, tenantId, year);
+        return this.getYearTable(applicationContext.getBean(DataSource.class), sourceTable, tenantId, year);
     }
 
 
@@ -100,7 +100,7 @@ public abstract class AbstractTableSharding {
      * @param year
      * @return
      */
-    public final String getTable(DataSource dataSource, String sourceTable, String tenantId, String year) {
+    public final String getYearTable(DataSource dataSource, String sourceTable, String tenantId, String year) {
         if (!StringUtils.hasText(tenantId)) {
             throw new IllegalArgumentException("使用sharding获取分表结果,但是入口方法未正确声明@Tenant注解, 或者无法获取有效的tenant信息");
         }
