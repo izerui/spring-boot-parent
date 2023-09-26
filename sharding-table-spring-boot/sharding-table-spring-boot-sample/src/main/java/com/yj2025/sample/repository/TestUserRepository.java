@@ -18,6 +18,7 @@ public interface TestUserRepository extends ListCrudRepository<TestUser, Long>, 
     @Tenant("#{#entCode}")
     List<TestUser> findByCode(String entCode, String code);
 
-    @Query("select * from test_user_#{#entCode} ")
-    List<TestUser> findList1(String entCode);
+    @Tenant(value = "#{#entCode}", year = "#{#year}")
+    @Query("select * from #{@tenantSharding.getYearTable('test_user')} ")
+    List<TestUser> findList1(String entCode, Integer year);
 }

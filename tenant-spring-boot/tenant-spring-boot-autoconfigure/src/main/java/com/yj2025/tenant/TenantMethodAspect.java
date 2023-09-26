@@ -51,6 +51,11 @@ public class TenantMethodAspect {
             throw new AnnotationTypeMismatchException(method, "无法从参数中获取有效的tenantId值, 表达式: " + tenant.value());
         }
         TenantHolder.setTenantId(tenantId);
+
+        Expression yearExpression = parser.parseExpression(tenant.year(), ParserContext.TEMPLATE_EXPRESSION);
+        String year = yearExpression.getValue(context, String.class);
+        TenantHolder.setYear(year);
+
         // return
         return pjp.proceed();
     }

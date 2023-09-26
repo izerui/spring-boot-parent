@@ -23,10 +23,10 @@ public class ShardingTableApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        List<TestUser> list = sampleService.findList("copy1");
-        System.out.println("list: " + list.size());
+//        List<TestUser> list = sampleService.findList("copy1");
+//        System.out.println("list: " + list.size());
 
         List<TestUser> copy1 = sampleService.findList1("copy1");
-        System.out.println("list1: " + list.size());
+        System.out.println("list1: " + copy1.size());
     }
 }

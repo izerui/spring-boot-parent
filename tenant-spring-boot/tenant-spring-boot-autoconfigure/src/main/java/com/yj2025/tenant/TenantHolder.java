@@ -4,6 +4,8 @@ public class TenantHolder {
 
     private final static ThreadLocal<String> tenantLocal = new InheritableThreadLocal<>();
 
+    private final static ThreadLocal<String> yearLocal = new InheritableThreadLocal<>();
+
     public static void setTenantId(String tenantId) {
         tenantLocal.set(tenantId);
     }
@@ -15,6 +17,15 @@ public class TenantHolder {
      */
     public static String getTenantId() {
         return tenantLocal.get();
+    }
+
+
+    public static void setYear(String year) {
+        yearLocal.set(year);
+    }
+
+    public static String getYear() {
+        return yearLocal.get();
     }
 
 }

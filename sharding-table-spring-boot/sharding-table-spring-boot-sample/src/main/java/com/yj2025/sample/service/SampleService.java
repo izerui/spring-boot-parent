@@ -22,7 +22,7 @@ public class SampleService {
     }
 
     public List<TestUser> findList1(String entCode) {
-        return testUserRepository.findList1(entCode);
+        return testUserRepository.findList1(entCode, 2017);
     }
 
 }

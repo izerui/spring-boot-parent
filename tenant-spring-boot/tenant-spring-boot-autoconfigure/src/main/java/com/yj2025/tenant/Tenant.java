@@ -3,6 +3,7 @@ package com.yj2025.tenant;
 import jdk.jfr.Description;
 
 import java.lang.annotation.*;
+import java.util.Date;
 
 /**
  * @author liuyuhua
@@ -21,4 +22,10 @@ public @interface Tenant {
      * @return
      */
     String value();
+
+    /**
+     * 年度
+     * @return
+     */
+    String year() default "";
 }

@@ -26,22 +26,93 @@ public abstract class AbstractTableSharding {
         this.applicationContext = applicationContext;
     }
 
+    /**
+     * 获取自动租户id的表名
+     *
+     * @param sourceTable
+     * @return
+     */
     public final String getTable(String sourceTable) {
         Assert.state(!StringUtils.isEmpty(sourceTable), "AbstractRule: [tablePrefix]不能为空");
         String tenantId = TenantHolder.getTenantId();
         return this.getTable(sourceTable, tenantId);
     }
 
+    /**
+     * 获取自动租户id、指定年度的表名
+     *
+     * @param sourceTable
+     * @return
+     */
+    public final String getYearTable(String sourceTable) {
+        Assert.state(!StringUtils.isEmpty(sourceTable), "AbstractRule: [tablePrefix]不能为空");
+        String tenantId = TenantHolder.getTenantId();
+        String year = TenantHolder.getYear();
+        return this.getYearTable(sourceTable, tenantId, year);
+    }
+
+    /**
+     * 通过租户id获取租户表名
+     *
+     * @param sourceTable
+     * @param tenantId
+     * @return
+     */
     public final String getTable(String sourceTable, String tenantId) {
         return this.getTable(applicationContext.getBean(DataSource.class), sourceTable, tenantId);
     }
 
-    @SneakyThrows
+    /**
+     * 通过租户id+指定年度获取表名
+     *
+     * @param sourceTable
+     * @param tenantId
+     * @param year
+     * @return
+     */
+    public final String getYearTable(String sourceTable, String tenantId, String year) {
+        return this.getTable(applicationContext.getBean(DataSource.class), sourceTable, tenantId, year);
+    }
+
+
+    /**
+     * 获取指定数据源、指定租户id的表名
+     *
+     * @param dataSource
+     * @param sourceTable
+     * @param tenantId
+     * @return
+     */
     public final String getTable(DataSource dataSource, String sourceTable, String tenantId) {
         if (!StringUtils.hasText(tenantId)) {
-            throw new IllegalArgumentException("使用sharding获取分表结果,但是入口方法未正确声明@TenantThreadLocal(\"#{#entCode}\")注解, 或者无法获取有效的tenantId");
+            throw new IllegalArgumentException("使用sharding获取分表结果,但是入口方法未正确声明@Tenant注解, 或者无法获取有效的tenant信息");
         }
         String tableName = this.tableName(sourceTable, tenantId);
+        return switchTable(dataSource, sourceTable, tableName);
+    }
+
+    /**
+     * 获取指定数据源、指定租户id、指定年度的表名
+     *
+     * @param dataSource
+     * @param sourceTable
+     * @param tenantId
+     * @param year
+     * @return
+     */
+    public final String getTable(DataSource dataSource, String sourceTable, String tenantId, String year) {
+        if (!StringUtils.hasText(tenantId)) {
+            throw new IllegalArgumentException("使用sharding获取分表结果,但是入口方法未正确声明@Tenant注解, 或者无法获取有效的tenant信息");
+        }
+        if (year == null) {
+            throw new IllegalArgumentException("使用sharding获取分表结果,但是入口方法未正确声明@Tenant注解, 或者无法获取有效的year信息");
+        }
+        String tableName = this.tableName(sourceTable, tenantId, year);
+        return switchTable(dataSource, sourceTable, tableName);
+    }
+
+    @SneakyThrows
+    private String switchTable(DataSource dataSource, String sourceTable, String targetTable) {
         if (dataSource.getClass().getName().equals("com.baomidou.dynamic.datasource.DynamicRoutingDataSource")) {
             Method determineMethod = ReflectionUtils.findMethod(Class.forName("com.baomidou.dynamic.datasource.DynamicRoutingDataSource"), "determineDataSource");
             dataSource = (DataSource) ReflectionUtils.invokeMethod(determineMethod, dataSource);
@@ -51,12 +122,12 @@ public abstract class AbstractTableSharding {
             cacheDataSourceTablesMap.put(dataSource, getTables(dataSource));
         }
         List<String> cacheTables = cacheDataSourceTablesMap.get(dataSource);
-        if (cacheTables != null && cacheTables.contains(tableName)) {
-            return tableName;
+        if (cacheTables != null && cacheTables.contains(targetTable)) {
+            return targetTable;
         } else if (cacheTables != null && cacheTables.contains(sourceTable + "_runtime")) {
             return sourceTable + "_runtime";
         } else {
-            log.debug("路由目的表: [{}] 在数据库中不存在, 故使用源表: [{}]", tableName, sourceTable);
+            log.debug("路由目的表: [{}] 在数据库中不存在, 故使用源表: [{}]", targetTable, sourceTable);
             return sourceTable;
         }
     }
@@ -81,4 +152,14 @@ public abstract class AbstractTableSharding {
      * @return
      */
     protected abstract String tableName(String sourceTable, String tenantId);
+
+    /**
+     * 不开放给public调用，因为必须经过缓存列表验证一道
+     *
+     * @param sourceTable
+     * @param tenantId
+     * @param year
+     * @return
+     */
+    protected abstract String tableName(String sourceTable, String tenantId, String year);
 }

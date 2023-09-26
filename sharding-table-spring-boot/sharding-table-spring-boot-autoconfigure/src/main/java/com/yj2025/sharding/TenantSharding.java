@@ -12,4 +12,9 @@ public class TenantSharding extends AbstractTableSharding {
     protected String tableName(String sourceTable, String tenantId) {
         return sourceTable.concat("_").concat(tenantId);
     }
+
+    @Override
+    protected String tableName(String sourceTable, String tenantId, String year) {
+        return sourceTable.concat("_").concat(tenantId).concat("_").concat(year);
+    }
 }
