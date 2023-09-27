@@ -36,21 +36,10 @@ public abstract class AbstractTableSharding {
     public final String getTable(String sourceTable) {
         Assert.state(!StringUtils.isEmpty(sourceTable), "AbstractRule: [tablePrefix]不能为空");
         String tenantId = TenantHolder.getTenantId();
-        return this.getTable(sourceTable, tenantId);
+        String year = TenantHolder.getYear();
+        return this.getTable(sourceTable, tenantId, year);
     }
 
-    /**
-     * 获取自动租户id、指定年度的表名
-     *
-     * @param sourceTable
-     * @return
-     */
-    public final String getYearTable(String sourceTable) {
-        Assert.state(!StringUtils.isEmpty(sourceTable), "AbstractRule: [tablePrefix]不能为空");
-        String tenantId = TenantHolder.getTenantId();
-        String year = TenantHolder.getYear();
-        return this.getYearTable(sourceTable, tenantId, year);
-    }
 
     /**
      * 通过租户id获取租户表名
@@ -59,38 +48,10 @@ public abstract class AbstractTableSharding {
      * @param tenantId
      * @return
      */
-    public final String getTable(String sourceTable, String tenantId) {
-        return this.getTable(applicationContext.getBean(DataSource.class), sourceTable, tenantId);
+    public final String getTable(String sourceTable, String tenantId, String year) {
+        return this.getTable(applicationContext.getBean(DataSource.class), sourceTable, tenantId, year);
     }
 
-    /**
-     * 通过租户id+指定年度获取表名
-     *
-     * @param sourceTable
-     * @param tenantId
-     * @param year
-     * @return
-     */
-    public final String getYearTable(String sourceTable, String tenantId, String year) {
-        return this.getYearTable(applicationContext.getBean(DataSource.class), sourceTable, tenantId, year);
-    }
-
-
-    /**
-     * 获取指定数据源、指定租户id的表名
-     *
-     * @param dataSource
-     * @param sourceTable
-     * @param tenantId
-     * @return
-     */
-    public final String getTable(DataSource dataSource, String sourceTable, String tenantId) {
-        if (!StringUtils.hasText(tenantId)) {
-            throw new IllegalArgumentException("使用sharding获取分表结果,但是入口方法未正确声明@Tenant注解, 或者无法获取有效的tenant信息");
-        }
-        String tableName = this.tableName(sourceTable, tenantId);
-        return switchTable(dataSource, sourceTable, tableName);
-    }
 
     /**
      * 获取指定数据源、指定租户id、指定年度的表名
@@ -101,19 +62,21 @@ public abstract class AbstractTableSharding {
      * @param year
      * @return
      */
-    public final String getYearTable(DataSource dataSource, String sourceTable, String tenantId, String year) {
+    public final String getTable(DataSource dataSource, String sourceTable, String tenantId, String year) {
         if (!StringUtils.hasText(tenantId)) {
             throw new IllegalArgumentException("使用sharding获取分表结果,但是入口方法未正确声明@Tenant注解, 或者无法获取有效的tenant信息");
         }
         if (year == null) {
             throw new IllegalArgumentException("使用sharding获取分表结果,但是入口方法未正确声明@Tenant注解, 或者无法获取有效的year信息");
         }
-        String tableName = this.tableName(sourceTable, tenantId, year);
-        return switchTable(dataSource, sourceTable, tableName);
+        String tenantTable = this.tableName(sourceTable, tenantId);
+        String tenantYearTable = this.tableName(sourceTable, tenantId, year);
+        String table = switchTable(dataSource, sourceTable, tenantYearTable, tenantTable);
+        return "`".concat(table).concat("`");
     }
 
     @SneakyThrows
-    private String switchTable(DataSource dataSource, String sourceTable, String targetTable) {
+    private String switchTable(DataSource dataSource, String sourceTable, String... targetTables) {
         if (dataSource.getClass().getName().equals("com.baomidou.dynamic.datasource.DynamicRoutingDataSource")) {
             Method determineMethod = ReflectionUtils.findMethod(Class.forName("com.baomidou.dynamic.datasource.DynamicRoutingDataSource"), "determineDataSource");
             dataSource = (DataSource) ReflectionUtils.invokeMethod(determineMethod, dataSource);
@@ -123,14 +86,22 @@ public abstract class AbstractTableSharding {
             cacheDataSourceTablesMap.put(dataSource, getTables(dataSource));
         }
         List<String> cacheTables = cacheDataSourceTablesMap.get(dataSource);
-        if (cacheTables != null && cacheTables.contains(targetTable)) {
-            return targetTable;
-        } else if (cacheTables != null && cacheTables.contains(sourceTable + "_runtime")) {
+
+        // 按顺序先找年表、再找租户表
+        for (String targetTable : targetTables) {
+            if (cacheTables != null && cacheTables.contains(targetTable)) {
+                return targetTable;
+            }
+        }
+        // 如果年表和租户表都找不到则按有限匹配到的顺序返回 【源表_runtime】 和 【源表】
+        if (cacheTables != null && cacheTables.contains(sourceTable + "_runtime")) {
+            log.debug("路由目的表: [{}] 在数据库中不存在, 故使用源表_runtime: [{}]", targetTables, sourceTable);
             return sourceTable + "_runtime";
         } else {
-            log.debug("路由目的表: [{}] 在数据库中不存在, 故使用源表: [{}]", targetTable, sourceTable);
+            log.debug("路由目的表: [{}] 在数据库中不存在, 故使用源表: [{}]", targetTables, sourceTable);
             return sourceTable;
         }
+
     }
 
     /**

@@ -20,6 +20,7 @@ import org.springframework.data.relational.core.mapping.RelationalMappingContext
 import org.springframework.data.relational.core.mapping.RelationalPersistentEntity;
 import org.springframework.data.relational.core.query.Criteria;
 import org.springframework.data.relational.core.query.Query;
+import org.springframework.data.relational.core.sql.IdentifierProcessing;
 import org.springframework.data.relational.core.sql.SqlIdentifier;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -86,7 +87,7 @@ public class PlatformJdbcRepositoryImpl<T, ID> extends SimpleJdbcRepository<T, I
     @Override
     public void batchInsert(Collection<T> instances, String... generatedKeys) {
         SqlIdentifier identifier = ((RelationalPersistentEntity<T>) entity).getTableName();
-        DbContext.batchInsert(identifier.getReference(), instances, generatedKeys);
+        DbContext.batchInsert(identifier.toSql(IdentifierProcessing.ANSI), instances, generatedKeys);
     }
 
     @Override
