@@ -40,6 +40,17 @@ public abstract class AbstractTableSharding {
         return this.getTable(sourceTable, tenantId, year);
     }
 
+    /**
+     * 通过租户id获取租户表名
+     *
+     * @param sourceTable
+     * @param tenantId
+     * @return
+     */
+    public final String getTable(String sourceTable, String tenantId) {
+        return this.getTable(applicationContext.getBean(DataSource.class), sourceTable, tenantId, null);
+    }
+
 
     /**
      * 通过租户id获取租户表名
@@ -66,11 +77,11 @@ public abstract class AbstractTableSharding {
         if (!StringUtils.hasText(tenantId)) {
             throw new IllegalArgumentException("使用sharding获取分表结果,但是入口方法未正确声明@Tenant注解, 或者无法获取有效的tenant信息");
         }
-        if (year == null) {
-            throw new IllegalArgumentException("使用sharding获取分表结果,但是入口方法未正确声明@Tenant注解, 或者无法获取有效的year信息");
-        }
         String tenantTable = this.tableName(sourceTable, tenantId);
-        String tenantYearTable = this.tableName(sourceTable, tenantId, year);
+        String tenantYearTable = null;
+        if (year != null) {
+            tenantYearTable = this.tableName(sourceTable, tenantId, year);
+        }
         String table = switchTable(dataSource, sourceTable, tenantYearTable, tenantTable);
         return "`".concat(table).concat("`");
     }
@@ -89,6 +100,9 @@ public abstract class AbstractTableSharding {
 
         // 按顺序先找年表、再找租户表
         for (String targetTable : targetTables) {
+            if (targetTable == null) {
+                continue;
+            }
             if (cacheTables != null && cacheTables.contains(targetTable)) {
                 return targetTable;
             }
