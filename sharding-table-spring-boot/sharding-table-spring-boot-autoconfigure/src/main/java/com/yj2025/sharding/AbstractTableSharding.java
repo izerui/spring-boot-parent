@@ -83,7 +83,7 @@ public abstract class AbstractTableSharding {
             tenantYearTable = this.tableName(sourceTable, tenantId, year);
         }
         String table = switchTable(dataSource, sourceTable, tenantYearTable, tenantTable);
-        return "`".concat(table).concat("`");
+        return table;
     }
 
     @SneakyThrows
