@@ -87,7 +87,7 @@ public class PlatformJdbcRepositoryImpl<T, ID> extends SimpleJdbcRepository<T, I
     @Override
     public void batchInsert(Collection<T> instances, String... generatedKeys) {
         SqlIdentifier identifier = ((RelationalPersistentEntity<T>) entity).getTableName();
-        DbContext.batchInsert(identifier.toSql(IdentifierProcessing.ANSI), instances, generatedKeys);
+        DbContext.batchInsert(identifier.getReference(), instances, generatedKeys);
     }
 
     @Override
