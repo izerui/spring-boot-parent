@@ -55,10 +55,6 @@ public class CustomSqlGenerator {
                 .getCriteria() //
                 .map(item -> this.applyCriteria(item, selectWhere, parameterSource, table)) //
                 .orElse(selectWhere);
-        if (query.isSorted()) {
-            List<OrderByField> sort = this.queryMapper.getMappedSort(table, query.getSort(), entity);
-            selectOrdered = selectWhere.orderBy(sort);
-        }
         Select select = selectOrdered.build();
         String sql = sqlRenderer.render(select);
         return sql;

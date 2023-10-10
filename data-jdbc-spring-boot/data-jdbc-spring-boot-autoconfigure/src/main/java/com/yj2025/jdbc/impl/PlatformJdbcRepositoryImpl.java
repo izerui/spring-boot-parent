@@ -187,6 +187,10 @@ public class PlatformJdbcRepositoryImpl<T, ID> extends SimpleJdbcRepository<T, I
     public <S> S aggregate(Collection<String> aggregateColumns, Class<S> mappingClass, Query query) {
         MapSqlParameterSource parameterSource = new MapSqlParameterSource();
         String sql = generator.getSelectWhereSql(aggregateColumns, query, parameterSource);
+        if (query.isSorted()) {
+            List<String> orderList = query.getSort().stream().map(order -> order.getProperty() + " " + order.getDirection().name()).collect(Collectors.toList());
+            sql += " order by " + StringUtils.join(orderList, ",") + " ";
+        }
         if (Map.class.isAssignableFrom(mappingClass)) {
             return (S) namedParameterJdbcTemplate.queryForObject(sql, parameterSource, new ColumnMapRowMapper());
         }
@@ -203,6 +207,10 @@ public class PlatformJdbcRepositoryImpl<T, ID> extends SimpleJdbcRepository<T, I
     public <S> List<S> groupAll(Collection<String> selectColumns, Collection<String> groupColumns, Class<S> mappingClass, Query query) {
         MapSqlParameterSource parameterSource = new MapSqlParameterSource();
         String sql = generator.getGroupSql(selectColumns, groupColumns, query, parameterSource);
+        if (query.isSorted()) {
+            List<String> orderList = query.getSort().stream().map(order -> order.getProperty() + " " + order.getDirection().name()).collect(Collectors.toList());
+            sql += " order by " + StringUtils.join(orderList, ",") + " ";
+        }
         if (Map.class.isAssignableFrom(mappingClass)) {
             return (List<S>) namedParameterJdbcTemplate.query(sql, parameterSource, new ColumnMapRowMapper());
         }
