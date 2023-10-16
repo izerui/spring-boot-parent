@@ -73,11 +73,6 @@ public class CloudFileProperties {
     private boolean enableDynamicBucket = false;
 
     /**
-     * 动态bucket的桶前缀
-     */
-    private String dynamicBucketPrefix = "file-p3-";
-
-    /**
      * 动态bucket的域名后缀, 注意必须以点开头,会自动拼接桶前缀组成自定义文件桶的域名 例如： .yj2025.com
      */
     private String dynamicBucketDomainSuffix = ".yj2025.com";
@@ -124,8 +119,8 @@ public class CloudFileProperties {
                 .orElseGet(() -> {
                     if (enableDynamicBucket) {
                         Bucket bkt = new Bucket();
-                        bkt.setBucketName(dynamicBucketPrefix.concat(bucket));
-                        bkt.setDomain(dynamicBucketPrefix.concat(bucket).concat(dynamicBucketDomainSuffix));
+                        bkt.setBucketName(bucket);
+                        bkt.setDomain(bucket.concat(dynamicBucketDomainSuffix));
                         bkt.setIsDefault(false);
                         // 动态桶默认只支持私有桶
                         bkt.setIsPublic(false);

@@ -19,12 +19,12 @@ public class CloudFileApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        String filePath = "/Users/serv/ecworking/yj2025-spring-boot-parent/cloud-file-spring-boot/cloud-file-spring-boot-sample/src/main/java/com/yj2025/cloud/file/CloudFileApplication.java";
+        String filePath = "/Users/serv/Downloads/WechatIMG37.png";
 //        String bucket = "sz-yunji-test";
-        String bucket = "demo001";
+        String bucket = "file-p3-demo001";
         String key = UUID.randomUUID().toString() + ".jpg";
         System.out.println(cloudFileManager.getBucket(false));
-//        cloudFileManager.upload(bucket, key, filePath);
+        cloudFileManager.upload(bucket, key, filePath);
 
         System.out.println(cloudFileManager.getPreviewUrl(bucket, key));
 
