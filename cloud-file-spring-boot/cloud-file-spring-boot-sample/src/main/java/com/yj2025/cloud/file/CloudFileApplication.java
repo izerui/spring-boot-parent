@@ -21,10 +21,10 @@ public class CloudFileApplication implements CommandLineRunner {
     public void run(String... args) throws Exception {
         String filePath = "/Users/serv/ecworking/yj2025-spring-boot-parent/cloud-file-spring-boot/cloud-file-spring-boot-sample/src/main/java/com/yj2025/cloud/file/CloudFileApplication.java";
 //        String bucket = "sz-yunji-test";
-        String bucket = "sz-yunji-test-private";
+        String bucket = "demo001";
         String key = UUID.randomUUID().toString() + ".jpg";
         System.out.println(cloudFileManager.getBucket(false));
-        cloudFileManager.upload(bucket, key, filePath);
+//        cloudFileManager.upload(bucket, key, filePath);
 
         System.out.println(cloudFileManager.getPreviewUrl(bucket, key));
 

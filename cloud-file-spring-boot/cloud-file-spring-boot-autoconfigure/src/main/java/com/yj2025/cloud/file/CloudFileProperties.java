@@ -68,6 +68,26 @@ public class CloudFileProperties {
     private long downloadExpiresSeconds = 300;
 
     /**
+     * 是否开启动态bucket， 开启后会根据不同的entCode，动态生成Bucket对象，而不再是抛出new BusinessException("文件的bucket为空,无法获取文件URL")异常
+     */
+    private boolean enableDynamicBucket = false;
+
+    /**
+     * 动态bucket的桶前缀
+     */
+    private String dynamicBucketPrefix = "file-p3-";
+
+    /**
+     * 动态bucket的域名后缀, 注意必须以点开头,会自动拼接桶前缀组成自定义文件桶的域名 例如： .yj2025.com
+     */
+    private String dynamicBucketDomainSuffix = ".yj2025.com";
+
+    /**
+     * 动态bucket的域名是否使用https
+     */
+    private boolean dynamicBucketUseHttps = false;
+
+    /**
      * 支持上传的桶
      */
     @NestedConfigurationProperty
@@ -99,7 +119,22 @@ public class CloudFileProperties {
      * @return
      */
     public Bucket getBucketByname(String bucket) {
-        return buckets.values().stream().filter(b -> b.getBucketName().equals(bucket)).findFirst().orElseThrow(() -> new BusinessException("文件的bucket为空,无法获取文件URL"));
+        return buckets.values().stream()
+                .filter(b -> b.getBucketName().equals(bucket)).findFirst()
+                .orElseGet(() -> {
+                    if (enableDynamicBucket) {
+                        Bucket bkt = new Bucket();
+                        bkt.setBucketName(dynamicBucketPrefix.concat(bucket));
+                        bkt.setDomain(dynamicBucketPrefix.concat(bucket).concat(dynamicBucketDomainSuffix));
+                        bkt.setIsDefault(false);
+                        // 动态桶默认只支持私有桶
+                        bkt.setIsPublic(false);
+                        bkt.setUseHttps(dynamicBucketUseHttps);
+                        return bkt;
+                    } else {
+                        throw new BusinessException("文件的bucket为空,无法获取文件URL");
+                    }
+                });
     }
 
     @Data
