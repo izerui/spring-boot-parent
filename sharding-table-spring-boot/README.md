@@ -34,7 +34,7 @@ public class TestUser {
 
 按租户+年度:
 @Data
-@Table("#{@sharding.getYearTable('test_user')}")
+@Table("#{@sharding.getTable('test_user')}")
 public class TestUser {
 ```
 
@@ -44,7 +44,7 @@ repository:
 @Query("select * from #{@sharding.getTable('test_user')} where code like CONCAT('%', :code,'%') ")
 List<TestUser> findList(@Param("entCode") String entCode, @Param("code") String code);
 按租户+年度:
-@Query("select * from #{@sharding.getYearTable('test_user')} where code like CONCAT('%', :code,'%') ")
+@Query("select * from #{@sharding.getTable('test_user')} where code like CONCAT('%', :code,'%') ")
 List<TestUser> findList(@Param("entCode") String entCode, @Param("code") String code);
 ```
 
