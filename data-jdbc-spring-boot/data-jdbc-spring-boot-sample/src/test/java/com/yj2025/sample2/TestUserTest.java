@@ -134,7 +134,7 @@ public class TestUserTest {
 
     @Test
     public void testBatchInsert() {
-        List<TestUser> users = IntStream.range(0, 18000).mapToObj(value -> {
+        List<TestUser> users = IntStream.range(0, 100).mapToObj(value -> {
             TestUser user = new TestUser();
             user.setCreateTime(new Date());
             user.setCode("code" + value);
@@ -147,6 +147,7 @@ public class TestUserTest {
         }).collect(Collectors.toList());
         Stopwatch watch = Stopwatch.createStarted();
         testUserService.batchInsert("ent001", users);
+        testUserService.batchInsert("ent002", users);
         System.out.println("batchInsert 耗时: " + watch.elapsed(TimeUnit.MILLISECONDS));
     }
 
@@ -155,6 +156,7 @@ public class TestUserTest {
     public void testQueryBoolean() {
         ArrayList<Long> ids = Lists.newArrayList(12574L, 12575L, 12576L, 12577L);
         Iterable<TestUser> users = testUserService.findByRecordIds("ent001", ids);
+        Iterable<TestUser> users2 = testUserService.findByRecordIds("ent002", ids);
         for (TestUser user : users) {
             System.out.println(String.format("flag: %s, flag_string: %s", user.getFlag(), user.getFlagString()));
         }
@@ -164,7 +166,7 @@ public class TestUserTest {
     public void testQuery() {
         Criteria criteria = Criteria.where("ent_code").is("ent001").and("age").greaterThan(10);
         Page<TestUser> users = testUserService.findByQuery("ent001", Query.query(criteria));
-        Page<TestUser> users2 = testUserService.findByQuery2("ent001", Query.query(criteria));
+        Page<TestUser> users2 = testUserService.findByQuery2("ent002", Query.query(criteria));
         System.out.println(users);
         System.out.println(users2);
     }

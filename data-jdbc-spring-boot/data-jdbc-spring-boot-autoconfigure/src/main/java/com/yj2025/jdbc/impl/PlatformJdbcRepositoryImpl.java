@@ -140,6 +140,18 @@ public class PlatformJdbcRepositoryImpl<T, ID> extends SimpleJdbcRepository<T, I
         return Lists.newArrayList(jdbcAggregateTemplate.findAll(query.sort(sort), entity.getType()));
     }
 
+    /**
+     * 1. findAll:145, PlatformJdbcRepositoryImpl (com.yj2025.jdbc.impl)
+     * 2. findAll:333, JdbcAggregateTemplate (org.springframework.data.jdbc.core)
+     * 3. getPage:63, PageableExecutionUtils (org.springframework.data.support)
+     * 4. lambda$findAll$5:333, JdbcAggregateTemplate (org.springframework.data.jdbc.core)
+     * 5. count:384, DefaultDataAccessStrategy (org.springframework.data.jdbc.core.convert)
+     * 6. sql:415, DefaultDataAccessStrategy (org.springframework.data.jdbc.core.convert)
+     * 7. getSqlGenerator:63, SqlGeneratorSource (org.springframework.data.jdbc.core.convert)
+     * @param query    查询条件，不能为空
+     * @param pageable 分页对象，不能为空
+     * @return
+     */
     @Override
     public Page<T> findAll(Query query, Pageable pageable) {
         return jdbcAggregateTemplate.findAll(query, entity.getType(), pageable);
