@@ -58,7 +58,7 @@ public class SequenceService {
      * @return
      */
     public boolean verifyNumber(String groupId, PeriodType.Period period, Integer number) {
-        return numberStorage.verifyVaildNumber(groupId, period, number);
+        return numberStorage.verifyValidNumber(groupId, period, number);
     }
 
 }

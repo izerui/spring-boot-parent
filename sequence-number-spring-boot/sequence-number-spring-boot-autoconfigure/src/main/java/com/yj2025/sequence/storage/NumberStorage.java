@@ -31,6 +31,6 @@ public interface NumberStorage {
      * @param number
      * @return
      */
-    boolean verifyVaildNumber(String groupId, PeriodType.Period period, Integer number);
+    boolean verifyValidNumber(String groupId, PeriodType.Period period, Integer number);
 
 }

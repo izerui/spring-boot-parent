@@ -50,7 +50,7 @@ public class RedisNumberStorage implements NumberStorage {
     }
 
     @Override
-    public boolean verifyVaildNumber(String groupId, PeriodType.Period period, Integer number) {
+    public boolean verifyValidNumber(String groupId, PeriodType.Period period, Integer number) {
         String redisKey = String.format(SEQUENCE_KEY_PATH, groupId, period.getPeriodFormatter());
         BoundZSetOperations<String, String> operations = redisTemplate.boundZSetOps(redisKey);
         Double score = operations.score(number.toString());
