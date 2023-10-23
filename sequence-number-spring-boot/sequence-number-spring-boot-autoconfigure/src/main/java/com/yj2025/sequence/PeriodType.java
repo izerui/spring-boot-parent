@@ -3,22 +3,42 @@ package com.yj2025.sequence;
 import org.joda.time.DateTime;
 
 public enum PeriodType {
-    DAY{
+    DAY {
         @Override
         public Period period(DateTime dateTime) {
-            return () -> dateTime.toString("yyyy-MM-dd");
+            return () -> dateTime.toString("yyyyMMdd");
         }
-    },MONTH{
+    }, MONTH {
         @Override
         public Period period(DateTime dateTime) {
-            return () -> dateTime.toString("yyyy-MM");
+            return () -> dateTime.toString("yyyyMM");
         }
-    },YEAR{
+    }, YEAR {
         @Override
         public Period period(DateTime dateTime) {
             return () -> dateTime.toString("yyyy");
         }
-    },FOREVER{
+    }, YEAR2 {
+        @Override
+        public Period period(DateTime dateTime) {
+            return () -> dateTime.toString("yy");
+        }
+    }, YEAR_MONTH2 {
+        @Override
+        public Period period(DateTime dateTime) {
+            return () -> dateTime.toString("yymm");
+        }
+    }, YEAR_WW2 {
+        @Override
+        public Period period(DateTime dateTime) {
+            return () -> dateTime.toString("yyww");
+        }
+    }, DAY2 {
+        @Override
+        public Period period(DateTime dateTime) {
+            return () -> dateTime.toString("yyMMdd");
+        }
+    }, FOREVER {
         @Override
         public Period period(DateTime dateTime) {
             return () -> "FOREVER";
@@ -28,7 +48,7 @@ public enum PeriodType {
     public abstract Period period(DateTime dateTime);
 
     public interface Period {
-        String getPeriodFormater();
+        String getPeriodFormatter();
     }
 
 }
