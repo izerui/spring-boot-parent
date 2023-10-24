@@ -24,7 +24,7 @@ public class SequenceService {
      * @param consumer 回调函数
      */
     public void consumerNumber(String groupId, PeriodType.Period period, Consumer<Integer> consumer) {
-        lock.execute(groupId + "_" + period.getPeriodFormater(), 60, () -> {
+        lock.execute(groupId + "_" + period.getPeriodFormatter(), 60, () -> {
             Integer number = null;
             try {
                 number = numberStorage.getNumber(groupId, period);
