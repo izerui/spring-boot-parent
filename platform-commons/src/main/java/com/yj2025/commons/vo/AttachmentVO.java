@@ -76,7 +76,7 @@ public class AttachmentVO implements Serializable {
      * @return
      */
     public String getUrl() {
-        return previewUrl;
+        return StringUtils.isNotBlank(url) ? url : this.previewUrl;
     }
 
     /**
