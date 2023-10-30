@@ -110,4 +110,13 @@ public class AttachmentVO implements Serializable {
     public String getDownloadUrl() {
         return StringUtils.isNotBlank(downloadUrl) ? downloadUrl : this.url;
     }
+
+    public Boolean getPrivateBucket() {
+        if (StringUtils.isNotBlank(getPreviewUrl())) {
+            return getPreviewUrl().startsWith("https://pfile.") //线上
+                    || getPreviewUrl().startsWith("https://pdfile.") //开发
+                    || getPreviewUrl().startsWith("https://ptfile.");//测试
+        }
+        return true;
+    }
 }
