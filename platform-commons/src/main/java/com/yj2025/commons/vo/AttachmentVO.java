@@ -2,6 +2,7 @@ package com.yj2025.commons.vo;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 
@@ -78,4 +79,35 @@ public class AttachmentVO implements Serializable {
         return previewUrl;
     }
 
+    /**
+     * 老的文件key对应现在的key
+     */
+    @Deprecated
+    private String fileId;
+    /**
+     * 老的tag，对应现在的eTag
+     */
+    @Deprecated
+    private String tag;
+    /**
+     * 原来的url，对应现在的previewUrl，downloadUrl
+     */
+    @Deprecated
+    private String url;
+
+    public String getKey() {
+        return StringUtils.isNotBlank(key) ? key : this.fileId;
+    }
+
+    public String geteTag() {
+        return StringUtils.isNotBlank(eTag) ? eTag : this.tag;
+    }
+
+    public String getPreviewUrl() {
+        return StringUtils.isNotBlank(previewUrl) ? previewUrl : this.url;
+    }
+
+    public String getDownloadUrl() {
+        return StringUtils.isNotBlank(downloadUrl) ? downloadUrl : this.url;
+    }
 }
