@@ -99,7 +99,7 @@ public class AttachmentVO implements Serializable {
         return StringUtils.isNotBlank(key) ? key : this.fileId;
     }
 
-    public String geteTag() {
+    public String getETag() {
         return StringUtils.isNotBlank(eTag) ? eTag : this.tag;
     }
 
