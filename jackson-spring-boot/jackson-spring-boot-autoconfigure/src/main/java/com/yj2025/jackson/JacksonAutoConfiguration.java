@@ -23,6 +23,7 @@ public class JacksonAutoConfiguration {
                 objectMapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
                 objectMapper.findAndRegisterModules();
                 objectMapper.registerModule(new ParameterNamesModule())
+                        .registerModule(new Jdk8Module())
                         .registerModule(new JavaTimeModule())
                         .registerModule(new GuavaModule());
             });
