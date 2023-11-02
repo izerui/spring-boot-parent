@@ -16,29 +16,19 @@ import org.springframework.data.domain.Sort;
 @Data
 public abstract class PageQueryRequestVO extends BaseQueryRequestVO {
 
-    /**
-     * 页码不能为空,起始页从0开始
-     */
+    @Schema(description = "页码不能为空,起始页从0开始", name = "pageIndex")
     private Integer pageIndex = 0;
 
-    /**
-     * 每页条目数不能为空 每页条目数最大不能超过2000条
-     */
+    @Schema(description = "每页条目数不能为空 每页条目数最大不能超过2000条", name = "pageSize")
     private Integer pageSize = 20;
 
-    /**
-     * 排序字段
-     */
+    @Schema(description = "排序字段", name = "orderBy")
     private String orderBy;
 
-    /**
-     * 排序方向
-     */
+    @Schema(description = "排序方向，ASC 升序，DESC 降序", name = "orderByDirection")
     private String orderByDirection;
 
-    /**
-     * 是否需要拼接id排序
-     */
+    @Schema(description = "排序使用时，是否包含id字段", name = "withId")
     private boolean withId = true;
 
     /**
