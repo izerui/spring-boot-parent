@@ -36,8 +36,8 @@ public class CustormJdbcMySqlDialect extends JdbcMySqlDialect {
     public Collection<Object> getConverters() {
         Collection<Object> converters = super.getConverters();
         converters.addAll(Arrays.asList(
-                new BooleanToStringConverter(),
-                new StringToBooleanConverter(),
+//                new BooleanToStringConverter(),
+//                new StringToBooleanConverter(),
                 new BooleanToIntegerConverter(),
                 new IntegerToBooleanConverter()
         ));
