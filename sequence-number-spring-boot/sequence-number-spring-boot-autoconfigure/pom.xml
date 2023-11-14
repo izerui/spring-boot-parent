@@ -27,6 +27,10 @@
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.yj2025</groupId>
             <artifactId>redis-spring-boot-starter</artifactId>
         </dependency>
