@@ -3,6 +3,7 @@ package com.yj2025.sequence;
 import com.yj2025.lock.Lock;
 import com.yj2025.sequence.storage.MysqlNumberStorage;
 import com.yj2025.sequence.storage.RedisNumberStorage;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -22,14 +23,16 @@ public class SequenceAutoConfiguration {
         return new MysqlNumberStorage(transactionManager, lock, jdbcTemplate);
     }
 
-//
-//    @Bean
-//    public SequenceService sequenceService(RedisNumberStorage numberStorage, Lock lock) {
-//        return new SequenceService(numberStorage, lock);
-//    }
-//
-//    @Bean
-//    public SequenceService sequenceService(MysqlNumberStorage numberStorage, Lock lock) {
-//        return new SequenceService(numberStorage, lock);
-//    }
+
+    @Bean
+    @ConditionalOnProperty(value = "sequence.storage.type", matchIfMissing = true, havingValue = "redis")
+    public SequenceService sequenceService(RedisNumberStorage numberStorage, Lock lock) {
+        return new SequenceService(numberStorage, lock);
+    }
+
+    @Bean
+    @ConditionalOnProperty(value = "sequence.storage.type", havingValue = "mysql")
+    public SequenceService sequenceService(MysqlNumberStorage numberStorage, Lock lock) {
+        return new SequenceService(numberStorage, lock);
+    }
 }

@@ -30,7 +30,7 @@ public class MysqlNumberStorage implements NumberStorage {
     }
 
     public List<Integer> getNumberList(String groupId, PeriodType.Period period, int count) {
-        Assert.notNull(groupId, "groupId can not be null");
+        Assert.notNull(groupId, "groupId不能为空");
         Assert.isTrue(count > 0, "序列号数量必须大于0");
         List<Integer> numberList = Lists.newArrayList();
         lock.execute("sequence_number" + groupId, 60, () -> {
