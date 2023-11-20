@@ -14,8 +14,10 @@ import org.springframework.util.CollectionUtils;
 
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class MysqlNumberStorage implements NumberStorage {
 
@@ -43,18 +45,13 @@ public class MysqlNumberStorage implements NumberStorage {
                 } else {
                     //截取当前可用的返回并修改状态
                     List<SequenceNoEntity> sequenceNoEntities = reversList.subList(0, Integer.min(count, reversList.size()));
-                    for (SequenceNoEntity sequenceNoEntity : sequenceNoEntities) {
-                        Integer seqNum = sequenceNoEntity.getSeqNum();
-                        numberList.add(seqNum);
-                        int updateCount = jdbcTemplate.execute(new StatementCallback<Integer>() {
-                            @Override
-                            public Integer doInStatement(Statement stmt) throws SQLException {
-                                String sql = (" delete from mysql_sequence_number where group_id = '" + groupId + "' and seq_num = " + seqNum);
-                                return stmt.executeUpdate(sql);
-                            }
-                        });
-                        Assert.isTrue(updateCount == 1, "使用回收的序列号失败！！！【13】");
-                    }
+                    String deleteSql = " delete from mysql_sequence_number where group_id = ? and seq_num = ?";
+                    List<Object[]> batchArgs = new ArrayList<>();
+                    sequenceNoEntities.stream().forEach(number -> {
+                        batchArgs.add(new Object[]{groupId, number.getSeqNum()});
+                        numberList.add(number.getSeqNum());
+                    });
+                    jdbcTemplate.batchUpdate(deleteSql, batchArgs);
 
                     //如果 要生成的数量小于等于当前回收可用的数量则不需要另外再创建新的
                     int moreSeqSize = count - reversList.size();
@@ -65,7 +62,7 @@ public class MysqlNumberStorage implements NumberStorage {
                 return true;
             });
         });
-        return Lists.newArrayList();
+        return numberList;
     }
 
     private void generalFormDb(String groupId, int count, List<Integer> numberList) {
@@ -152,6 +149,7 @@ public class MysqlNumberStorage implements NumberStorage {
 
     @Override
     public void recycleNumber(String groupId, PeriodType.Period period, final Integer number) {
+        //找到当前序列号的最大值，如果回收的序列号大于最大值，就提示不存在
         Integer seqNum = jdbcTemplate.queryForObject("select seq_num from mysql_sequence_number where group_id='" + groupId + "' and reverse = 0", Integer.class);
         if (number > seqNum) {
             throw new RuntimeException("回收的序列号【" + number + "】不存在！！！");
@@ -168,22 +166,21 @@ public class MysqlNumberStorage implements NumberStorage {
     }
 
     @Override
-    public void recycleNumberList(String groupId, PeriodType.Period period, final List<Integer> numbers) {
-        numbers.forEach(number -> {
-            Integer seqNum = jdbcTemplate.queryForObject("select seq_num from mysql_sequence_number where group_id='" + groupId + "' and reverse = 0", Integer.class);
-            if (number > seqNum) {
-                throw new RuntimeException("回收的序列号【" + number + "】不存在！！！");
-            }
+    public void recycleNumberList(String groupId, PeriodType.Period period, List<Integer> numbers) {
+        numbers = numbers.stream().distinct().collect(Collectors.toList());
+        Assert.notEmpty(numbers, "回收的序列号列表不能为空！！！");
+        Integer maxNum = numbers.stream().max(Integer::compareTo).get();
+        Integer seqNum = jdbcTemplate.queryForObject("select seq_num from mysql_sequence_number where group_id='" + groupId + "' and reverse = 0", Integer.class);
 
-            int updateCount = jdbcTemplate.execute(new StatementCallback<Integer>() {
-                @Override
-                public Integer doInStatement(Statement stmt) throws SQLException {
-                    String sql = " insert into mysql_sequence_number(seq_num,group_id,reverse,create_time,update_time) value (" + number + ",'" + groupId + "',1,now(),now())";
-                    return stmt.executeUpdate(sql);
-                }
-            });
-            Assert.isTrue(updateCount == 1, "回收序列号失败！！！");
-        });
+        if (maxNum > seqNum) {
+            throw new RuntimeException("序列号回收失败，当前的序列号的最大值为“" + seqNum + "”，待回收序列号中大于“" + seqNum + "”的均为错误数据！！！");
+        }
+
+        String insertSql = " insert into mysql_sequence_number(seq_num,group_id,reverse,create_time,update_time) value (?,?,1,now(),now())";
+        List<Object[]> batchArgs = new ArrayList<>();
+        numbers.stream().forEach(number -> batchArgs.add(new Object[]{number, groupId}));
+        int[] ints = jdbcTemplate.batchUpdate(insertSql, batchArgs);
+//        Assert.isTrue(ints.length == 1, "回收序列号失败！！！【4】");
     }
 
     @Override

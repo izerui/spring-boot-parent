@@ -24,15 +24,15 @@ public class SequenceAutoConfiguration {
     }
 
 
-    @Bean
-    @ConditionalOnProperty(value = "sequence.storage.type", matchIfMissing = true, havingValue = "redis")
-    public SequenceService sequenceService(RedisNumberStorage numberStorage, Lock lock) {
-        return new SequenceService(numberStorage, lock);
-    }
-
-    @Bean
-    @ConditionalOnProperty(value = "sequence.storage.type", havingValue = "mysql")
-    public SequenceService sequenceService(MysqlNumberStorage numberStorage, Lock lock) {
-        return new SequenceService(numberStorage, lock);
-    }
+//    @Bean
+//    @ConditionalOnProperty(value = "sequence.storage.type", matchIfMissing = true, havingValue = "redis")
+//    public SequenceService sequenceService(RedisNumberStorage numberStorage, Lock lock) {
+//        return new SequenceService(numberStorage, lock);
+//    }
+//
+//    @Bean
+//    @ConditionalOnProperty(value = "sequence.storage.type", havingValue = "mysql")
+//    public SequenceService sequenceService(MysqlNumberStorage numberStorage, Lock lock) {
+//        return new SequenceService(numberStorage, lock);
+//    }
 }
