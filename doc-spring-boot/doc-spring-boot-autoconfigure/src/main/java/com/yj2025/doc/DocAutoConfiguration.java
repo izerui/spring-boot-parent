@@ -22,7 +22,7 @@ public class DocAutoConfiguration implements WebMvcConfigurer {
     @Value("${spring.application.name:#{null}}")
     private String applicationName;
 
-    @Value("${doc.label.groups:'com.yj2025,com.ecworking'}")
+    @Value("${doc.label.groups:com.yj2025,com.ecworking}")
     private String labelGroups;
 
     @Bean
