@@ -1,7 +1,6 @@
 package com.yj2025.doc;
 
 import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Table;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
@@ -12,8 +11,6 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.core.io.support.ResourcePatternResolver;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Properties;
 
 /**
@@ -21,11 +18,6 @@ import java.util.Properties;
  */
 @Slf4j
 public class JarDependenceLoader implements InitializingBean {
-
-    private final static List<String> LABEL_GROUP_IDS = Lists.newArrayList(
-            "com.yj2025",
-            "com.ecworking"
-    );
 
     private ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
 
