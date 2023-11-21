@@ -37,7 +37,7 @@ public class JarDependenceLoader implements InitializingBean {
 
     public JarDependenceLoader(String labelGroups) {
         try {
-            List<String> labelGroupIds = Arrays.asList(labelGroups.split(","));
+            String[] labelGroupIds = labelGroups.split(",");
             Resource[] resources = resourcePatternResolver.getResources("classpath*:**/pom.properties");
             for (Resource resource : resources) {
                 Properties properties = new Properties();
@@ -45,8 +45,10 @@ public class JarDependenceLoader implements InitializingBean {
                 String groupId = properties.getProperty("groupId");
                 String artifactId = properties.getProperty("artifactId");
                 String version = properties.getProperty("version");
-                if (labelGroupIds.contains(groupId)) {
-                    dependenceies.put(groupId, artifactId, version);
+                for (String labelGroupId : labelGroupIds) {
+                    if (groupId.startsWith(labelGroupId)) {
+                        dependenceies.put(groupId, artifactId, version);
+                    }
                 }
             }
         } catch (Exception ex) {
