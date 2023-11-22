@@ -128,7 +128,10 @@ public abstract class AbstractTableSharding {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
         List<String> tables = jdbcTemplate.queryForList("/* 缓存当前" + dataSource + "所有表,用来分表路由 */ show tables", String.class);
         Collections.sort(tables);
+        log.info("检测到数据库表:");
+        log.info("------------------------------------------------");
         tables.forEach(s -> log.info("{}", s));
+        log.info("------------------------------------------------");
         return tables;
     }
 
