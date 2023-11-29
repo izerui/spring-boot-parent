@@ -95,6 +95,7 @@ public abstract class AbstractTableSharding {
         // 如果未缓存当前库的所有表，则获取并放入缓存
         if (!cacheDataSourceTablesMap.containsKey(dataSource)) {
             cacheDataSourceTablesMap.put(dataSource, getTables(dataSource));
+            log.info("缓存的数据源个数: {}", cacheDataSourceTablesMap.size());
         }
         List<String> cacheTables = cacheDataSourceTablesMap.get(dataSource);
 
