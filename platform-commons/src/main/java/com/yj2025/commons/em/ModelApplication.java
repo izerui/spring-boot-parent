@@ -7,6 +7,7 @@ public enum ModelApplication {
     PROOFING("开发打样"),
     THIRD_API("公共接口"),
     TY_MES("天音MES"),
+    SN("序列号"),
     TY_SUPPLIER("天音供应商"),
     ;
     private String remark;
