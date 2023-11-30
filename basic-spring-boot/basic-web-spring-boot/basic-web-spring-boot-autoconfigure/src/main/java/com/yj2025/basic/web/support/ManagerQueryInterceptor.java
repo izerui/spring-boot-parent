@@ -36,7 +36,7 @@ public class ManagerQueryInterceptor implements QueryInterceptor {
     public <T extends Resultset> T preProcess(Supplier<String> sql, Query interceptedQuery) {
         String sqlText = sql.get();
         sqlText = sqlText.toLowerCase();
-        log.logInfo(sqlText);
+//        log.logDebug(sqlText);
         if (sqlText.startsWith("update")
                 || sqlText.startsWith("insert") || sqlText.startsWith("delete")) {
             if (isShadow()) {

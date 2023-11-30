@@ -93,7 +93,7 @@ public class ImportWebMsg {
     }
 
     public void send(WebSocketContext context) {
-        context.sendMessage(build());
+        context.sendMessageAsync(build());
     }
 
     public static class SuccessWebMsg extends ImportWebMsg {

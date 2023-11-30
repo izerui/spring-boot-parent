@@ -22,6 +22,14 @@ public class DocAutoConfiguration implements WebMvcConfigurer {
     @Value("${spring.application.name:#{null}}")
     private String applicationName;
 
+    @Value("${doc.label.groups:com.yj2025,com.ecworking}")
+    private String labelGroups;
+
+    @Bean
+    public JarDependenceLoader jarDependenceLoader() {
+        return new JarDependenceLoader(labelGroups);
+    }
+
     @Bean
     public GroupedOpenApi groupedOpenApi() {
         String[] paths = {"/**"};

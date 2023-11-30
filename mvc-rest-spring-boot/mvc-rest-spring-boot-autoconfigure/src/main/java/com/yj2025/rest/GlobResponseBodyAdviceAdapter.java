@@ -1,6 +1,7 @@
 package com.yj2025.rest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -97,6 +98,10 @@ public class GlobResponseBodyAdviceAdapter implements ResponseBodyAdvice<Object>
                 throwable = throwable.getCause();
             } else if (throwable.getClass().getName().equals("org.springframework.web.util.NestedServletException") && throwable.getCause() != null) {
                 throwable = throwable.getCause();
+            }
+            Throwable rootCause = ExceptionUtils.getRootCause(throwable);
+            if (rootCause != null) {
+                throwable = rootCause;
             }
 
             String errMsg = throwable.getMessage();
