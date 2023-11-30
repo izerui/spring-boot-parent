@@ -5,7 +5,7 @@
     <parent>
         <artifactId>yj2025-spring-boot-parent</artifactId>
         <groupId>com.yj2025</groupId>
-        <version>3.1.1-SNAPSHOT</version>
+        <version>3.1.6-SNAPSHOT</version>
     </parent>
     <packaging>pom</packaging>
     <modelVersion>4.0.0</modelVersion>
