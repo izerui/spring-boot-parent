@@ -2,34 +2,37 @@ package com.yj2025.basic.dao.value.object;
 
 import lombok.Data;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Embeddable;
 import java.util.Date;
 
 @Data
-@Embeddable
-@Deprecated(since = "3.1", forRemoval = true)
 public class SubmitValueObject {
-    @Column(name = "submitter", columnDefinition = "VARCHAR(64) COMMENT '提交人CODE'")
+    /**
+     * 提交人CODE
+     */
     private String submitter;
-    @Column(name = "submit_name", columnDefinition = "VARCHAR(64) COMMENT '提交人名称'")
+    /**
+     * 提交人名称
+     */
     private String submitName;
-    @Column(name = "submit_time", columnDefinition = "DATETIME(3) COMMENT '提交时间'")
+    /**
+     * 提交时间
+     */
     protected Date submitTime;
 
-    public SubmitValueObject(String submitter, String submitName, Date submitTime) {
-        this.submitter = submitter;
-        this.submitName = submitName;
-        this.submitTime = submitTime;
+    public static SubmitValueObject of(String submitter, String submitName, Date submitTime) {
+        SubmitValueObject valueObject = new SubmitValueObject();
+        valueObject.setSubmitter(submitter);
+        valueObject.setSubmitName(submitName);
+        valueObject.setSubmitTime(submitTime);
+        return valueObject;
     }
 
 
-    public SubmitValueObject(String submitter, String submitName) {
-        this.submitter = submitter;
-        this.submitName = submitName;
-        this.submitTime = new Date();
-    }
-
-    public SubmitValueObject() {
+    public static SubmitValueObject of(String submitter, String submitName) {
+        SubmitValueObject valueObject = new SubmitValueObject();
+        valueObject.setSubmitter(submitter);
+        valueObject.setSubmitName(submitName);
+        valueObject.setSubmitTime(new Date());
+        return valueObject;
     }
 }
