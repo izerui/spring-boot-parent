@@ -6,7 +6,6 @@ import lombok.Data;
 
 @Data
 @Schema(description = "客户料号信息")
-@Deprecated(since = "3.1", forRemoval = true)
 public class InventoryCustomerVO {
     @Schema(description = "客户货品编码")
     private String customerInventoryCode;

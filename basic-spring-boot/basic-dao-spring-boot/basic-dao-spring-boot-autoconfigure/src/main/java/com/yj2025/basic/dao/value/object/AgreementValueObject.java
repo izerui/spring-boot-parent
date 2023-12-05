@@ -6,6 +6,8 @@ import org.apache.commons.lang3.StringUtils;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
+import java.math.BigDecimal;
+
 @Data
 @Embeddable
 @Deprecated(since = "3.1", forRemoval = true)
@@ -16,12 +18,12 @@ public class AgreementValueObject {
     private String agreementName;
     @Column(columnDefinition = "VARCHAR(64) COMMENT '协议类型（CASH:现结-款到发货,CASH_ON_DELIVERY:现结-货到付款,MONTH:月结）'")
     private String agreementType;
-    @Column(columnDefinition = "VARCHAR(64) COMMENT '预收百分比'")
-    private Integer prepareRecPercentage;
-    @Column(columnDefinition = "VARCHAR(64) COMMENT '发货前百分比'")
-    private Integer deliverAfterPercentage;
-    @Column(columnDefinition = "VARCHAR(64) COMMENT '发货后百分比'")
-    private Integer deliverBeforePercentage;
+    @Column(columnDefinition = "VARCHAR(64) COMMENT '预收百分比(支持两位小数点)'")
+    private BigDecimal prepareRecPercentage;
+    @Column(columnDefinition = "VARCHAR(64) COMMENT '发货前百分比(支持两位小数点)'")
+    private BigDecimal deliverAfterPercentage;
+    @Column(columnDefinition = "VARCHAR(64) COMMENT '发货后百分比(支持两位小数点)'")
+    private BigDecimal deliverBeforePercentage;
     @Column(columnDefinition = "VARCHAR(64) COMMENT '发货后多少天收付款'")
     private Integer deviationDay;
 

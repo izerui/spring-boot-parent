@@ -8,7 +8,6 @@ import jakarta.persistence.Embeddable;
 
 @Data
 @Schema(description = "供应商料号信息")
-@Deprecated(since = "3.1", forRemoval = true)
 public class InventorySupplierVO {
     @Schema(description = "供应商货品编码")
     private String supplierInventoryCode;

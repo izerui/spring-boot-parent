@@ -8,7 +8,6 @@ import jakarta.persistence.Embeddable;
 
 @Data
 @Schema(description = "客户信息")
-@Deprecated(since = "3.1", forRemoval = true)
 public class CustomerVO {
     @Schema(description = "客户CODE")
     private String customerCode;

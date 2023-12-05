@@ -1,6 +1,7 @@
 package com.yj2025.basic.web.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.yj2025.basic.dao.value.object.AuditValueObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -8,7 +9,6 @@ import java.util.Date;
 
 @Data
 @Schema(description = "审核信息")
-@Deprecated(since = "3.1", forRemoval = true)
 public class AuditVO {
     @Schema(description = "审核/驳回说明")
     private String auditRemark;
@@ -30,22 +30,38 @@ public class AuditVO {
     public AuditVO() {
     }
 
-    public AuditVO(String processInstanceId) {
-        this.processInstanceId = processInstanceId;
+    public static AuditVO of(String processInstanceId) {
+        AuditVO vo = new AuditVO();
+        vo.setProcessInstanceId(processInstanceId);
+        return vo;
     }
 
-    public AuditVO(String auditRemark, String auditor, String auditName) {
-        this.auditRemark = auditRemark;
-        this.auditor = auditor;
-        this.auditName = auditName;
-        this.auditTime = new Date();
+    public static AuditVO of(String auditRemark, String auditor, String auditName) {
+        AuditVO vo = new AuditVO();
+        vo.setAuditRemark(auditRemark);
+        vo.setAuditor(auditor);
+        vo.setAuditName(auditName);
+        vo.setAuditTime(new Date());
+        return vo;
     }
 
-    public AuditVO(String auditRemark, String auditor, String auditName, String processInstanceId) {
-        this.auditRemark = auditRemark;
-        this.auditor = auditor;
-        this.auditName = auditName;
-        this.auditTime = new Date();
-        this.processInstanceId = processInstanceId;
+    public static AuditVO of(String auditRemark, String auditor, String auditName, String processInstanceId) {
+        AuditVO vo = new AuditVO();
+        vo.setAuditRemark(auditRemark);
+        vo.setAuditor(auditor);
+        vo.setAuditName(auditName);
+        vo.setAuditTime(new Date());
+        vo.setProcessInstanceId(processInstanceId);
+        return vo;
+    }
+
+    public static AuditVO of(AuditValueObject valueObject) {
+        AuditVO vo = new AuditVO();
+        vo.setAuditRemark(valueObject.getAuditRemark());
+        vo.setAuditor(valueObject.getAuditor());
+        vo.setAuditName(valueObject.getAuditName());
+        vo.setAuditTime(valueObject.getAuditTime());
+        vo.setProcessInstanceId(valueObject.getProcessInstanceId());
+        return vo;
     }
 }

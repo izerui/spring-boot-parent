@@ -5,9 +5,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
+import java.math.BigDecimal;
+
 @Data
 @Schema(description = "协议信息")
-@Deprecated(since = "3.1", forRemoval = true)
 public class AgreementVO {
     @Schema(description = "协议CODE")
     private String agreementCode;
@@ -15,12 +16,12 @@ public class AgreementVO {
     private String agreementName;
     @Schema(description = "协议类型（CASH:现结-款到发货,CASH_ON_DELIVERY:现结-货到付款,MONTH:月结）")
     private String agreementType;
-    @Schema(description = "预收百分比")
-    private Integer prepareRecPercentage;
-    @Schema(description = "发货前百分比")
-    private Integer deliverBeforePercentage;
-    @Schema(description = "发货后百分比")
-    private Integer deliverAfterPercentage;
+    @Schema(description = "预收百分比(支持两位小数点)")
+    private BigDecimal prepareRecPercentage;
+    @Schema(description = "发货前百分比(支持两位小数点)")
+    private BigDecimal deliverBeforePercentage;
+    @Schema(description = "发货后百分比(支持两位小数点)")
+    private BigDecimal deliverAfterPercentage;
     @Schema(description = "发货后多少天收付款")
     private Integer deviationDay;
 
@@ -40,17 +41,17 @@ public class AgreementVO {
 
     @JsonIgnore
     public boolean isCash() {
-        return StringUtils.isNotBlank(this.agreementType) && "CASH".equals(this.agreementType) ? true : false;
+        return StringUtils.isNotBlank(this.agreementType) && "CASH".equals(this.agreementType);
     }
 
     @JsonIgnore
     public boolean isCashOnDelivery() {
-        return StringUtils.isNotBlank(this.agreementType) && "CASH_ON_DELIVERY".equals(this.agreementType) ? true : false;
+        return StringUtils.isNotBlank(this.agreementType) && "CASH_ON_DELIVERY".equals(this.agreementType);
     }
 
     @JsonIgnore
     public boolean isMonth() {
-        return StringUtils.isNotBlank(this.agreementType) && "MONTH".equals(this.agreementType) ? true : false;
+        return StringUtils.isNotBlank(this.agreementType) && "MONTH".equals(this.agreementType);
     }
 
     public String getRecAgreementFullName() {

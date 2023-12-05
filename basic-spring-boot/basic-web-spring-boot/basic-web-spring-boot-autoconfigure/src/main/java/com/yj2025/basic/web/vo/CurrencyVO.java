@@ -5,7 +5,6 @@ import lombok.Data;
 
 @Data
 @Schema(description = "币种信息")
-@Deprecated(since = "3.1", forRemoval = true)
 public class CurrencyVO {
     @Schema(description = "币种编码")
     private String currencyCode;

@@ -8,7 +8,6 @@ import java.math.BigDecimal;
 
 @Data
 @Schema(description = "税率信息")
-@Deprecated(since = "3.1", forRemoval = true)
 public class TaxVO {
     @Schema(description = "是否含税")
     private Boolean taxIncluded;
