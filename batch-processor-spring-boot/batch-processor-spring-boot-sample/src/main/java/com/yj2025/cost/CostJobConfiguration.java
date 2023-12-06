@@ -3,15 +3,15 @@ package com.yj2025.cost;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.text.StringSubstitutor;
 import org.springframework.batch.core.*;
-import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.JobScope;
-import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
+import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.listener.ChunkListenerSupport;
+import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.scope.context.ChunkContext;
+import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.core.step.tasklet.Tasklet;
-import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
@@ -22,6 +22,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
 import java.util.HashMap;
@@ -32,9 +33,9 @@ import java.util.Map;
 public class CostJobConfiguration {
 
     @Autowired
-    private JobBuilderFactory jobs;
+    private JobRepository jobRepository;
     @Autowired
-    private StepBuilderFactory steps;
+    private PlatformTransactionManager transactionManager;
     @Autowired
     private DataSource dataSource;
     @Autowired
@@ -43,7 +44,7 @@ public class CostJobConfiguration {
 
     @Bean("costJob")
     public Job costJob() {
-        return jobs.get("costJob")
+        return new JobBuilder("costJob", jobRepository)
                 .incrementer(new RunIdIncrementer())
                 .start(step0(null))
                 .next(step1(null))
@@ -55,12 +56,13 @@ public class CostJobConfiguration {
     @Bean
     @JobScope
     public Step step0(@Value("#{jobExecution}") JobExecution jobExecution) {
-        return steps.get("从生产获取自制件的当月登数数据")
+        return new StepBuilder("从生产获取自制件的当月登数数据", jobRepository)
                 .listener(step0ExeListener(null))
                 .<Map<String, Object>, Map<String, Object>>chunk(10000)
                 .reader(step0Reader(null))
                 .writer(step0Writer(null))
                 .listener(printChunkListener())
+                .transactionManager(transactionManager)
                 .build();
     }
 
@@ -152,12 +154,13 @@ public class CostJobConfiguration {
     @Bean
     @JobScope
     public Step step1(@Value("#{jobExecution}") JobExecution jobExecution) {
-        return steps.get("获取当月使用的自制件物料的量")
+        return new StepBuilder("获取当月使用的自制件物料的量", jobRepository)
                 .listener(step1ExeListener(null))
                 .<Map<String, Object>, Map<String, Object>>chunk(10000)
                 .reader(step1Reader(null))
                 .writer(step1Writer(null))
                 .listener(printChunkListener())
+                .transactionManager(transactionManager)
                 .build();
     }
 
@@ -235,8 +238,9 @@ public class CostJobConfiguration {
     @Bean
     @JobScope
     public Step step2(@Value("#{jobExecution}") JobExecution jobExecution) {
-        return steps.get("计算自制件的平均单价")
+        return new StepBuilder("计算自制件的平均单价", jobRepository)
                 .tasklet(homeMadeCalculationTasklet(null, null))
+                .transactionManager(transactionManager)
                 .build();
     }
 

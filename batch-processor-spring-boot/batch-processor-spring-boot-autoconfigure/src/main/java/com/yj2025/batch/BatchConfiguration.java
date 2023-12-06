@@ -1,37 +1,42 @@
 package com.yj2025.batch;
 
 import org.springframework.batch.core.configuration.BatchConfigurationException;
-import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.configuration.support.DefaultBatchConfiguration;
-import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.launch.JobLauncher;
-import org.springframework.batch.core.launch.support.SimpleJobLauncher;
-import org.springframework.batch.core.launch.support.SimpleJobOperator;
+import org.springframework.batch.core.launch.JobOperator;
 import org.springframework.batch.core.repository.JobRepository;
-import org.springframework.batch.core.repository.support.JobRepositoryFactoryBean;
+import org.springframework.boot.autoconfigure.batch.BatchDataSourceScriptDatabaseInitializer;
+import org.springframework.boot.autoconfigure.batch.BatchProperties;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.sql.init.DatabaseInitializationMode;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.task.SimpleAsyncTaskExecutor;
-import org.springframework.core.task.TaskExecutor;
+import org.springframework.jdbc.support.JdbcTransactionManager;
+import org.springframework.jdbc.support.MetaDataAccessException;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
 
+/**
+ * see: line:74 in {@link org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration}
+ */
 @Configuration
 public class BatchConfiguration extends DefaultBatchConfiguration {
 
-    /**
-     * JobRepository定义：设置数据库，注册Job容器
-     */
+    @ConditionalOnMissingBean
+    public PlatformTransactionManager transactionManager(DataSource dataSource) {
+        return new JdbcTransactionManager(dataSource);
+    }
+
+    @Override
+    protected String getDatabaseType() throws MetaDataAccessException {
+        return "mysql";
+    }
+
     @Bean
-    public JobRepositoryFactoryBean jobRepositoryFactoryBean(DataSource dataSource, PlatformTransactionManager transactionManager) throws Exception {
-        JobRepositoryFactoryBean jobRepositoryFactoryBean = new JobRepositoryFactoryBean();
-        jobRepositoryFactoryBean.setDatabaseType("mysql");
-        jobRepositoryFactoryBean.setTablePrefix("SB_");
-        jobRepositoryFactoryBean.setTransactionManager(transactionManager);
-        jobRepositoryFactoryBean.setDataSource(dataSource);
-        jobRepositoryFactoryBean.afterPropertiesSet();
-        return jobRepositoryFactoryBean;
+    @Override
+    public JobRepository jobRepository() throws BatchConfigurationException {
+        return super.jobRepository();
     }
 
     /**
@@ -44,16 +49,18 @@ public class BatchConfiguration extends DefaultBatchConfiguration {
     }
 
     @Bean
-    public SimpleJobOperator jobOperator(JobExplorer jobExplorer,
-                                         JobRepository jobRepository,
-                                         JobLauncher jobLauncher,
-                                         JobRegistry jobRegistry) {
-        SimpleJobOperator jobOperator = new SimpleJobOperator();
-        jobOperator.setJobExplorer(jobExplorer);
-        jobOperator.setJobRepository(jobRepository);
-        jobOperator.setJobRegistry(jobRegistry);
-        jobOperator.setJobLauncher(jobLauncher);
-        return jobOperator;
+    @Override
+    public JobOperator jobOperator() throws BatchConfigurationException {
+        return super.jobOperator();
+    }
+
+    @Bean
+    public BatchDataSourceScriptDatabaseInitializer batchDataSourceScriptDatabaseInitializer(DataSource dataSource) throws MetaDataAccessException {
+        BatchProperties.Jdbc jdbc = new BatchProperties.Jdbc();
+        jdbc.setPlatform(getDatabaseType());
+        jdbc.setTablePrefix(getTablePrefix());
+        jdbc.setInitializeSchema(DatabaseInitializationMode.ALWAYS);
+        return new BatchDataSourceScriptDatabaseInitializer(dataSource, jdbc);
     }
 
 }

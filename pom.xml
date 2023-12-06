@@ -36,6 +36,7 @@
         <module>dynamic-datasource-spring-boot</module>
         <module>tenant-spring-boot</module>
         <module>kafka-spring-boot</module>
+        <module>batch-processor-spring-boot</module>
     </modules>
     <!-- spring boot upgrade -->
     <!-- 2.3->2.4: https://thepracticaldeveloper.com/book-update-2.4.0/ -->
@@ -530,11 +531,11 @@
                 <version>${base-starter.version}</version>
             </dependency>
             <!-- batch -->
-            <!--            <dependency>-->
-            <!--                <groupId>com.yj2025</groupId>-->
-            <!--                <artifactId>batch-processor-spring-boot-starter</artifactId>-->
-            <!--                <version>${base-starter.version}</version>-->
-            <!--            </dependency>-->
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>batch-processor-spring-boot-starter</artifactId>
+                <version>${base-starter.version}</version>
+            </dependency>
             <!-- table creator -->
             <!--            <dependency>-->
             <!--                <groupId>com.yj2025</groupId>-->
