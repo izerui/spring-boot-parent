@@ -1,5 +1,6 @@
 package com.yj2025.basic.dao.entity.jdbc;
 
+import com.yj2025.basic.dao.value.object.AgreementValueObject;
 import lombok.Data;
 import org.springframework.data.relational.core.mapping.Column;
 
@@ -26,12 +27,16 @@ public abstract class BasicJdbcEntity extends BaseJdbcEntity {
      */
     @Column("creator")
     protected String creator;
+    @Column("create_name")
+    protected String createName;
 
     /**
      * 更新人
      */
     @Column("updater")
     protected String updater;
+    @Column("update_name")
+    protected String updateName;
 
     /**
      * 删除人
@@ -46,6 +51,17 @@ public abstract class BasicJdbcEntity extends BaseJdbcEntity {
      */
     public void updateBy(String updater) {
         this.updater = updater;
+        this.updateTime = new Date();
+    }
+
+    /**
+     * 修改更新人、更新时间
+     *
+     * @param updater
+     */
+    public void updateBy(String updater, String updateName) {
+        this.updater = updater;
+        this.updateName = updateName;
         this.updateTime = new Date();
     }
 

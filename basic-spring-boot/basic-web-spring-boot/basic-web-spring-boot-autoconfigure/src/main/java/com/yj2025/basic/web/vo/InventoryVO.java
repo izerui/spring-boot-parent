@@ -7,7 +7,6 @@ import org.apache.commons.lang3.StringUtils;
 
 @Data
 @Schema(description = "货品信息")
-@Deprecated(since = "3.1", forRemoval = true)
 public class InventoryVO {
     @Schema(description = "货品ID")
     private String inventoryId;

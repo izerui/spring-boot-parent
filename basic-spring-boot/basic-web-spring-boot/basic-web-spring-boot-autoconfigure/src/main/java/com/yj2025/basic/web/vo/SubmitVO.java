@@ -7,7 +7,6 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
-@Deprecated(since = "3.1", forRemoval = true)
 public class SubmitVO {
     @Schema(description = "提交人CODE")
     private String submitter;
