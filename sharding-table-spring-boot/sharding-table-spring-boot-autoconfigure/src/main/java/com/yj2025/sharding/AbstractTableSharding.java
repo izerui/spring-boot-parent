@@ -63,6 +63,18 @@ public abstract class AbstractTableSharding {
         return this.getTable(applicationContext.getBean(DataSource.class), sourceTable, tenantId, year);
     }
 
+    /**
+     * 获取指定数据源、指定租户id、指定年度的表名
+     *
+     * @param dataSource
+     * @param sourceTable
+     * @param tenantId
+     * @return
+     */
+    public final String getTable(DataSource dataSource, String sourceTable, String tenantId) {
+        return this.getTable(dataSource, sourceTable, tenantId, null);
+    }
+
 
     /**
      * 获取指定数据源、指定租户id、指定年度的表名
