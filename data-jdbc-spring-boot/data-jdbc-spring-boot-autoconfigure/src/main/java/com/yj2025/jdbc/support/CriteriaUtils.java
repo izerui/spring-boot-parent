@@ -70,6 +70,9 @@ public final class CriteriaUtils {
         return CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, value);
     }
 
+    /**
+     * 驼峰转小写下划线
+     */
     public static Collection<String> camelToUnderscore(Collection<String> values) {
         Assert.notEmpty(values, "驼峰转下划线字符串集合不能为空");
         return values.stream().map(CriteriaUtils::camelToUnderscore).collect(Collectors.toList());
