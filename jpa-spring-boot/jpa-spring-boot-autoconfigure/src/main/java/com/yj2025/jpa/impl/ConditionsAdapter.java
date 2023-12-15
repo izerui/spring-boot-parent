@@ -22,7 +22,7 @@ public class ConditionsAdapter {
      * 驼峰转小写下划线
      */
     public final static Function<String, String> camelToUnderscore = fieldName -> {
-        Assert.notNull(s, "字段不能为空");
+        Assert.notNull(fieldName, "字段不能为空");
         return CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, fieldName);
     };
 
