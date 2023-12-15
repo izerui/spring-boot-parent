@@ -1,9 +1,11 @@
 package com.yj2025.jpa.impl;
 
+import com.google.common.base.CaseFormat;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.relational.core.query.Criteria;
 import org.springframework.data.relational.core.query.Query;
 import org.springframework.lang.Nullable;
+import org.springframework.util.Assert;
 
 import java.util.function.Function;
 
@@ -15,6 +17,14 @@ import java.util.function.Function;
 public class ConditionsAdapter {
 
     private final Conditions conditions;
+
+    /**
+     * 驼峰转小写下划线
+     */
+    public final static Function<String, String> camelToUnderscore = fieldName -> {
+        Assert.notNull(s, "字段不能为空");
+        return CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, fieldName);
+    };
 
     public ConditionsAdapter(Conditions conditions) {
         this.conditions = conditions;
