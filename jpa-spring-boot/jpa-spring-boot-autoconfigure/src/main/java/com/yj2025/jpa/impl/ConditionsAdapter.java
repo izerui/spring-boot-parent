@@ -54,19 +54,7 @@ public class ConditionsAdapter {
                 }
                 // 如果是just模式，则进行拆分识别出来的字段进行驼峰转下划线(或者使用自定义字段转换器转换)
                 if (condition.getExpress() == null) {
-                    String sqlFragment = condition.getField();
-                    // 正则匹配 一段字符串中 有大写的词  但是忽略 单引号中的内容
-                    String regex = "\\b\\w*[A-Z]\\w*\\b(?<!'\\w*[A-Z]\\w*\\b)";
-                    Pattern pattern = Pattern.compile(regex);
-                    Matcher matcher = pattern.matcher(sqlFragment);
-                    while (matcher.find()) {
-                        String word = matcher.group();
-                        String newWord = camelToUnderscore.apply(word);
-                        if (fieldConverter != null) {
-                            newWord = fieldConverter.apply(word);
-                        }
-                        sqlFragment = StringUtils.replace(sqlFragment, word, newWord);
-                    }
+                    String sqlFragment = camelToUnderscore.apply(condition.getField());
                     inside = StringUtils.equals(condition.getAndOr(), "or") ? inside.or(Criteria.just(sqlFragment)) : inside.and(Criteria.just(sqlFragment));
                     continue;
                 }

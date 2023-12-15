@@ -1,5 +1,6 @@
 package com.yj2025.jdbc.impl;
 
+import com.yj2025.jdbc.support.CriteriaUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.jdbc.core.convert.JdbcConverter;
 import org.springframework.data.jdbc.core.convert.QueryMapper;
@@ -49,7 +50,7 @@ public class CustomSqlGenerator {
         Assert.notNull(selectColumns, "查询的字段不能为空!");
         Table table = getTable();
         SelectBuilder.SelectWhere selectWhere = StatementBuilder
-                .select(selectColumns.stream().map(s -> new OriginalSqlIdentifier(s)).collect(Collectors.toList()))
+                .select(CriteriaUtils.camelToUnderscore(selectColumns).stream().map(s -> new OriginalSqlIdentifier(s)).collect(Collectors.toList()))
                 .from(table);
         SelectBuilder.SelectOrdered selectOrdered = query //
                 .getCriteria() //
@@ -63,7 +64,7 @@ public class CustomSqlGenerator {
     public String getGroupSql(Collection<String> selectColumns, Collection<String> groupColumns, Query query, MapSqlParameterSource parameterSource) {
         String sql = getSelectWhereSql(selectColumns, query, parameterSource);
         if (groupColumns != null && !groupColumns.isEmpty()) {
-            sql += " group by " + StringUtils.join(groupColumns, ",");
+            sql += " group by " + StringUtils.join(CriteriaUtils.camelToUnderscore(groupColumns), ",");
         }
         return sql;
     }
