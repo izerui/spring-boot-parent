@@ -55,6 +55,7 @@ public class ConditionsAdapter {
                 // 如果是just模式，则进行拆分识别出来的字段进行驼峰转下划线(或者使用自定义字段转换器转换)
                 if (condition.getExpress() == null) {
                     String sqlFragment = condition.getField();
+                    // 正则匹配 一段字符串中 有大写的词  但是忽略 单引号中的内容
                     String regex = "\\b\\w*[A-Z]\\w*\\b(?<!'\\w*[A-Z]\\w*\\b)";
                     Pattern pattern = Pattern.compile(regex);
                     Matcher matcher = pattern.matcher(sqlFragment);
