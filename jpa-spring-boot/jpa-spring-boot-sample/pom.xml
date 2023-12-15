@@ -38,6 +38,12 @@
             <artifactId>basic-infrastructure-spring-boot-starter</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <artifactId>spring-data-relational</artifactId>
+            <groupId>org.springframework.data</groupId>
+            <optional>true</optional>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>

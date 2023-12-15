@@ -55,6 +55,12 @@
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.yj2025</groupId>
+            <artifactId>jpa-spring-boot-autoconfigure</artifactId>
+            <version>${base-starter.version}</version>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 
 </project>

@@ -34,6 +34,15 @@
             <groupId>com.querydsl</groupId>
             <artifactId>querydsl-apt</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+        <dependency>
+            <artifactId>spring-data-relational</artifactId>
+            <groupId>org.springframework.data</groupId>
+            <optional>true</optional>
+        </dependency>
 
     </dependencies>
 
