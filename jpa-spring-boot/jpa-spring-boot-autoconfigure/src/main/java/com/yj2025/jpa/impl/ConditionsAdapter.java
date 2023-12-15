@@ -2,6 +2,7 @@ package com.yj2025.jpa.impl;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.relational.core.query.Criteria;
+import org.springframework.data.relational.core.query.Query;
 
 /**
  * 从jpa的Conditions转换为jdbc的Criteria转换器
@@ -49,6 +50,10 @@ public class ConditionsAdapter {
             // 根据连接符与外部的上下文进行连接，并返回完善后的上下文
             return StringUtils.equals(andOr, "or") ? context.or(inside) : context.and(inside);
         });
+    }
+
+    public Query toQuery() {
+        return Query.query(toCriteria());
     }
 
 }
