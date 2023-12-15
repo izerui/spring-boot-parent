@@ -3,9 +3,13 @@ package com.yj2025.jpa.impl;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.relational.core.query.Criteria;
 import org.springframework.data.relational.core.query.Query;
+import org.springframework.lang.Nullable;
+
+import java.util.function.Function;
 
 /**
  * 从jpa的Conditions转换为jdbc的Criteria转换器
+ *
  * @author liuyuhua
  */
 public class ConditionsAdapter {
@@ -21,7 +25,7 @@ public class ConditionsAdapter {
      *
      * @return
      */
-    public Criteria toCriteria() {
+    public Criteria toCriteria(@Nullable Function<String, String> fieldConverter) {
         return conditions.loopContext(Criteria.empty(), null, (context, andOr, cond) -> {
             // 如果当前层级没有条件，则直接返回上下文
             if (cond.getCdList() == null || cond.getCdList().size() == 0) {
@@ -31,7 +35,11 @@ public class ConditionsAdapter {
             Criteria inside = Criteria.empty();
             // 循环当前层级的所有条件，并补充内部上下文内容
             for (Conditions.Condition condition : cond.getCdList()) {
-                Criteria.CriteriaStep step = StringUtils.equals(condition.getAndOr(), "or") ? inside.or(condition.getSqlField()) : inside.and(condition.getSqlField());
+                String dbField = condition.getSqlField();
+                if (fieldConverter != null) {
+                    dbField = fieldConverter.apply(condition.getField());
+                }
+                Criteria.CriteriaStep step = StringUtils.equals(condition.getAndOr(), "or") ? inside.or(dbField) : inside.and(dbField);
                 inside = switch (condition.getExpress()) {
                     case "=" -> step.is(condition.getValue());
                     case "is null" -> step.isNull();
@@ -53,7 +61,11 @@ public class ConditionsAdapter {
     }
 
     public Query toQuery() {
-        return Query.query(toCriteria());
+        return Query.query(toCriteria(null));
+    }
+
+    public Query toQuery(@Nullable Function<String, String> fieldConverter) {
+        return Query.query(toCriteria(fieldConverter));
     }
 
 }
