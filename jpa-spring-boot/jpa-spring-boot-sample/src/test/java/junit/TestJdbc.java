@@ -9,7 +9,7 @@ public class TestJdbc {
 
     @Test
     public void test01() {
-        Conditions where = Conditions.where("a =1 and b = 1 or (a=2 and b = 3)");
+        Conditions where = Conditions.where("recordStatus=1 and title = 1 or (nameAge=2 and ttt = 3)");
         System.out.println("jpql: " + where);
         Criteria criteria = new ConditionsAdapter(where).toCriteria(ConditionsAdapter.camelToUnderscore);
         System.out.println("sql: " + criteria);
