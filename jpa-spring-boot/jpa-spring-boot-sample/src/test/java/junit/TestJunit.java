@@ -237,7 +237,7 @@ public class TestJunit {
 
         // 顺手测试下 转jdbc的连接器
         ConditionsAdapter adapter = new ConditionsAdapter(conditions);
-        org.springframework.data.relational.core.query.Criteria criteria = adapter.toCriteria();
+        org.springframework.data.relational.core.query.Criteria criteria = adapter.toCriteria(null);
         System.out.println(criteria);
 
         System.out.println(
