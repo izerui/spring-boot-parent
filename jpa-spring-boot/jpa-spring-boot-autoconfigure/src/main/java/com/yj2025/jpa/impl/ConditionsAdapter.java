@@ -49,6 +49,10 @@ public class ConditionsAdapter {
                 if (fieldConverter != null) {
                     dbField = fieldConverter.apply(condition.getField());
                 }
+                if (condition.getExpress() == null) {
+                    inside = StringUtils.equals(condition.getAndOr(), "or") ? inside.or(Criteria.just(condition.getField())) : inside.and(Criteria.just(condition.getField()));
+                    continue;
+                }
                 Criteria.CriteriaStep step = StringUtils.equals(condition.getAndOr(), "or") ? inside.or(dbField) : inside.and(dbField);
                 inside = switch (condition.getExpress()) {
                     case "=" -> step.is(condition.getValue());
