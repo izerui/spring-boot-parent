@@ -1,10 +1,14 @@
 package com.yj2025.jdbc.support;
 
+import com.google.common.base.CaseFormat;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.relational.core.query.Criteria;
 import org.springframework.util.Assert;
 
+import java.util.Collection;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public final class CriteriaUtils {
 
@@ -56,6 +60,19 @@ public final class CriteriaUtils {
             return StringUtils.isBlank((String) value);
         }
         return false;
+    }
+
+    /**
+     * 驼峰转小写下划线
+     */
+    public static String camelToUnderscore(String value) {
+        Assert.notNull(value, "驼峰转下划线字符串不能为空");
+        return CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, value);
+    }
+
+    public static Collection<String> camelToUnderscore(Collection<String> values) {
+        Assert.notEmpty(values, "驼峰转下划线字符串集合不能为空");
+        return values.stream().map(CriteriaUtils::camelToUnderscore).collect(Collectors.toList());
     }
 
 }
