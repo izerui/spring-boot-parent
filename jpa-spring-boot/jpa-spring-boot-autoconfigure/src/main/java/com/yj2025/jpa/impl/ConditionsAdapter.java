@@ -8,6 +8,8 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
 import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 从jpa的Conditions转换为jdbc的Criteria转换器
@@ -46,11 +48,25 @@ public class ConditionsAdapter {
             // 循环当前层级的所有条件，并补充内部上下文内容
             for (Conditions.Condition condition : cond.getCdList()) {
                 String dbField = condition.getSqlField();
-                if (fieldConverter != null) {
+                // 当不是just模式,则进行字段转换
+                if (fieldConverter != null && condition.getExpress() != null) {
                     dbField = fieldConverter.apply(condition.getField());
                 }
+                // 如果是just模式，则进行拆分识别出来的字段进行驼峰转下划线(或者使用自定义字段转换器转换)
                 if (condition.getExpress() == null) {
-                    inside = StringUtils.equals(condition.getAndOr(), "or") ? inside.or(Criteria.just(condition.getField())) : inside.and(Criteria.just(condition.getField()));
+                    String sqlFragment = condition.getField();
+                    String regex = "\\b\\w*[A-Z]\\w*\\b(?<!'\\w*[A-Z]\\w*\\b)";
+                    Pattern pattern = Pattern.compile(regex);
+                    Matcher matcher = pattern.matcher(sqlFragment);
+                    while (matcher.find()) {
+                        String word = matcher.group();
+                        String newWord = camelToUnderscore.apply(word);
+                        if (fieldConverter != null) {
+                            newWord = fieldConverter.apply(word);
+                        }
+                        sqlFragment = StringUtils.replace(sqlFragment, word, newWord);
+                    }
+                    inside = StringUtils.equals(condition.getAndOr(), "or") ? inside.or(Criteria.just(sqlFragment)) : inside.and(Criteria.just(sqlFragment));
                     continue;
                 }
                 Criteria.CriteriaStep step = StringUtils.equals(condition.getAndOr(), "or") ? inside.or(dbField) : inside.and(dbField);
