@@ -1,10 +1,12 @@
 package com.yj2025.sharding;
 
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@EnableConfigurationProperties(ShardingProperties.class)
 public class ShardingAutoConfiguration {
 
     private final ApplicationContext applicationContext;
@@ -15,7 +17,7 @@ public class ShardingAutoConfiguration {
 
 
     @Bean
-    public Sharding sharding() {
-        return new Sharding(applicationContext);
+    public Sharding sharding(ShardingProperties properties) {
+        return new Sharding(applicationContext, properties);
     }
 }
