@@ -10,6 +10,9 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
 
+/**
+ * 不建议直接使用NumberStorage, 要使用 SequenceService
+ */
 @Configuration
 public class SequenceAutoConfiguration {
 
@@ -24,15 +27,15 @@ public class SequenceAutoConfiguration {
     }
 
 
-//    @Bean
-//    @ConditionalOnProperty(value = "sequence.storage.type", matchIfMissing = true, havingValue = "redis")
-//    public SequenceService sequenceService(RedisNumberStorage numberStorage, Lock lock) {
-//        return new SequenceService(numberStorage, lock);
-//    }
-//
-//    @Bean
-//    @ConditionalOnProperty(value = "sequence.storage.type", havingValue = "mysql")
-//    public SequenceService sequenceService(MysqlNumberStorage numberStorage, Lock lock) {
-//        return new SequenceService(numberStorage, lock);
-//    }
+    @Bean
+    @ConditionalOnProperty(value = "sequence.storage.type", havingValue = "redis")
+    public SequenceService sequenceService(RedisNumberStorage numberStorage, Lock lock) {
+        return new SequenceService(numberStorage, lock);
+    }
+
+    @Bean
+    @ConditionalOnProperty(value = "sequence.storage.type", matchIfMissing = true, havingValue = "mysql")
+    public SequenceService sequenceService(MysqlNumberStorage numberStorage, Lock lock) {
+        return new SequenceService(numberStorage, lock);
+    }
 }
