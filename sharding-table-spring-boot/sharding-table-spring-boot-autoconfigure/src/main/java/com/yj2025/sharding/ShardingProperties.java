@@ -9,6 +9,6 @@ public class ShardingProperties {
 
     private Boolean underlineTablename = false;
 
-    private Boolean warnForNotFoundTable = true;
+    private Boolean warnForNotfound = true;
 
 }

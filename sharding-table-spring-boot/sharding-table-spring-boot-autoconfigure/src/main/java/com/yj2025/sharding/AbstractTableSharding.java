@@ -125,7 +125,7 @@ public abstract class AbstractTableSharding {
         }
         // 找到匹配到sourceTable的多个分拆后的表数量
         Function<String, String> targetNotFoundWarnFun = useTable -> {
-            if (properties.getWarnForNotFoundTable()) {
+            if (properties.getWarnForNotfound()) {
                 long count = cacheTables.stream().filter(s -> s.startsWith(sourceTable)).count();
                 log.warn("拆表数量:[{}] 路由目的表: [{}] 在数据库中不存在, 故使用源表: [{}]", count - 1, targetTables, sourceTable);
             }
