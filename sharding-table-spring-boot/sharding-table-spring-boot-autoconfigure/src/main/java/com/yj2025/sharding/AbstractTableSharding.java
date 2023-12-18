@@ -26,7 +26,7 @@ public abstract class AbstractTableSharding {
     /**
      * 记录根据tenantId和year已经路由过的目的表(非源表)
      */
-    private final static Table<DataSource, String, String> FIRST_RELATION_TABLE = HashBasedTable.create();
+    private final static Table<DataSource, String, String> USE_TABLE_FIRST = HashBasedTable.create();
 
     protected ApplicationContext applicationContext;
     protected final ShardingProperties properties;
@@ -109,9 +109,9 @@ public abstract class AbstractTableSharding {
         if (properties.getExceptionForDifference()) {
             String relationPrefix = tenantId + "-" + year;
             // 记录首次对应的路由表
-            String first = FIRST_RELATION_TABLE.get(dataSource, relationPrefix);
+            String first = USE_TABLE_FIRST.get(dataSource, relationPrefix);
             if (first == null) {
-                FIRST_RELATION_TABLE.put(dataSource, relationPrefix, table);
+                USE_TABLE_FIRST.put(dataSource, relationPrefix, table);
             } else {
                 // 如果路由表与第一次记录的关系表不一样，则抛出异常，以供排查
                 Assert.state(Objects.equals(table, first), "【sharding】: 当前查询路由表 [" + table + "] 与首次使用的表 [" + first + "] 不一致,请排查!!!");
