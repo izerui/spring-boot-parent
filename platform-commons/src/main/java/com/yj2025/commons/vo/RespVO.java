@@ -10,12 +10,15 @@ package com.yj2025.commons.vo;
  * @date 2016/10/12 17:43
  */
 
+import lombok.Data;
+
 /**
  * 响应基本结构
  *
  * @param <T>
  * @author liuyuhua
  */
+@Data
 public class RespVO<T> {
     /**
      * 请求处理是否成功
@@ -97,37 +100,4 @@ public class RespVO<T> {
     public static <T> RespVO<T> error(String errCode, String errMsg) {
         return new RespVO<>(false, errCode, errMsg, null);
     }
-
-    public boolean isSuccess() {
-        return success;
-    }
-
-    public String getErrCode() {
-        return errCode;
-    }
-
-    public String getErrMsg() {
-        return errMsg;
-    }
-
-    public T getData() {
-        return data;
-    }
-
-    public void setSuccess(boolean success) {
-        this.success = success;
-    }
-
-    public void setErrCode(String errCode) {
-        this.errCode = errCode;
-    }
-
-    public void setErrMsg(String errMsg) {
-        this.errMsg = errMsg;
-    }
-
-    public void setData(T data) {
-        this.data = data;
-    }
-
 }

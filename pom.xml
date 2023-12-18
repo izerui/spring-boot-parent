@@ -567,6 +567,12 @@
                 <artifactId>data-jdbc-spring-boot-starter</artifactId>
                 <version>${base-starter.version}</version>
             </dependency>
+            <!-- kafka -->
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>kafka-spring-boot-starter</artifactId>
+                <version>${base-starter.version}</version>
+            </dependency>
 
         </dependencies>
     </dependencyManagement>

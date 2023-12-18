@@ -1,5 +1,6 @@
 package com.yj2025.jpa.impl;
 
+import com.google.common.base.CaseFormat;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -219,7 +220,36 @@ public class Conditions implements Cloneable {
         return sb.toString();
     }
 
-    private static class CombCondition {
+    /**
+     * 开始按树形结构从root开始往下循环调用层级
+     * @param context 初始调用传入的上下文
+     * @param andOr 与上层连接的关系符,外部传入调用可以为null
+     * @param loop 每层的调用对象
+     * @return 返回经历过每层的循环后处理的上下文
+     * @param <R> 上下文对象
+     */
+    public <R> R loopContext(R context, String andOr, Loop<R> loop) {
+        // 触发当前对象的外部调用
+        context = loop.apply(context, andOr, this);
+        if (combList != null) {
+            for (CombCondition comb : combList) {
+                // 如果有子条件,则继续触发...以此循环到最末级,并返回上下文
+                context = comb.cds.loopContext(context, comb.andOr, loop);
+            }
+        }
+        return context;
+    }
+
+    List<Condition> getCdList() {
+        return this.cdList;
+    }
+
+    List<CombCondition> getCombList() {
+        return combList;
+    }
+
+
+    static class CombCondition {
         private String andOr;
         private Conditions cds;
 
@@ -246,7 +276,7 @@ public class Conditions implements Cloneable {
 
     }
 
-    private static class Condition {
+    static class Condition {
         private boolean valid;
         private String andOr;
         //查询字段
@@ -262,7 +292,8 @@ public class Conditions implements Cloneable {
             this.valid = valid;
             this.andOr = andOr;
             this.field = field;
-            this.sqlField = field.replaceAll("([a-z])([A-Z]+)", "$1_$2").toLowerCase();
+            // 驼峰转下划线 field.replaceAll("([a-z])([A-Z]+)", "$1_$2").toLowerCase();
+            this.sqlField = CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, this.field);
         }
 
         private String toQL(Map<String, Object> params) {
@@ -344,6 +375,22 @@ public class Conditions implements Cloneable {
             return valid;
         }
 
+        public String getSqlField() {
+            return sqlField;
+        }
+
+    }
+
+    @FunctionalInterface
+    public interface Loop<R> {
+        /**
+         * 当前层级调用
+         * @param context 外部传进来的上下文对象
+         * @param andOr 与外部连接的关系符
+         * @param conditions 当前层级的条件持有对象,主要处理其内部的cdList
+         * @return
+         */
+        R apply(R context, String andOr, Conditions conditions);
     }
 
 }

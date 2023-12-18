@@ -15,16 +15,19 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 
 @Slf4j
 public abstract class AbstractTableSharding {
 
-    private ApplicationContext applicationContext;
+    protected ApplicationContext applicationContext;
+    protected final ShardingProperties properties;
 
     protected final static Map<DataSource, List<String>> cacheDataSourceTablesMap = new ConcurrentHashMap<>();
 
-    public AbstractTableSharding(ApplicationContext applicationContext) {
+    public AbstractTableSharding(ApplicationContext applicationContext, ShardingProperties properties) {
         this.applicationContext = applicationContext;
+        this.properties = properties;
     }
 
     /**
@@ -61,6 +64,18 @@ public abstract class AbstractTableSharding {
      */
     public final String getTable(String sourceTable, String tenantId, String year) {
         return this.getTable(applicationContext.getBean(DataSource.class), sourceTable, tenantId, year);
+    }
+
+    /**
+     * 获取指定数据源、指定租户id、指定年度的表名
+     *
+     * @param dataSource
+     * @param sourceTable
+     * @param tenantId
+     * @return
+     */
+    public final String getTable(DataSource dataSource, String sourceTable, String tenantId) {
+        return this.getTable(dataSource, sourceTable, tenantId, null);
     }
 
 
@@ -108,13 +123,20 @@ public abstract class AbstractTableSharding {
                 return targetTable;
             }
         }
+        // 找到匹配到sourceTable的多个分拆后的表数量
+        Function<String, String> targetNotFoundWarnFun = useTable -> {
+            if (properties.getWarnForNotfound()) {
+                long count = cacheTables.stream().filter(s -> s.startsWith(sourceTable)).count();
+                log.warn("拆表数量:[{}] 路由目的表: [{}] 在数据库中不存在, 故使用源表: [{}]", count - 1, targetTables, sourceTable);
+            }
+            return useTable;
+        };
+
         // 如果年表和租户表都找不到则按有限匹配到的顺序返回 【源表_runtime】 和 【源表】
         if (cacheTables != null && cacheTables.contains(sourceTable + "_runtime")) {
-            log.debug("路由目的表: [{}] 在数据库中不存在, 故使用源表_runtime: [{}]", targetTables, sourceTable);
-            return sourceTable + "_runtime";
+            return targetNotFoundWarnFun.apply(sourceTable + "_runtime");
         } else {
-            log.debug("路由目的表: [{}] 在数据库中不存在, 故使用源表: [{}]", targetTables, sourceTable);
-            return sourceTable;
+            return targetNotFoundWarnFun.apply(sourceTable);
         }
 
     }

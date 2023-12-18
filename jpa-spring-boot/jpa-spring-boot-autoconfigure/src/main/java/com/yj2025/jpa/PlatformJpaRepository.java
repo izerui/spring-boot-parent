@@ -108,7 +108,7 @@ public interface PlatformJpaRepository<T, ID extends Serializable> extends JpaRe
      * @param conditions 查询条件
      * @return
      */
-    @Deprecated
+    @Deprecated(forRemoval = true, since = "3.1")
     List<?> selectSql(String sql, Conditions conditions);
 
 }

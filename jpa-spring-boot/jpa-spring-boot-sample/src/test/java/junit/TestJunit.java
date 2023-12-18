@@ -7,6 +7,7 @@ import com.yj2025.jpa.entity.Abcd;
 import com.yj2025.jpa.entity.User;
 import com.yj2025.jpa.entity.UserDistinct;
 import com.yj2025.jpa.impl.Conditions;
+import com.yj2025.jpa.impl.ConditionsAdapter;
 import com.yj2025.jpa.repository.AbcdRepository;
 import com.yj2025.jpa.repository.UserRepository;
 import org.assertj.core.util.Lists;
@@ -222,17 +223,23 @@ public class TestJunit {
     }
 
     public static void main(String[] args) {
-        Conditions conditions = Conditions.where("a").is(1)
-                .and("b").is(2)
+        Conditions conditions = Conditions.where("A").is(1)
+                .and("B").is(2)
                 .or(
-                        Conditions.where("c").like(null)
+                        Conditions.where("C").like("%222%")
                 )
                 .and(
-                        Conditions.where("e").is(5).or("f").is(6)
+                        Conditions.where("E").is(5).or("F").is(6)
                 );
-        conditions.and("ddd").is(null).and("fff").like("");
+        conditions.and("G").is("sjsj").and("H").like("%ffff%");
 
         System.out.println(conditions);
+
+        // 顺手测试下 转jdbc的连接器
+        ConditionsAdapter adapter = new ConditionsAdapter(conditions);
+        org.springframework.data.relational.core.query.Criteria criteria = adapter.toCriteria(null);
+        System.out.println(criteria);
+
         System.out.println(
                 Conditions.where(false, "abc").notNull()
                         .and("b").gt(2)

@@ -394,6 +394,7 @@ public class PlatformRepositoryImpl<T, ID extends Serializable> extends SimpleJp
     }
 
     @Override
+    @Deprecated(forRemoval = true, since = "3.1")
     public List<?> selectSql(String sql, Conditions conditions) {
         Query query = new JpqlQueryHolder(conditions).createJpqlQuery(sql);
         return query.getResultList();

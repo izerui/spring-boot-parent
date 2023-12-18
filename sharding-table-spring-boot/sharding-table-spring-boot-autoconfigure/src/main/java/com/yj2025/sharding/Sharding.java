@@ -6,16 +6,14 @@ import org.springframework.util.StringUtils;
 
 public class Sharding extends AbstractTableSharding {
 
-    @Value("${sharding.underline-tablename:false}")
-    private Boolean underlineTablename;
 
-    public Sharding(ApplicationContext applicationContext) {
-        super(applicationContext);
+    public Sharding(ApplicationContext applicationContext, ShardingProperties properties) {
+        super(applicationContext, properties);
     }
 
     @Override
     protected String tableName(String sourceTable, String tenantId) {
-        if (underlineTablename) {
+        if (properties.getUnderlineTablename()) {
             return sourceTable.concat("_").concat(StringUtils.replace(tenantId, "-", "_"));
         } else {
             return sourceTable.concat("_").concat(tenantId);
@@ -24,7 +22,7 @@ public class Sharding extends AbstractTableSharding {
 
     @Override
     protected String tableName(String sourceTable, String tenantId, String year) {
-        if (underlineTablename) {
+        if (properties.getUnderlineTablename()) {
             return sourceTable.concat("_").concat(StringUtils.replace(tenantId, "-", "_")).concat("_").concat(year);
         } else {
             return sourceTable.concat("_").concat(tenantId).concat("_").concat(year);

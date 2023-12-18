@@ -1,9 +1,57 @@
 package com.yj2025.kafka;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yj2025.kafka.impl.MessageProducerImpl;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.kafka.annotation.EnableKafka;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.converter.RecordMessageConverter;
+import org.springframework.kafka.support.converter.StringJsonMessageConverter;
 
+/**
+ * # spring.kafka.listener.ack-mode=record
+ * <pre>
+ *     MANUAL	            poll()拉取一批消息，处理完业务后，手动调用Acknowledgment.acknowledge()先将offset存放到map本地缓存，在下一次poll之前从缓存拿出来批量提交
+ *     MANUAL_IMMEDIATE	    每处理完业务手动调用Acknowledgment.acknowledge()后立即提交
+ *     RECORD	            当每一条记录被消费者监听器（ListenerConsumer）处理之后提交
+ *     BATCH	            当每一批poll()的数据被消费者监听器（ListenerConsumer）处理之后提交
+ *     TIME	                当每一批poll()的数据被消费者监听器（ListenerConsumer）处理之后，距离上次提交时间大于TIME时提交
+ *     COUNT	            当每一批poll()的数据被消费者监听器（ListenerConsumer）处理之后，被处理record数量大于等于COUNT时提交
+ *     COUNT_TIME	        TIME或COUNT满足其中一个时提交
+ * </pre>
+ */
+
+/**
+ * @author liuyuhua
+ */
 @Configuration
+@EnableKafka
 public class KafkaConfiguration {
+
+    @Value("${spring.application.name:null}")
+    private String applicationName;
+
+    @Bean
+    public RecordMessageConverter messageConverter(ObjectMapper objectMapper) {
+        return new StringJsonMessageConverter(objectMapper);
+    }
+
+
+    @Bean
+    public MessageProducer messageProducer(KafkaTemplate<String, Object> kafkaTemplate, KafkaProperties kafkaProperties) {
+        return new MessageProducerImpl(kafkaTemplate, kafkaProperties, applicationName);
+    }
+
+
+//    @Bean
+//    public DefaultKafkaConsumerFactoryCustomizer consumerFactoryCustomizer() {
+//        return consumerFactory -> {
+//            consumerFactory.addListener(new ConsumerContextHolder());
+//        };
+//    }
 
 
 }

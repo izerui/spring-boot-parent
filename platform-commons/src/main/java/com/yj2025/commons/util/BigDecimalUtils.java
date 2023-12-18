@@ -1,5 +1,6 @@
 package com.yj2025.commons.util;
 
+import com.yj2025.commons.jackson.Decimal2StringUtils;
 import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
@@ -377,5 +378,9 @@ public class BigDecimalUtils {
             return false;
         }
         return quantity.compareTo(BigDecimal.ZERO) != 0;
+    }
+
+    public static String toPlainString(BigDecimal quantity) {
+        return Decimal2StringUtils.toPlainString(quantity);
     }
 }
