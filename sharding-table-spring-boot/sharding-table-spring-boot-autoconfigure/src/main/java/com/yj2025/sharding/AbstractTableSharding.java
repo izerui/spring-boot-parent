@@ -110,7 +110,7 @@ public abstract class AbstractTableSharding {
         // 如果未缓存当前库的所有表，则获取并放入缓存
         if (!cacheDataSourceTablesMap.containsKey(dataSource)) {
             cacheDataSourceTablesMap.put(dataSource, getTables(dataSource));
-            log.info("缓存的数据源个数: {}", cacheDataSourceTablesMap.size());
+            log.info("【sharding】: 缓存的数据源个数: {}", cacheDataSourceTablesMap.size());
         }
         List<String> cacheTables = cacheDataSourceTablesMap.get(dataSource);
 
@@ -120,6 +120,9 @@ public abstract class AbstractTableSharding {
                 continue;
             }
             if (cacheTables != null && cacheTables.contains(targetTable)) {
+                if (properties.getInfoForFound()) {
+                    log.info("【sharding】: 使用路由表 {}", targetTable);
+                }
                 return targetTable;
             }
         }
@@ -127,7 +130,7 @@ public abstract class AbstractTableSharding {
         Function<String, String> targetNotFoundWarnFun = useTable -> {
             if (properties.getWarnForNotfound()) {
                 long count = cacheTables.stream().filter(s -> s.startsWith(sourceTable)).count();
-                log.warn("拆表数量:[{}] 路由目的表: [{}] 在数据库中不存在, 故使用源表: [{}]", count - 1, targetTables, sourceTable);
+                log.warn("【sharding】: 本表拆表数量:[{}] 路由目的表: [{}] 在数据库中不存在, 故使用源表: [{}]", count - 1, targetTables, sourceTable);
             }
             return useTable;
         };
@@ -151,7 +154,7 @@ public abstract class AbstractTableSharding {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
         List<String> tables = jdbcTemplate.queryForList("/* 缓存当前" + dataSource + "所有表,用来分表路由 */ show tables", String.class);
         Collections.sort(tables);
-        log.info("检测到数据库表:");
+        log.info("【sharding】: 检测数据库表:");
         log.info("------------------------------------------------");
         tables.forEach(s -> log.info("{}", s));
         log.info("------------------------------------------------");
