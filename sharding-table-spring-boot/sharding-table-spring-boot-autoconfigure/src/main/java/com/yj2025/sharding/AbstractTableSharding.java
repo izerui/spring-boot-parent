@@ -24,7 +24,7 @@ import java.util.function.Function;
 public abstract class AbstractTableSharding {
 
     /**
-     * 记录根据tenantId和year已经路由过的目的表(非源表)
+     * 记录根据tenantId和year首次使用的路由表, 以供后续判断抛出异常, 避免出现某些业务功能针对拆表遗漏
      */
     private final static Table<DataSource, String, String> USE_TABLE_FIRST = HashBasedTable.create();
 
