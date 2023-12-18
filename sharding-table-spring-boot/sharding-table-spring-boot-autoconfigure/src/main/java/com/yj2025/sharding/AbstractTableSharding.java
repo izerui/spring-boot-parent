@@ -1,5 +1,7 @@
 package com.yj2025.sharding;
 
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 import com.yj2025.tenant.TenantHolder;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -14,11 +16,17 @@ import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 @Slf4j
 public abstract class AbstractTableSharding {
+
+    /**
+     * 记录根据tenantId和year已经路由过的目的表(非源表)
+     */
+    private final static Table<DataSource, String, String> FIRST_RELATION_TABLE = HashBasedTable.create();
 
     protected ApplicationContext applicationContext;
     protected final ShardingProperties properties;
@@ -98,6 +106,17 @@ public abstract class AbstractTableSharding {
             tenantYearTable = this.tableName(sourceTable, tenantId, year);
         }
         String table = switchTable(dataSource, sourceTable, tenantYearTable, tenantTable);
+        if (properties.getExceptionForDifference()) {
+            String relationPrefix = tenantId + "-" + year;
+            // 记录首次对应的路由表
+            String first = FIRST_RELATION_TABLE.get(dataSource, relationPrefix);
+            if (first == null) {
+                FIRST_RELATION_TABLE.put(dataSource, relationPrefix, table);
+            } else {
+                // 如果路由表与第一次记录的关系表不一样，则抛出异常，以供排查
+                Assert.state(Objects.equals(table, first), "【sharding】: 当前查询路由表 [" + table + "] 与首次使用的表 [" + first + "] 不一致,请排查!!!");
+            }
+        }
         return table;
     }
 

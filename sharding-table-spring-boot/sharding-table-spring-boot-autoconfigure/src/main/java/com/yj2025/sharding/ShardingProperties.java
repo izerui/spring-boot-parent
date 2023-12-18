@@ -22,4 +22,9 @@ public class ShardingProperties {
      */
     private Boolean infoForFound = false;
 
+    /**
+     * 如果使用租户id+年度找到的路由表跟首次缓存记录的路由表不一致则报错
+     */
+    private Boolean exceptionForDifference = true;
+
 }
