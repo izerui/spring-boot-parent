@@ -140,7 +140,7 @@ public abstract class AbstractTableSharding {
             }
             if (cacheTables != null && cacheTables.contains(targetTable)) {
                 if (properties.getInfoForFound()) {
-                    log.info("【sharding】: 使用路由表 {}", targetTable);
+                    log.info("【sharding】: 使用路由表 [{}]", targetTable);
                 }
                 return targetTable;
             }
