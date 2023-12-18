@@ -149,7 +149,7 @@ public abstract class AbstractTableSharding {
         Function<String, String> targetNotFoundWarnFun = useTable -> {
             if (properties.getWarnForNotfound()) {
                 long count = cacheTables.stream().filter(s -> s.startsWith(sourceTable)).count();
-                log.warn("【sharding】: 本表拆表数量:[{}] 路由目的表: [{}] 在数据库中不存在, 故使用源表: [{}]", count - 1, targetTables, sourceTable);
+                log.warn("【sharding】: 本表拆表数量:[{}] 当前使用源表: [{}] 路由目的表(租户+年表、租户表): [{}] 在数据库中不存在", count - 1, sourceTable, targetTables);
             }
             return useTable;
         };
