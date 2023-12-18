@@ -8,6 +8,7 @@ public enum ModelApplication {
     THIRD_API("公共接口"),
     TY_MES("天音MES"),
     SN("序列号"),
+    SCM("星链宝"),
     TY_SUPPLIER("天音供应商"),
     ;
     private String remark;
