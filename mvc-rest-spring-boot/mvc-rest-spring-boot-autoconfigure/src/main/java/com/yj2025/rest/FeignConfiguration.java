@@ -5,26 +5,18 @@ import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import feign.RetryableException;
 import feign.Retryer;
-import feign.codec.Decoder;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.openfeign.encoding.BaseRequestInterceptor;
 import org.springframework.cloud.openfeign.encoding.FeignClientEncodingProperties;
-import org.springframework.cloud.openfeign.support.ResponseEntityDecoder;
-import org.springframework.cloud.openfeign.support.SpringDecoder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.MediaType;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -48,21 +40,6 @@ public class FeignConfiguration {
 
     @Value("${spring.application.name:unknown}")
     private String applicationName;
-
-    @Bean
-    public Decoder feignDecoder(ObjectMapper objectMapper) {
-        return new ResponseEntityDecoder(new SpringDecoder(feignHttpMessageConverter(objectMapper)));
-    }
-
-    public ObjectFactory<HttpMessageConverters> feignHttpMessageConverter(ObjectMapper objectMapper) {
-        final HttpMessageConverters httpMessageConverters = new HttpMessageConverters(new MappingJackson2HttpMessageConverter(objectMapper) {{
-            List<MediaType> mediaTypes = new ArrayList<>();
-            mediaTypes.add(MediaType.valueOf(MediaType.TEXT_HTML_VALUE + ";charset=UTF-8"));
-            mediaTypes.add(MediaType.valueOf(MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8"));
-            setSupportedMediaTypes(mediaTypes);
-        }});
-        return () -> httpMessageConverters;
-    }
 
     @Bean
     public Retryer retryer() {
