@@ -28,6 +28,7 @@ import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.lang.Nullable;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
@@ -216,7 +217,7 @@ public class PlatformJdbcRepositoryImpl<T, ID> extends SimpleJdbcRepository<T, I
     }
 
     @Override
-    public <S> List<S> groupAll(Collection<String> selectColumns, Collection<String> groupColumns, Class<S> mappingClass, Query query) {
+    public <S> List<S> groupAll(Collection<String> selectColumns, @Nullable Collection<String> groupColumns, Class<S> mappingClass, Query query) {
         MapSqlParameterSource parameterSource = new MapSqlParameterSource();
         String sql = generator.getGroupSql(selectColumns, groupColumns, query, parameterSource);
         if (query.isSorted()) {
@@ -230,7 +231,7 @@ public class PlatformJdbcRepositoryImpl<T, ID> extends SimpleJdbcRepository<T, I
     }
 
     @Override
-    public <S> Page<S> groupAll(Collection<String> selectColumns, Collection<String> groupColumns, Class<S> mappingClass, Query query, Pageable pageable) {
+    public <S> Page<S> groupAll(Collection<String> selectColumns, @Nullable Collection<String> groupColumns, Class<S> mappingClass, Query query, Pageable pageable) {
         MapSqlParameterSource parameterSource = new MapSqlParameterSource();
         String sql = generator.getGroupSql(selectColumns, groupColumns, query, parameterSource);
         String pageSql = "select x.* from (" + sql + ") x ";
@@ -250,13 +251,13 @@ public class PlatformJdbcRepositoryImpl<T, ID> extends SimpleJdbcRepository<T, I
     }
 
     @Override
-    public <S> List<S> groupAll(Collection<String> selectColumns, Collection<String> groupColumns, Class<S> mappingClass, Map<String, Object> simpleMap) {
+    public <S> List<S> groupAll(Collection<String> selectColumns, @Nullable Collection<String> groupColumns, Class<S> mappingClass, Map<String, Object> simpleMap) {
         Query query = Query.query(CriteriaUtils.joinToCriteria(Criteria.empty(), simpleMap));
         return this.groupAll(selectColumns, groupColumns, mappingClass, query);
     }
 
     @Override
-    public <S> Page<S> groupAll(Collection<String> selectColumns, Collection<String> groupColumns, Class<S> mappingClass, Map<String, Object> simpleMap, Pageable pageable) {
+    public <S> Page<S> groupAll(Collection<String> selectColumns, @Nullable Collection<String> groupColumns, Class<S> mappingClass, Map<String, Object> simpleMap, Pageable pageable) {
         Query query =
                 Query.query(CriteriaUtils.joinToCriteria(Criteria.empty(),
                         simpleMap));

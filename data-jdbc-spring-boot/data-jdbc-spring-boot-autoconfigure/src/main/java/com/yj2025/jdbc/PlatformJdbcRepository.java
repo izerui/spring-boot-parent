@@ -9,6 +9,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.QueryByExampleExecutor;
+import org.springframework.lang.Nullable;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
@@ -273,19 +274,19 @@ public interface PlatformJdbcRepository<T, ID> extends CrudRepository<T, ID>, Pa
                     Class<S> mappingClass, Map<String, Object> simpleMap);
 
     <S> List<S> groupAll(Collection<String> selectColumns,
-                         Collection<String> groupColumns,
+                         @Nullable Collection<String> groupColumns,
                          Class<S> mappingClass, Query query);
 
     <S> List<S> groupAll(Collection<String> selectColumns,
-                         Collection<String> groupColumns,
+                         @Nullable Collection<String> groupColumns,
                          Class<S> mappingClass, Map<String, Object> simpleMap);
 
     <S> Page<S> groupAll(Collection<String> selectColumns,
-                         Collection<String> groupColumns,
+                         @Nullable Collection<String> groupColumns,
                          Class<S> mappingClass, Query query, Pageable pageable);
 
     <S> Page<S> groupAll(Collection<String> selectColumns,
-                         Collection<String> groupColumns,
+                         @Nullable Collection<String> groupColumns,
                          Class<S> mappingClass, Map<String, Object> simpleMap
             , Pageable pageable);
 

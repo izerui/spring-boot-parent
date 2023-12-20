@@ -61,7 +61,7 @@ public class CustomSqlGenerator {
         return sql;
     }
 
-    public String getGroupSql(Collection<String> selectColumns, Collection<String> groupColumns, Query query, MapSqlParameterSource parameterSource) {
+    public String getGroupSql(Collection<String> selectColumns, @Nullable Collection<String> groupColumns, Query query, MapSqlParameterSource parameterSource) {
         String sql = getSelectWhereSql(selectColumns, query, parameterSource);
         if (groupColumns != null && !groupColumns.isEmpty()) {
             sql += " group by " + StringUtils.join(CriteriaUtils.camelToUnderscore(groupColumns), ",");
