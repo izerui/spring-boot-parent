@@ -152,7 +152,7 @@ public interface PlatformJdbcRepository<T, ID> extends CrudRepository<T, ID>, Pa
      * @return 包含所有匹配结果的非空排序列表。
      * @since 3.0
      */
-    List<T> findAll(Query query,Sort sort);
+    List<T> findAll(Query query, Sort sort);
 
     /**
      * 返回一个{@link Page}的实体，匹配给定的{@link Query}。
@@ -201,7 +201,7 @@ public interface PlatformJdbcRepository<T, ID> extends CrudRepository<T, ID>, Pa
 
     /**
      * <b>请使用Query</b> <br />
-     *
+     * <p>
      * 执行{@code SELECT}查询并将结果项转换为确保一个结果的实体。
      *
      * @param simpleMap 查询条件，不能为空
@@ -289,10 +289,6 @@ public interface PlatformJdbcRepository<T, ID> extends CrudRepository<T, ID>, Pa
                          Class<S> mappingClass, Map<String, Object> simpleMap
             , Pageable pageable);
 
-    /**
-     * <b>请使用getByRecordId</b> <br />
-     */
-    @Deprecated(since = "3.1", forRemoval = true)
     T findByRecordId(String entCode, String recordId);
 
     Optional<T> getByRecordId(String entCode, String recordId);
