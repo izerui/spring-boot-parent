@@ -9,6 +9,7 @@ public enum VersionType {
     TRADE("星链版", Lists.newArrayList("ec-dev", "ec-test", "ec-yunji", "ec-xjp")),
     MACHINE_WORK("数控版", Lists.newArrayList("mlf-dev", "mlf-test", "mlf-yunji")),
     P3("P3", Lists.newArrayList("p3-dev", "p3-test", "p3-yunji")),
+    SCM("星链宝", Lists.newArrayList("scm-dev", "scm-test",  "scm-uat", "scm-yunji")),
     CONNECTION("联通版", List.of()),
     ;
     private String remark;
