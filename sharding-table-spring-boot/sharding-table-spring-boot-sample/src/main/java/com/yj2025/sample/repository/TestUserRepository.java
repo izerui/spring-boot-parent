@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface TestUserRepository extends ListCrudRepository<TestUser, Long>, PagingAndSortingRepository<TestUser, Long> {
 
-    @Query("select * from test_user_#{#entCode} where code like CONCAT('%', :code,'%') ")
+    @Query("select * from #{@sharding.getTable('test_user')} where code like CONCAT('%', :code,'%') ")
     List<TestUser> findList(@Param("entCode") String entCode, @Param("code") String code);
 
 

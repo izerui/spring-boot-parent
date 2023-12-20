@@ -12,10 +12,10 @@ import java.util.Map;
 
 public interface TestUserRepository extends PlatformJdbcRepository<TestUser, Long> {
 
-    @Query("select * from test_user_#{#entCode} where code like CONCAT('%', :code,'%') ")
+    @Query("select * from #{@sharding.getTable('test_user')} where code like CONCAT('%', :code,'%') ")
     List<TestUser> findList(@Param("entCode") String entCode, @Param("code") String code);
 
-    @Query("select * from test_user_#{#entCode} where code in (:codes)")
+    @Query("select * from #{@sharding.getTable('test_user')} where code in (:codes)")
     List<TestUser> findList(String entCode, List<String> codes);
 
 

@@ -42,6 +42,10 @@
             <groupId>com.yj2025</groupId>
             <artifactId>tenant-spring-boot-starter</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

@@ -21,6 +21,8 @@ import static com.google.common.io.Resources.getResource;
 @Slf4j
 public final class UnitEnum {
 
+    public final static String UNITS_PATH = "/data/public/units";
+
     //类型
     private String type;
     //名字
@@ -146,7 +148,7 @@ public final class UnitEnum {
         }
 
         try {
-            File file = new File("/data/public/units");
+            File file = new File(UNITS_PATH);
             if (file.exists()) {
                 List<String> lines = FileUtils.readLines(file, "UTF-8");
                 UnitEnum unitEnum = getUnitEnum(unitName, lines);
@@ -162,7 +164,7 @@ public final class UnitEnum {
                 }
             }
         } catch (Exception e) {
-            log.error("单位文件找不到，初始化失败............../data/public/units " + e.getMessage());
+            log.error("单位文件找不到，初始化失败.............."+ UNITS_PATH + " " + e.getMessage());
         }
 
         throw new RuntimeException("计量单位【" + unitName + "】不在系统可用列表");
@@ -185,7 +187,7 @@ public final class UnitEnum {
 
     public static void initUnits() {
         try {
-            File file = new File("/data/public/units");
+            File file = new File(UNITS_PATH);
             if (file.exists()) {
                 List<String> lines = FileUtils.readLines(file, "UTF-8");
                 for (String line : lines) {
@@ -211,7 +213,7 @@ public final class UnitEnum {
                 }
             }
         } catch (Exception e) {
-            log.error("单位文件找不到，初始化失败............../data/public/units " + e.getMessage());
+            log.error("单位文件找不到，初始化失败.............."+ UNITS_PATH + " " + e.getMessage());
         }
     }
 
