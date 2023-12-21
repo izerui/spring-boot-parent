@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import javax.sql.DataSource;
 
 /**
+ * callback: https://docs.spring.io/spring-data/relational/reference/jdbc/events.html#jdbc.entity-callbacks
  * @see org.springframework.boot.autoconfigure.data.jdbc.JdbcRepositoriesAutoConfiguration
  */
 @Configuration
