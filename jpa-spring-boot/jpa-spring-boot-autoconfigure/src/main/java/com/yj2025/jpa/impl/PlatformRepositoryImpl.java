@@ -136,14 +136,13 @@ public class PlatformRepositoryImpl<T, ID extends Serializable> extends SimpleJp
 
 
     @Override
-    public <R> List<R> groupAll(List<String> selectFields, List<String> groupFields, Class<R> rClass) {
+    public <R> List<R> groupAll(List<String> selectFields, @Nullable List<String> groupFields, Class<R> rClass) {
         return this.groupAll(selectFields, groupFields, rClass, -1);
     }
 
     @Override
-    public <R> List<R> groupAll(List<String> selectFields, List<String> groupFields, Class<R> rClass, int limit) {
+    public <R> List<R> groupAll(List<String> selectFields, @Nullable List<String> groupFields, Class<R> rClass, int limit) {
         Assert.notEmpty(selectFields);
-        Assert.notEmpty(groupFields);
         List<Map> mapList = new JpqlQueryHolder().createGroupQuery(selectFields, groupFields, limit).getResultList();
         if (rClass.isAssignableFrom(Map.class)) {
             return (List<R>) mapList;
@@ -154,14 +153,13 @@ public class PlatformRepositoryImpl<T, ID extends Serializable> extends SimpleJp
 
 
     @Override
-    public <R> List<R> groupAll(Sort sort, List<String> selectFields, List<String> groupFields, Class<R> rClass) {
+    public <R> List<R> groupAll(Sort sort, List<String> selectFields, @Nullable List<String> groupFields, Class<R> rClass) {
         return this.groupAll(sort, selectFields, groupFields, rClass, -1);
     }
 
     @Override
-    public <R> List<R> groupAll(Sort sort, List<String> selectFields, List<String> groupFields, Class<R> rClass, int limit) {
+    public <R> List<R> groupAll(Sort sort, List<String> selectFields, @Nullable List<String> groupFields, Class<R> rClass, int limit) {
         Assert.notEmpty(selectFields);
-        Assert.notEmpty(groupFields);
         List<Map> mapList = new JpqlQueryHolder(sort).createGroupQuery(selectFields, groupFields, limit).getResultList();
         if (rClass.isAssignableFrom(Map.class)) {
             return (List<R>) mapList;
@@ -171,14 +169,13 @@ public class PlatformRepositoryImpl<T, ID extends Serializable> extends SimpleJp
     }
 
     @Override
-    public <R> List<R> groupAll(Conditions conditions, List<String> selectFields, List<String> groupFields, Class<R> rClass) {
+    public <R> List<R> groupAll(Conditions conditions, List<String> selectFields, @Nullable List<String> groupFields, Class<R> rClass) {
         return this.groupAll(conditions, selectFields, groupFields, rClass, -1);
     }
 
     @Override
-    public <R> List<R> groupAll(Conditions conditions, List<String> selectFields, List<String> groupFields, Class<R> rClass, int limit) {
+    public <R> List<R> groupAll(Conditions conditions, List<String> selectFields, @Nullable List<String> groupFields, Class<R> rClass, int limit) {
         Assert.notEmpty(selectFields);
-        Assert.notEmpty(groupFields);
         List<Map> mapList = new JpqlQueryHolder(conditions).createGroupQuery(selectFields, groupFields, limit).getResultList();
         if (rClass.isAssignableFrom(Map.class)) {
             return (List<R>) mapList;
@@ -188,14 +185,13 @@ public class PlatformRepositoryImpl<T, ID extends Serializable> extends SimpleJp
     }
 
     @Override
-    public <R> List<R> groupAll(Conditions conditions, Sort sort, List<String> selectFields, List<String> groupFields, Class<R> rClass) {
+    public <R> List<R> groupAll(Conditions conditions, Sort sort, List<String> selectFields, @Nullable List<String> groupFields, Class<R> rClass) {
         return this.groupAll(conditions, sort, selectFields, groupFields, rClass, -1);
     }
 
     @Override
-    public <R> List<R> groupAll(Conditions conditions, Sort sort, List<String> selectFields, List<String> groupFields, Class<R> rClass, int limit) {
+    public <R> List<R> groupAll(Conditions conditions, Sort sort, List<String> selectFields, @Nullable List<String> groupFields, Class<R> rClass, int limit) {
         Assert.notEmpty(selectFields);
-        Assert.notEmpty(groupFields);
         List<Map> mapList = new JpqlQueryHolder(conditions, sort).createGroupQuery(selectFields, groupFields, limit).getResultList();
         if (rClass.isAssignableFrom(Map.class)) {
             return (List<R>) mapList;

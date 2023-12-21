@@ -8,6 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.NoRepositoryBean;
+import org.springframework.lang.Nullable;
 
 import java.io.Serializable;
 import java.util.List;
@@ -37,21 +38,21 @@ public interface PlatformJpaRepository<T, ID extends Serializable> extends JpaRe
     Page<T> findAll(Conditions conditions, Pageable pageable);
     Page<T> findPage(Conditions conditions, Pageable pageable);
 
-    <R> List<R> groupAll(List<String> selectFields, List<String> groupFields, Class<R> rClass);
+    <R> List<R> groupAll(List<String> selectFields, @Nullable List<String> groupFields, Class<R> rClass);
 
-    <R> List<R> groupAll(List<String> selectFields, List<String> groupFields, Class<R> rClass, int limit);
+    <R> List<R> groupAll(List<String> selectFields, @Nullable List<String> groupFields, Class<R> rClass, int limit);
 
-    <R> List<R> groupAll(Sort sort, List<String> selectFields, List<String> groupFields, Class<R> rClass);
+    <R> List<R> groupAll(Sort sort, List<String> selectFields, @Nullable List<String> groupFields, Class<R> rClass);
 
-    <R> List<R> groupAll(Sort sort, List<String> selectFields, List<String> groupFields, Class<R> rClass, int limit);
+    <R> List<R> groupAll(Sort sort, List<String> selectFields, @Nullable List<String> groupFields, Class<R> rClass, int limit);
 
-    <R> List<R> groupAll(Conditions conditions, List<String> selectFields, List<String> groupFields, Class<R> rClass);
+    <R> List<R> groupAll(Conditions conditions, List<String> selectFields, @Nullable List<String> groupFields, Class<R> rClass);
 
-    <R> List<R> groupAll(Conditions conditions, List<String> selectFields, List<String> groupFields, Class<R> rClass, int limit);
+    <R> List<R> groupAll(Conditions conditions, List<String> selectFields, @Nullable List<String> groupFields, Class<R> rClass, int limit);
 
-    <R> List<R> groupAll(Conditions conditions, Sort sort, List<String> selectFields, List<String> groupFields, Class<R> rClass);
+    <R> List<R> groupAll(Conditions conditions, Sort sort, List<String> selectFields, @Nullable List<String> groupFields, Class<R> rClass);
 
-    <R> List<R> groupAll(Conditions conditions, Sort sort, List<String> selectFields, List<String> groupFields, Class<R> rClass, int limit);
+    <R> List<R> groupAll(Conditions conditions, Sort sort, List<String> selectFields, @Nullable List<String> groupFields, Class<R> rClass, int limit);
 
     @Deprecated
     <R> Page<R> groupAll(Conditions conditions, Pageable pageable, List<String> selectFields, List<String> groupFields, Class<R> rClass);
