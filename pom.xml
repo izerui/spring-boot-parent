@@ -38,6 +38,7 @@
         <module>kafka-spring-boot</module>
         <module>batch-processor-spring-boot</module>
         <module>chatgpt-spring-boot</module>
+        <module>mail-spring-boot</module>
     </modules>
     <!-- spring boot upgrade -->
     <!-- 2.3->2.4: https://thepracticaldeveloper.com/book-update-2.4.0/ -->
