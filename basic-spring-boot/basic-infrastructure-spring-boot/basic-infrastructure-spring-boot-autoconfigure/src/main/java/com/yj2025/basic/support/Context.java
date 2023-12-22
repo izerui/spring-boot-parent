@@ -28,6 +28,10 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.core.ResolvableType;
+import org.springframework.retry.RecoveryCallback;
+import org.springframework.retry.RetryCallback;
+import org.springframework.retry.backoff.ExponentialBackOffPolicy;
+import org.springframework.retry.support.RetryTemplate;
 import org.springframework.util.Assert;
 
 import java.text.SimpleDateFormat;
@@ -542,6 +546,29 @@ public final class Context {
         if (blockAndWait) {
             countDownLatch.await();
         }
+    }
+
+    /**
+     * 方法重试
+     * 示例： retryTemplate.execute(context -> authorityClient.findAuthorities(properties.getOauth2().getClientId()), context -> null);
+     * @param initialInterval 设置初始睡眠间隔值。默认值是100毫秒。不能设置为小于1的值。
+     * @param multiplier 设置乘数值。默认为'2.0'。提示:不要使用超过1.0的值(否则回退会变得非常长非常快)。
+     * @param maxInterval 最大后退周期设置器。默认值为30000(30秒)。如果以小于1的值调用此方法，则该值将重置为1。设置它是为了避免在后退很多次(或者如果乘数设置得太高)时出现无限等待。
+     * @param retryCallback 继续执行回调，直到它成功或策略指示我们停止，在这种情况下，补偿回调将被执行。
+     * @param recoveryCallback 补偿回调
+     * @return
+     * @param <T> 返回值
+     * @param <E> 异常
+     */
+    public static <T, E extends Throwable> T retry(int initialInterval, int multiplier, int maxInterval, RetryCallback<T, E> retryCallback,
+                                                   RecoveryCallback<T> recoveryCallback) {
+        RetryTemplate retryTemplate = new RetryTemplate();
+        ExponentialBackOffPolicy backOffPolicy = new ExponentialBackOffPolicy();
+        backOffPolicy.setInitialInterval(initialInterval);
+        backOffPolicy.setMultiplier(multiplier);
+        backOffPolicy.setMaxInterval(maxInterval);
+        retryTemplate.setBackOffPolicy(backOffPolicy);
+        return tryWith(() -> retryTemplate.execute(retryCallback, recoveryCallback));
     }
 
 }
