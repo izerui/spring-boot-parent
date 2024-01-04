@@ -14,9 +14,13 @@ public class SourceMessageVO {
      */
     private String entCode;
     /**
-     * 发送人
+     * 发送人CODE
      */
     private String userCode;
+    /**
+     * 发送人姓名
+     */
+    private String userName;
     /**
      * 单个业务主键
      */
@@ -34,8 +38,20 @@ public class SourceMessageVO {
         this.userCode = userCode;
     }
 
+    private SourceMessageVO(String entCode, String userCode, String userName) {
+        this.entCode = entCode;
+        this.userCode = userCode;
+        this.userName = userName;
+    }
+
     public static SourceMessageVO of(String entCode, String userCode, String businessRecordId) {
         var result = new SourceMessageVO(entCode, userCode);
+        result.businessRecordId = businessRecordId;
+        return result;
+    }
+
+    public static SourceMessageVO of(String entCode, String userCode, String userName, String businessRecordId) {
+        var result = new SourceMessageVO(entCode, userCode, userName);
         result.businessRecordId = businessRecordId;
         return result;
     }
@@ -46,12 +62,22 @@ public class SourceMessageVO {
         return result;
     }
 
+    public static SourceMessageVO of(String entCode, String userCode, String userName, List<String> businessRecordIds) {
+        var result = new SourceMessageVO(entCode, userCode, userName);
+        result.businessRecordIds = businessRecordIds;
+        return result;
+    }
+
     public String getEntCode() {
         return entCode;
     }
 
     public String getUserCode() {
         return userCode;
+    }
+
+    public String getUserName() {
+        return userName;
     }
 
     public String getBusinessRecordId() {
