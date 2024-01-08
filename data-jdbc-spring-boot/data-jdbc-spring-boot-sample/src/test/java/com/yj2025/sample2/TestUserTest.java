@@ -142,6 +142,8 @@ public class TestUserTest {
             user.setEmail("email" + value);
             user.setVersion(1);
             user.setAge(28);
+            user.setFlag(true);
+            user.setFlagString(false);
             user.setEntCode("ent001");
             return user;
         }).collect(Collectors.toList());
