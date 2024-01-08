@@ -262,7 +262,7 @@ public class DbContext {
     private final static Map<String, SimpleJdbcInsert> GLOB_TABLE_INSERT_HOLDER = new ConcurrentHashMap<>();
 
     private static SimpleJdbcInsert getInsert(DataSource dataSource, String tablename, String... generatedKeys) {
-        String mapKey = tablename + String.join("_", generatedKeys);
+        String mapKey = tablename + "_" + String.join("_", generatedKeys);
         SimpleJdbcInsert insert = GLOB_TABLE_INSERT_HOLDER.get(mapKey);
         if (insert == null) {
             insert = new SimpleJdbcInsert(dataSource);
