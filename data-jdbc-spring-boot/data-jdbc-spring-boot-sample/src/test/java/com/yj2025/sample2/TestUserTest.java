@@ -263,7 +263,19 @@ public class TestUserTest {
         map2.put("bom_id", UUID.randomUUID().toString());
         map2.put("alternative_material_changed", false);
         DbContext.batchInsert("order_bom_item_638334323_2024", Lists.newArrayList(map1, map2), "id");
-//        System.out.println(byAge);
+    }
+
+    @Test
+    public void test_order_bom_item_process_technology() {
+        Map map1 = new HashMap();
+        map1.put("ent_code", UUID.randomUUID().toString());
+        map1.put("create_time", new Date());
+        map1.put("bom_id", UUID.randomUUID().toString());
+        map1.put("root_bom_id", UUID.randomUUID().toString());
+        map1.put("process_code", UUID.randomUUID().toString());
+        map1.put("technology_id", UUID.randomUUID().toString());
+
+        DbContext.batchInsert("order_bom_item_process_technology", Lists.newArrayList(map1), "id");
     }
 
 }
