@@ -282,12 +282,41 @@ public class DbContext {
 
     /**
      * 从DataSource获取当前连接的数据库名
+     *
      * @param dataSource
      * @return
      */
     public final static String getDatabase(DataSource dataSource) {
         try (Connection connection = dataSource.getConnection()) {
             return connection.unwrap(com.mysql.cj.jdbc.ConnectionImpl.class).getDatabase();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 从DataSource获取当前连接的目录名名
+     *
+     * @param dataSource
+     * @return
+     */
+    public final static String getCatalog(DataSource dataSource) {
+        try (Connection connection = dataSource.getConnection()) {
+            return connection.unwrap(com.mysql.cj.jdbc.ConnectionImpl.class).getCatalog();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 从DataSource获取当前连接的schema名
+     *
+     * @param dataSource
+     * @return
+     */
+    public final static String getSchema(DataSource dataSource) {
+        try (Connection connection = dataSource.getConnection()) {
+            return connection.unwrap(com.mysql.cj.jdbc.ConnectionImpl.class).getSchema();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
