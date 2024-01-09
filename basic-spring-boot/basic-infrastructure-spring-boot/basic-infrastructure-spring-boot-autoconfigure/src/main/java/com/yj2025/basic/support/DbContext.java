@@ -272,7 +272,7 @@ public class DbContext {
             // 当test库或者其他库有相同表的时候会出现错乱，特别是表名一致，但是字段不一致的问题。
             insert.setCatalogName(getCatalog(dataSource));
             // mysql 的schema其实就是数据库名
-            insert.setSchemaName(getDatabase(dataSource));
+            insert.setSchemaName(getSchema(dataSource));
             if (generatedKeys != null && generatedKeys.length > 0) {
                 insert.usingGeneratedKeyColumns(generatedKeys);
             }
