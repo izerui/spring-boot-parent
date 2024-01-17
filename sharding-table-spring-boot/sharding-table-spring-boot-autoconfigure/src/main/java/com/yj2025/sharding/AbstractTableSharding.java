@@ -198,4 +198,14 @@ public abstract class AbstractTableSharding {
      * @return
      */
     protected abstract String tableName(String sourceTable, String tenantId, String year);
+
+    /**
+     * 获取已经缓存起来的表
+     *
+     * @param dataSource
+     * @return
+     */
+    public List<String> getCachedTables(DataSource dataSource) {
+        return cacheDataSourceTablesMap.get(dataSource);
+    }
 }
