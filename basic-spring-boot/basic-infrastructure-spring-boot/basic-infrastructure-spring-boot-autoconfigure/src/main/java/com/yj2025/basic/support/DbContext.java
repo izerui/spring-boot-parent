@@ -27,7 +27,9 @@ import org.springframework.util.ReflectionUtils;
 import javax.sql.DataSource;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
+import java.sql.Connection;
 import java.sql.JDBCType;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
@@ -262,11 +264,15 @@ public class DbContext {
     private final static Map<String, SimpleJdbcInsert> GLOB_TABLE_INSERT_HOLDER = new ConcurrentHashMap<>();
 
     private static SimpleJdbcInsert getInsert(DataSource dataSource, String tablename, String... generatedKeys) {
-        String mapKey = tablename + String.join("_", generatedKeys);
+        String mapKey = tablename + "_" + String.join("_", generatedKeys) + "_" + dataSource.toString();
         SimpleJdbcInsert insert = GLOB_TABLE_INSERT_HOLDER.get(mapKey);
         if (insert == null) {
             insert = new SimpleJdbcInsert(dataSource);
             insert.setTableName(tablename);
+            // 当test库或者其他库有相同表的时候会出现错乱，特别是表名一致，但是字段不一致的问题。
+            insert.setCatalogName(getCatalog(dataSource));
+            // mysql 的schema其实就是数据库名
+            insert.setSchemaName(getSchema(dataSource));
             if (generatedKeys != null && generatedKeys.length > 0) {
                 insert.usingGeneratedKeyColumns(generatedKeys);
             }
@@ -274,6 +280,48 @@ public class DbContext {
             GLOB_TABLE_INSERT_HOLDER.put(mapKey, insert);
         }
         return insert;
+    }
+
+    /**
+     * 从DataSource获取当前连接的数据库名
+     *
+     * @param dataSource
+     * @return
+     */
+    public final static String getDatabase(DataSource dataSource) {
+        try (Connection connection = dataSource.getConnection()) {
+            return connection.unwrap(com.mysql.cj.jdbc.ConnectionImpl.class).getDatabase();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 从DataSource获取当前连接的目录名名
+     *
+     * @param dataSource
+     * @return
+     */
+    public final static String getCatalog(DataSource dataSource) {
+        try (Connection connection = dataSource.getConnection()) {
+            return connection.unwrap(com.mysql.cj.jdbc.ConnectionImpl.class).getCatalog();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 从DataSource获取当前连接的schema名
+     *
+     * @param dataSource
+     * @return
+     */
+    public final static String getSchema(DataSource dataSource) {
+        try (Connection connection = dataSource.getConnection()) {
+            return connection.unwrap(com.mysql.cj.jdbc.ConnectionImpl.class).getSchema();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**

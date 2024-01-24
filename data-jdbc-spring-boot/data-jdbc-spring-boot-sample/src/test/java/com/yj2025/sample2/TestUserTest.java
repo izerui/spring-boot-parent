@@ -2,6 +2,7 @@ package com.yj2025.sample2;
 
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
+import com.yj2025.basic.support.DbContext;
 import com.yj2025.jdbc.support.Comparator;
 import com.yj2025.sample2.entity.TestUser;
 import com.yj2025.sample2.mapping.GroupMapping;
@@ -142,6 +143,8 @@ public class TestUserTest {
             user.setEmail("email" + value);
             user.setVersion(1);
             user.setAge(28);
+            user.setFlag(true);
+            user.setFlagString(false);
             user.setEntCode("ent001");
             return user;
         }).collect(Collectors.toList());
@@ -247,8 +250,32 @@ public class TestUserTest {
 
 
     @Test
-    public void testFindByAge() {
-//        System.out.println(byAge);
+    public void testMapBatchInsert() {
+        Map map1 = new HashMap();
+        map1.put("ent_code", UUID.randomUUID().toString());
+        map1.put("root_bom_id", UUID.randomUUID().toString());
+        map1.put("bom_id", UUID.randomUUID().toString());
+        map1.put("alternative_material_changed", true);
+
+        Map map2 = new HashMap();
+        map2.put("ent_code", UUID.randomUUID().toString());
+        map2.put("root_bom_id", UUID.randomUUID().toString());
+        map2.put("bom_id", UUID.randomUUID().toString());
+        map2.put("alternative_material_changed", false);
+        DbContext.batchInsert("order_bom_item_638334323_2024", Lists.newArrayList(map1, map2), "id");
+    }
+
+    @Test
+    public void test_order_bom_item_process_technology() {
+        Map map1 = new HashMap();
+        map1.put("ent_code", UUID.randomUUID().toString());
+        map1.put("create_time", new Date());
+        map1.put("bom_id", UUID.randomUUID().toString());
+        map1.put("root_bom_id", UUID.randomUUID().toString());
+        map1.put("process_code", UUID.randomUUID().toString());
+        map1.put("technology_id", UUID.randomUUID().toString());
+
+        DbContext.batchInsert("order_bom_item_process_technology", Lists.newArrayList(map1), "id");
     }
 
 }
