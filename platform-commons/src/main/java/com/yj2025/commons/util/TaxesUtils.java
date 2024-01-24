@@ -6,10 +6,6 @@ import com.yj2025.commons.vo.TaxRateVO;
 import java.math.BigDecimal;
 
 public class TaxesUtils {
-    @Deprecated
-    public final static int PRICE = 8;
-    @Deprecated
-    public final static int AMOUNT = 2;
 
     public TaxesUtils() {
     }
