@@ -29,6 +29,7 @@ public enum MoneyEnum {
 
     PRICING_VALUE_DECIMALS(5, "#,###.#####"),
     HOUR(5, "#.#####"),
+    STATEMENT_AMOUNT(4, "#,###.####"),
     NONE(0, "#.#");
 
     private int decimal;
