@@ -1,5 +1,7 @@
 package com.yj2025.rabbit;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.Date;
 import java.util.List;
 
@@ -8,6 +10,7 @@ public class SourceMessageVO {
     /**
      * 消息发送时间
      */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Shanghai")
     private final Date createTime = new Date();
     /**
      * 企业账号编码
