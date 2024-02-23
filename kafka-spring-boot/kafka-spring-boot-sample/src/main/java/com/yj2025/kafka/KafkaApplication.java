@@ -23,16 +23,16 @@ public class KafkaApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        Context.runDelayed("循环发送消息",
-                integer -> {
-                    send(integer + 1);
-                    return true;
-                },
-                3,
-                10,
-                100,
-                true
-        );
+//        Context.runDelayed("循环发送消息",
+//                integer -> {
+//                    send(integer + 1);
+//                    return true;
+//                },
+//                3,
+//                10,
+//                100,
+//                true
+//        );
     }
 
     private void send(Integer num) {

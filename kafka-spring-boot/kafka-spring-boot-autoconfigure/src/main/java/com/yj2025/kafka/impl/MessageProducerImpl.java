@@ -2,6 +2,7 @@ package com.yj2025.kafka.impl;
 
 import com.yj2025.kafka.MessageProducer;
 import com.yj2025.kafka.ProducerCallback;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.header.Headers;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
@@ -15,10 +16,13 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 
+@Slf4j
 public class MessageProducerImpl implements MessageProducer {
 
 
@@ -47,6 +51,7 @@ public class MessageProducerImpl implements MessageProducer {
         headers.add("sendTimeLabel", toBytesFun.apply(now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), null));
         headers.add("applicationName", toBytesFun.apply(applicationName, null));
         headers.add("producerClientId", toBytesFun.apply(kafkaProperties.getProducer().getClientId(), kafkaProperties.getClientId()));
+        headers.add("messageUuid", UUID.randomUUID().toString().getBytes());
     }
 
     public CompletableFuture<SendResult<String, Object>> send(String topic, String key, @Nullable Object value, Map<String, String> headers) {
@@ -54,9 +59,16 @@ public class MessageProducerImpl implements MessageProducer {
         Assert.notNull(key, "key不能为空");
         ProducerRecord<String, Object> producerRecord = new ProducerRecord<>(topic, key, value);
         headers.forEach((s, s2) -> {
-            producerRecord.headers().add(s, s2.getBytes(StandardCharsets.UTF_8));
+            if (!List.of("sendTime","sendTimeLabel","applicationName","producerClientId","messageUuid").contains(s)){
+                producerRecord.headers().add(s, s2.getBytes(StandardCharsets.UTF_8));
+            }
         });
         wrapHeaders(producerRecord.headers());
+        producerRecord.headers().forEach(e->{
+            if (e.key().equals("messageUuid")){
+                log.info("messageUuid:{}",new String(e.value()));
+            }
+        });
         return kafkaTemplate.send(producerRecord);
     }
 
