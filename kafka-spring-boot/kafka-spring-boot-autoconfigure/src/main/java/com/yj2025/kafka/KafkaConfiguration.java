@@ -1,6 +1,7 @@
 package com.yj2025.kafka;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yj2025.kafka.impl.GlobalKafkaErrorHandler;
 import com.yj2025.kafka.impl.MessageProducerImpl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
@@ -45,6 +46,11 @@ public class KafkaConfiguration {
         return new MessageProducerImpl(kafkaTemplate, kafkaProperties, applicationName);
     }
 
+
+    @Bean
+    public GlobalKafkaErrorHandler globalKafkaErrorHandler(MessageProducer messageProducer){
+        return new GlobalKafkaErrorHandler(messageProducer);
+    }
 
 //    @Bean
 //    public DefaultKafkaConsumerFactoryCustomizer consumerFactoryCustomizer() {

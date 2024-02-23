@@ -64,11 +64,6 @@ public class MessageProducerImpl implements MessageProducer {
             }
         });
         wrapHeaders(producerRecord.headers());
-        producerRecord.headers().forEach(e->{
-            if (e.key().equals("messageUuid")){
-                log.info("messageUuid:{}",new String(e.value()));
-            }
-        });
         return kafkaTemplate.send(producerRecord);
     }
 
