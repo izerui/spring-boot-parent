@@ -20,7 +20,7 @@ public class Application {
 
     // 方式一
     @Bean
-    public BeanDefinitionRegistryCustomizer<CustomBean> originalBeanCustomizer() {
+    public BeanDefinitionRegistryCustomizer originalBeanCustomizer() {
         return (registry, applicationContext) -> {
             log.info("使用 com.yj2025.customizer.bean.BeanDefinitionRegistryCustomizer 方式进行bean替换");
             BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.rootBeanDefinition(CustomBean.class);

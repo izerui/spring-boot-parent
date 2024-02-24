@@ -57,6 +57,8 @@ public class MessageProducerImpl implements MessageProducer {
             producerRecord.headers().add(s, s2.getBytes(StandardCharsets.UTF_8));
         });
         wrapHeaders(producerRecord.headers());
+        System.out.println("isAllowNonTransactional"+kafkaTemplate.isAllowNonTransactional());
+        System.out.println("isTransactional"+kafkaTemplate.isTransactional());
         return kafkaTemplate.send(producerRecord);
     }
 
