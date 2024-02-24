@@ -76,9 +76,8 @@ public class KafkaConfiguration {
 
     /**
      * 补偿机制： 防止重复创建事务管理器(可选)
-     * 前提: {@link #factoryCustomizer()}
      * 如果已经存在jdbc的事务管理器，则移除掉kafka自动创建的事务管理器
-     * {@link org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration#kafkaTransactionManager(ProducerFactory)}
+     * {@link #kafkaTransactionManager(ProducerFactory)}
      */
     @Bean
     public BeanDefinitionRegistryCustomizer kafkaTransactionManagerCustomizer() {
