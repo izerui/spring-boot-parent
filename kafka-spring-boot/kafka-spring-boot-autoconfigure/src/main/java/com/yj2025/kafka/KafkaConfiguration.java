@@ -55,7 +55,9 @@ public class KafkaConfiguration {
     public BeanDefinitionRegistryCustomizer kafkaTransactionManagerCustomizer() {
         return (registry, applicationContext) -> {
             if (registry.isBeanNameInUse("transactionManager")) {
-                registry.removeBeanDefinition("kafkaTransactionManager");
+                if (registry.isBeanNameInUse("kafkaTransactionManager")) {
+                    registry.removeBeanDefinition("kafkaTransactionManager");
+                }
             }
         };
     }

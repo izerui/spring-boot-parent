@@ -37,7 +37,7 @@ public class SampleSender {
                 }
             });
         }
-//        throw new RuntimeException("故意抛出异常，让事务回滚，消息不发出");
+        throw new RuntimeException("故意抛出异常，让事务回滚，消息不发出");
     }
 
 }
