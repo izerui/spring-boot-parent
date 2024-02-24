@@ -4,6 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yj2025.customizer.bean.BeanDefinitionRegistryCustomizer;
 import com.yj2025.kafka.impl.MessageProducerImpl;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.kafka.DefaultKafkaProducerFactoryCustomizer;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +15,8 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.converter.RecordMessageConverter;
 import org.springframework.kafka.support.converter.StringJsonMessageConverter;
+import org.springframework.kafka.transaction.KafkaTransactionManager;
+import org.springframework.transaction.TransactionManager;
 
 /**
  * # spring.kafka.listener.ack-mode=record
@@ -48,6 +53,30 @@ public class KafkaConfiguration {
     }
 
     /**
+     * 如果没有jdbc事务再创建自身kafka事务管理器
+     * @param producerFactory
+     * @return
+     */
+    @Bean
+	@ConditionalOnMissingBean(TransactionManager.class)
+	public KafkaTransactionManager<?, ?> kafkaTransactionManager(ProducerFactory<?, ?> producerFactory) {
+		return new KafkaTransactionManager<>(producerFactory);
+	}
+
+    /**
+     * 无需配置声明，设置kafka自身事务管理器的id前缀
+     * @return
+     */
+    @Bean
+    public DefaultKafkaProducerFactoryCustomizer factoryCustomizer() {
+        return producerFactory -> {
+            producerFactory.setTransactionIdPrefix("kafka-tx-");
+        };
+    }
+
+    /**
+     * 补偿机制： 防止重复创建事务管理器(可选)
+     * 前提: {@link #factoryCustomizer()}
      * 如果已经存在jdbc的事务管理器，则移除掉kafka自动创建的事务管理器
      * {@link org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration#kafkaTransactionManager(ProducerFactory)}
      */

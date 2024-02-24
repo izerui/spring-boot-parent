@@ -36,10 +36,10 @@
             <groupId>com.yj2025</groupId>
             <artifactId>basic-infrastructure-spring-boot-starter</artifactId>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>com.yj2025</groupId>-->
-<!--            <artifactId>data-jdbc-spring-boot-starter</artifactId>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>com.yj2025</groupId>
+            <artifactId>data-jdbc-spring-boot-starter</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
