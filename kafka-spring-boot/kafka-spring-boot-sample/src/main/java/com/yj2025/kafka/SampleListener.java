@@ -9,10 +9,10 @@ import java.util.Map;
 
 @Slf4j(topic = "[接收端]:")
 @Component
-@Transactional
 public class SampleListener {
 
     @KafkaListener(topics = "testTopic")
+    @Transactional
     public void listenerTestTopic(Map<String, Object> map) {
         log.info("接收到消息: {}", map);
     }

@@ -64,6 +64,8 @@ public class MessageProducerImpl implements MessageProducer {
             }
         });
         wrapHeaders(producerRecord.headers());
+        System.out.println("isAllowNonTransactional"+kafkaTemplate.isAllowNonTransactional());
+        System.out.println("isTransactional"+kafkaTemplate.isTransactional());
         return kafkaTemplate.send(producerRecord);
     }
 

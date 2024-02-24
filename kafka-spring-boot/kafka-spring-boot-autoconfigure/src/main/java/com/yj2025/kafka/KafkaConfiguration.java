@@ -2,6 +2,7 @@ package com.yj2025.kafka;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yj2025.kafka.impl.GlobalKafkaErrorHandler;
+import com.yj2025.customizer.bean.BeanDefinitionRegistryCustomizer;
 import com.yj2025.kafka.impl.MessageProducerImpl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
@@ -9,6 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.converter.RecordMessageConverter;
 import org.springframework.kafka.support.converter.StringJsonMessageConverter;
 
@@ -44,6 +46,19 @@ public class KafkaConfiguration {
     @Bean
     public MessageProducer messageProducer(KafkaTemplate<String, Object> kafkaTemplate, KafkaProperties kafkaProperties) {
         return new MessageProducerImpl(kafkaTemplate, kafkaProperties, applicationName);
+    }
+
+    /**
+     * 如果已经存在jdbc的事务管理器，则移除掉kafka自动创建的事务管理器
+     * {@link org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration#kafkaTransactionManager(ProducerFactory)}
+     */
+    @Bean
+    public BeanDefinitionRegistryCustomizer kafkaTransactionManagerCustomizer() {
+        return (registry, applicationContext) -> {
+            if (registry.isBeanNameInUse("transactionManager")) {
+                registry.removeBeanDefinition("kafkaTransactionManager");
+            }
+        };
     }
 
 
