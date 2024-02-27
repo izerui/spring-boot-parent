@@ -52,9 +52,7 @@
 ## 3.1.6-SNAPSHOT
 
 ### Bug Fixes
-
 * 修复功能bug
 
 ### Features
-
 * jpa 增加aop支持
