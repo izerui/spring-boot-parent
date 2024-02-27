@@ -5,12 +5,16 @@ import com.yj2025.kafka.impl.GlobalKafkaErrorHandler;
 import com.yj2025.customizer.bean.BeanDefinitionRegistryCustomizer;
 import com.yj2025.kafka.impl.MessageProducerImpl;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
 import org.springframework.boot.autoconfigure.kafka.DefaultKafkaProducerFactoryCustomizer;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
@@ -37,6 +41,8 @@ import org.springframework.transaction.TransactionManager;
  */
 @Configuration
 @EnableKafka
+@AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
+@AutoConfigureAfter(DataSourceTransactionManagerAutoConfiguration.class)
 public class KafkaConfiguration {
 
     @Value("${spring.application.name:null}")
