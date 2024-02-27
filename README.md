@@ -47,3 +47,14 @@
   > 企业微信封装：sdk、回调
 * mongo-transaction-spring-boot
   > mongodb 支持事务：建议mongodb版本在4.2以上,并且是集群模式
+
+
+## 3.1.6-SNAPSHOT
+
+### Bug Fixes
+
+* 修复功能bug
+
+### Features
+
+* jpa 增加aop支持
