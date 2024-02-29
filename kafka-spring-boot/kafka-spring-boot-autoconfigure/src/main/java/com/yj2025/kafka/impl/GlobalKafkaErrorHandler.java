@@ -7,6 +7,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.listener.CommonErrorHandler;
 import org.springframework.kafka.listener.DefaultErrorHandler;
 import org.springframework.kafka.listener.MessageListenerContainer;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,6 +22,8 @@ public class GlobalKafkaErrorHandler implements CommonErrorHandler {
     public GlobalKafkaErrorHandler(MessageProducer messageProducer){
         this.messageProducer = messageProducer;
     }
+
+    @Transactional
     @Override
     public boolean handleOne(Exception thrownException, ConsumerRecord<?, ?> record, Consumer<?, ?> consumer,
                              MessageListenerContainer container) {
@@ -37,7 +40,11 @@ public class GlobalKafkaErrorHandler implements CommonErrorHandler {
                 messageBody.put("timestamp", record.timestamp());
                 Map<String, String> headers = new HashMap<>();
                 record.headers().forEach(header -> {
-                    headers.put(header.key(), new String(header.value()));
+                    if (null == header.value()){
+                        headers.put(header.key(), null);
+                    }else{
+                        headers.put(header.key(), new String(header.value()));
+                    }
                 });
                 messageBody.put("header", headers);
                 messageProducer.send(KafkaErrorMessageConfig.topic, KafkaErrorMessageConfig.key, messageBody, headers);
