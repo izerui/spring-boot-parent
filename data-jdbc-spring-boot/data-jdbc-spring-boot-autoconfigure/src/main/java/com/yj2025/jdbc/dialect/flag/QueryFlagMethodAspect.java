@@ -74,7 +74,7 @@ public class QueryFlagMethodAspect {
             String value = parser.parseExpression(queryFlag.value(), ParserContext.TEMPLATE_EXPRESSION).getValue(context, String.class);
             list.add(new QueryFlag(queryFlag.tablePrefix(), queryFlag.isComment(), value));
         }
-        list.sort((o1, o2) -> o1.getTablePrefix().compareTo(o2.getTablePrefix()));
+        list.sort((o1, o2) -> o2.getTablePrefix().compareTo(o1.getTablePrefix()));
         QueryFlagThreadLocalHolder.setQueryFlags(list);
         return pjp.proceed();
     }

@@ -61,7 +61,7 @@ public class TestUserService {
 //                    @QueryFlagAfterTable(value = "force index(idx_02)", isComment = false, tablePrefix = "test_user_ent002")
 //            }
 //    )
-    @QueryFlagAfterTable(value = "force index(idx_01)", isComment = false, tablePrefix = "test_user_ent001")
+    @QueryFlagAfterTable(value = "force index(idx_01)", isComment = false)
     @QueryFlagAfterTable(value = "force index(idx_02)", isComment = false, tablePrefix = "test_user_ent002")
     public Page<TestUser> findByQuery(String entCode, Query query) {
         return testUserRepository.findAll(query, PageRequest.of(0, 200));
