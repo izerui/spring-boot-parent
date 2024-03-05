@@ -1,5 +1,6 @@
 package com.yj2025.sample2.service;
 
+import com.yj2025.jdbc.dialect.flag.QueryFlagAfterTable;
 import com.yj2025.sample2.entity.TestUser;
 import com.yj2025.sample2.mapping.GroupMapping;
 import com.yj2025.sample2.repository.TestUserRepository;
@@ -53,6 +54,7 @@ public class TestUserService {
     }
 
     @Tenant("#{#entCode}")
+    @QueryFlagAfterTable(value = "force index(idx_01)", isComment = false)
     public Page<TestUser> findByQuery(String entCode, Query query) {
         return testUserRepository.findAll(query, PageRequest.of(0, 200));
     }
