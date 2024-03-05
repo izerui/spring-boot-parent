@@ -47,6 +47,8 @@ public interface TestUserRepository extends PlatformJdbcRepository<TestUser, Lon
     @QueryFlagAfterTable(value = "force index(idx_01)", isComment = false)
     @QueryFlagAfterTable(value = "force index(idx_02)", isComment = false, tablePrefix = "test_user_ent002")
     default Page<TestUser> findAllForceIndex(org.springframework.data.relational.core.query.Query query, Pageable pageable) {
+        System.out.println("第二步：切面放入本地线程queryflag值，并运用到业务逻辑中");
         return this.findAll(query, pageable);
+//        System.out.println("第三步：切面即将跳出，即将清空本地线程的queryflag值");
     }
 }

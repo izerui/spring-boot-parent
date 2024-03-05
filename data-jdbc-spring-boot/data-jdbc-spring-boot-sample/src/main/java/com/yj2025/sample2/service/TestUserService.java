@@ -61,6 +61,7 @@ public class TestUserService {
 
      @Tenant("#{#entCode}")
     public Page<TestUser> findByQueryForceIndex(String entCode, Query query) {
+         System.out.println("第一步： 准备开始执行方法 findAllForceIndex 切面");
         return testUserRepository.findAllForceIndex(query, PageRequest.of(0, 200));
     }
 
