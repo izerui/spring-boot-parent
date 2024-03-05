@@ -7,7 +7,8 @@ import java.lang.annotation.*;
 /**
  * @author liuyuhua
  */
-@Description("data-jdbc生成的查询表后的一个标记")
+@Description("data-jdbc生成的查询表后的一个标记,只对被该注解声明的方法有效,跳出方法后本地线程无法再获取值," +
+        "建议该注解使用在RepositoryDao类的方法上,保证只对指定的某个查询方法使用。")
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})

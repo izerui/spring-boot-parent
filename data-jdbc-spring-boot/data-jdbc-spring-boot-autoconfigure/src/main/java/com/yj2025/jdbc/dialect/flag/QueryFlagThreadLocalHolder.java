@@ -11,6 +11,10 @@ public class QueryFlagThreadLocalHolder {
         QUERY_FLAG_LOCALS.set(values);
     }
 
+    public static void removeQueryFlags() {
+        QUERY_FLAG_LOCALS.remove();
+    }
+
     public static List<QueryFlag> getQueryFlags() {
         List<QueryFlag> list = QUERY_FLAG_LOCALS.get();
         if (list == null) {

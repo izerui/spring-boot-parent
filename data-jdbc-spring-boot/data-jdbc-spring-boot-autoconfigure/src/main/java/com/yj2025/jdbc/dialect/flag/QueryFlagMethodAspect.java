@@ -47,36 +47,45 @@ public class QueryFlagMethodAspect {
 
     @Around(value = "pointcut01(queryFlag)")
     public Object around01(ProceedingJoinPoint pjp, QueryFlagAfterTable queryFlag) throws Throwable {
-        Method method = this.getInterfaceMethod(pjp);
+        try {
+            Method method = this.getInterfaceMethod(pjp);
 //        String methodName = method.toString();
-        // 获取方法的参数值
-        Object[] args = pjp.getArgs();
-        EvaluationContext context = this.bindParam(method, args);
-        // 放入租户信息到本地线程
-        String value = parser.parseExpression(queryFlag.value(), ParserContext.TEMPLATE_EXPRESSION).getValue(context, String.class);
-        QueryFlagThreadLocalHolder.setQueryFlags(Lists.newArrayList(
-                new QueryFlag(queryFlag.tablePrefix(), queryFlag.isComment(), value)
-        ));
-        // return
-        return pjp.proceed();
+            // 获取方法的参数值
+            Object[] args = pjp.getArgs();
+            EvaluationContext context = this.bindParam(method, args);
+            // 放入租户信息到本地线程
+            String value = parser.parseExpression(queryFlag.value(), ParserContext.TEMPLATE_EXPRESSION).getValue(context, String.class);
+            QueryFlagThreadLocalHolder.setQueryFlags(Lists.newArrayList(
+                    new QueryFlag(queryFlag.tablePrefix(), queryFlag.isComment(), value)
+            ));
+            // return
+            return pjp.proceed();
+        } finally {
+            QueryFlagThreadLocalHolder.removeQueryFlags();
+        }
     }
 
     @Around(value = "pointcut02(queryFlags)")
     public Object around02(ProceedingJoinPoint pjp, QueryFlagAfterTables queryFlags) throws Throwable {
-        Method method = this.getInterfaceMethod(pjp);
+        try {
+            Method method = this.getInterfaceMethod(pjp);
 //        String methodName = method.toString();
-        // 获取方法的参数值
-        Object[] args = pjp.getArgs();
-        EvaluationContext context = this.bindParam(method, args);
-        List<QueryFlag> list = new ArrayList<>();
-        for (QueryFlagAfterTable queryFlag : queryFlags.value()) {
-            // 放入租户信息到本地线程
-            String value = parser.parseExpression(queryFlag.value(), ParserContext.TEMPLATE_EXPRESSION).getValue(context, String.class);
-            list.add(new QueryFlag(queryFlag.tablePrefix(), queryFlag.isComment(), value));
+            // 获取方法的参数值
+            Object[] args = pjp.getArgs();
+            EvaluationContext context = this.bindParam(method, args);
+            List<QueryFlag> list = new ArrayList<>();
+            for (QueryFlagAfterTable queryFlag : queryFlags.value()) {
+                // 放入租户信息到本地线程
+                String value = parser.parseExpression(queryFlag.value(), ParserContext.TEMPLATE_EXPRESSION).getValue(context, String.class);
+                list.add(new QueryFlag(queryFlag.tablePrefix(), queryFlag.isComment(), value));
+            }
+            list.sort((o1, o2) -> o2.getTablePrefix().compareTo(o1.getTablePrefix()));
+            QueryFlagThreadLocalHolder.setQueryFlags(list);
+            return pjp.proceed();
+        } finally {
+            QueryFlagThreadLocalHolder.removeQueryFlags();
         }
-        list.sort((o1, o2) -> o2.getTablePrefix().compareTo(o1.getTablePrefix()));
-        QueryFlagThreadLocalHolder.setQueryFlags(list);
-        return pjp.proceed();
+
     }
 
     /**
