@@ -55,24 +55,13 @@ public class TestUserService {
     }
 
     @Tenant("#{#entCode}")
-    /**
-     * 优先匹配有值的tablePrefix前缀,最后匹配空串,发现空串算匹配成功,则添加表后缀字符串
-     * 第一种写法:
-     */
-//    @QueryFlagAfterTables(
-//            {
-//                    @QueryFlagAfterTable(value = "force index(idx_01)", isComment = false, tablePrefix = "test_user_ent001"),
-//                    @QueryFlagAfterTable(value = "force index(idx_02)", isComment = false, tablePrefix = "test_user_ent002")
-//            }
-//    )
-    /**
-     * 优先匹配有值的tablePrefix前缀,最后匹配空串,发现空串算匹配成功,则添加表后缀字符串
-     * 第二种写法
-     */
-    @QueryFlagAfterTable(value = "force index(idx_01)", isComment = false)
-    @QueryFlagAfterTable(value = "force index(idx_02)", isComment = false, tablePrefix = "test_user_ent002")
     public Page<TestUser> findByQuery(String entCode, Query query) {
         return testUserRepository.findAll(query, PageRequest.of(0, 200));
+    }
+
+     @Tenant("#{#entCode}")
+    public Page<TestUser> findByQueryForceIndex(String entCode, Query query) {
+        return testUserRepository.findAllForceIndex(query, PageRequest.of(0, 200));
     }
 
     @Tenant("#{#entCode}")

@@ -16,11 +16,7 @@ public class QueryFlagThreadLocalHolder {
     }
 
     public static List<QueryFlag> getQueryFlags() {
-        List<QueryFlag> list = QUERY_FLAG_LOCALS.get();
-        if (list == null) {
-            return new ArrayList<>();
-        }
-        return list;
+        return QUERY_FLAG_LOCALS.get();
     }
 
 }

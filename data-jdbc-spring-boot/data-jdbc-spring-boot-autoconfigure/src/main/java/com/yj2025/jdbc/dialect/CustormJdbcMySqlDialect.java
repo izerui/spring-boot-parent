@@ -38,11 +38,14 @@ public class CustormJdbcMySqlDialect extends JdbcMySqlDialect {
             // without schema
             String tableName = last.toSql(IdentifierProcessing.NONE);
 
-            for (QueryFlag queryFlag : getQueryFlags()) {
-                if ("".equals(queryFlag.getTablePrefix()) || (tableName != null && tableName.startsWith(queryFlag.getTablePrefix()))) {
-                    String value = queryFlag.getValue();
-                    if (StringUtils.isNotEmpty(value)) {
-                        return "\n".concat(queryFlag.isComment() ? "/* " + value + " */" : value);
+            List<QueryFlag> queryFlags = getQueryFlags();
+            if (queryFlags != null && !queryFlags.isEmpty()) {
+                for (QueryFlag queryFlag : queryFlags) {
+                    if ("".equals(queryFlag.getTablePrefix()) || (tableName != null && tableName.startsWith(queryFlag.getTablePrefix()))) {
+                        String value = queryFlag.getValue();
+                        if (StringUtils.isNotEmpty(value)) {
+                            return "\n".concat(queryFlag.isComment() ? "/* " + value + " */" : value);
+                        }
                     }
                 }
             }
