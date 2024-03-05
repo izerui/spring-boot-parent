@@ -1,24 +1,22 @@
 package com.yj2025.jdbc.dialect.flag;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class QueryFlagThreadLocalHolder {
 
-    private final static ThreadLocal<String> THREAD_LOCAL0 = new InheritableThreadLocal<>();
-    private final static ThreadLocal<Boolean> THREAD_LOCAL1 = new InheritableThreadLocal<>();
+    private final static ThreadLocal<List<QueryFlag>> QUERY_FLAG_LOCALS = new InheritableThreadLocal<>();
 
-    public static void setQueryFlag(String queryFlag) {
-        THREAD_LOCAL0.set(queryFlag);
+    public static void setQueryFlags(List<QueryFlag> values) {
+        QUERY_FLAG_LOCALS.set(values);
     }
 
-    public static String getQueryFlag() {
-        return THREAD_LOCAL0.get();
-    }
-
-    public static void setComment(boolean isComment) {
-        THREAD_LOCAL1.set(isComment);
-    }
-
-    public static boolean isComment() {
-        return THREAD_LOCAL1.get() != null ? THREAD_LOCAL1.get() : false;
+    public static List<QueryFlag> getQueryFlags() {
+        List<QueryFlag> list = QUERY_FLAG_LOCALS.get();
+        if (list == null) {
+            return new ArrayList<>();
+        }
+        return list;
     }
 
 }

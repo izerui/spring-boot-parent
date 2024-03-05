@@ -11,6 +11,7 @@ import java.lang.annotation.*;
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
+@Repeatable(QueryFlagAfterTables.class)
 public @interface QueryFlagAfterTable {
     /**
      * 会在自动生成的sql的表名后跟随spel解析后的内容
@@ -26,5 +27,13 @@ public @interface QueryFlagAfterTable {
      */
     boolean isComment() default true;
 
+    /**
+     * 生效对应的表名前缀,如果为空则默认生效,否则匹配前缀生效
+     *
+     * @return
+     */
+    String tablePrefix() default "";
+
     Class holder() default QueryFlagThreadLocalHolder.class;
+
 }

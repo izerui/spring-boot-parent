@@ -1,5 +1,6 @@
 package com.yj2025.jdbc.dialect.flag;
 
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -11,13 +12,14 @@ import org.springframework.context.expression.BeanFactoryAccessor;
 import org.springframework.context.expression.BeanFactoryResolver;
 import org.springframework.core.StandardReflectionParameterNameDiscoverer;
 import org.springframework.expression.EvaluationContext;
-import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.ParserContext;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 @Aspect
 @Slf4j
@@ -34,23 +36,46 @@ public class QueryFlagMethodAspect {
     }
 
     @Pointcut(value = "@annotation(queryFlag)")
-    public void pointcut(QueryFlagAfterTable queryFlag) {
+    public void pointcut01(QueryFlagAfterTable queryFlag) {
 
     }
 
-    @Around(value = "pointcut(queryFlag)")
-    public Object around(ProceedingJoinPoint pjp, QueryFlagAfterTable queryFlag) throws Throwable {
+    @Pointcut(value = "@annotation(queryFlags)")
+    public void pointcut02(QueryFlagAfterTables queryFlags) {
+
+    }
+
+    @Around(value = "pointcut01(queryFlag)")
+    public Object around01(ProceedingJoinPoint pjp, QueryFlagAfterTable queryFlag) throws Throwable {
         Method method = this.getInterfaceMethod(pjp);
 //        String methodName = method.toString();
         // 获取方法的参数值
         Object[] args = pjp.getArgs();
         EvaluationContext context = this.bindParam(method, args);
-        Expression expression = parser.parseExpression(queryFlag.value(), ParserContext.TEMPLATE_EXPRESSION);
         // 放入租户信息到本地线程
-        String queryFlagValue = expression.getValue(context, String.class);
-        QueryFlagThreadLocalHolder.setQueryFlag(queryFlagValue);
-        QueryFlagThreadLocalHolder.setComment(queryFlag.isComment());
+        String value = parser.parseExpression(queryFlag.value(), ParserContext.TEMPLATE_EXPRESSION).getValue(context, String.class);
+        QueryFlagThreadLocalHolder.setQueryFlags(Lists.newArrayList(
+                new QueryFlag(queryFlag.tablePrefix(), queryFlag.isComment(), value)
+        ));
         // return
+        return pjp.proceed();
+    }
+
+    @Around(value = "pointcut02(queryFlags)")
+    public Object around02(ProceedingJoinPoint pjp, QueryFlagAfterTables queryFlags) throws Throwable {
+        Method method = this.getInterfaceMethod(pjp);
+//        String methodName = method.toString();
+        // 获取方法的参数值
+        Object[] args = pjp.getArgs();
+        EvaluationContext context = this.bindParam(method, args);
+        List<QueryFlag> list = new ArrayList<>();
+        for (QueryFlagAfterTable queryFlag : queryFlags.value()) {
+            // 放入租户信息到本地线程
+            String value = parser.parseExpression(queryFlag.value(), ParserContext.TEMPLATE_EXPRESSION).getValue(context, String.class);
+            list.add(new QueryFlag(queryFlag.tablePrefix(), queryFlag.isComment(), value));
+        }
+        list.sort((o1, o2) -> o1.getTablePrefix().compareTo(o2.getTablePrefix()));
+        QueryFlagThreadLocalHolder.setQueryFlags(list);
         return pjp.proceed();
     }
 
