@@ -168,8 +168,8 @@ public class TestUserTest {
     @Test
     public void testQuery() {
         Criteria criteria = Criteria.where("ent_code").is("ent001").and("age").greaterThan(10);
-        Page<TestUser> users = testUserService.findByQuery("ent001", Query.query(criteria));
-        Page<TestUser> users2 = testUserService.findByQuery2("ent002", Query.query(criteria));
+        Page<TestUser> users = testUserService.findByQueryForceIndex("ent001", Query.query(criteria));
+        Page<TestUser> users2 = testUserService.findByQueryForceIndex("ent002", Query.query(criteria));
         System.out.println(users);
         System.out.println(users2);
     }
