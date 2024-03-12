@@ -1,5 +1,6 @@
 package com.yj2025.cloud.file;
 
+import com.qiniu.common.QiniuException;
 import com.qiniu.storage.model.FileInfo;
 import com.yj2025.commons.vo.AttachmentVO;
 
@@ -236,4 +237,11 @@ public interface CloudFileManager {
      */
     String getPreviewUrl(boolean isPublic, String key);
 
+    /**
+     * 创建桶
+     *
+     * @param isPublic  是否是公共桶
+     * @param bucketName 桶名称
+     */
+    void createBucket(boolean isPublic,String bucketName) throws QiniuException;
 }
