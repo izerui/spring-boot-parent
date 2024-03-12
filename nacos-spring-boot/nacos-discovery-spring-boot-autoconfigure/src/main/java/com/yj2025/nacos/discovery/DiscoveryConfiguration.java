@@ -36,6 +36,11 @@ public class DiscoveryConfiguration {
         if (buildUser != null && !"".equals(buildUser)) {
             metadata.put("build.user", buildUser);
         }
+        // git branch
+        String gitBranch = System.getenv("GIT_BRANCH");
+        if (gitBranch != null && !"".equals(gitBranch)) {
+            metadata.put("git.branch", gitBranch);
+        }
         return nacosDiscoveryProperties;
     }
 
