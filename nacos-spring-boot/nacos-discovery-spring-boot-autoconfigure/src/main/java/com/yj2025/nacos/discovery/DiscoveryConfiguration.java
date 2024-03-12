@@ -31,6 +31,11 @@ public class DiscoveryConfiguration {
         if (appVersion != null && !"".equals(appVersion)) {
             metadata.put("version", appVersion);
         }
+        // build user
+        String buildUser = System.getenv("BUILD_USER");
+        if (buildUser != null && !"".equals(buildUser)) {
+            metadata.put("build.user", buildUser);
+        }
         return nacosDiscoveryProperties;
     }
 
