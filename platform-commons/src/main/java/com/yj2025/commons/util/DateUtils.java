@@ -286,6 +286,17 @@ public class DateUtils {
     }
 
     /**
+     * 年运算
+     *
+     * @param myDate 开始日期
+     * @param yearNum 年数
+     * @return Date
+     */
+    public static Date yearAdd(Date myDate, int yearNum) {
+        return new DateTime(myDate).plusYears(yearNum).toDate();
+    }
+
+    /**
      * 获取年第几周(每周星期一开始)
      *
      * @param date
