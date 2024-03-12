@@ -43,6 +43,7 @@ public class DiscoveryConfiguration {
         if (buildUser != null && !"".equals(buildUser)) {
             metadata.put("build.user", buildUser);
         }
+        // add if in k8s
         ObjectProvider<BuildProperties> beanProvider = applicationContext.getBeanProvider(BuildProperties.class);
         beanProvider.ifAvailable(build -> {
             metadata.put("build.version", build.getVersion());
