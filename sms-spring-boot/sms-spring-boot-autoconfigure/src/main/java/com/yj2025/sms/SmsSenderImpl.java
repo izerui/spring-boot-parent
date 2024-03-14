@@ -38,9 +38,9 @@ class SmsSenderImpl implements SmsSender {
 
     private SmsExecutor getExecutor() {
         if (this._currentExecutor == null) {
-            if (executors.stream().count() < 1l) {
+            if (executors.stream().findAny().isEmpty()) {
                 throw new SmsException("未配置有效的短信发送网关!");
-            } else if (executors.stream().count() > 1l) {
+            } else if (executors.stream().count() > 1L) {
                 log.warn("发现多个在使用的短信网关，自动使用第一个发现的网关，建议检查配置!");
             }
             this._currentExecutor = executors.stream().findFirst().get();
@@ -112,7 +112,11 @@ class SmsSenderImpl implements SmsSender {
          * 2020年5月新增165、172、174、191、195 等号段的验证
          */
 
-        String regex = "^((13[0-9])|(14[5,7,9])|(15([0-3]|[5-9]))|(16[5,6])|(17[0-8])|(18[0-9])|(19[1、5、8、9]))\\d{8}$";
+        // String regex = "^((13[0-9])|(14[5,7,9])|(15([0-3]|[5-9]))|(16[5,6])|(17[0-8])|(18[0-9])|(19[1、5、8、9]))\\d{8}$";
+        /**
+         * 2024年3月13日 新增，167，192,193,194,196,197
+         */
+        String regex = "^((13[0-9])|(14[5,7,9])|(15([0-3]|[5-9]))|(16[5,6,7])|(17[0-8])|(18[0-9])|(19[1-9]))\\d{8}$";
         if (phoneNumber.length() != 11) {
             return false;
         } else {
