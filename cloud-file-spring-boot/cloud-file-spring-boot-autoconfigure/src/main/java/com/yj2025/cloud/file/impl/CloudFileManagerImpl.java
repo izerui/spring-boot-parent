@@ -9,7 +9,6 @@ import com.qiniu.storage.BucketManager;
 import com.qiniu.storage.Configuration;
 import com.qiniu.storage.DownloadUrl;
 import com.qiniu.storage.UploadManager;
-import com.qiniu.storage.model.AclType;
 import com.qiniu.storage.model.FileInfo;
 import com.qiniu.storage.persistent.FileRecorder;
 import com.qiniu.util.Auth;
@@ -262,12 +261,12 @@ public class CloudFileManagerImpl implements CloudFileManager {
     }
 
     @Override
-    public void createBucket(boolean isPublic, String bucketName) throws QiniuException {
-        //创建桶
-        Response bucket = this.bucketManager.createBucket(bucketName, "");
-        //设置为私有空间
-        if (!isPublic && bucket.isOK()) {
-            this.bucketManager.setBucketAcl(bucketName, AclType.PRIVATE);
+    public Response rename(String bucket, String oldFileKey, String newFileKey, boolean force) {
+        try {
+            return bucketManager.rename(bucket, oldFileKey, newFileKey, force);
+        } catch (Exception ex) {
+            throw new CloudFileException(ex.getMessage(), ex);
         }
     }
+
 }
