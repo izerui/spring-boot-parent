@@ -124,7 +124,7 @@ public abstract class AbstractTableSharding {
         }
         String table = switchTable(dataSource, databaseName, sourceTable, tenantYearTable, tenantTable);
         if (properties.getExceptionForDifference()) {
-            String relationPrefix = sourceTable + "_" + tenantId + "-" + year;
+            String relationPrefix = databaseName + "_" + sourceTable + "_" + tenantId + "-" + year;
             // 记录首次对应的路由表
             String first = USE_TABLE_FIRST.get(dataSource, relationPrefix);
             if (first == null) {
