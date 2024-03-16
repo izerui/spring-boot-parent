@@ -227,6 +227,7 @@ public abstract class AbstractTableSharding {
      */
     @SneakyThrows
     public List<String> getCachedTables(DataSource dataSource, String databaseName) {
+        Assert.notNull(databaseName, "请指定数据库名");
         if (dataSource.getClass().getName().equals("com.baomidou.dynamic.datasource.DynamicRoutingDataSource")) {
             Method determineMethod = ReflectionUtils.findMethod(Class.forName("com.baomidou.dynamic.datasource.DynamicRoutingDataSource"), "determineDataSource");
             dataSource = (DataSource) ReflectionUtils.invokeMethod(determineMethod, dataSource);
