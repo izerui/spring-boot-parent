@@ -139,17 +139,7 @@ public abstract class AbstractTableSharding {
 
     @SneakyThrows
     private String switchTable(DataSource dataSource, String databaseName, String sourceTable, String... targetTables) {
-        if (dataSource.getClass().getName().equals("com.baomidou.dynamic.datasource.DynamicRoutingDataSource")) {
-            Method determineMethod = ReflectionUtils.findMethod(Class.forName("com.baomidou.dynamic.datasource.DynamicRoutingDataSource"), "determineDataSource");
-            dataSource = (DataSource) ReflectionUtils.invokeMethod(determineMethod, dataSource);
-        }
-        // 如果未缓存当前库的所有表，则获取并放入缓存
-        if (!cacheDataSourceTablesMap.contains(dataSource, databaseName)) {
-            cacheDataSourceTablesMap.put(dataSource, databaseName, getTables(dataSource, databaseName));
-            log.info("【sharding-{}】: 缓存的数据源个数: {}", databaseName, cacheDataSourceTablesMap.size());
-        }
-        List<String> cacheTables = cacheDataSourceTablesMap.get(dataSource, databaseName);
-
+        List<String> cacheTables = this.getCachedTables(dataSource, databaseName);
         // 按顺序先找年表、再找租户表
         for (String targetTable : targetTables) {
             if (targetTable == null) {
@@ -226,7 +216,27 @@ public abstract class AbstractTableSharding {
      * @return
      */
     public List<String> getCachedTables(DataSource dataSource) {
-        return cacheDataSourceTablesMap.get(dataSource, getDatabaseName(dataSource));
+        return this.getCachedTables(dataSource, getDatabaseName(dataSource));
+    }
+
+    /**
+     * 获取已经缓存起来的表
+     *
+     * @param dataSource
+     * @return
+     */
+    @SneakyThrows
+    public List<String> getCachedTables(DataSource dataSource, String databaseName) {
+        if (dataSource.getClass().getName().equals("com.baomidou.dynamic.datasource.DynamicRoutingDataSource")) {
+            Method determineMethod = ReflectionUtils.findMethod(Class.forName("com.baomidou.dynamic.datasource.DynamicRoutingDataSource"), "determineDataSource");
+            dataSource = (DataSource) ReflectionUtils.invokeMethod(determineMethod, dataSource);
+        }
+        // 如果未缓存当前库的所有表，则获取并放入缓存
+        if (!cacheDataSourceTablesMap.contains(dataSource, databaseName)) {
+            cacheDataSourceTablesMap.put(dataSource, databaseName, getTables(dataSource, databaseName));
+            log.info("【sharding-{}】: 缓存的数据源个数: {}", databaseName, cacheDataSourceTablesMap.size());
+        }
+        return cacheDataSourceTablesMap.get(dataSource, databaseName);
     }
 
     /**
