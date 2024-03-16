@@ -240,6 +240,7 @@ public abstract class AbstractTableSharding {
         if (databaseName == null || "".equals(databaseName)) {
             JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
             databaseName = jdbcTemplate.queryForObject("/* 获取当前\" + dataSource + \"连接的数据库名 */ SELECT DATABASE()", String.class);
+            Assert.notNull(databaseName, "必须指定连接的数据库");
             DATASOURCE_DB_NAME.put(dataSource, databaseName);
         }
         return databaseName;
