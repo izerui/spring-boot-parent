@@ -269,4 +269,12 @@ public class CloudFileManagerImpl implements CloudFileManager {
         }
     }
 
+    @Override
+    public Response delete(String bucket, String key) {
+        try {
+            return bucketManager.delete(bucket, key);
+        } catch (Exception ex) {
+            throw new CloudFileException(ex.getMessage(), ex);
+        }
+    }
 }

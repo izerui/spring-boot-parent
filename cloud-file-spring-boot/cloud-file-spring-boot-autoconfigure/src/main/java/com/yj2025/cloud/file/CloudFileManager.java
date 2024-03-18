@@ -1,6 +1,5 @@
 package com.yj2025.cloud.file;
 
-import com.qiniu.common.QiniuException;
 import com.qiniu.http.Response;
 import com.qiniu.storage.model.FileInfo;
 import com.yj2025.commons.vo.AttachmentVO;
@@ -20,6 +19,7 @@ public interface CloudFileManager {
 
     /**
      * 转换返回内容到 AttachmentVO
+     *
      * @param response
      * @return
      */
@@ -246,5 +246,13 @@ public interface CloudFileManager {
      * @param newFileKey 新文件名
      * @param force      强制覆盖空间中已有同名（和 newFileKey 相同）的文件
      */
-    Response rename(String bucket, String oldFileKey, String newFileKey, boolean force) throws QiniuException;
+    Response rename(String bucket, String oldFileKey, String newFileKey, boolean force);
+
+    /**
+     * 删除指定空间、文件名的文件
+     *
+     * @param bucket 空间名称
+     * @param key    文件key
+     */
+    Response delete(String bucket, String key);
 }
