@@ -23,6 +23,7 @@ import org.springframework.util.Assert;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -275,6 +276,18 @@ public class CloudFileManagerImpl implements CloudFileManager {
             return bucketManager.delete(bucket, key);
         } catch (Exception ex) {
             throw new CloudFileException(ex.getMessage(), ex);
+        }
+    }
+
+    @Override
+    public Response batchDelete(String bucket, List<String> keyList) {
+        //单次批量请求的文件数量不得超过1000
+        try {
+            BucketManager.BatchOperations batchOperations = new BucketManager.BatchOperations();
+            batchOperations.addDeleteOp(bucket, keyList.toArray(new String[0]));
+            return bucketManager.batch(batchOperations);
+        } catch (QiniuException e) {
+            throw new CloudFileException(e.getMessage(), e);
         }
     }
 }

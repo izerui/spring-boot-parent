@@ -6,6 +6,7 @@ import com.yj2025.commons.vo.AttachmentVO;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.List;
 
 public interface CloudFileManager {
 
@@ -255,4 +256,12 @@ public interface CloudFileManager {
      * @param key    文件key
      */
     Response delete(String bucket, String key);
+
+    /**
+     * 批量删除指定空间、文件名的文件
+     * 单次批量请求的文件数量不得超过1000
+     * @param bucket 空间名称
+     * @param keys    文件key集合
+     */
+    Response batchDelete(String bucket, List<String> keys);
 }
