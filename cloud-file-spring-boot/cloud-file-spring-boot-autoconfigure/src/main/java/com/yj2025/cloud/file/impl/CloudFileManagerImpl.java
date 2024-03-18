@@ -24,6 +24,7 @@ import org.springframework.util.Assert;
 import java.io.File;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -285,6 +286,19 @@ public class CloudFileManagerImpl implements CloudFileManager {
         try {
             BucketManager.BatchOperations batchOperations = new BucketManager.BatchOperations();
             batchOperations.addDeleteOp(bucket, keyList.toArray(new String[0]));
+            return bucketManager.batch(batchOperations);
+        } catch (QiniuException e) {
+            throw new CloudFileException(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public Response batchRename(String bucket, Map<String, String> keyMap) {
+        try {
+            BucketManager.BatchOperations batchOperations = new BucketManager.BatchOperations();
+            for (Map.Entry<String, String> stringStringEntry : keyMap.entrySet()) {
+                batchOperations.addDeleteOp(bucket, stringStringEntry.getKey(),stringStringEntry.getValue());
+            }
             return bucketManager.batch(batchOperations);
         } catch (QiniuException e) {
             throw new CloudFileException(e.getMessage(), e);
