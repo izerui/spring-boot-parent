@@ -42,7 +42,6 @@ import org.springframework.transaction.TransactionManager;
 @Configuration
 @EnableKafka
 @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
-@AutoConfigureAfter(DataSourceTransactionManagerAutoConfiguration.class)
 public class KafkaConfiguration {
 
     @Value("${spring.application.name:null}")
@@ -69,34 +68,6 @@ public class KafkaConfiguration {
             producerFactory.setTransactionIdPrefix("kafka-tx-");
         };
     }
-
-    /**
-     * 如果没有jdbc事务再创建自身kafka事务管理器
-     * @param producerFactory
-     * @return
-     */
-    @Bean
-	@ConditionalOnMissingBean(TransactionManager.class)
-	public KafkaTransactionManager<?, ?> kafkaTransactionManager(ProducerFactory<?, ?> producerFactory) {
-		return new KafkaTransactionManager<>(producerFactory);
-	}
-
-    /**
-     * 补偿机制： 防止重复创建事务管理器(可选)
-     * 如果已经存在jdbc的事务管理器，则移除掉kafka自动创建的事务管理器
-     * {@link #kafkaTransactionManager(ProducerFactory)}
-     */
-    @Bean
-    public BeanDefinitionRegistryCustomizer kafkaTransactionManagerCustomizer() {
-        return (registry, applicationContext) -> {
-            if (registry.isBeanNameInUse("transactionManager")) {
-                if (registry.isBeanNameInUse("kafkaTransactionManager")) {
-                    registry.removeBeanDefinition("kafkaTransactionManager");
-                }
-            }
-        };
-    }
-
 
     @Bean
     public GlobalKafkaErrorHandler globalKafkaErrorHandler(MessageProducer messageProducer){
