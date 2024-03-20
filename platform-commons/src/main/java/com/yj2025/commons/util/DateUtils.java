@@ -19,6 +19,7 @@ import java.util.Locale;
 public class DateUtils {
     public final static String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
     public final static String DATE_FORMAT = "yyyy-MM-dd";
+    public final static String DATE_FORMAT_MONTH = "yyyy-MM";
     public final static String TIME_FORMAT = "HH:mm:ss";
 
 
@@ -49,6 +50,17 @@ public class DateUtils {
      */
     public static String formatYMD(Date date) {
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+        return sdf.format(date);
+    }
+
+    /**
+     * 将日期格式转换为yyyy-MM格式的字符串
+     *
+     * @param date
+     * @return
+     */
+    public static String formatYM(Date date) {
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_MONTH);
         return sdf.format(date);
     }
 
@@ -255,7 +267,7 @@ public class DateUtils {
     /**
      * 小时运算
      *
-     * @param myDate 开始日期
+     * @param myDate   开始日期
      * @param hoursNum 小时数
      * @return Date
      */
@@ -288,7 +300,7 @@ public class DateUtils {
     /**
      * 年运算
      *
-     * @param myDate 开始日期
+     * @param myDate  开始日期
      * @param yearNum 年数
      * @return Date
      */
