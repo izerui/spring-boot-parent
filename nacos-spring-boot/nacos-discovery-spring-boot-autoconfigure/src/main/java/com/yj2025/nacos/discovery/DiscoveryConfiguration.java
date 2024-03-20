@@ -2,8 +2,12 @@ package com.yj2025.nacos.discovery;
 
 import com.alibaba.cloud.nacos.ConditionalOnNacosDiscoveryEnabled;
 import com.alibaba.cloud.nacos.NacosDiscoveryProperties;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.info.BuildProperties;
 import org.springframework.boot.system.ApplicationHome;
 import org.springframework.boot.system.ApplicationPid;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -13,6 +17,9 @@ import java.util.Map;
 
 @Configuration
 public class DiscoveryConfiguration {
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     @Bean
     @ConditionalOnNacosDiscoveryEnabled
@@ -36,6 +43,12 @@ public class DiscoveryConfiguration {
         if (buildUser != null && !"".equals(buildUser)) {
             metadata.put("build.user", buildUser);
         }
+        // add if in k8s
+        ObjectProvider<BuildProperties> beanProvider = applicationContext.getBeanProvider(BuildProperties.class);
+        beanProvider.ifAvailable(build -> {
+            metadata.put("build.version", build.getVersion());
+            metadata.put("build.time", String.valueOf(build.getTime()));
+        });
         // git branch
         String gitBranch = System.getenv("GIT_BRANCH");
         if (gitBranch != null && !"".equals(gitBranch)) {

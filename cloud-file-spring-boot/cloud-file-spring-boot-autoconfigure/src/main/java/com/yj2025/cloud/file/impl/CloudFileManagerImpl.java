@@ -9,7 +9,6 @@ import com.qiniu.storage.BucketManager;
 import com.qiniu.storage.Configuration;
 import com.qiniu.storage.DownloadUrl;
 import com.qiniu.storage.UploadManager;
-import com.qiniu.storage.model.AclType;
 import com.qiniu.storage.model.FileInfo;
 import com.qiniu.storage.persistent.FileRecorder;
 import com.qiniu.util.Auth;
@@ -24,6 +23,8 @@ import org.springframework.util.Assert;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -262,12 +263,45 @@ public class CloudFileManagerImpl implements CloudFileManager {
     }
 
     @Override
-    public void createBucket(boolean isPublic, String bucketName) throws QiniuException {
-        //创建桶
-        Response bucket = this.bucketManager.createBucket(bucketName, "");
-        //设置为私有空间
-        if (!isPublic && bucket.isOK()) {
-            this.bucketManager.setBucketAcl(bucketName, AclType.PRIVATE);
+    public Response rename(String bucket, String oldFileKey, String newFileKey, boolean force) {
+        try {
+            return bucketManager.rename(bucket, oldFileKey, newFileKey, force);
+        } catch (Exception ex) {
+            throw new CloudFileException(ex.getMessage(), ex);
+        }
+    }
+
+    @Override
+    public Response delete(String bucket, String key) {
+        try {
+            return bucketManager.delete(bucket, key);
+        } catch (Exception ex) {
+            throw new CloudFileException(ex.getMessage(), ex);
+        }
+    }
+
+    @Override
+    public Response batchDelete(String bucket, List<String> keyList) {
+        //单次批量请求的文件数量不得超过1000
+        try {
+            BucketManager.BatchOperations batchOperations = new BucketManager.BatchOperations();
+            batchOperations.addDeleteOp(bucket, keyList.toArray(new String[0]));
+            return bucketManager.batch(batchOperations);
+        } catch (QiniuException e) {
+            throw new CloudFileException(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public Response batchRename(String bucket, Map<String, String> keyMap) {
+        try {
+            BucketManager.BatchOperations batchOperations = new BucketManager.BatchOperations();
+            for (Map.Entry<String, String> stringStringEntry : keyMap.entrySet()) {
+                batchOperations.addDeleteOp(bucket, stringStringEntry.getKey(),stringStringEntry.getValue());
+            }
+            return bucketManager.batch(batchOperations);
+        } catch (QiniuException e) {
+            throw new CloudFileException(e.getMessage(), e);
         }
     }
 }

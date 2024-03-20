@@ -1,11 +1,13 @@
 package com.yj2025.cloud.file;
 
-import com.qiniu.common.QiniuException;
+import com.qiniu.http.Response;
 import com.qiniu.storage.model.FileInfo;
 import com.yj2025.commons.vo.AttachmentVO;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
 
 public interface CloudFileManager {
 
@@ -19,6 +21,7 @@ public interface CloudFileManager {
 
     /**
      * 转换返回内容到 AttachmentVO
+     *
      * @param response
      * @return
      */
@@ -238,10 +241,38 @@ public interface CloudFileManager {
     String getPreviewUrl(boolean isPublic, String key);
 
     /**
-     * 创建桶
+     * 重命名空间中的文件，可以设置force参数为true强行覆盖空间已有同名文件
      *
-     * @param isPublic  是否是公共桶
-     * @param bucketName 桶名称
+     * @param bucket     空间名称
+     * @param oldFileKey 文件名称
+     * @param newFileKey 新文件名
+     * @param force      强制覆盖空间中已有同名（和 newFileKey 相同）的文件
      */
-    void createBucket(boolean isPublic,String bucketName) throws QiniuException;
+    Response rename(String bucket, String oldFileKey, String newFileKey, boolean force);
+
+    /**
+     * 删除指定空间、文件名的文件
+     *
+     * @param bucket 空间名称
+     * @param key    文件key
+     */
+    Response delete(String bucket, String key);
+
+    /**
+     * 批量删除指定空间、文件名的文件
+     * 单次批量请求的文件数量不得超过1000
+     *
+     * @param bucket 空间名称
+     * @param keys   文件key集合
+     */
+    Response batchDelete(String bucket, List<String> keys);
+
+    /**
+     * 批量重命名
+     * 单次批量请求的文件数量不得超过1000
+     *
+     * @param bucket 空间名称
+     * @param keyMap key为文件 fileKey,value 为 新文件key
+     */
+    Response batchRename(String bucket, Map<String, String> keyMap);
 }
