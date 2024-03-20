@@ -18,8 +18,9 @@ import java.util.Locale;
  */
 public class DateUtils {
     public final static String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
-    public final static String DATE_FORMAT = "yyyy-MM-dd";
+    public final static String DATE_FORMAT_YEAR = "yyyy";
     public final static String DATE_FORMAT_MONTH = "yyyy-MM";
+    public final static String DATE_FORMAT = "yyyy-MM-dd";
     public final static String TIME_FORMAT = "HH:mm:ss";
 
 
@@ -49,8 +50,7 @@ public class DateUtils {
      * @return
      */
     public static String formatYMD(Date date) {
-        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
-        return sdf.format(date);
+        return format(date, DATE_FORMAT);
     }
 
     /**
@@ -60,8 +60,17 @@ public class DateUtils {
      * @return
      */
     public static String formatYM(Date date) {
-        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_MONTH);
-        return sdf.format(date);
+        return format(date, DATE_FORMAT_MONTH);
+    }
+
+    /**
+     * 将日期格式转换为yyyy-MM格式的字符串
+     *
+     * @param date
+     * @return
+     */
+    public static String formatY(Date date) {
+        return format(date, DATE_FORMAT_YEAR);
     }
 
     /**
@@ -71,8 +80,7 @@ public class DateUtils {
      * @return
      */
     public static String formatYMDHMS(Date date) {
-        SimpleDateFormat sdf = new SimpleDateFormat(DATE_TIME_FORMAT);
-        return sdf.format(date);
+        return format(date, DATE_TIME_FORMAT);
     }
 
     /**
@@ -82,8 +90,7 @@ public class DateUtils {
      * @return
      */
     public static String formatHMS(Date date) {
-        SimpleDateFormat sdf = new SimpleDateFormat(TIME_FORMAT);
-        return sdf.format(date);
+        return format(date, TIME_FORMAT);
     }
 
     /**
