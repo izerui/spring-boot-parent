@@ -4,7 +4,10 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.qiniu.common.QiniuException;
+import com.qiniu.http.Client;
 import com.qiniu.http.Response;
+import com.qiniu.processing.OperationManager;
+import com.qiniu.processing.OperationStatus;
 import com.qiniu.storage.BucketManager;
 import com.qiniu.storage.Configuration;
 import com.qiniu.storage.DownloadUrl;
@@ -13,12 +16,14 @@ import com.qiniu.storage.model.FileInfo;
 import com.qiniu.storage.persistent.FileRecorder;
 import com.qiniu.util.Auth;
 import com.qiniu.util.StringMap;
+import com.qiniu.util.UrlSafeBase64;
 import com.yj2025.cloud.file.CloudFileException;
 import com.yj2025.cloud.file.CloudFileManager;
 import com.yj2025.cloud.file.CloudFileProperties;
 import com.yj2025.cloud.file.UploadResponse;
 import com.yj2025.commons.vo.AttachmentVO;
 import lombok.SneakyThrows;
+import org.apache.logging.log4j.util.Base64Util;
 import org.springframework.util.Assert;
 
 import java.io.File;
@@ -297,10 +302,24 @@ public class CloudFileManagerImpl implements CloudFileManager {
         try {
             BucketManager.BatchOperations batchOperations = new BucketManager.BatchOperations();
             for (Map.Entry<String, String> stringStringEntry : keyMap.entrySet()) {
-                batchOperations.addDeleteOp(bucket, stringStringEntry.getKey(),stringStringEntry.getValue());
+                batchOperations.addDeleteOp(bucket, stringStringEntry.getKey(), stringStringEntry.getValue());
             }
             return bucketManager.batch(batchOperations);
         } catch (QiniuException e) {
+            throw new CloudFileException(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public OperationStatus mkzip(String bucket, String zipName, String zipTxt, String notifyUrl) {
+        try {
+            OperationManager om = new OperationManager(auth, new Client());
+            String fops = "mkzip/4/|saveas/" + Base64Util.encode(bucket + ":" + zipName);
+            StringMap params = new StringMap();
+            params.put("notifyURL", UrlSafeBase64.encodeToString(notifyUrl));
+            String pipe = om.pfop(bucket, zipTxt, fops, params);
+            return om.prefop(pipe);
+        } catch (Exception e) {
             throw new CloudFileException(e.getMessage(), e);
         }
     }

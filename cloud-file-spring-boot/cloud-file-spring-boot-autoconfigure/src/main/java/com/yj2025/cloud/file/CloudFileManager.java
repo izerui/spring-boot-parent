@@ -1,7 +1,9 @@
 package com.yj2025.cloud.file;
 
 import com.qiniu.http.Response;
+import com.qiniu.processing.OperationStatus;
 import com.qiniu.storage.model.FileInfo;
+import com.qiniu.util.StringMap;
 import com.yj2025.commons.vo.AttachmentVO;
 
 import java.io.File;
@@ -275,4 +277,14 @@ public interface CloudFileManager {
      * @param keyMap key为文件 fileKey,value 为 新文件key
      */
     Response batchRename(String bucket, Map<String, String> keyMap);
+
+    /**
+     * 打包压缩
+     *
+     * @param bucket  空间名称
+     * @param zipName 压缩包名称
+     * @param zipTxt  打包文档，详见：https://developer.qiniu.com/dora/1667/mkzip
+     * @param notifyUrl 回调地址
+     */
+    OperationStatus mkzip(String bucket, String zipName, String zipTxt,String notifyUrl);
 }
