@@ -281,7 +281,7 @@ public class BigDecimalUtils {
      * @return
      */
     public static final BigDecimal divide100(BigDecimal num, int scale) {
-        return divide(num, new BigDecimal("100"), scale);
+        return num.divide(new BigDecimal(100), scale, RoundingMode.HALF_UP);
     }
 
     /**
