@@ -275,6 +275,16 @@ public class BigDecimalUtils {
     }
 
     /**
+     * 除以100,四舍五入 保留小数位，
+     *
+     * @param num
+     * @return
+     */
+    public static final BigDecimal divide100(BigDecimal num, int scale) {
+        return divide(num, BigDecimal.TEN, scale);
+    }
+
+    /**
      * 获取最小值
      *
      * @return
