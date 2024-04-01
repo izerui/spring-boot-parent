@@ -1,0 +1,327 @@
+package com.yj2025.cloud.file.impl;
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.qiniu.common.QiniuException;
+import com.qiniu.http.Client;
+import com.qiniu.http.Response;
+import com.qiniu.processing.OperationManager;
+import com.qiniu.processing.OperationStatus;
+import com.qiniu.storage.BucketManager;
+import com.qiniu.storage.Configuration;
+import com.qiniu.storage.DownloadUrl;
+import com.qiniu.storage.UploadManager;
+import com.qiniu.storage.model.FileInfo;
+import com.qiniu.storage.persistent.FileRecorder;
+import com.qiniu.util.Auth;
+import com.qiniu.util.StringMap;
+import com.qiniu.util.UrlSafeBase64;
+import com.yj2025.cloud.file.CloudFileException;
+import com.yj2025.cloud.file.CloudFileProductManager;
+import com.yj2025.cloud.file.CloudFileProperties;
+import com.yj2025.cloud.file.UploadResponse;
+import com.yj2025.commons.vo.AttachmentVO;
+import lombok.SneakyThrows;
+import org.apache.logging.log4j.util.Base64Util;
+import org.springframework.util.Assert;
+
+import java.io.File;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+public class CloudFileProductManagerImpl implements CloudFileProductManager {
+
+    private final CloudFileProperties properties;
+
+    private static final ObjectMapper OBJECT_MAPPER;
+
+    static {
+        OBJECT_MAPPER = new ObjectMapper();
+        OBJECT_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        OBJECT_MAPPER.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+    }
+
+    private transient Map<String, Auth> auth;
+    private transient Map<String, UploadManager> uploadManager;
+    private transient Map<String, BucketManager> bucketManager;
+
+
+    public CloudFileProductManagerImpl(CloudFileProperties properties) throws Exception {
+        this.properties = properties;
+        init();
+    }
+
+    private void init() throws Exception {
+        this.auth = new HashMap<>();
+        this.uploadManager = new HashMap<>();
+        this.bucketManager = new HashMap<>();
+        for (Map.Entry<String, CloudFileProperties> entry : properties.getProduct().entrySet()) {
+            this.auth.put(entry.getKey(), Auth.create(entry.getValue().getAccessKey(), entry.getValue().getSecretKey()));
+            Configuration config = new Configuration(entry.getValue().getRegion().getRegion());
+            config.useHttpsDomains = entry.getValue().isUploadByHttps();
+            config.putThreshold = entry.getValue().getPutThreshold();
+            config.connectTimeout = entry.getValue().getConnectTimeout();
+            config.writeTimeout = entry.getValue().getWriteTimeout();
+            config.readTimeout = entry.getValue().getResponseTimeout();
+            config.retryMax = entry.getValue().getMaxRetryTimes();
+            this.uploadManager.put(entry.getKey(), new UploadManager(config, new FileRecorder(entry.getValue().getFileRecordDirectory())));
+            this.bucketManager.put(entry.getKey(), new BucketManager(auth.get(entry.getKey()), config));
+        }
+    }
+
+    @Override
+    public String generateKey(String productId, String fileName) {
+        String key = fileName.replaceAll("^.+?(\\.\\w*)??$", UUID.randomUUID().toString() + "$1");
+        return key;
+    }
+
+    @SneakyThrows
+    @Override
+    public AttachmentVO convert(String productId, UploadResponse response) {
+        AttachmentVO attachmentVO = OBJECT_MAPPER.readValue(OBJECT_MAPPER.writeValueAsString(response), AttachmentVO.class);
+        CloudFileProperties.Bucket bucket = getBucket(productId, attachmentVO.getBucket());
+        attachmentVO.setPrivateBucket(!bucket.getIsPublic());
+        return attachmentVO;
+    }
+
+    @Override
+    public FileInfo getFileInfo(String productId, String bucket, String key) {
+        try {
+            return bucketManager.get(productId).stat(bucket, key);
+        } catch (QiniuException e) {
+            throw new CloudFileException(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public FileInfo getFileInfo(String productId, boolean isPublic, String key) {
+        CloudFileProperties.Bucket bucket = getBucket(productId, isPublic);
+        return getFileInfo(productId, bucket.getBucketName(), key);
+    }
+
+    @Override
+    public CloudFileProperties.Bucket getBucket(String productId, boolean isPublic) {
+        if (isPublic) {
+            return properties.getProduct().get(productId).getFirstPublicBucket();
+        } else {
+            return properties.getProduct().get(productId).getFirstPrivateBucket();
+        }
+    }
+
+    @Override
+    public CloudFileProperties.Bucket getBucket(String productId, String bucket) {
+        return properties.getProduct().get(productId).getBucketByname(bucket);
+    }
+
+    @Override
+    public String getUploadToken(String productId, String bucket, String key) {
+        // https://developer.qiniu.com/kodo/1235/vars#magicvar
+        StringBuilder builder = new StringBuilder()
+                .append("{")
+                .append("\"bucket\":\"$(bucket)\",")
+                .append("\"key\":\"$(key)\",")
+                .append("\"eTag\":\"$(etag)\",")
+                .append("\"fileSize\":$(fsize),")
+                .append("\"fileName\":$(fname),")
+                .append("\"filePrefix\":$(fprefix),")
+                .append("\"mimeType\":\"$(mimeType)\",")
+                .append("\"ext\":\"$(ext)\"")
+                .append("}");
+        final String returnBody = builder.toString();
+        StringMap policy = new StringMap();
+        policy.put("returnBody", returnBody);
+        return auth.get(productId).uploadToken(bucket, key, 3600, policy);
+    }
+
+    @Override
+    public String getUploadToken(String productId, boolean isPublic, String key) {
+        CloudFileProperties.Bucket bucket = getBucket(productId, isPublic);
+        return getUploadToken(productId, bucket.getBucketName(), key);
+    }
+
+    @Override
+    public UploadResponse upload(String productId, String bucket, String key, byte[] bytes) {
+        try {
+            String token = getUploadToken(productId, bucket, key);
+            Response response = this.uploadManager.get(productId).put(bytes, key, token);
+            return OBJECT_MAPPER.readValue(response.bodyString(), UploadResponse.class);
+        } catch (Exception ex) {
+            throw new CloudFileException(ex.getMessage(), ex);
+        }
+    }
+
+    @Override
+    public UploadResponse upload(String productId, boolean isPublic, String key, byte[] bytes) {
+        CloudFileProperties.Bucket bucket = getBucket(productId, isPublic);
+        return upload(productId, bucket.getBucketName(), key, bytes);
+    }
+
+    @Override
+    public UploadResponse upload(String productId, String bucket, String key, File file) {
+        try {
+            String token = getUploadToken(productId, bucket, key);
+            Response response = this.uploadManager.get(productId).put(file, key, token);
+            return OBJECT_MAPPER.readValue(response.bodyString(), UploadResponse.class);
+        } catch (Exception ex) {
+            throw new CloudFileException(ex.getMessage(), ex);
+        }
+    }
+
+    @Override
+    public UploadResponse upload(String productId, boolean isPublic, String key, File file) {
+        CloudFileProperties.Bucket bucket = getBucket(productId, isPublic);
+        return upload(productId, bucket.getBucketName(), key, file);
+    }
+
+    @Override
+    public UploadResponse upload(String productId, String bucket, String key, String filePath) {
+        try {
+            String token = getUploadToken(productId, bucket, key);
+            Response response = this.uploadManager.get(productId).put(filePath, key, token);
+            return OBJECT_MAPPER.readValue(response.bodyString(), UploadResponse.class);
+        } catch (Exception ex) {
+            throw new CloudFileException(ex.getMessage(), ex);
+        }
+    }
+
+    @Override
+    public UploadResponse upload(String productId, boolean isPublic, String key, String filePath) {
+        CloudFileProperties.Bucket bucket = getBucket(productId, isPublic);
+        return upload(productId, bucket.getBucketName(), key, filePath);
+    }
+
+    @Override
+    public UploadResponse upload(String productId, String bucket, String key, InputStream inputStream, String mime) {
+        try {
+            String token = getUploadToken(productId, bucket, key);
+            Response response = this.uploadManager.get(productId).put(inputStream, key, token, null, mime);
+            return OBJECT_MAPPER.readValue(response.bodyString(), UploadResponse.class);
+        } catch (Exception ex) {
+            throw new CloudFileException(ex.getMessage(), ex);
+        }
+    }
+
+    @Override
+    public UploadResponse upload(String productId, boolean isPublic, String key, InputStream inputStream, String mime) {
+        CloudFileProperties.Bucket bucket = getBucket(productId, isPublic);
+        return upload(productId, bucket.getBucketName(), key, inputStream, mime);
+    }
+
+    @Override
+    public String getDownloadUrl(String productId, String bucket, String key, String attName) {
+        return getDownloadUrl(productId, bucket, key, attName, null);
+    }
+
+    @Override
+    public String getDownloadUrl(String productId, boolean isPublic, String key, String attName) {
+        CloudFileProperties.Bucket bucket = getBucket(productId, isPublic);
+        return getDownloadUrl(productId, bucket.getBucketName(), key, attName);
+    }
+
+    @Override
+    public String getDownloadUrl(String productId, String bucket, String key, String attName, String fop) {
+        try {
+            CloudFileProperties.Bucket cloudBucket = properties.getProduct().get(productId).getBucketByname(bucket);
+            Assert.notNull(cloudBucket, "未找到名称为" + cloudBucket + "的存储空间配置");
+            DownloadUrl downloadUrl = new DownloadUrl(cloudBucket.getDomain(), cloudBucket.getUseHttps(), key);
+            downloadUrl.setAttname(attName);
+            downloadUrl.setFop(fop);
+            if (cloudBucket.getIsPublic()) {
+                return downloadUrl.buildURL();
+            } else {
+                return downloadUrl.buildURL(auth.get(productId), System.currentTimeMillis() / 1000 + properties.getProduct().get(productId).getDownloadExpiresSeconds());
+            }
+        } catch (Exception ex) {
+            throw new CloudFileException(ex.getMessage(), ex);
+        }
+    }
+
+    @Override
+    public String getDownloadUrl(String productId, boolean isPublic, String key, String attName, String fop) {
+        CloudFileProperties.Bucket bucket = getBucket(productId, isPublic);
+        return getDownloadUrl(productId, bucket.getBucketName(), key, attName, fop);
+    }
+
+    @Override
+    public String getPreviewUrl(String productId, String bucket, String key, Integer width, Integer height) {
+        return getDownloadUrl(productId, bucket, key, null, "imageView2/2/w/" + width + "/h/" + height);
+    }
+
+    @Override
+    public String getPreviewUrl(String productId, boolean isPublic, String key, Integer width, Integer height) {
+        CloudFileProperties.Bucket bucket = getBucket(productId, isPublic);
+        return getPreviewUrl(productId, bucket.getBucketName(), key, width, height);
+    }
+
+    @Override
+    public String getPreviewUrl(String productId, String bucket, String key) {
+        return getDownloadUrl(productId, bucket, key, null);
+    }
+
+    @Override
+    public String getPreviewUrl(String productId, boolean isPublic, String key) {
+        CloudFileProperties.Bucket bucket = getBucket(productId, isPublic);
+        return getPreviewUrl(productId, bucket.getBucketName(), key);
+    }
+
+    @Override
+    public Response rename(String productId, String bucket, String oldFileKey, String newFileKey, boolean force) {
+        try {
+            return bucketManager.get(productId).rename(bucket, oldFileKey, newFileKey, force);
+        } catch (Exception ex) {
+            throw new CloudFileException(ex.getMessage(), ex);
+        }
+    }
+
+    @Override
+    public Response delete(String productId, String bucket, String key) {
+        try {
+            return bucketManager.get(productId).delete(bucket, key);
+        } catch (Exception ex) {
+            throw new CloudFileException(ex.getMessage(), ex);
+        }
+    }
+
+    @Override
+    public Response batchDelete(String productId, String bucket, List<String> keyList) {
+        //单次批量请求的文件数量不得超过1000
+        try {
+            BucketManager.BatchOperations batchOperations = new BucketManager.BatchOperations();
+            batchOperations.addDeleteOp(bucket, keyList.toArray(new String[0]));
+            return bucketManager.get(productId).batch(batchOperations);
+        } catch (QiniuException e) {
+            throw new CloudFileException(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public Response batchRename(String productId, String bucket, Map<String, String> keyMap) {
+        try {
+            BucketManager.BatchOperations batchOperations = new BucketManager.BatchOperations();
+            for (Map.Entry<String, String> stringStringEntry : keyMap.entrySet()) {
+                batchOperations.addDeleteOp(bucket, stringStringEntry.getKey(), stringStringEntry.getValue());
+            }
+            return bucketManager.get(productId).batch(batchOperations);
+        } catch (QiniuException e) {
+            throw new CloudFileException(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public OperationStatus mkzip(String productId, String bucket, String zipName, String zipTxt, String notifyUrl) {
+        try {
+            OperationManager om = new OperationManager(auth.get(productId), new Client());
+            String fops = "mkzip/4/|saveas/" + Base64Util.encode(bucket + ":" + zipName);
+            StringMap params = new StringMap();
+            params.put("notifyURL", UrlSafeBase64.encodeToString(notifyUrl));
+            String pipe = om.pfop(bucket, zipTxt, fops, params);
+            return om.prefop(pipe);
+        } catch (Exception e) {
+            throw new CloudFileException(e.getMessage(), e);
+        }
+    }
+}

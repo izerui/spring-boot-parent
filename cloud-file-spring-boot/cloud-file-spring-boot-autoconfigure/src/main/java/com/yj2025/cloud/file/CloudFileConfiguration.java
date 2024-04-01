@@ -1,6 +1,7 @@
 package com.yj2025.cloud.file;
 
 import com.yj2025.cloud.file.impl.CloudFileManagerImpl;
+import com.yj2025.cloud.file.impl.CloudFileProductManagerImpl;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +14,10 @@ public class CloudFileConfiguration {
     @Bean
     public CloudFileManager fileManager(CloudFileProperties properties) throws Exception{
         return new CloudFileManagerImpl(properties);
+    }
+
+    @Bean CloudFileProductManager fileProductManager(CloudFileProperties properties) throws Exception{
+        return new CloudFileProductManagerImpl(properties);
     }
 
 }

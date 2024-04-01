@@ -14,6 +14,10 @@ import java.util.Map;
 @Data
 @ConfigurationProperties(prefix = "file.storage")
 public class CloudFileProperties {
+
+    @NestedConfigurationProperty
+    private Map<String, CloudFileProperties> product = new HashMap<>();
+
     /**
      * appkey
      */

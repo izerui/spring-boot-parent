@@ -19,18 +19,18 @@ public class CloudFileApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        String filePath = "/Users/serv/Downloads/WechatIMG37.png";
-//        String bucket = "sz-yunji-test";
-        String bucket = "file-p3-demo001";
-        String key = UUID.randomUUID().toString() + ".jpg";
-        cloudFileManager.upload(bucket, key, filePath);
-
-        System.out.println(cloudFileManager.getPreviewUrl(bucket, key));
-
-        System.out.println(cloudFileManager.getPreviewUrl(bucket, key, 100, 100));
-
-        System.out.println(cloudFileManager.getDownloadUrl(bucket, key, "我们.jpg", "imageView2/2/w/100/h/100"));
-
-        System.out.println(cloudFileManager.getDownloadUrl(bucket, key, "我们.jpg"));
+//        String filePath = "/Users/serv/Downloads/WechatIMG37.png";
+////        String bucket = "sz-yunji-test";
+//        String bucket = "file-p3-demo001";
+//        String key = UUID.randomUUID().toString() + ".jpg";
+//        cloudFileManager.upload(bucket, key, filePath);
+//
+//        System.out.println(cloudFileManager.getPreviewUrl(bucket, key));
+//
+//        System.out.println(cloudFileManager.getPreviewUrl(bucket, key, 100, 100));
+//
+//        System.out.println(cloudFileManager.getDownloadUrl(bucket, key, "我们.jpg", "imageView2/2/w/100/h/100"));
+//
+//        System.out.println(cloudFileManager.getDownloadUrl(bucket, key, "我们.jpg"));
     }
 }
