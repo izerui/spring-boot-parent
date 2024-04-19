@@ -23,15 +23,12 @@ import com.yj2025.cloud.file.CloudFileProperties;
 import com.yj2025.cloud.file.UploadResponse;
 import com.yj2025.commons.vo.AttachmentVO;
 import lombok.SneakyThrows;
-import org.apache.logging.log4j.util.Base64Util;
 import org.springframework.util.Assert;
 
 import java.io.File;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 public class CloudFileProductManagerImpl implements CloudFileProductManager {
 
@@ -315,7 +312,8 @@ public class CloudFileProductManagerImpl implements CloudFileProductManager {
     public OperationStatus mkzip(String productId, String bucket, String zipName, String zipTxt, String notifyUrl) {
         try {
             OperationManager om = new OperationManager(auth.get(productId), new Client());
-            String fops = "mkzip/4/|saveas/" + Base64Util.encode(bucket + ":" + zipName);
+            Base64.Encoder encoder = Base64.getEncoder();
+            String fops = "mkzip/4/|saveas/" + encoder.encodeToString((bucket + ":" + zipName).getBytes(StandardCharsets.UTF_8));
             StringMap params = new StringMap();
             params.put("notifyURL", UrlSafeBase64.encodeToString(notifyUrl));
             String pipe = om.pfop(bucket, zipTxt, fops, params);
