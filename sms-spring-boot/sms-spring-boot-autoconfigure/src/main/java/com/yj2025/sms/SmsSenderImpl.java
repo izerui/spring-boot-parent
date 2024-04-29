@@ -50,40 +50,50 @@ class SmsSenderImpl implements SmsSender {
 
     @Override
     public void sendContent(String template, Map<String, String> varaibles, String... phones) {
-        if (varaibles == null) {
-            varaibles = new HashMap<>();
+        try {
+            if (varaibles == null) {
+                varaibles = new HashMap<>();
+            }
+            SmsExecuteContext context = this.getExecutor().sendSMS(StringUtils.join(phones, ","), properties.getSignName(), template, varaibles);
+            if (!context.isSuccess()) {
+                throw new RuntimeException("无法发送短信：" + context.getErrMsg() + "[错误代码：" + context.getErrCode() + "]");
+            }
+            publisher.publishEvent(new SmsSpringEvent(this, context));
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("短信发送失败，可能原因是配置错误，，，，，，，，，，，，，，本地环境，短信无法发送出去。。。。。。。请到数据库查看发送结果。。。。。");
         }
-        SmsExecuteContext context = this.getExecutor().sendSMS(StringUtils.join(phones, ","), properties.getSignName(), template, varaibles);
-        if (!context.isSuccess()) {
-            throw new RuntimeException("无法发送短信：" + context.getErrMsg() + "[错误代码：" + context.getErrCode() + "]");
-        }
-        publisher.publishEvent(new SmsSpringEvent(this, context));
     }
 
 
     @Override
     public void sendCaptcha(String template, Function<String, Map<String, String>> varaiblesFun, String bizCode, long timeoutSeconds, String phone) {
-        if (!isPhoneNumber(phone)) {
-            throw new SmsException("手机号码不符合规则");
+        try {
+            if (!isPhoneNumber(phone)) {
+                throw new SmsException("手机号码不符合规则");
+            }
+            if (StringUtils.isBlank(bizCode)) {
+                throw new SmsException("业务编号不能为空");
+            }
+            Assert.notNull(varaiblesFun, "变量集窗口不能为空");
+            String expirePhoneKey = String.format(SMS_CAPTCHA_EXPIRE_KEY, bizCode, phone);
+            BoundValueOperations<String, String> ops = redisTemplate.boundValueOps(expirePhoneKey);
+            Long expire = ops.getExpire();
+            if (expire != null && expire > 0) {
+                throw new SmsException("上次发送的验证码还有效,请不要重复发送");
+            }
+            String captcha = RandomStringUtils.randomNumeric(6);
+            Map<String, String> varaibles = varaiblesFun.apply(captcha);
+            SmsExecuteContext context = this.getExecutor().sendSMS(phone, properties.getSignName(), template, varaibles);
+            if (!context.isSuccess()) {
+                throw new RuntimeException("无法发送短信：" + context.getErrMsg() + "[错误代码：" + context.getErrCode() + "]");
+            }
+            ops.set(captcha, timeoutSeconds, TimeUnit.SECONDS);
+            publisher.publishEvent(new SmsSpringEvent(this, context));
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("短信发送失败，可能原因是配置错误，，，，，，，，，，，，，，本地环境，短信无法发送出去。。。。。。。请到数据库查看发送结果。。。。。");
         }
-        if (StringUtils.isBlank(bizCode)) {
-            throw new SmsException("业务编号不能为空");
-        }
-        Assert.notNull(varaiblesFun, "变量集窗口不能为空");
-        String expirePhoneKey = String.format(SMS_CAPTCHA_EXPIRE_KEY, bizCode, phone);
-        BoundValueOperations<String, String> ops = redisTemplate.boundValueOps(expirePhoneKey);
-        Long expire = ops.getExpire();
-        if (expire != null && expire > 0) {
-            throw new SmsException("上次发送的验证码还有效,请不要重复发送");
-        }
-        String captcha = RandomStringUtils.randomNumeric(6);
-        Map<String, String> varaibles = varaiblesFun.apply(captcha);
-        SmsExecuteContext context = this.getExecutor().sendSMS(phone, properties.getSignName(), template, varaibles);
-        if (!context.isSuccess()) {
-            throw new RuntimeException("无法发送短信：" + context.getErrMsg() + "[错误代码：" + context.getErrCode() + "]");
-        }
-        ops.set(captcha, timeoutSeconds, TimeUnit.SECONDS);
-        publisher.publishEvent(new SmsSpringEvent(this, context));
     }
 
     @Override
