@@ -35,7 +35,6 @@ class SmsSenderImpl implements SmsSender {
     @Autowired
     private StringRedisTemplate redisTemplate;
 
-
     private SmsExecutor getExecutor() {
         if (this._currentExecutor == null) {
             if (executors.stream().findAny().isEmpty()) {
@@ -61,7 +60,7 @@ class SmsSenderImpl implements SmsSender {
             publisher.publishEvent(new SmsSpringEvent(this, context));
         } catch (Exception e) {
             e.printStackTrace();
-            log.error("sendContent 短信发送失败，可能原因是配置错误，，，，，，，，，，，，，，本地环境，短信无法发送出去。。。。。。。请到数据库查看发送结果。。。。。varaibles {} ", varaibles);
+            log.error("sendContent 短信发送失败，可能原因是配置错误，，，，，，，，，，，，，，本地环境，短信无法发送出去。。。。。。。请到数据库查看发送结果。。。。。");
         }
     }
 
@@ -92,7 +91,7 @@ class SmsSenderImpl implements SmsSender {
             publisher.publishEvent(new SmsSpringEvent(this, context));
         } catch (Exception e) {
             e.printStackTrace();
-            log.error("sendCaptcha 短信发送失败，可能原因是配置错误，，，，，，，，，，，，，，本地环境，短信无法发送出去。。。。。。。请到数据库查看发送结果。。。。。。varaibles {} ", varaiblesFun);
+            log.error("sendCaptcha 短信发送失败，可能原因是配置错误，，，，，，，，，，，，，，本地环境，短信无法发送出去。。。。。。。请到数据库查看发送结果。。。。。。");
         }
     }
 
