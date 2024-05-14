@@ -61,7 +61,7 @@ class SmsSenderImpl implements SmsSender {
             publisher.publishEvent(new SmsSpringEvent(this, context));
         } catch (Exception e) {
             e.printStackTrace();
-            log.error("短信发送失败，可能原因是配置错误，，，，，，，，，，，，，，本地环境，短信无法发送出去。。。。。。。请到数据库查看发送结果。。。。。");
+            log.error("sendContent 短信发送失败，可能原因是配置错误，，，，，，，，，，，，，，本地环境，短信无法发送出去。。。。。。。请到数据库查看发送结果。。。。。varaibles {} ", varaibles);
         }
     }
 
@@ -92,7 +92,7 @@ class SmsSenderImpl implements SmsSender {
             publisher.publishEvent(new SmsSpringEvent(this, context));
         } catch (Exception e) {
             e.printStackTrace();
-            log.error("短信发送失败，可能原因是配置错误，，，，，，，，，，，，，，本地环境，短信无法发送出去。。。。。。。请到数据库查看发送结果。。。。。");
+            log.error("sendCaptcha 短信发送失败，可能原因是配置错误，，，，，，，，，，，，，，本地环境，短信无法发送出去。。。。。。。请到数据库查看发送结果。。。。。。varaibles {} ", varaiblesFun);
         }
     }
 
