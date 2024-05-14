@@ -53,6 +53,8 @@ class SmsSenderImpl implements SmsSender {
             if (varaibles == null) {
                 varaibles = new HashMap<>();
             }
+
+            log.info("sendContent phone {}, varaibles {}", phones, varaibles);
             SmsExecuteContext context = this.getExecutor().sendSMS(StringUtils.join(phones, ","), properties.getSignName(), template, varaibles);
             if (!context.isSuccess()) {
                 throw new RuntimeException("无法发送短信：" + context.getErrMsg() + "[错误代码：" + context.getErrCode() + "]");
@@ -83,6 +85,7 @@ class SmsSenderImpl implements SmsSender {
             }
             String captcha = RandomStringUtils.randomNumeric(6);
             Map<String, String> varaibles = varaiblesFun.apply(captcha);
+            log.info("sendCaptcha phone {}, varaibles {} bizCode {} ", phone, varaibles, bizCode);
             SmsExecuteContext context = this.getExecutor().sendSMS(phone, properties.getSignName(), template, varaibles);
             if (!context.isSuccess()) {
                 throw new RuntimeException("无法发送短信：" + context.getErrMsg() + "[错误代码：" + context.getErrCode() + "]");
