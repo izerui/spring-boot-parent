@@ -4,9 +4,9 @@ import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
-import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
+import java.time.YearMonth;
 import java.util.Date;
 
 //用户
@@ -26,4 +26,18 @@ public class TestUser {
     private Integer age;
     private Boolean flag;
     private Boolean flagString;
+
+    /**
+     * 会计期间
+     * <pre>测试年月是否可以自动转换</pre>
+     */
+    private YearMonth accountingPeriod;
+
+    /**
+     * 单据状态
+     * <pre>测试枚举可能为空的情况</pre>
+     */
+    private DocStatus docStatus;
+
+
 }

@@ -26,10 +26,11 @@ import org.springframework.util.ReflectionUtils;
 
 import javax.sql.DataSource;
 import java.beans.PropertyDescriptor;
-import java.lang.reflect.Method;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.JDBCType;
 import java.sql.SQLException;
+import java.time.YearMonth;
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
@@ -334,28 +335,36 @@ public class DbContext {
     private static <T> Map<String, ?> mapOfUnderscoreKey(T data) {
         if (data instanceof Map) {
             return (Map<String, ?>) data;
-        } else {
-            Map<String, Object> map = new HashMap<>();
-            PropertyDescriptor[] propertyDescriptors = BeanUtils.getPropertyDescriptors(data.getClass());
-            for (PropertyDescriptor pd : propertyDescriptors) {
-                String dbFieldName = CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, pd.getName());
-                if (pd.getReadMethod() != null) {
-                    Object value =
-                            ReflectionUtils.invokeMethod(pd.getReadMethod(),
-                                    data);
-                    if (pd.getPropertyType().isEnum()) {
-                        Method method =
-                                ReflectionUtils.findMethod(value.getClass(),
-                                        "name");
-                        map.put(dbFieldName,
-                                ReflectionUtils.invokeMethod(method, value));
-                    } else {
-                        map.put(dbFieldName, value);
-                    }
-                }
-            }
-            return map;
         }
+        Map<String, Object> map = new HashMap<>();
+        PropertyDescriptor[] propertyDescriptors = BeanUtils.getPropertyDescriptors(data.getClass());
+        for (PropertyDescriptor pd : propertyDescriptors) {
+            processPropertyDescriptor(data, pd, map);
+        }
+        return map;
+    }
+
+    private static <T> void processPropertyDescriptor(T data, PropertyDescriptor pd, Map<String, Object> map) {
+        String dbFieldName = CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, pd.getName());
+        if (pd.getReadMethod() == null) {
+            return;
+        }
+        Object value = ReflectionUtils.invokeMethod(pd.getReadMethod(), data);
+        if (value == null) {
+            map.put(dbFieldName, null);
+            return;
+        }
+        map.put(dbFieldName, convertValue(pd, value));
+    }
+
+    private static Object convertValue(PropertyDescriptor pd, Object value) {
+        if (pd.getPropertyType().isEnum()) {
+            return ((Enum<?>) value).name();
+        }
+        if (YearMonth.class.equals(pd.getPropertyType())) {
+            return Date.valueOf(((YearMonth) value).atDay(1));
+        }
+        return value;
     }
 
     /**

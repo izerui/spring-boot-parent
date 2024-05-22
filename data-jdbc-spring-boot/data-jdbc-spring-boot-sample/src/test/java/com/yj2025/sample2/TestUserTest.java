@@ -4,6 +4,7 @@ import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
 import com.yj2025.basic.support.DbContext;
 import com.yj2025.jdbc.support.Comparator;
+import com.yj2025.sample2.entity.DocStatus;
 import com.yj2025.sample2.entity.TestUser;
 import com.yj2025.sample2.mapping.GroupMapping;
 import com.yj2025.sample2.repository.TestUserRepository;
@@ -30,6 +31,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.YearMonth;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -93,7 +95,33 @@ public class TestUserTest {
         user.setEmail("email" + UUID.randomUUID().toString());
         user.setEntCode("copy1");
         user.setAge(20);
-        testUserService.insertUser(user);
+        user.setAccountingPeriod(YearMonth.now());
+        user.setDocStatus(null);
+        testUserService.saveUser(user);
+        System.out.println("耗时: " + watch.elapsed(TimeUnit.MILLISECONDS));
+    }
+
+    @Test
+    public void testInsert() {
+        Stopwatch watch = Stopwatch.createStarted();
+        TestUser user = new TestUser();
+        user.setVersion(0);
+        user.setCreateTime(new Date());
+        user.setCode("code" + UUID.randomUUID().toString());
+        user.setName("name" + UUID.randomUUID().toString());
+        user.setEmail("email" + UUID.randomUUID().toString());
+        user.setEntCode("copy1");
+        user.setAge(20);
+        user.setAccountingPeriod(YearMonth.now());
+        user.setDocStatus(null);
+//        testUserService.insertUser(user);
+
+        testUserService.batchInsert("1", List.of(user));
+
+        var all = testUserService.findAll("copy1");
+
+        log.info(all.toString());
+
         System.out.println("耗时: " + watch.elapsed(TimeUnit.MILLISECONDS));
     }
 

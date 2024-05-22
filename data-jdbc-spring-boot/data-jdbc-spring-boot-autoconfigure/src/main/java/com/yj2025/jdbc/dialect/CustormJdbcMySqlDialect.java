@@ -1,7 +1,6 @@
 package com.yj2025.jdbc.dialect;
 
-import com.yj2025.jdbc.converter.BooleanToIntegerConverter;
-import com.yj2025.jdbc.converter.IntegerToBooleanConverter;
+import com.yj2025.jdbc.converter.*;
 import com.yj2025.jdbc.dialect.flag.QueryFlag;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.jdbc.core.dialect.JdbcMySqlDialect;
@@ -65,10 +64,10 @@ public class CustormJdbcMySqlDialect extends JdbcMySqlDialect {
     public Collection<Object> getConverters() {
         Collection<Object> converters = super.getConverters();
         converters.addAll(Arrays.asList(
-//                new BooleanToStringConverter(),
-//                new StringToBooleanConverter(),
                 new BooleanToIntegerConverter(),
-                new IntegerToBooleanConverter()
+                new IntegerToBooleanConverter(),
+                new LocalDateToYearMonthConverter(),
+                new YearMonthToLocalDateConverter()
         ));
         return converters;
     }

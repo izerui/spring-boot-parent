@@ -1,7 +1,5 @@
 package com.yj2025.sample2.service;
 
-import com.yj2025.jdbc.dialect.flag.QueryFlagAfterTable;
-import com.yj2025.jdbc.dialect.flag.QueryFlagAfterTables;
 import com.yj2025.sample2.entity.TestUser;
 import com.yj2025.sample2.mapping.GroupMapping;
 import com.yj2025.sample2.repository.TestUserRepository;
@@ -45,8 +43,13 @@ public class TestUserService {
     }
 
     @Tenant("#{#user.entCode}")
-    public void insertUser(TestUser user) {
+    public void saveUser(TestUser user) {
         testUserRepository.save(user);
+    }
+
+    @Tenant("#{#user.entCode}")
+    public void insertUser(TestUser user) {
+        testUserRepository.insert(user);
     }
 
     public List<TestUser> findByCode(String entCode, String code) {
