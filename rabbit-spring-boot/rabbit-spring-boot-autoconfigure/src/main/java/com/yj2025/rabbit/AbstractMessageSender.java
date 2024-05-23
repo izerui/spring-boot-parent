@@ -21,11 +21,11 @@ public abstract class AbstractMessageSender implements IMessageRouter {
      */
     public final void sendMessage(Object msg) {
         rabbitTemplate.convertAndSend(getExchange(), getRoutingKey(), msg);
-        log.info("exchange:{},routingKey:{},消息内容:{}", getExchange(), getRoutingKey(), msg);
+        log.info("【发送消息】exchange:[{}], routingKey:[{}], 消息内容:[{}]", getExchange(), getRoutingKey(), msg);
     }
 
     public final void sendMessage(SourceMessageVO messageVO) {
         rabbitTemplate.convertAndSend(getExchange(), getRoutingKey(), messageVO);
-        log.info("exchange:{},routingKey:{},消息内容:{}", getExchange(), getRoutingKey(), messageVO);
+        log.info("【发送消息】exchange:[{}], routingKey:[{}], 消息内容:[{}]", getExchange(), getRoutingKey(), messageVO);
     }
 }
