@@ -203,7 +203,15 @@ public class BigDecimalUtils {
      * @param num2
      * @return
      */
+    @Deprecated(since = "3.1.6", forRemoval = true)
     public static final boolean isLessThan(BigDecimal num1, BigDecimal num2) {
+        if (num1 == null || num2 == null) {
+            return false;
+        }
+        return num1.compareTo(num2) < 0;
+    }
+
+    public static final boolean ltThan(BigDecimal num1, BigDecimal num2) {
         if (num1 == null || num2 == null) {
             return false;
         }
@@ -218,7 +226,15 @@ public class BigDecimalUtils {
      * @param num2
      * @return
      */
+    @Deprecated(since = "3.1.6", forRemoval = true)
     public static final boolean isLessEqThan(BigDecimal num1, BigDecimal num2) {
+        if (num1 == null || num2 == null) {
+            return false;
+        }
+        return num1.compareTo(num2) <= 0;
+    }
+
+    public static final boolean lteThan(BigDecimal num1, BigDecimal num2) {
         if (num1 == null || num2 == null) {
             return false;
         }
@@ -232,7 +248,15 @@ public class BigDecimalUtils {
      * @param num2
      * @return
      */
+    @Deprecated(since = "3.1.6", forRemoval = true)
     public static final boolean isGreaterThan(BigDecimal num1, BigDecimal num2) {
+        if (num1 == null || num2 == null) {
+            return false;
+        }
+        return num1.compareTo(num2) > 0;
+    }
+
+    public static final boolean gtThan(BigDecimal num1, BigDecimal num2) {
         if (num1 == null || num2 == null) {
             return false;
         }
@@ -246,7 +270,15 @@ public class BigDecimalUtils {
      * @param num2
      * @return
      */
+    @Deprecated(since = "3.1.6", forRemoval = true)
     public static final boolean isGreaterEqThan(BigDecimal num1, BigDecimal num2) {
+        if (num1 == null || num2 == null) {
+            return false;
+        }
+        return num1.compareTo(num2) >= 0;
+    }
+
+    public static final boolean gteThan(BigDecimal num1, BigDecimal num2) {
         if (num1 == null || num2 == null) {
             return false;
         }
@@ -360,22 +392,43 @@ public class BigDecimalUtils {
     }
 
     //大于0
+    @Deprecated(since = "3.1.6", forRemoval = true)
     public static boolean moreZero(BigDecimal quantity) {
         return null2Zero(quantity).compareTo(BigDecimal.ZERO) > 0;
     }
 
+    public static boolean gtZero(BigDecimal quantity) {
+        return null2Zero(quantity).compareTo(BigDecimal.ZERO) > 0;
+    }
+
     //大于等于0
+    @Deprecated(since = "3.1.6", forRemoval = true)
     public static boolean moreThanZero(BigDecimal quantity) {
         return null2Zero(quantity).compareTo(BigDecimal.ZERO) >= 0;
     }
 
+    public static boolean gteZero(BigDecimal quantity) {
+        return null2Zero(quantity).compareTo(BigDecimal.ZERO) >= 0;
+    }
+
+
     //小于0
+    @Deprecated(since = "3.1.6", forRemoval = true)
     public static boolean lessZero(BigDecimal quantity) {
         return null2Zero(quantity).compareTo(BigDecimal.ZERO) < 0;
     }
 
+    public static boolean ltZero(BigDecimal quantity) {
+        return null2Zero(quantity).compareTo(BigDecimal.ZERO) < 0;
+    }
+
     //小于等于0
+    @Deprecated(since = "3.1.6", forRemoval = true)
     public static boolean lessThanZero(BigDecimal quantity) {
+        return null2Zero(quantity).compareTo(BigDecimal.ZERO) <= 0;
+    }
+
+    public static boolean lteZero(BigDecimal quantity) {
         return null2Zero(quantity).compareTo(BigDecimal.ZERO) <= 0;
     }
 
