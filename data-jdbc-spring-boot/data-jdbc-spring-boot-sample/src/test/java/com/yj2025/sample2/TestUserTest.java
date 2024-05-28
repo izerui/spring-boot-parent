@@ -10,6 +10,7 @@ import com.yj2025.sample2.mapping.GroupMapping;
 import com.yj2025.sample2.repository.TestUserRepository;
 import com.yj2025.sample2.service.TestUserService;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -99,6 +100,14 @@ public class TestUserTest {
         user.setDocStatus(null);
         testUserService.saveUser(user);
         System.out.println("耗时: " + watch.elapsed(TimeUnit.MILLISECONDS));
+    }
+
+    @Test
+    public void testYearMonths() {
+        var batchUsers = testUserService.findByAccountingPeriods("copy1", List.of(YearMonth.now(), YearMonth.now().minusMonths(1)));
+        Assertions.assertNotNull(batchUsers);
+        var users = testUserService.findByAccountingPeriod("copy1", YearMonth.now());
+        Assertions.assertNotNull(users);
     }
 
     @Test

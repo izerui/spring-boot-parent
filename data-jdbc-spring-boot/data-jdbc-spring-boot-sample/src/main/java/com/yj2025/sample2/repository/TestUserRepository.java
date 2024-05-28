@@ -9,6 +9,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.YearMonth;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +32,10 @@ public interface TestUserRepository extends PlatformJdbcRepository<TestUser, Lon
     @QueryFlagAfterTable("query标注: #{#code}")
     List<TestUser> findAll(Map<String, Object> map);
 
+    List<TestUser> findByEntCodeAndAccountingPeriod(String  entCode, YearMonth accountingPeriod);
+
+    List<TestUser> findByEntCodeAndAccountingPeriodIn(String entCode, Collection<YearMonth> accountingPeriods);
+
     /**
      * 优先匹配有值的tablePrefix前缀,最后匹配空串,发现空串算匹配成功,则添加表后缀字符串
      * 第一种写法:
@@ -40,6 +46,7 @@ public interface TestUserRepository extends PlatformJdbcRepository<TestUser, Lon
 //                    @QueryFlagAfterTable(value = "force index(idx_02)", isComment = false, tablePrefix = "test_user_ent002")
 //            }
 //    )
+
     /**
      * 优先匹配有值的tablePrefix前缀,最后匹配空串,发现空串算匹配成功,则添加表后缀字符串
      * 第二种写法
@@ -51,4 +58,5 @@ public interface TestUserRepository extends PlatformJdbcRepository<TestUser, Lon
         return this.findAll(query, pageable);
 //        System.out.println("第三步：切面即将跳出，即将清空本地线程的queryflag值");
     }
+
 }

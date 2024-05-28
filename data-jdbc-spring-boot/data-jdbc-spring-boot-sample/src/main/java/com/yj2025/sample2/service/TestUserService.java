@@ -13,6 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
+import java.time.YearMonth;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -62,9 +65,9 @@ public class TestUserService {
         return testUserRepository.findAll(query, PageRequest.of(0, 200));
     }
 
-     @Tenant("#{#entCode}")
+    @Tenant("#{#entCode}")
     public Page<TestUser> findByQueryForceIndex(String entCode, Query query) {
-         System.out.println("第一步： 准备开始执行方法 findAllForceIndex 切面");
+        System.out.println("第一步： 准备开始执行方法 findAllForceIndex 切面");
         return testUserRepository.findAllForceIndex(query, PageRequest.of(0, 200));
     }
 
@@ -82,6 +85,7 @@ public class TestUserService {
     public Page<TestUser> findByMapPage(Map map, Pageable pageable) {
         return testUserRepository.findAll(map, pageable);
     }
+
 
     @Tenant("#{#entCode}")
     public void batchInsert(String entCode, List<TestUser> users) {
@@ -106,5 +110,15 @@ public class TestUserService {
     @Tenant("#{#entCode}")
     public Iterable<TestUser> findByRecordIds(String entCode, List<Long> ids) {
         return testUserRepository.findAllById(ids);
+    }
+
+    @Tenant("#{#entCode}")
+    public  List<TestUser>  findByAccountingPeriod(String entCode, YearMonth accountingPeriod) {
+        return testUserRepository.findByEntCodeAndAccountingPeriod(entCode, accountingPeriod);
+    }
+
+    @Tenant("#{#entCode}")
+    public  List<TestUser>  findByAccountingPeriods(String entCode, Collection<YearMonth> accountingPeriods) {
+        return testUserRepository.findByEntCodeAndAccountingPeriodIn(entCode, accountingPeriods);
     }
 }
