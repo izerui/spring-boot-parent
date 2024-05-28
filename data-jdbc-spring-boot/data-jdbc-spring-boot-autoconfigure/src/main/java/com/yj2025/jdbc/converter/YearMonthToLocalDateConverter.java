@@ -7,7 +7,6 @@ import org.springframework.lang.NonNull;
 import java.sql.Date;
 import java.time.YearMonth;
 
-@WritingConverter
 public class YearMonthToLocalDateConverter implements Converter<YearMonth, Date> {
 
   @Override
