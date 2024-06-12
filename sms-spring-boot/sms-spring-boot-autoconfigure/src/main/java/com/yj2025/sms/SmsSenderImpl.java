@@ -61,8 +61,7 @@ class SmsSenderImpl implements SmsSender {
             }
             publisher.publishEvent(new SmsSpringEvent(this, context));
         } catch (Exception e) {
-            e.printStackTrace();
-            log.error("sendContent 短信发送失败，可能原因是配置错误，，，，，，，，，，，，，，本地环境，短信无法发送出去。。。。。。。");
+            log.error("sendContent 短信发送失败，可能原因是配置错误，，，，，，，，，，，，，，本地环境，短信无法发送出去。。。。。。。", e);
         }
     }
 
@@ -93,8 +92,7 @@ class SmsSenderImpl implements SmsSender {
             ops.set(captcha, timeoutSeconds, TimeUnit.SECONDS);
             publisher.publishEvent(new SmsSpringEvent(this, context));
         } catch (Exception e) {
-            e.printStackTrace();
-            log.error("sendCaptcha 短信发送失败，可能原因是配置错误，，，，，，，，，，，，，，本地环境，短信无法发送出去。。。。。。。");
+            log.error("sendCaptcha 短信发送失败，可能原因是配置错误，，，，，，，，，，，，，，本地环境，短信无法发送出去。。。。。。。", e);
         }
     }
 
