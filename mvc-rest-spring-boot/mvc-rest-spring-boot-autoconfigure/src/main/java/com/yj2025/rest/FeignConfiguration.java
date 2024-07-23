@@ -83,7 +83,9 @@ public class FeignConfiguration {
                 Iterator<String> headerNameIterator = request.getHeaderNames().asIterator();
                 headerNameIterator.forEachRemaining(headerName -> {
                     if (PROXY_HEADER_NAMES.contains(headerName)) {
-                        template.header(headerName, request.getHeader(headerName));
+                        if (!template.headers().containsKey(headerName)) {
+                            template.header(headerName, request.getHeader(headerName));
+                        }
                     }
                 });
             }
