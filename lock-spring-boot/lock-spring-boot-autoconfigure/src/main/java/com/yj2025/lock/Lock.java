@@ -3,6 +3,8 @@ package com.yj2025.lock;
 import com.yj2025.lock.support.ThrowsRunnable;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.locks.InterProcessSemaphoreMutex;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 
 import java.util.concurrent.TimeUnit;
@@ -12,6 +14,8 @@ import java.util.function.Function;
  * Created by serv on 16/8/16.
  */
 public class Lock implements DisposableBean {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(Lock.class);
 
     private final static Integer LEASE_SECONDS = 30;
 
@@ -33,6 +37,7 @@ public class Lock implements DisposableBean {
             //执行全局唯一逻辑
             runnable.run();
         } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
             if (e instanceof LockException) {
                 throw catchThrowNew.apply((LockException) e);
             } else {
