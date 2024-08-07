@@ -106,6 +106,16 @@ class SmsSenderImpl implements SmsSender {
         return false;
     }
 
+    public boolean checkAndDestroyCaptcha(String bizCode, String captcha, String phone) {
+        String expirePhoneKey = String.format(SMS_CAPTCHA_EXPIRE_KEY, bizCode, phone);
+        String redisCaptcha = redisTemplate.boundValueOps(expirePhoneKey).get();
+        if (StringUtils.isNotEmpty(redisCaptcha) && StringUtils.equals(captcha, redisCaptcha)) {
+            redisTemplate.delete(expirePhoneKey);
+            return true;
+        }
+        return false;
+    }
+
     /**
      * 验证手机号码是否正确，正确返回true，否则返回false
      *
