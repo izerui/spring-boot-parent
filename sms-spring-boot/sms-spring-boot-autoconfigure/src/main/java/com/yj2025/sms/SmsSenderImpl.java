@@ -57,9 +57,11 @@ class SmsSenderImpl implements SmsSender {
             log.info("sendContent phone {}, varaibles {}", phones, varaibles);
             SmsExecuteContext context = this.getExecutor().sendSMS(StringUtils.join(phones, ","), properties.getSignName(), template, varaibles);
             if (!context.isSuccess()) {
-                throw new RuntimeException("无法发送短信：" + context.getErrMsg() + "[错误代码：" + context.getErrCode() + "]");
+                throw new SmsException("无法发送短信：" + context.getErrMsg() + "[错误代码：" + context.getErrCode() + "]");
             }
             publisher.publishEvent(new SmsSpringEvent(this, context));
+        } catch (SmsException se) {
+            throw se;
         } catch (Exception e) {
             log.error("sendContent 短信发送失败，可能原因是配置错误，，，，，，，，，，，，，，本地环境，短信无法发送出去。。。。。。。", e);
         }
@@ -87,10 +89,12 @@ class SmsSenderImpl implements SmsSender {
             log.info("sendCaptcha phone {}, varaibles {} bizCode {} ", phone, varaibles, bizCode);
             SmsExecuteContext context = this.getExecutor().sendSMS(phone, properties.getSignName(), template, varaibles);
             if (!context.isSuccess()) {
-                throw new RuntimeException("无法发送短信：" + context.getErrMsg() + "[错误代码：" + context.getErrCode() + "]");
+                throw new SmsException("无法发送短信：" + context.getErrMsg() + "[错误代码：" + context.getErrCode() + "]");
             }
             ops.set(captcha, timeoutSeconds, TimeUnit.SECONDS);
             publisher.publishEvent(new SmsSpringEvent(this, context));
+        } catch (SmsException se) {
+            throw se;
         } catch (Exception e) {
             log.error("sendCaptcha 短信发送失败，可能原因是配置错误，，，，，，，，，，，，，，本地环境，短信无法发送出去。。。。。。。", e);
         }
@@ -106,6 +110,7 @@ class SmsSenderImpl implements SmsSender {
         return false;
     }
 
+    @Override
     public boolean checkAndDestroyCaptcha(String bizCode, String captcha, String phone) {
         String expirePhoneKey = String.format(SMS_CAPTCHA_EXPIRE_KEY, bizCode, phone);
         String redisCaptcha = redisTemplate.boundValueOps(expirePhoneKey).get();
