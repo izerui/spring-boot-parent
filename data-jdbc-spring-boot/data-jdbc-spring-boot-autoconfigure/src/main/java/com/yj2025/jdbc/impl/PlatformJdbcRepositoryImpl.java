@@ -226,7 +226,7 @@ public class PlatformJdbcRepositoryImpl<T, ID> extends SimpleJdbcRepository<T, I
             sql += " order by " + StringUtils.join(orderList, ",") + " ";
         }
         if (query.isLimited()) {
-            sql += dialect.limit().getLimitOffset(query.getOffset(), query.getLimit());
+            sql += dialect.limit().getLimitOffset(query.getLimit(), query.getOffset());
         }
         if (String.class.isAssignableFrom(mappingClass)) {
             return namedParameterJdbcTemplate.query(sql, parameterSource, new SingleColumnRowMapper<>(mappingClass));
