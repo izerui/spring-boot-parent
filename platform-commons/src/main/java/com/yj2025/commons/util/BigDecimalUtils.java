@@ -446,4 +446,15 @@ public class BigDecimalUtils {
     public static String toPlainString(BigDecimal quantity) {
         return Decimal2StringUtils.toPlainString(quantity);
     }
+
+    /**
+     * 判断两个数字方向是否一致。
+     */
+    public static boolean areSameSign(BigDecimal num1, BigDecimal num2) {
+        int sign1 = BigDecimalUtils.null2Zero(num1).signum();
+        int sign2 = BigDecimalUtils.null2Zero(num2).signum();
+
+        // Both positive or both negative (excluding zero)
+        return (sign1 > 0 && sign2 > 0) || (sign1 < 0 && sign2 < 0);
+    }
 }
