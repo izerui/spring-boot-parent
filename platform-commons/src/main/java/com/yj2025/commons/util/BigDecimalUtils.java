@@ -448,13 +448,20 @@ public class BigDecimalUtils {
     }
 
     /**
-     * 判断两个数字方向是否一致。
+     * 判断数字方向是否一致。
      */
-    public static boolean areSameSign(BigDecimal num1, BigDecimal num2) {
-        int sign1 = BigDecimalUtils.null2Zero(num1).signum();
-        int sign2 = BigDecimalUtils.null2Zero(num2).signum();
-
-        // Both positive or both negative (excluding zero)
-        return (sign1 > 0 && sign2 > 0) || (sign1 < 0 && sign2 < 0);
+    public static boolean areSameSign(BigDecimal... nums) {
+        if (nums == null || nums.length == 0) {
+            return false;
+        }
+        int sign = BigDecimalUtils.null2Zero(nums[0]).signum();
+        for (int i = 1; i < nums.length; i++) {
+            int currentSign = BigDecimalUtils.null2Zero(nums[i]).signum();
+            if (currentSign != sign) {
+                return false;
+            }
+        }
+        return true;
     }
+
 }
