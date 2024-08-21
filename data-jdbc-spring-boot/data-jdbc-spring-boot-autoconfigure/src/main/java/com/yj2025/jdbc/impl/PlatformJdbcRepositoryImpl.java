@@ -26,6 +26,7 @@ import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.lang.Nullable;
@@ -223,6 +224,12 @@ public class PlatformJdbcRepositoryImpl<T, ID> extends SimpleJdbcRepository<T, I
         if (query.isSorted()) {
             List<String> orderList = query.getSort().stream().map(order -> order.getProperty() + " " + order.getDirection().name()).collect(Collectors.toList());
             sql += " order by " + StringUtils.join(orderList, ",") + " ";
+        }
+        if (query.isLimited()) {
+            sql += dialect.limit().getLimitOffset(query.getLimit(), query.getOffset());
+        }
+        if (String.class.isAssignableFrom(mappingClass)) {
+            return namedParameterJdbcTemplate.query(sql, parameterSource, new SingleColumnRowMapper<>(mappingClass));
         }
         if (Map.class.isAssignableFrom(mappingClass)) {
             return (List<S>) namedParameterJdbcTemplate.query(sql, parameterSource, new ColumnMapRowMapper());
