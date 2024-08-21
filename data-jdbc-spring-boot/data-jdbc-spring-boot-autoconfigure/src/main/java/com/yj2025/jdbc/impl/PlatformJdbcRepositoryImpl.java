@@ -20,12 +20,10 @@ import org.springframework.data.relational.core.mapping.RelationalMappingContext
 import org.springframework.data.relational.core.mapping.RelationalPersistentEntity;
 import org.springframework.data.relational.core.query.Criteria;
 import org.springframework.data.relational.core.query.Query;
-import org.springframework.data.relational.core.sql.IdentifierProcessing;
 import org.springframework.data.relational.core.sql.SqlIdentifier;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -33,6 +31,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -48,25 +47,19 @@ public class PlatformJdbcRepositoryImpl<T, ID> extends SimpleJdbcRepository<T, I
     private final JdbcAggregateTemplate jdbcAggregateTemplate;
     private final PersistentEntity<T, ?> entity;
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-    private final JdbcTemplate jdbcTemplate;
-    private final SqlGeneratorSource sqlGeneratorSource;
     private final Dialect dialect;
-    private final JdbcConverter jdbcConverter;
-    private final RelationalMappingContext relationalMappingContext;
     private final CustomSqlGenerator generator;
 
     public PlatformJdbcRepositoryImpl(JdbcAggregateOperations entityOperations, PersistentEntity<T, ?> entity, JdbcConverter converter) throws IllegalAccessException {
         super(entityOperations, entity, converter);
         this.jdbcAggregateTemplate = (JdbcAggregateTemplate) entityOperations;
         this.entity = entity;
-        this.jdbcConverter = converter;
         DefaultDataAccessStrategy dataAccessStrategy = getRefFieldValue(this.jdbcAggregateTemplate, "accessStrategy");
         this.namedParameterJdbcTemplate = getRefFieldValue(dataAccessStrategy, "operations");
-        this.sqlGeneratorSource = getRefFieldValue(dataAccessStrategy, "sqlGeneratorSource");
-        this.relationalMappingContext = getRefFieldValue(dataAccessStrategy, "context");
+        SqlGeneratorSource sqlGeneratorSource = getRefFieldValue(dataAccessStrategy, "sqlGeneratorSource");
+        RelationalMappingContext relationalMappingContext = getRefFieldValue(dataAccessStrategy, "context");
         this.dialect = getRefFieldValue(sqlGeneratorSource, "dialect");
-        this.jdbcTemplate = namedParameterJdbcTemplate.getJdbcTemplate();
-        this.generator = new CustomSqlGenerator(relationalMappingContext, jdbcConverter, relationalMappingContext.getRequiredPersistentEntity(entity.getType()), dialect);
+        this.generator = new CustomSqlGenerator(relationalMappingContext, converter, relationalMappingContext.getRequiredPersistentEntity(entity.getType()), dialect);
     }
 
 
@@ -150,6 +143,7 @@ public class PlatformJdbcRepositoryImpl<T, ID> extends SimpleJdbcRepository<T, I
      * 5. count:384, DefaultDataAccessStrategy (org.springframework.data.jdbc.core.convert)
      * 6. sql:415, DefaultDataAccessStrategy (org.springframework.data.jdbc.core.convert)
      * 7. getSqlGenerator:63, SqlGeneratorSource (org.springframework.data.jdbc.core.convert)
+     *
      * @param query    查询条件，不能为空
      * @param pageable 分页对象，不能为空
      * @return
@@ -219,43 +213,49 @@ public class PlatformJdbcRepositoryImpl<T, ID> extends SimpleJdbcRepository<T, I
 
     @Override
     public <S> List<S> groupAll(Collection<String> selectColumns, @Nullable Collection<String> groupColumns, Class<S> mappingClass, Query query) {
+        return this.groupAll(selectColumns, groupColumns, mappingClass, query, "");
+    }
+
+    @Override
+    public <S> List<S> groupAll(Collection<String> selectColumns, @Nullable Collection<String> groupColumns, Class<S> mappingClass, Query query, String having) {
         MapSqlParameterSource parameterSource = new MapSqlParameterSource();
         String sql = generator.getGroupSql(selectColumns, groupColumns, query, parameterSource);
+        if (StringUtils.isNotBlank(having)) {
+            sql += " HAVING " + having;
+        }
         if (query.isSorted()) {
             List<String> orderList = query.getSort().stream().map(order -> order.getProperty() + " " + order.getDirection().name()).collect(Collectors.toList());
-            sql += " order by " + StringUtils.join(orderList, ",") + " ";
+            sql += " ORDER BY " + StringUtils.join(orderList, ",") + " ";
         }
         if (query.isLimited()) {
             sql += dialect.limit().getLimitOffset(query.getLimit(), query.getOffset());
         }
-        if (String.class.isAssignableFrom(mappingClass)) {
-            return namedParameterJdbcTemplate.query(sql, parameterSource, new SingleColumnRowMapper<>(mappingClass));
-        }
-        if (Map.class.isAssignableFrom(mappingClass)) {
-            return (List<S>) namedParameterJdbcTemplate.query(sql, parameterSource, new ColumnMapRowMapper());
-        }
-        return namedParameterJdbcTemplate.query(sql, parameterSource, new BeanPropertyRowMapper<>(mappingClass));
+
+        return getS(mappingClass, sql, parameterSource);
     }
 
     @Override
     public <S> Page<S> groupAll(Collection<String> selectColumns, @Nullable Collection<String> groupColumns, Class<S> mappingClass, Query query, Pageable pageable) {
+        return this.groupAll(selectColumns, groupColumns, mappingClass, query, pageable, "");
+    }
+
+    @Override
+    public <S> Page<S> groupAll(Collection<String> selectColumns, @Nullable Collection<String> groupColumns, Class<S> mappingClass, Query query, Pageable pageable, String having) {
         MapSqlParameterSource parameterSource = new MapSqlParameterSource();
         String sql = generator.getGroupSql(selectColumns, groupColumns, query, parameterSource);
-        String pageSql = "select x.* from (" + sql + ") x ";
-        String countSql = "select count(0) from (" + sql + ") x";
+        String pageSql = "SELECT x.* from (" + sql + ") x ";
+        if (StringUtils.isNotBlank(having)) {
+            pageSql += " HAVING " + having;
+        }
+        String countSql = getCountSql(sql, having);
         if (pageable.getSort().isSorted()) {
             List<String> orderList = pageable.getSort().stream()
                     .map(order -> "x." + CriteriaUtils.camelToUnderscore(order.getProperty()) + " " + order.getDirection().name())
                     .collect(Collectors.toList());
-            pageSql += " order by " + StringUtils.join(orderList, ",") + " ";
+            pageSql += " ORDER BY " + StringUtils.join(orderList, ",") + " ";
         }
         pageSql += dialect.limit().getLimitOffset(pageable.getPageSize(), pageable.getOffset());
-        List<S> content;
-        if (Map.class.isAssignableFrom(mappingClass)) {
-            content = (List<S>) namedParameterJdbcTemplate.query(pageSql, parameterSource, new ColumnMapRowMapper());
-        } else {
-            content = namedParameterJdbcTemplate.query(pageSql, parameterSource, new BeanPropertyRowMapper<>(mappingClass));
-        }
+        List<S> content = getS(mappingClass, pageSql, parameterSource);
         return PageableExecutionUtils.getPage(content, pageable, () -> namedParameterJdbcTemplate.queryForObject(countSql, parameterSource, Long.class));
     }
 
@@ -266,12 +266,22 @@ public class PlatformJdbcRepositoryImpl<T, ID> extends SimpleJdbcRepository<T, I
     }
 
     @Override
+    public <S> List<S> groupAll(Collection<String> selectColumns, @Nullable Collection<String> groupColumns, Class<S> mappingClass, Map<String, Object> simpleMap, String having) {
+        Query query = Query.query(CriteriaUtils.joinToCriteria(Criteria.empty(), simpleMap));
+        return this.groupAll(selectColumns, groupColumns, mappingClass, query, having);
+    }
+
+    @Override
     public <S> Page<S> groupAll(Collection<String> selectColumns, @Nullable Collection<String> groupColumns, Class<S> mappingClass, Map<String, Object> simpleMap, Pageable pageable) {
+        return this.groupAll(selectColumns, groupColumns, mappingClass, simpleMap, pageable, "");
+    }
+
+    @Override
+    public <S> Page<S> groupAll(Collection<String> selectColumns, @Nullable Collection<String> groupColumns, Class<S> mappingClass, Map<String, Object> simpleMap, Pageable pageable, String having) {
         Query query =
                 Query.query(CriteriaUtils.joinToCriteria(Criteria.empty(),
                         simpleMap));
-        return this.groupAll(selectColumns, groupColumns, mappingClass, query
-                , pageable);
+        return this.groupAll(selectColumns, groupColumns, mappingClass, query, pageable, having);
     }
 
     @Override
@@ -297,5 +307,38 @@ public class PlatformJdbcRepositoryImpl<T, ID> extends SimpleJdbcRepository<T, I
         );
         return Lists.newArrayList(jdbcAggregateTemplate.findAll(query,
                 entity.getType()));
+    }
+
+    private boolean isPrimitiveWrapper(Class<?> clazz) {
+        return clazz.equals(Boolean.class) ||
+                clazz.equals(Byte.class) ||
+                clazz.equals(Short.class) ||
+                clazz.equals(Integer.class) ||
+                clazz.equals(Long.class) ||
+                clazz.equals(Float.class) ||
+                clazz.equals(Double.class) ||
+                clazz.equals(Character.class);
+    }
+
+    private boolean isSingleColumn(Class<?> clazz) {
+        return isPrimitiveWrapper(clazz) || clazz.equals(String.class) || clazz.equals(BigDecimal.class);
+    }
+
+    private String getCountSql(String sql, String having) {
+        String result = "SELECT count(0) from (" + sql + ") x";
+        if (StringUtils.isNotBlank(having)) {
+            result += " HAVING " + having;
+        }
+        return result;
+    }
+
+    private <S> List<S> getS(Class<S> mappingClass, String sql, MapSqlParameterSource parameterSource) {
+        if (isSingleColumn(mappingClass)) {
+            return namedParameterJdbcTemplate.query(sql, parameterSource, new SingleColumnRowMapper<>(mappingClass));
+        }
+        if (Map.class.isAssignableFrom(mappingClass)) {
+            return (List<S>) namedParameterJdbcTemplate.query(sql, parameterSource, new ColumnMapRowMapper());
+        }
+        return namedParameterJdbcTemplate.query(sql, parameterSource, new BeanPropertyRowMapper<>(mappingClass));
     }
 }

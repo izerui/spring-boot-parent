@@ -267,28 +267,25 @@ public interface PlatformJdbcRepository<T, ID> extends CrudRepository<T, ID>, Pa
     @Override
     void deleteAll();
 
-    <S> S aggregate(Collection<String> aggregateColumns,
-                    Class<S> mappingClass, Query query);
+    <S> S aggregate(Collection<String> aggregateColumns, Class<S> mappingClass, Query query);
 
-    <S> S aggregate(Collection<String> aggregateColumns,
-                    Class<S> mappingClass, Map<String, Object> simpleMap);
+    <S> S aggregate(Collection<String> aggregateColumns, Class<S> mappingClass, Map<String, Object> simpleMap);
 
-    <S> List<S> groupAll(Collection<String> selectColumns,
-                         @Nullable Collection<String> groupColumns,
-                         Class<S> mappingClass, Query query);
+    <S> List<S> groupAll(Collection<String> selectColumns, @Nullable Collection<String> groupColumns, Class<S> mappingClass, Query query);
 
-    <S> List<S> groupAll(Collection<String> selectColumns,
-                         @Nullable Collection<String> groupColumns,
-                         Class<S> mappingClass, Map<String, Object> simpleMap);
+    <S> List<S> groupAll(Collection<String> selectColumns, @Nullable Collection<String> groupColumns, Class<S> mappingClass, Query query, String having);
 
-    <S> Page<S> groupAll(Collection<String> selectColumns,
-                         @Nullable Collection<String> groupColumns,
-                         Class<S> mappingClass, Query query, Pageable pageable);
+    <S> List<S> groupAll(Collection<String> selectColumns, @Nullable Collection<String> groupColumns, Class<S> mappingClass, Map<String, Object> simpleMap);
 
-    <S> Page<S> groupAll(Collection<String> selectColumns,
-                         @Nullable Collection<String> groupColumns,
-                         Class<S> mappingClass, Map<String, Object> simpleMap
-            , Pageable pageable);
+    <S> List<S> groupAll(Collection<String> selectColumns, @Nullable Collection<String> groupColumns, Class<S> mappingClass, Map<String, Object> simpleMap, String having);
+
+    <S> Page<S> groupAll(Collection<String> selectColumns, @Nullable Collection<String> groupColumns, Class<S> mappingClass, Query query, Pageable pageable);
+
+    <S> Page<S> groupAll(Collection<String> selectColumns, @Nullable Collection<String> groupColumns, Class<S> mappingClass, Query query, Pageable pageable, String having);
+
+    <S> Page<S> groupAll(Collection<String> selectColumns, @Nullable Collection<String> groupColumns, Class<S> mappingClass, Map<String, Object> simpleMap, Pageable pageable);
+
+    <S> Page<S> groupAll(Collection<String> selectColumns, @Nullable Collection<String> groupColumns, Class<S> mappingClass, Map<String, Object> simpleMap, Pageable pageable, String having);
 
     T findByRecordId(String entCode, String recordId);
 
