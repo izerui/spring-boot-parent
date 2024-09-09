@@ -1,10 +1,10 @@
 package com.yj2025.sequence;
 
-import org.joda.time.DateTime;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @SpringBootTest
@@ -15,26 +15,26 @@ public class NumberTests {
 
     @Test
     public void getNumber() {
-        sequenceService.consumerNumber("test", PeriodType.DAY.period(DateTime.now()), number -> {
+        sequenceService.consumerNumber("test", PeriodType.DAY.period(LocalDateTime.now()), number -> {
             System.out.println(number);
         });
     }
 
     @Test
     public void recycleNumber() {
-        sequenceService.recycleNumber("test", PeriodType.DAY.period(DateTime.now()), 4);
+        sequenceService.recycleNumber("test", PeriodType.DAY.period(LocalDateTime.now()), 4);
     }
 
     @Test
     public void verifyNumber() {
-        boolean test = sequenceService.verifyNumber("test", PeriodType.DAY.period(DateTime.now()), 4);
+        boolean test = sequenceService.verifyNumber("test", PeriodType.DAY.period(LocalDateTime.now()), 4);
         System.out.println(test);
     }
 
     @Test
     public void testAll() {
         String groupId = UUID.randomUUID().toString();
-        PeriodType.Period period = PeriodType.DAY.period(DateTime.now());
+        PeriodType.Period period = PeriodType.DAY.period(LocalDateTime.now());
         System.out.println("groupId: " + groupId);
         System.out.println("开始获取顺序号,顺序获取5次");
         for (int i = 0; i < 5; i++) {
