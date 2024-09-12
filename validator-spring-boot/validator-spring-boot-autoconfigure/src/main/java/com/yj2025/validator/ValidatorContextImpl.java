@@ -78,7 +78,7 @@ public class ValidatorContextImpl implements ValidatorContext {
     @Override
     public Results validate(String form, Object obj, Validator<?>... customizeValidators) {
 
-        Assert.notNull(obj);
+        Assert.notNull(obj, "obj must not be null");
 
         Form validationForm = getForm(form);
 

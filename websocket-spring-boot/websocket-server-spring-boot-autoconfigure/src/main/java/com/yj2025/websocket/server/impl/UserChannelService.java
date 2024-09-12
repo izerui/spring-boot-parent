@@ -93,8 +93,8 @@ public class UserChannelService {
         String entCode = webMessage.get("entCode");
         String userCode = webMessage.get("userCode");
         String userName = webMessage.get("userName");
-        Assert.notNull(entCode);
-        Assert.notNull(userCode);
+        Assert.notNull(entCode, "entCode cannot be null");
+        Assert.notNull(userCode, "userCode cannot be null");
 
         String key = getRedisKey(entCode, userCode, String.valueOf(Math.random()));
         channel.attr(AttributeKey.valueOf("key")).set(key);

@@ -142,7 +142,7 @@ public class PlatformRepositoryImpl<T, ID extends Serializable> extends SimpleJp
 
     @Override
     public <R> List<R> groupAll(List<String> selectFields, @Nullable List<String> groupFields, Class<R> rClass, int limit) {
-        Assert.notEmpty(selectFields);
+        Assert.notEmpty(selectFields, "selectFields can't be empty");
         List<Map> mapList = new JpqlQueryHolder().createGroupQuery(selectFields, groupFields, limit).getResultList();
         if (rClass.isAssignableFrom(Map.class)) {
             return (List<R>) mapList;
@@ -159,7 +159,7 @@ public class PlatformRepositoryImpl<T, ID extends Serializable> extends SimpleJp
 
     @Override
     public <R> List<R> groupAll(Sort sort, List<String> selectFields, @Nullable List<String> groupFields, Class<R> rClass, int limit) {
-        Assert.notEmpty(selectFields);
+        Assert.notEmpty(selectFields, "selectFields can't be empty");
         List<Map> mapList = new JpqlQueryHolder(sort).createGroupQuery(selectFields, groupFields, limit).getResultList();
         if (rClass.isAssignableFrom(Map.class)) {
             return (List<R>) mapList;
@@ -175,7 +175,7 @@ public class PlatformRepositoryImpl<T, ID extends Serializable> extends SimpleJp
 
     @Override
     public <R> List<R> groupAll(Conditions conditions, List<String> selectFields, @Nullable List<String> groupFields, Class<R> rClass, int limit) {
-        Assert.notEmpty(selectFields);
+        Assert.notEmpty(selectFields, "selectFields can't be empty");
         List<Map> mapList = new JpqlQueryHolder(conditions).createGroupQuery(selectFields, groupFields, limit).getResultList();
         if (rClass.isAssignableFrom(Map.class)) {
             return (List<R>) mapList;
@@ -191,7 +191,7 @@ public class PlatformRepositoryImpl<T, ID extends Serializable> extends SimpleJp
 
     @Override
     public <R> List<R> groupAll(Conditions conditions, Sort sort, List<String> selectFields, @Nullable List<String> groupFields, Class<R> rClass, int limit) {
-        Assert.notEmpty(selectFields);
+        Assert.notEmpty(selectFields, "selectFields can't be empty");
         List<Map> mapList = new JpqlQueryHolder(conditions, sort).createGroupQuery(selectFields, groupFields, limit).getResultList();
         if (rClass.isAssignableFrom(Map.class)) {
             return (List<R>) mapList;
@@ -207,9 +207,9 @@ public class PlatformRepositoryImpl<T, ID extends Serializable> extends SimpleJp
 
     @Override
     public <R> Page<R> groupPage(Conditions conditions, Pageable pageable, List<String> selectFields, List<String> groupFields, Class<R> rClass) {
-        Assert.notEmpty(selectFields);
-        Assert.notEmpty(groupFields);
-        Assert.notNull(pageable);
+        Assert.notEmpty(selectFields, "selectFields can't be empty");
+        Assert.notEmpty(groupFields, "groupFields can't be empty");
+        Assert.notNull(pageable, "pageable can't be null");
         Long total;
         if (1 == groupFields.size()) {
             total = count(conditions, "distinct " + groupFields.get(0));
@@ -282,7 +282,7 @@ public class PlatformRepositoryImpl<T, ID extends Serializable> extends SimpleJp
     @Override
     public <R> Page<R> distinctPage(Conditions conditions, Pageable pageable, Class<R> rClass) {
         List<String> fields = getFields(rClass);
-        Assert.notNull(pageable);
+        Assert.notNull(pageable, "pageable can't be null");
 
 //        Long total = count(conditions, "distinct " + StringUtils.join(fields, ","));
         List<R> list = groupAll(conditions, fields, fields, rClass);
@@ -359,14 +359,14 @@ public class PlatformRepositoryImpl<T, ID extends Serializable> extends SimpleJp
 
     @Override
     public Map<String, Object> aggregate(Conditions conditions, String... aggregates) {
-        Assert.notEmpty(aggregates);
+        Assert.notEmpty(aggregates, "aggregates can't be empty");
         List<Map> mapList = new JpqlQueryHolder(conditions).createGroupQuery(Arrays.asList(aggregates), null, 1).getResultList();
         return mapList.isEmpty() ? null : mapList.get(0);
     }
 
     @Override
     public <R> R aggregate(Conditions conditions, Class<R> resultClass, String... aggregates) {
-        Assert.notEmpty(aggregates);
+        Assert.notEmpty(aggregates, "aggregates can't be empty");
         List<Map> mapList = new JpqlQueryHolder(conditions).createGroupQuery(Arrays.asList(aggregates), null, 1).getResultList();
         List<R> list = transMap2Bean(mapList, resultClass);
         return list.isEmpty() ? null : list.get(0);
@@ -388,14 +388,6 @@ public class PlatformRepositoryImpl<T, ID extends Serializable> extends SimpleJp
     public Class<T> getEntityClass() {
         return entityInformation.getJavaType();
     }
-
-    @Override
-    @Deprecated(forRemoval = true, since = "3.1")
-    public List<?> selectSql(String sql, Conditions conditions) {
-        Query query = new JpqlQueryHolder(conditions).createJpqlQuery(sql);
-        return query.getResultList();
-    }
-
 
     // Map --> Bean 1: 利用Introspector,PropertyDescriptor实现 Map --> Bean
     private <R> List<R> transMap2Bean(List<Map> mapList, Class<R> tClass) {
@@ -460,7 +452,7 @@ public class PlatformRepositoryImpl<T, ID extends Serializable> extends SimpleJp
         }
 
         private JpqlQueryHolder(Sort sort) {
-            Assert.notNull(sort);
+            Assert.notNull(sort, "sort can't be null");
             this.sort = sort;
         }
 

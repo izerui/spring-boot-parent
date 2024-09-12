@@ -284,7 +284,7 @@ public class UserTest {
     }
 
     private void batchGetPrimaryIds(String tableName, ConditionEntity conditionEntity, BiConsumer<Integer, Integer> consumer) {
-        Assert.notNull(conditionEntity);
+        Assert.notNull(conditionEntity, "conditionEntity is null");
         String whereQL = conditionEntity.build();
         String sql = "select id from " + tableName + whereQL + " limit ? offset ?";
         Integer page = 1;

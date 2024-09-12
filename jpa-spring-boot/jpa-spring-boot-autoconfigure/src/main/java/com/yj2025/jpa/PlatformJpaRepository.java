@@ -1,7 +1,6 @@
 package com.yj2025.jpa;
 
 import com.yj2025.jpa.impl.Conditions;
-import com.yj2025.jpa.impl.JpqlSelector;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -36,6 +35,7 @@ public interface PlatformJpaRepository<T, ID extends Serializable> extends JpaRe
 
     @Deprecated
     Page<T> findAll(Conditions conditions, Pageable pageable);
+
     Page<T> findPage(Conditions conditions, Pageable pageable);
 
     <R> List<R> groupAll(List<String> selectFields, @Nullable List<String> groupFields, Class<R> rClass);
@@ -69,6 +69,7 @@ public interface PlatformJpaRepository<T, ID extends Serializable> extends JpaRe
 
     @Deprecated
     <R> Page<R> distinctAll(Conditions conditions, Pageable pageable, Class<R> rClass);
+
     <R> Page<R> distinctPage(Conditions conditions, Pageable pageable, Class<R> rClass);
 
     long count(Conditions conditions);
@@ -93,7 +94,7 @@ public interface PlatformJpaRepository<T, ID extends Serializable> extends JpaRe
 
     <R> R aggregate(Conditions conditions, String aggregate, Class<R> resultClass);
 
-    Map<String,Object> aggregate(Conditions conditions, String... aggregates);
+    Map<String, Object> aggregate(Conditions conditions, String... aggregates);
 
     <R> R aggregate(Conditions conditions, Class<R> resultClass, String... aggregates);
 
@@ -102,14 +103,5 @@ public interface PlatformJpaRepository<T, ID extends Serializable> extends JpaRe
     void deleteAll(Conditions conditions);
 
     Class<T> getEntityClass();
-
-    /**
-     * 使用指定sql和conditions进行查询
-     * @param sql 自定义sql
-     * @param conditions 查询条件
-     * @return
-     */
-    @Deprecated(forRemoval = true, since = "3.1")
-    List<?> selectSql(String sql, Conditions conditions);
 
 }

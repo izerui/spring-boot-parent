@@ -10,7 +10,7 @@ public class ColorOutput {
 
     public static String output(AnsiColor ansiColor, Object out) {
         AnsiOutput.setEnabled(AnsiOutput.Enabled.ALWAYS);
-        Assert.notNull(out);
+        Assert.notNull(out, "AnsiOutput must not be null");
         String value = out.toString();
         if (out instanceof BigDecimal) {
             value = toPlainString((BigDecimal) out);
