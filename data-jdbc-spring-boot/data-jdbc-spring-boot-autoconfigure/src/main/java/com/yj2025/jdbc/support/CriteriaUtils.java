@@ -66,7 +66,7 @@ public final class CriteriaUtils {
      */
     public static String camelToUnderscore(String value) {
         Assert.notNull(value, "驼峰转下划线字符串不能为空");
-        return value.toLowerCase().contains(" as ") ? CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, value) : value;
+        return value.toLowerCase().contains(" as ") ? value : CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, value);
     }
 
     /**
