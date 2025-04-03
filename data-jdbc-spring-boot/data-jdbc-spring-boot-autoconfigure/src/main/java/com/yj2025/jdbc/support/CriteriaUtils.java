@@ -66,8 +66,21 @@ public final class CriteriaUtils {
      */
     public static String camelToUnderscore(String value) {
         Assert.notNull(value, "驼峰转下划线字符串不能为空");
-        return value.toLowerCase().contains(" as ") ? value : CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, value);
+        if (value.toLowerCase().contains(" as ")) {
+            String[] split = value.split(" ");
+            String field = split[0];
+            field = CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, field);
+            split[0] = field;
+            return String.join(" ", split);
+        } else {
+            return CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, value);
+        }
     }
+
+//    public static void main(String[] args) {
+//        String s = "userCode";
+//        System.out.println(camelToUnderscore(s));
+//    }
 
     /**
      * 驼峰转小写下划线
