@@ -68,19 +68,24 @@ public final class CriteriaUtils {
         Assert.notNull(value, "驼峰转下划线字符串不能为空");
         if (value.toLowerCase().contains(" as ")) {
             String[] split = value.split(" ");
-            String field = split[0];
-            field = CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, field);
-            split[0] = field;
+            for (int i = 0; i < split.length; i++) {
+                if (split[i] != null && split[i].length() > 0) {
+                    String field = split[i];
+                    field = CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, field);
+                    split[i] = field;
+                    break;
+                }
+            }
             return String.join(" ", split);
         } else {
             return CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, value);
         }
     }
 
-//    public static void main(String[] args) {
-//        String s = "userCode";
-//        System.out.println(camelToUnderscore(s));
-//    }
+    public static void main(String[] args) {
+        String s = "   userCode as uuuF";
+        System.out.println(camelToUnderscore(s));
+    }
 
     /**
      * 驼峰转小写下划线
