@@ -82,10 +82,10 @@ public final class CriteriaUtils {
         }
     }
 
-    public static void main(String[] args) {
-        String s = "   userCode as uuuF";
-        System.out.println(camelToUnderscore(s));
-    }
+//    public static void main(String[] args) {
+//        String s = "   userCode as uuuF";
+//        System.out.println(camelToUnderscore(s));
+//    }
 
     /**
      * 驼峰转小写下划线
