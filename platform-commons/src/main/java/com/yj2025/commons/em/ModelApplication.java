@@ -25,6 +25,7 @@ public enum ModelApplication {
     THIRD_API("公共接口"),
     AI("AI经营管理"),
     DROP_BOX("网盘"),
+    EMAIL("企业邮箱"),
     ;
     private final String remark;
 }
