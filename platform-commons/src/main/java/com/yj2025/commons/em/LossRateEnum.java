@@ -9,7 +9,7 @@ import static com.yj2025.commons.util.BigDecimalUtils.multiply;
  */
 public enum LossRateEnum {
 
-    LOSS_RATE(2);
+    LOSS_RATE(6);
 
     private int decimal;
 

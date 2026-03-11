@@ -1,6 +1,7 @@
 package com.yj2025.performance.delay;
 
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
 
 /**
  * @author liuyuhua

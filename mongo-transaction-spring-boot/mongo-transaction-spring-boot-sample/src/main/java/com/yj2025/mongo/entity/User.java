@@ -1,12 +1,9 @@
 package com.yj2025.mongo.entity;
 
+import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.data.annotation.Version;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Table;
 import java.util.Date;
 
 //用户
@@ -15,7 +12,7 @@ import java.util.Date;
 @Table(name = "test_user")
 public class User {
 
-    @javax.persistence.Id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

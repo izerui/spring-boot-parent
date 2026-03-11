@@ -39,7 +39,7 @@ public class Application implements CommandLineRunner {
                             log.info(count.get() + "");
                             Assert.state(count.get() == 0, "锁失败，值冲突");
                             count.set(1);
-//                            Thread.sleep(new Random().nextInt(3) * 1000);
+                            Thread.sleep(new Random().nextInt(3) * 1000);
                             count.set(0);
                         });
                     } catch (Exception e) {

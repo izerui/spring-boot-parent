@@ -2,15 +2,14 @@ package com.yj2025.sample.command;
 
 import com.yj2025.basic.command.BasicCommand;
 import com.yj2025.basic.support.Context;
+import com.yj2025.basic.support.DbContext;
 import com.yj2025.performance.BatchConsumer;
 import com.yj2025.performance.Producer;
-import com.yj2025.sample.entity.User;
+import com.yj2025.sample.entity.JpaUser;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.persistence.EntityManager;
 import javax.sql.DataSource;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public class UserBatchCreate2Cmd extends BasicCommand<Void> {
@@ -23,12 +22,12 @@ public class UserBatchCreate2Cmd extends BasicCommand<Void> {
 
     @Override
     protected Void doExecute() throws Exception {
-        Producer<User> producer = Context.batchConsumer(User.class, 2, 1000, new BatchConsumer<User>() {
+        Producer<JpaUser> producer = Context.batchConsumer(JpaUser.class, 2, 1000, new BatchConsumer<JpaUser>() {
             @Override
-            protected void handlerEvent(List<User> correlationData, long sequence) throws Exception {
+            protected void handlerEvent(List<JpaUser> correlationData, long sequence) throws Exception {
                 logger.info("批次执行数量： {}", correlationData.size());
-                Context.executeTransaction(status -> {
-                    Context.batchUpdate($(DataSource.class), "insert into test_user(version, create_time, code, name, email, age) values (:version,:createTime,:code,:name,:email,:age)", correlationData);
+                DbContext.executeTransaction(status -> {
+                    DbContext.batchUpdate($(DataSource.class), "insert into test_user(version, create_time, code, name, email, age) values (:version,:createTime,:code,:name,:email,:age)", correlationData);
                 });
             }
         });

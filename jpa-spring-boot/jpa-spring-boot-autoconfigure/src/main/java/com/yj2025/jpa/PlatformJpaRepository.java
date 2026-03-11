@@ -7,9 +7,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.NoRepositoryBean;
+import org.springframework.lang.Nullable;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by serv on 14-5-29.
@@ -31,25 +33,31 @@ public interface PlatformJpaRepository<T, ID extends Serializable> extends JpaRe
 
     List<T> findAll(Conditions conditions, Sort sort);
 
+    @Deprecated
     Page<T> findAll(Conditions conditions, Pageable pageable);
 
-    <R> List<R> groupAll(List<String> selectFields, List<String> groupFields, Class<R> rClass);
+    Page<T> findPage(Conditions conditions, Pageable pageable);
 
-    <R> List<R> groupAll(List<String> selectFields, List<String> groupFields, Class<R> rClass, int limit);
+    <R> List<R> groupAll(List<String> selectFields, @Nullable List<String> groupFields, Class<R> rClass);
 
-    <R> List<R> groupAll(Sort sort, List<String> selectFields, List<String> groupFields, Class<R> rClass);
+    <R> List<R> groupAll(List<String> selectFields, @Nullable List<String> groupFields, Class<R> rClass, int limit);
 
-    <R> List<R> groupAll(Sort sort, List<String> selectFields, List<String> groupFields, Class<R> rClass, int limit);
+    <R> List<R> groupAll(Sort sort, List<String> selectFields, @Nullable List<String> groupFields, Class<R> rClass);
 
-    <R> List<R> groupAll(Conditions conditions, List<String> selectFields, List<String> groupFields, Class<R> rClass);
+    <R> List<R> groupAll(Sort sort, List<String> selectFields, @Nullable List<String> groupFields, Class<R> rClass, int limit);
 
-    <R> List<R> groupAll(Conditions conditions, List<String> selectFields, List<String> groupFields, Class<R> rClass, int limit);
+    <R> List<R> groupAll(Conditions conditions, List<String> selectFields, @Nullable List<String> groupFields, Class<R> rClass);
 
-    <R> List<R> groupAll(Conditions conditions, Sort sort, List<String> selectFields, List<String> groupFields, Class<R> rClass);
+    <R> List<R> groupAll(Conditions conditions, List<String> selectFields, @Nullable List<String> groupFields, Class<R> rClass, int limit);
 
-    <R> List<R> groupAll(Conditions conditions, Sort sort, List<String> selectFields, List<String> groupFields, Class<R> rClass, int limit);
+    <R> List<R> groupAll(Conditions conditions, Sort sort, List<String> selectFields, @Nullable List<String> groupFields, Class<R> rClass);
 
+    <R> List<R> groupAll(Conditions conditions, Sort sort, List<String> selectFields, @Nullable List<String> groupFields, Class<R> rClass, int limit);
+
+    @Deprecated
     <R> Page<R> groupAll(Conditions conditions, Pageable pageable, List<String> selectFields, List<String> groupFields, Class<R> rClass);
+
+    <R> Page<R> groupPage(Conditions conditions, Pageable pageable, List<String> selectFields, List<String> groupFields, Class<R> rClass);
 
     <R> List<R> distinctAll(Class<R> rClass);
 
@@ -59,7 +67,10 @@ public interface PlatformJpaRepository<T, ID extends Serializable> extends JpaRe
 
     <R> List<R> distinctAll(Conditions conditions, Sort sort, Class<R> rClass);
 
+    @Deprecated
     <R> Page<R> distinctAll(Conditions conditions, Pageable pageable, Class<R> rClass);
+
+    <R> Page<R> distinctPage(Conditions conditions, Pageable pageable, Class<R> rClass);
 
     long count(Conditions conditions);
 
@@ -83,18 +94,14 @@ public interface PlatformJpaRepository<T, ID extends Serializable> extends JpaRe
 
     <R> R aggregate(Conditions conditions, String aggregate, Class<R> resultClass);
 
+    Map<String, Object> aggregate(Conditions conditions, String... aggregates);
+
+    <R> R aggregate(Conditions conditions, Class<R> resultClass, String... aggregates);
+
     <R> R aggregate(String aggregate, Class<R> resultClass);
 
     void deleteAll(Conditions conditions);
 
     Class<T> getEntityClass();
-
-    /**
-     * 使用指定sql和conditions进行查询
-     * @param sql 自定义sql
-     * @param conditions 查询条件
-     * @return
-     */
-    List<?> selectSql(String sql, Conditions conditions);
 
 }

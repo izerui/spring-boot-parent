@@ -1,0 +1,1 @@
+https://docs.spring.io/spring-boot/docs/3.0.x/reference/html/data.html#data.nosql.elasticsearch

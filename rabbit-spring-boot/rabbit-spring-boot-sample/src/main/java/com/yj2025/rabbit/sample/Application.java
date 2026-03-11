@@ -5,13 +5,14 @@ import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.transaction.RabbitTransactionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +26,11 @@ public class Application implements CommandLineRunner {
 
     @Autowired
     private RabbitSender rabbitSender;
+
+    @Bean
+    public RabbitTransactionManager rabbitTransactionManager(ConnectionFactory connectionFactory) {
+        return new RabbitTransactionManager(connectionFactory);
+    }
 
     @Bean
     public Queue queue() {

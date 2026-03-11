@@ -16,6 +16,9 @@
 package com.yj2025.jpa.impl;
 
 import com.yj2025.jpa.PlatformJpaRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -25,11 +28,9 @@ import org.springframework.data.jpa.repository.query.QueryUtils;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 import org.springframework.data.jpa.repository.support.JpaEntityInformationSupport;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
+import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
@@ -112,6 +113,11 @@ public class PlatformRepositoryImpl<T, ID extends Serializable> extends SimpleJp
 
     @Override
     public Page<T> findAll(Conditions conditions, Pageable pageable) {
+        return findPage(conditions, pageable);
+    }
+
+    @Override
+    public Page<T> findPage(Conditions conditions, Pageable pageable) {
         if (pageable == null) {
             return new PageImpl<T>((List<T>) findAll(conditions));
         }
@@ -119,7 +125,8 @@ public class PlatformRepositoryImpl<T, ID extends Serializable> extends SimpleJp
         Long total = count(conditions);
 
         Query query = new JpqlQueryHolder(conditions, pageable.getSort()).createQuery();
-        query.setFirstResult(new Long(pageable.getOffset()).intValue());
+
+        query.setFirstResult(Long.valueOf(pageable.getOffset()).intValue());
         query.setMaxResults(pageable.getPageSize());
 
         List<T> content = total > pageable.getOffset() ? query.getResultList() : Collections.<T>emptyList();
@@ -129,14 +136,13 @@ public class PlatformRepositoryImpl<T, ID extends Serializable> extends SimpleJp
 
 
     @Override
-    public <R> List<R> groupAll(List<String> selectFields, List<String> groupFields, Class<R> rClass) {
+    public <R> List<R> groupAll(List<String> selectFields, @Nullable List<String> groupFields, Class<R> rClass) {
         return this.groupAll(selectFields, groupFields, rClass, -1);
     }
 
     @Override
-    public <R> List<R> groupAll(List<String> selectFields, List<String> groupFields, Class<R> rClass, int limit) {
-        Assert.notEmpty(selectFields);
-        Assert.notEmpty(groupFields);
+    public <R> List<R> groupAll(List<String> selectFields, @Nullable List<String> groupFields, Class<R> rClass, int limit) {
+        Assert.notEmpty(selectFields, "selectFields can't be empty");
         List<Map> mapList = new JpqlQueryHolder().createGroupQuery(selectFields, groupFields, limit).getResultList();
         if (rClass.isAssignableFrom(Map.class)) {
             return (List<R>) mapList;
@@ -147,14 +153,13 @@ public class PlatformRepositoryImpl<T, ID extends Serializable> extends SimpleJp
 
 
     @Override
-    public <R> List<R> groupAll(Sort sort, List<String> selectFields, List<String> groupFields, Class<R> rClass) {
+    public <R> List<R> groupAll(Sort sort, List<String> selectFields, @Nullable List<String> groupFields, Class<R> rClass) {
         return this.groupAll(sort, selectFields, groupFields, rClass, -1);
     }
 
     @Override
-    public <R> List<R> groupAll(Sort sort, List<String> selectFields, List<String> groupFields, Class<R> rClass, int limit) {
-        Assert.notEmpty(selectFields);
-        Assert.notEmpty(groupFields);
+    public <R> List<R> groupAll(Sort sort, List<String> selectFields, @Nullable List<String> groupFields, Class<R> rClass, int limit) {
+        Assert.notEmpty(selectFields, "selectFields can't be empty");
         List<Map> mapList = new JpqlQueryHolder(sort).createGroupQuery(selectFields, groupFields, limit).getResultList();
         if (rClass.isAssignableFrom(Map.class)) {
             return (List<R>) mapList;
@@ -164,14 +169,13 @@ public class PlatformRepositoryImpl<T, ID extends Serializable> extends SimpleJp
     }
 
     @Override
-    public <R> List<R> groupAll(Conditions conditions, List<String> selectFields, List<String> groupFields, Class<R> rClass) {
+    public <R> List<R> groupAll(Conditions conditions, List<String> selectFields, @Nullable List<String> groupFields, Class<R> rClass) {
         return this.groupAll(conditions, selectFields, groupFields, rClass, -1);
     }
 
     @Override
-    public <R> List<R> groupAll(Conditions conditions, List<String> selectFields, List<String> groupFields, Class<R> rClass, int limit) {
-        Assert.notEmpty(selectFields);
-        Assert.notEmpty(groupFields);
+    public <R> List<R> groupAll(Conditions conditions, List<String> selectFields, @Nullable List<String> groupFields, Class<R> rClass, int limit) {
+        Assert.notEmpty(selectFields, "selectFields can't be empty");
         List<Map> mapList = new JpqlQueryHolder(conditions).createGroupQuery(selectFields, groupFields, limit).getResultList();
         if (rClass.isAssignableFrom(Map.class)) {
             return (List<R>) mapList;
@@ -181,14 +185,13 @@ public class PlatformRepositoryImpl<T, ID extends Serializable> extends SimpleJp
     }
 
     @Override
-    public <R> List<R> groupAll(Conditions conditions, Sort sort, List<String> selectFields, List<String> groupFields, Class<R> rClass) {
+    public <R> List<R> groupAll(Conditions conditions, Sort sort, List<String> selectFields, @Nullable List<String> groupFields, Class<R> rClass) {
         return this.groupAll(conditions, sort, selectFields, groupFields, rClass, -1);
     }
 
     @Override
-    public <R> List<R> groupAll(Conditions conditions, Sort sort, List<String> selectFields, List<String> groupFields, Class<R> rClass, int limit) {
-        Assert.notEmpty(selectFields);
-        Assert.notEmpty(groupFields);
+    public <R> List<R> groupAll(Conditions conditions, Sort sort, List<String> selectFields, @Nullable List<String> groupFields, Class<R> rClass, int limit) {
+        Assert.notEmpty(selectFields, "selectFields can't be empty");
         List<Map> mapList = new JpqlQueryHolder(conditions, sort).createGroupQuery(selectFields, groupFields, limit).getResultList();
         if (rClass.isAssignableFrom(Map.class)) {
             return (List<R>) mapList;
@@ -199,13 +202,23 @@ public class PlatformRepositoryImpl<T, ID extends Serializable> extends SimpleJp
 
     @Override
     public <R> Page<R> groupAll(Conditions conditions, Pageable pageable, List<String> selectFields, List<String> groupFields, Class<R> rClass) {
-        Assert.notEmpty(selectFields);
-        Assert.notEmpty(groupFields);
-        Assert.notNull(pageable);
-        Long total = count(conditions, "distinct " + StringUtils.join(groupFields, ","));
+        return groupPage(conditions, pageable, selectFields, groupFields, rClass);
+    }
+
+    @Override
+    public <R> Page<R> groupPage(Conditions conditions, Pageable pageable, List<String> selectFields, List<String> groupFields, Class<R> rClass) {
+        Assert.notEmpty(selectFields, "selectFields can't be empty");
+        Assert.notEmpty(groupFields, "groupFields can't be empty");
+        Assert.notNull(pageable, "pageable can't be null");
+        Long total;
+        if (1 == groupFields.size()) {
+            total = count(conditions, "distinct " + groupFields.get(0));
+        } else {
+            total = count(conditions, "distinct concat(" + StringUtils.join(groupFields, ",") + ") ");
+        }
 
         Query query = new JpqlQueryHolder(conditions, pageable.getSort()).createGroupQuery(selectFields, groupFields);
-        query.setFirstResult(new Long(pageable.getOffset()).intValue());
+        query.setFirstResult(Long.valueOf(pageable.getOffset()).intValue());
         query.setMaxResults(pageable.getPageSize());
 
         List<Map> content = total > pageable.getOffset() ? query.getResultList() : Collections.<Map>emptyList();
@@ -263,15 +276,20 @@ public class PlatformRepositoryImpl<T, ID extends Serializable> extends SimpleJp
 
     @Override
     public <R> Page<R> distinctAll(Conditions conditions, Pageable pageable, Class<R> rClass) {
+        return distinctPage(conditions, pageable, rClass);
+    }
+
+    @Override
+    public <R> Page<R> distinctPage(Conditions conditions, Pageable pageable, Class<R> rClass) {
         List<String> fields = getFields(rClass);
-        Assert.notNull(pageable);
+        Assert.notNull(pageable, "pageable can't be null");
 
 //        Long total = count(conditions, "distinct " + StringUtils.join(fields, ","));
         List<R> list = groupAll(conditions, fields, fields, rClass);
         Long total = Long.valueOf(list.size() + "");
 
         Query query = new JpqlQueryHolder(conditions, pageable.getSort()).createGroupQuery(fields, fields);
-        query.setFirstResult(new Long(pageable.getOffset()).intValue());
+        query.setFirstResult(Long.valueOf(pageable.getOffset()).intValue());
         query.setMaxResults(pageable.getPageSize());
 
         List<Map> content = total > pageable.getOffset() ? query.getResultList() : Collections.<Map>emptyList();
@@ -340,6 +358,21 @@ public class PlatformRepositoryImpl<T, ID extends Serializable> extends SimpleJp
     }
 
     @Override
+    public Map<String, Object> aggregate(Conditions conditions, String... aggregates) {
+        Assert.notEmpty(aggregates, "aggregates can't be empty");
+        List<Map> mapList = new JpqlQueryHolder(conditions).createGroupQuery(Arrays.asList(aggregates), null, 1).getResultList();
+        return mapList.isEmpty() ? null : mapList.get(0);
+    }
+
+    @Override
+    public <R> R aggregate(Conditions conditions, Class<R> resultClass, String... aggregates) {
+        Assert.notEmpty(aggregates, "aggregates can't be empty");
+        List<Map> mapList = new JpqlQueryHolder(conditions).createGroupQuery(Arrays.asList(aggregates), null, 1).getResultList();
+        List<R> list = transMap2Bean(mapList, resultClass);
+        return list.isEmpty() ? null : list.get(0);
+    }
+
+    @Override
     public <R> R aggregate(String aggregate, Class<R> resultClass) {
         TypedQuery<R> query = new JpqlQueryHolder().createAggregateQuery(aggregate, resultClass);
         List<R> list = query.getResultList();
@@ -355,13 +388,6 @@ public class PlatformRepositoryImpl<T, ID extends Serializable> extends SimpleJp
     public Class<T> getEntityClass() {
         return entityInformation.getJavaType();
     }
-
-    @Override
-    public List<?> selectSql(String sql, Conditions conditions) {
-        Query query = new JpqlQueryHolder(conditions).createSqlQuery(sql);
-        return query.getResultList();
-    }
-
 
     // Map --> Bean 1: 利用Introspector,PropertyDescriptor实现 Map --> Bean
     private <R> List<R> transMap2Bean(List<Map> mapList, Class<R> tClass) {
@@ -426,7 +452,7 @@ public class PlatformRepositoryImpl<T, ID extends Serializable> extends SimpleJp
         }
 
         private JpqlQueryHolder(Sort sort) {
-            Assert.notNull(sort);
+            Assert.notNull(sort, "sort can't be null");
             this.sort = sort;
         }
 
@@ -456,9 +482,13 @@ public class PlatformRepositoryImpl<T, ID extends Serializable> extends SimpleJp
         }
 
         // 使用指定的sql执行查询
-        private Query createSqlQuery(String ql) {
-            ql += applyCondition();
-            Query query = entityManager.createQuery(ql);
+        private Query createJpqlQuery(String jpql) {
+            StringBuilder sb = new StringBuilder();
+            // select x from table
+            sb.append(jpql)
+                    //where
+                    .append(applyCondition());
+            Query query = entityManager.createQuery(QueryUtils.applySorting(sb.toString(), sort, ALIAS));
             applyQueryParameter(query);
             return query;
         }
@@ -482,11 +512,11 @@ public class PlatformRepositoryImpl<T, ID extends Serializable> extends SimpleJp
             return query;
         }
 
-        private TypedQuery<Map> createGroupQuery(List<String> selectFields, List<String> groupFields) {
+        private TypedQuery<Map> createGroupQuery(List<String> selectFields, @Nullable List<String> groupFields) {
             return this.createGroupQuery(selectFields, groupFields, -1);
         }
 
-        private TypedQuery<Map> createGroupQuery(List<String> selectFields, List<String> groupFields, int limit) {
+        private TypedQuery<Map> createGroupQuery(List<String> selectFields, @Nullable List<String> groupFields, int limit) {
             List<String> tempSelectFields = new ArrayList<>();
             for (String selectField : selectFields) {
                 if (!selectField.contains(" as ") && !selectField.contains(" AS ") && !selectField.contains(" ")) {
@@ -502,9 +532,11 @@ public class PlatformRepositoryImpl<T, ID extends Serializable> extends SimpleJp
                     //table
                     .append(QueryUtils.getQueryString(FIND_ALL_QUERY_STRING, entityInformation.getEntityName()))
                     //where
-                    .append(applyCondition())
-                    .append(" group by ")
-                    .append(StringUtils.join(groupFields, ","));
+                    .append(applyCondition());
+            if (groupFields != null && !groupFields.isEmpty()) {
+                sb.append(" group by ")
+                        .append(StringUtils.join(groupFields, ","));
+            }
             TypedQuery<Map> query = entityManager.createQuery(QueryUtils.applySorting(sb.toString(), sort, ALIAS), Map.class);
             if (limit > 0) {
                 query.setMaxResults(limit);

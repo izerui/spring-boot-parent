@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.yj2025</groupId>
+        <artifactId>batch-processor-spring-boot</artifactId>
+        <version>3.3.3-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>batch-processor-spring-boot-sample</artifactId>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+
+    <dependencies>
+        <dependency>
+            <groupId>com.yj2025</groupId>
+            <artifactId>batch-processor-spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.yj2025</groupId>
+            <artifactId>jackson-spring-boot-starter</artifactId>
+        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.yj2025</groupId>-->
+<!--            <artifactId>table-creator-spring-boot-starter</artifactId>-->
+<!--        </dependency>-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.yj2025</groupId>
+            <artifactId>platform-commons</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/tech.tablesaw/tablesaw-core -->
+        <dependency>
+            <groupId>tech.tablesaw</groupId>
+            <artifactId>tablesaw-core</artifactId>
+            <version>0.43.1</version>
+        </dependency>
+    </dependencies>
+
+</project>

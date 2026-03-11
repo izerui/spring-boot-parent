@@ -50,7 +50,6 @@ public class RedisAutoConfiguration extends CachingConfigurerSupport {
     private static final long CACHE_TTL = 2 * 60 * 60L;
 
 
-    @Primary
     @Bean(name = "redisTemplate")
     public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory factory) {
         if(Objects.isNull(factory)){
@@ -95,7 +94,6 @@ public class RedisAutoConfiguration extends CachingConfigurerSupport {
         template.afterPropertiesSet();
     }
 
-    @Primary
     @Bean(name = "stringRedisTemplate")
     public StringRedisTemplate stringRedisTemplate(RedisConnectionFactory factory) {
         if(Objects.isNull(factory)){

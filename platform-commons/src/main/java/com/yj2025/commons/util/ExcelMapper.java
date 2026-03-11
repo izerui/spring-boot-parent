@@ -23,11 +23,6 @@ import java.util.function.Consumer;
  */
 public class ExcelMapper {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ExcelMapper.class);
-
-
-    @Deprecated
-    private String fileName;
     private InputStream inputStream;
     private File file;
     private byte[] bytes;
@@ -37,23 +32,11 @@ public class ExcelMapper {
     private int headerRowIndex = 1;
     private boolean headerHandlerInvoke = false;
 
-    /**
-     * @param excelFile
-     * @throws IOException
-     */
     public ExcelMapper(File excelFile) {
         if (excelFile.length() > 5 * 1024 * 1000) {
             throw new RuntimeException("excel文件超过5M大小,请删除不必要的信息后重试");
         }
         this.file = excelFile;
-    }
-
-    @Deprecated
-    public ExcelMapper(String fileName, byte[] bytes) {
-        if (bytes.length > 5 * 1024 * 1000) {
-            throw new RuntimeException("excel文件超过5M大小,请删除不必要的信息后重试");
-        }
-        this.bytes = bytes;
     }
 
     public ExcelMapper(byte[] bytes) {
@@ -122,6 +105,7 @@ public class ExcelMapper {
      * @return
      * @throws IOException
      */
+    @Deprecated
     public <T> List<T> read(HeaderFormatter formatter, Convertor<T> convertor) {
         Assert.notNull(convertor, "convertor 转换器不能为空");
         Map<Integer, String> header = new HashMap<>();

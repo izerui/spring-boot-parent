@@ -3,24 +3,25 @@ package com.yj2025.sample.command;
 
 import com.yj2025.basic.command.BasicCommand;
 import com.yj2025.basic.support.Context;
-import com.yj2025.sample.entity.User;
+import com.yj2025.sample.entity.JpaUser;
 import com.yj2025.sample.repository.UserRepository;
-import org.springframework.util.Assert;
 
 public class UserCreateCmd extends BasicCommand<Long> {
 
-    private User user;
+    private JpaUser user;
 
-    public UserCreateCmd(User user) {
+    public UserCreateCmd(JpaUser user) {
         this.user = user;
     }
 
     @Override
     protected void beforeDoExecute() {
-        if (user == null) {
-            throw new RuntimeException("user对象不能为空");
-        }
-        Assert.state(user.getId() == null, "新增用户，id必须为空");
+        validateAndThrow(user);
+
+//        if (user == null) {
+//            throw new RuntimeException("user对象不能为空");
+//        }
+//        Assert.state(user.getId() == null, "新增用户，id必须为空");
     }
 
     @Override

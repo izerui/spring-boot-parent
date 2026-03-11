@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: mvc-rest-reactive-spring-boot-sample
+  cloud:
+    loadbalancer:
+      nacos:
+        enabled: true
+    nacos:
+      config:
+        name: ${spring.application.name}
+        server-addr: 10.96.55.103:8848
+        namespace: test
+        shared-configs:
+          - data-id: global.properties
+        refresh-enabled: false
+      discovery:
+        server-addr: 10.96.55.103:8848
+        namespace: test
+        fail-fast: true
+  main:
+    allow-bean-definition-overriding: true

@@ -4,6 +4,7 @@ import com.yj2025.sequence.PeriodType;
 import org.springframework.data.redis.core.BoundZSetOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
+import java.util.List;
 import java.util.Set;
 
 public class RedisNumberStorage implements NumberStorage {
@@ -16,9 +17,13 @@ public class RedisNumberStorage implements NumberStorage {
         this.redisTemplate = redisTemplate;
     }
 
+    public List<Integer> getNumberList(String groupId, PeriodType.Period period, int count) {
+        throw new RuntimeException("not support");
+    }
+
     @Override
     public Integer getNumber(String groupId, PeriodType.Period period) {
-        String redisKey = String.format(SEQUENCE_KEY_PATH, groupId, period.getPeriodFormater());
+        String redisKey = String.format(SEQUENCE_KEY_PATH, groupId, period.getPeriodFormatter());
         BoundZSetOperations<String, String> operations = redisTemplate.boundZSetOps(redisKey);
         // 优先使用已回收的
         Set<String> negativeSets = operations.reverseRangeByScore(Integer.MIN_VALUE, -1);
@@ -43,15 +48,25 @@ public class RedisNumberStorage implements NumberStorage {
 
     @Override
     public void recycleNumber(String groupId, PeriodType.Period period, Integer number) {
-        String redisKey = String.format(SEQUENCE_KEY_PATH, groupId, period.getPeriodFormater());
+        String redisKey = String.format(SEQUENCE_KEY_PATH, groupId, period.getPeriodFormatter());
         BoundZSetOperations<String, String> operations = redisTemplate.boundZSetOps(redisKey);
         operations.remove(number.toString());
         operations.add(number.toString(), Math.negateExact(number));
     }
 
     @Override
-    public boolean verifyVaildNumber(String groupId, PeriodType.Period period, Integer number) {
-        String redisKey = String.format(SEQUENCE_KEY_PATH, groupId, period.getPeriodFormater());
+    public void recycleNumberList(String groupId, PeriodType.Period period, List<Integer> numbers) {
+        numbers.forEach(number -> {
+            String redisKey = String.format(SEQUENCE_KEY_PATH, groupId, period.getPeriodFormatter());
+            BoundZSetOperations<String, String> operations = redisTemplate.boundZSetOps(redisKey);
+            operations.remove(number.toString());
+            operations.add(number.toString(), Math.negateExact(number));
+        });
+    }
+
+    @Override
+    public boolean verifyValidNumber(String groupId, PeriodType.Period period, Integer number) {
+        String redisKey = String.format(SEQUENCE_KEY_PATH, groupId, period.getPeriodFormatter());
         BoundZSetOperations<String, String> operations = redisTemplate.boundZSetOps(redisKey);
         Double score = operations.score(number.toString());
         return score == null || score < 0;

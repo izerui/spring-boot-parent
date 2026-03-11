@@ -1,5 +1,6 @@
 package com.yj2025.websocket;
 
+import com.yj2025.websocket.producer.WebSocketContext;
 import lombok.ToString;
 
 import java.io.Serializable;
@@ -31,16 +32,18 @@ public class WebMsg implements Serializable {
         return entCode;
     }
 
-    public void setEntCode(String entCode) {
+    public WebMsg setEntCode(String entCode) {
         this.entCode = entCode;
+        return this;
     }
 
     public String getUserCode() {
         return userCode;
     }
 
-    public void setUserCode(String userCode) {
+    public WebMsg setUserCode(String userCode) {
         this.userCode = userCode;
+        return this;
     }
 
     public Map<String, String> getMessage() {
@@ -50,6 +53,10 @@ public class WebMsg implements Serializable {
     public WebMsg set(String key, String value) {
         message.put(key, value);
         return this;
+    }
+
+    public void send(WebSocketContext context) {
+        context.sendMessage(this);
     }
 
 }

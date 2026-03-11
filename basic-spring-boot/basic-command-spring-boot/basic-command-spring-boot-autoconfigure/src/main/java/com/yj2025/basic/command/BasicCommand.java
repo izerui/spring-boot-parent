@@ -1,22 +1,43 @@
 package com.yj2025.basic.command;
 
-import com.yj2025.basic.component.BasicComponent;
 import com.yj2025.basic.support.ApplicationBeanAware;
 import com.yj2025.basic.support.ColorOutput;
+import jakarta.annotation.Resource;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.ValidationException;
+import jakarta.validation.Validator;
+import org.hibernate.validator.HibernateValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.util.ReflectionUtils;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 
 /**
  * 所有command命令集成该基类
  *
  * @param <R> 返回的结果类型
+ * @author liuyuhua
  */
-public abstract class BasicCommand<R> implements Command<R>, BasicComponent, ApplicationBeanAware {
+public abstract class BasicCommand<R> implements Command<R>, ApplicationBeanAware {
 
     private boolean executed = false;
     private Long executeTimeMillis;
 
+    protected static final Validator validatorFast = Validation.byProvider(HibernateValidator.class).configure().failFast(true).buildValidatorFactory().getValidator();
     protected final Logger logger = LoggerFactory.getLogger(getClass().getSimpleName());
+
+    public BasicCommand() {
+        autowiredBean();
+    }
 
     /**
      * 前置校验器，需要自行throw exception
@@ -25,6 +46,37 @@ public abstract class BasicCommand<R> implements Command<R>, BasicComponent, App
      */
     protected void beforeDoExecute() {
         /** no op */
+    }
+
+    protected List<Field> getAllFieldsIncludeSuperClass(
+            final Class<?> clazz) {
+        List<Field> lf = new ArrayList<>();
+        for (Class<?> superClass = clazz; superClass != Object.class; superClass = superClass
+                .getSuperclass()) {
+            Field[] f = superClass.getDeclaredFields();
+            for (int j = 0; j < f.length; j++) {
+                lf.add(f[j]);
+            }
+        }
+        return lf;
+    }
+
+    protected void autowiredBean() {
+        List<Field> declaredFields = getAllFieldsIncludeSuperClass(getClass());
+        declaredFields.forEach(field -> {
+            field.setAccessible(true);
+            Annotation[] annotations = field.getAnnotations();
+            boolean anyMatch = Arrays.asList(annotations).stream().map(Annotation::annotationType)
+                    .anyMatch(aClass -> aClass.isAssignableFrom(Autowired.class) || aClass.isAssignableFrom(Resource.class));
+            if (anyMatch) {
+                Qualifier qualifier = field.getAnnotation(Qualifier.class);
+                if (qualifier != null) {
+                    ReflectionUtils.setField(field, this, $(qualifier.value()));
+                } else {
+                    ReflectionUtils.setField(field, this, $(field.getType()));
+                }
+            }
+        });
     }
 
     /**
@@ -38,14 +90,14 @@ public abstract class BasicCommand<R> implements Command<R>, BasicComponent, App
             throw new RuntimeException("command: " + this.getClass().getName() + " 已经执行过,不允许重复执行!");
         }
         long startTime = System.currentTimeMillis();
-        R r;
+        R r = null;
         try {
             beforeDoExecute();
             r = doExecute();
             executed = true;
             afterExecuted(r);
         } catch (Exception ex) {
-            throw new RuntimeException(ex.getMessage(), ex);
+            catchThrowException(ex);
         } finally {
             executeTimeMillis = System.currentTimeMillis() - startTime;
             if (executeTimeMillis > getLimitWarnningTimeMillis()) {
@@ -56,6 +108,15 @@ public abstract class BasicCommand<R> implements Command<R>, BasicComponent, App
         }
         return r;
     }
+
+    protected void catchThrowException(Exception ex) {
+        if (ex instanceof RuntimeException) {
+            throw (RuntimeException) ex;
+        } else {
+            throw new RuntimeException(ex.getMessage(), ex);
+        }
+    }
+
 
     /**
      * 执行器
@@ -100,9 +161,20 @@ public abstract class BasicCommand<R> implements Command<R>, BasicComponent, App
         return 500L;
     }
 
-    @Override
     public Logger getLogger() {
         return logger;
+    }
+
+    /**
+     * 使用jsr303校验参数： 如果需要嵌套校验在相应的字段属性增加 @Valid
+     */
+    protected <T> void validateAndThrow(T request, Class<?>... groups) {
+        Set<ConstraintViolation<T>> errors = validatorFast.validate(request, groups);
+        if (errors != null) {
+            for (ConstraintViolation<T> error : errors) {
+                throw new ValidationException(error.getMessage());
+            }
+        }
     }
 
 }

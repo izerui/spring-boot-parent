@@ -1,0 +1,318 @@
+package com.yj2025.sample2;
+
+import com.google.common.base.Stopwatch;
+import com.google.common.collect.Lists;
+import com.yj2025.basic.support.DbContext;
+import com.yj2025.jdbc.support.Comparator;
+import com.yj2025.sample2.entity.DocStatus;
+import com.yj2025.sample2.entity.TestUser;
+import com.yj2025.sample2.mapping.GroupMapping;
+import com.yj2025.sample2.repository.TestUserRepository;
+import com.yj2025.sample2.service.TestUserService;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.expression.BeanFactoryAccessor;
+import org.springframework.context.expression.BeanFactoryResolver;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jdbc.core.JdbcAggregateTemplate;
+import org.springframework.data.relational.core.query.Criteria;
+import org.springframework.data.relational.core.query.Query;
+import org.springframework.expression.Expression;
+import org.springframework.expression.ParserContext;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
+import org.springframework.expression.spel.support.StandardEvaluationContext;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.YearMonth;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+@Slf4j
+@SpringBootTest(classes = SampleApplication.class)
+@Transactional
+@Rollback(value = false)
+public class TestUserTest {
+
+    @Autowired
+    private TestUserService testUserService;
+    @Autowired
+    private TestUserRepository userRepository;
+    @Autowired
+    private NamedParameterJdbcTemplate jdbcTemplate;
+    @Autowired
+    private ApplicationContext applicationContext;
+    @Autowired
+    private JdbcAggregateTemplate jdbcAggregateTemplate;
+
+    @Test
+    public void testFindAll() {
+        Iterable<TestUser> all = testUserService.findAll("copy1");
+        log.info(all.toString());
+    }
+
+    @Test
+    public void testPage() {
+        Page<TestUser> byPage = testUserService.findByPage("copy1", PageRequest.of(0, 55));
+        System.out.println(byPage);
+    }
+
+    @Test
+    public void testList() {
+        List<TestUser> copy1 = userRepository.findList("copy1", "code10");
+        System.out.println(copy1.size());
+    }
+
+     @Test
+    public void testList2() {
+        List<TestUser> copy1 = userRepository.findList("copy1", Lists.newArrayList("code10","code102"));
+        System.out.println(copy1.size());
+    }
+
+    @Test
+    public void testFindCode() {
+        List<TestUser> users = testUserService.findByCode("copy1", "code10");
+        System.out.println(users);
+    }
+
+    @Test
+    public void testSave() {
+        Stopwatch watch = Stopwatch.createStarted();
+        TestUser user = new TestUser();
+        user.setVersion(0);
+        user.setCreateTime(new Date());
+        user.setCode("code" + UUID.randomUUID().toString());
+        user.setName("name" + UUID.randomUUID().toString());
+        user.setEmail("email" + UUID.randomUUID().toString());
+        user.setEntCode("copy1");
+        user.setAge(20);
+        user.setAccountingPeriod(YearMonth.now());
+        user.setDocStatus(null);
+        testUserService.saveUser(user);
+        System.out.println("耗时: " + watch.elapsed(TimeUnit.MILLISECONDS));
+    }
+
+    @Test
+    public void testYearMonths() {
+        var batchUsers = testUserService.findByAccountingPeriods("copy1", List.of(YearMonth.now(), YearMonth.now().minusMonths(1)));
+        Assertions.assertNotNull(batchUsers);
+        var users = testUserService.findByAccountingPeriod("copy1", YearMonth.now());
+        Assertions.assertNotNull(users);
+    }
+
+    @Test
+    public void testInsert() {
+        Stopwatch watch = Stopwatch.createStarted();
+        TestUser user = new TestUser();
+        user.setVersion(0);
+        user.setCreateTime(new Date());
+        user.setCode("code" + UUID.randomUUID().toString());
+        user.setName("name" + UUID.randomUUID().toString());
+        user.setEmail("email" + UUID.randomUUID().toString());
+        user.setEntCode("copy1");
+        user.setAge(20);
+        user.setAccountingPeriod(YearMonth.now());
+        user.setDocStatus(null);
+//        testUserService.insertUser(user);
+
+        testUserService.batchInsert("1", List.of(user));
+
+        var all = testUserService.findAll("copy1");
+
+        log.info(all.toString());
+
+        System.out.println("耗时: " + watch.elapsed(TimeUnit.MILLISECONDS));
+    }
+
+    @Test
+    public void testSpel() {
+        String nameStr = "test_user_#{T(java.lang.Math).random()}";
+
+        StandardEvaluationContext context = new StandardEvaluationContext();
+        context.addPropertyAccessor(new BeanFactoryAccessor());
+        context.setBeanResolver(new BeanFactoryResolver(applicationContext));
+        context.setRootObject(applicationContext);
+
+        SpelExpressionParser parser = new SpelExpressionParser();
+        Expression expression = parser.parseExpression(nameStr, ParserContext.TEMPLATE_EXPRESSION);
+        String value = expression.getValue(context, String.class);
+        System.out.println(value);
+    }
+
+    @Test
+    public void testSaveAll() {
+        List<Map<String, Object>> users = IntStream.range(0, 18000).mapToObj(value -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("version", 0);
+            map.put("create_time", new Date());
+            map.put("code", "code" + value);
+            map.put("name", "name" + value);
+            map.put("email", "email" + value);
+            map.put("age", 28);
+            return map;
+        }).collect(Collectors.toList());
+        Stopwatch watch = Stopwatch.createStarted();
+        jdbcTemplate.batchUpdate("insert into test_user(version, create_time, code, name, email, age) values (:version,:create_time,:code,:name,:email,:age)",
+                users.toArray(new HashMap[users.size()]));
+        System.out.println("jdbcTemplate.batchUpdate 耗时: " + watch.elapsed(TimeUnit.MILLISECONDS));
+
+        System.out.println("总数: " + userRepository.count());
+
+    }
+
+    @Test
+    public void testBatchInsert() {
+        List<TestUser> users = IntStream.range(0, 100).mapToObj(value -> {
+            TestUser user = new TestUser();
+            user.setCreateTime(new Date());
+            user.setCode("code" + value);
+            user.setName("name" + value);
+            user.setEmail("email" + value);
+            user.setVersion(1);
+            user.setAge(28);
+            user.setFlag(true);
+            user.setFlagString(false);
+            user.setEntCode("ent001");
+            return user;
+        }).collect(Collectors.toList());
+        Stopwatch watch = Stopwatch.createStarted();
+        testUserService.batchInsert("ent001", users);
+        testUserService.batchInsert("ent002", users);
+        System.out.println("batchInsert 耗时: " + watch.elapsed(TimeUnit.MILLISECONDS));
+    }
+
+
+    @Test
+    public void testQueryBoolean() {
+        ArrayList<Long> ids = Lists.newArrayList(12574L, 12575L, 12576L, 12577L);
+        Iterable<TestUser> users = testUserService.findByRecordIds("ent001", ids);
+        Iterable<TestUser> users2 = testUserService.findByRecordIds("ent002", ids);
+        for (TestUser user : users) {
+            System.out.println(String.format("flag: %s, flag_string: %s", user.getFlag(), user.getFlagString()));
+        }
+    }
+
+    @Test
+    public void testQuery() {
+        Criteria criteria = Criteria.where("ent_code").is("ent001").and("age").greaterThan(10);
+        Page<TestUser> users = testUserService.findByQueryForceIndex("ent001", Query.query(criteria));
+        Page<TestUser> users2 = testUserService.findByQueryForceIndex("ent002", Query.query(criteria));
+        System.out.println(users);
+        System.out.println(users2);
+    }
+
+    @Test
+    public void testGroup() {
+        Criteria criteria = Criteria.where("ent_code").is("ent001").and("age").greaterThan(10);
+        Query query = Query.query(criteria);
+        query = query.sort(Sort.by(Sort.Direction.ASC, "age"));
+        Iterable<GroupMapping> groupList = testUserService.groupList("ent001", query, List.of("age", "count(0) as count"), List.of("age"));
+        Iterable<Map> groupList2 = testUserService.groupList2("ent001", query, List.of("age", "count(0) as count"), List.of("age"));
+        System.out.println(groupList);
+    }
+
+    @Test
+    public void testGroup2() {
+        Criteria criteria = Criteria
+                .where("ent_code")
+                .is("ent001")
+                .and(Criteria.just("code != name"));
+        Query query = Query.query(criteria);
+        Iterable<GroupMapping> groupList = testUserService.groupList("ent001", query, List.of("age", "count(0) as count"), null);
+        System.out.println(groupList);
+    }
+
+    @Test
+    public void testGroupPage() {
+        Criteria criteria = Criteria.where("ent_code").is("ent001").and("age").greaterThan(10);
+        Query query = Query.query(criteria);
+        Page<GroupMapping> groupList = testUserService.groupPage("ent001", query, List.of("age", "count(0) as count"), List.of("age"), PageRequest.of(0, 20));
+        System.out.println(groupList);
+    }
+
+    @Test
+    public void testExample() {
+        TestUser user = new TestUser();
+        user.setEntCode("ent001");
+        Iterable<TestUser> ent001 = testUserService.findAll("ent001", Example.of(user));
+        System.out.println(ent001);
+    }
+
+    @Test
+    public void testMap() {
+        Map map = new HashMap();
+        map.put("ent_code", "ent001");
+        map.put("code", "code100");
+        TestUser one = userRepository.findOne(map);
+        System.out.println(one);
+    }
+
+    @Test
+    public void testMap2() {
+        Map map = new HashMap();
+        map.put("ent_code", "ent001");
+        map.put("code", "code100");
+        map.put(Comparator.CRITERIA.wrap(""), Criteria.just("code != name"));
+        Iterable iterable = userRepository.findAll(map);
+        System.out.println(iterable);
+    }
+
+    @Test
+    public void testMap3() {
+        Map map = new HashMap();
+        map.put("ent_code", "ent001");
+        map.put("code", "code100");
+        Iterable iterable = testUserService.findByMap(map, Sort.by("code"));
+        System.out.println(iterable);
+    }
+
+    @Test
+    public void testMapPage() {
+        Map map = new HashMap();
+        map.put("ent_code", "ent001");
+        map.put(Comparator.GTE.wrap("code"), "code100");
+        Page<TestUser> page = testUserService.findByMapPage(map, PageRequest.of(0, 200, Sort.by("code")));
+        System.out.println(page);
+    }
+
+
+    @Test
+    public void testMapBatchInsert() {
+        Map map1 = new HashMap();
+        map1.put("ent_code", UUID.randomUUID().toString());
+        map1.put("root_bom_id", UUID.randomUUID().toString());
+        map1.put("bom_id", UUID.randomUUID().toString());
+        map1.put("alternative_material_changed", true);
+
+        Map map2 = new HashMap();
+        map2.put("ent_code", UUID.randomUUID().toString());
+        map2.put("root_bom_id", UUID.randomUUID().toString());
+        map2.put("bom_id", UUID.randomUUID().toString());
+        map2.put("alternative_material_changed", false);
+        DbContext.batchInsert("order_bom_item_638334323_2024", Lists.newArrayList(map1, map2), "id");
+    }
+
+    @Test
+    public void test_order_bom_item_process_technology() {
+        Map map1 = new HashMap();
+        map1.put("ent_code", UUID.randomUUID().toString());
+        map1.put("create_time", new Date());
+        map1.put("bom_id", UUID.randomUUID().toString());
+        map1.put("root_bom_id", UUID.randomUUID().toString());
+        map1.put("process_code", UUID.randomUUID().toString());
+        map1.put("technology_id", UUID.randomUUID().toString());
+
+        DbContext.batchInsert("order_bom_item_process_technology", Lists.newArrayList(map1), "id");
+    }
+
+}

@@ -24,5 +24,6 @@ public class ProducerSampleApplication implements CommandLineRunner {
             webMsg.set("a", "" + i);
             context.sendMessage(webMsg);
         }
+        context.destroy();
     }
 }

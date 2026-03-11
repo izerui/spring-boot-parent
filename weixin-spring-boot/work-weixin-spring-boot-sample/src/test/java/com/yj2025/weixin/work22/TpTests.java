@@ -12,15 +12,13 @@ import me.chanjar.weixin.cp.api.WxCpUserService;
 import me.chanjar.weixin.cp.bean.*;
 import me.chanjar.weixin.cp.bean.message.WxCpMessage;
 import me.chanjar.weixin.cp.bean.message.WxCpMessageSendResult;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
 public class TpTests {
 

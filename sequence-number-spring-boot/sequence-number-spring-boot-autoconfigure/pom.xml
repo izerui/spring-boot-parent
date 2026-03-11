@@ -5,15 +5,15 @@
     <parent>
         <artifactId>sequence-number-spring-boot</artifactId>
         <groupId>com.yj2025</groupId>
-        <version>1.7.0-SNAPSHOT</version>
+        <version>3.3.3-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>sequence-number-spring-boot-autoconfigure</artifactId>
 
     <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
     </properties>
 
     <dependencies>
@@ -27,17 +27,16 @@
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.yj2025</groupId>
             <artifactId>redis-spring-boot-starter</artifactId>
         </dependency>
         <dependency>
             <groupId>com.yj2025</groupId>
             <artifactId>lock-spring-boot-starter</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-            <version>2.10.13</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>

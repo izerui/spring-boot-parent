@@ -1,0 +1,259 @@
+package com.yj2025.sharding;
+
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
+import com.yj2025.tenant.TenantHolder;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationContext;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.util.Assert;
+import org.springframework.util.ReflectionUtils;
+import org.springframework.util.StringUtils;
+
+import javax.sql.DataSource;
+import java.lang.reflect.Method;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.SQLException;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+
+@Slf4j
+public abstract class AbstractTableSharding {
+
+    /**
+     * 记录根据tenantId和year首次使用的路由表, 以供后续判断抛出异常, 避免出现某些业务功能针对拆表遗漏
+     */
+    private final static Table<DataSource, String, String> USE_TABLE_FIRST = HashBasedTable.create();
+
+    protected ApplicationContext applicationContext;
+    protected final ShardingProperties properties;
+
+    // 保存当前数据源连接的数据库名对应关系
+    private final static Map<DataSource, String> DATASOURCE_DB_NAME = new HashMap<>();
+    protected final static Table<DataSource, String, List<String>> cacheDataSourceTablesMap = HashBasedTable.create();
+
+    public AbstractTableSharding(ApplicationContext applicationContext, ShardingProperties properties) {
+        this.applicationContext = applicationContext;
+        this.properties = properties;
+    }
+
+    /**
+     * 获取自动租户id的表名
+     *
+     * @param sourceTable
+     * @return
+     */
+    public final String getTable(String sourceTable) {
+        Assert.state(!StringUtils.isEmpty(sourceTable), "AbstractRule: [tablePrefix]不能为空");
+        String tenantId = TenantHolder.getTenantId();
+        String year = TenantHolder.getYear();
+        return this.getTable(sourceTable, tenantId, year);
+    }
+
+    /**
+     * 通过租户id获取租户表名
+     *
+     * @param sourceTable
+     * @param tenantId
+     * @return
+     */
+    public final String getTable(String sourceTable, String tenantId) {
+        DataSource dataSource = applicationContext.getBean(DataSource.class);
+        return this.getTable(dataSource, getDatabaseName(dataSource), sourceTable, tenantId, null);
+    }
+
+
+    /**
+     * 通过租户id获取租户表名
+     *
+     * @param sourceTable
+     * @param tenantId
+     * @return
+     */
+    public final String getTable(String sourceTable, String tenantId, String year) {
+        DataSource dataSource = applicationContext.getBean(DataSource.class);
+        return this.getTable(dataSource, getDatabaseName(dataSource), sourceTable, tenantId, year);
+    }
+
+    /**
+     * 获取指定数据源、指定租户id、指定年度的表名
+     *
+     * @param dataSource
+     * @param sourceTable
+     * @param tenantId
+     * @return
+     */
+    public final String getTable(DataSource dataSource, String sourceTable, String tenantId) {
+        return this.getTable(dataSource, getDatabaseName(dataSource), sourceTable, tenantId, null);
+    }
+
+    /**
+     * 获取指定数据源、指定租户id、指定年度的表名
+     *
+     * @param dataSource
+     * @param sourceTable
+     * @param tenantId
+     * @param year
+     * @return
+     */
+    public final String getTable(DataSource dataSource, String sourceTable, String tenantId, String year) {
+        return this.getTable(dataSource, getDatabaseName(dataSource), sourceTable, tenantId, year);
+    }
+
+
+    /**
+     * 获取指定数据源、指定租户id、指定年度的表名
+     *
+     * @param dataSource
+     * @param sourceTable
+     * @param tenantId
+     * @param year
+     * @return
+     */
+    public final String getTable(DataSource dataSource, String databaseName, String sourceTable, String tenantId, String year) {
+        if (!StringUtils.hasText(tenantId)) {
+            throw new IllegalArgumentException("使用sharding获取分表结果,但是入口方法未正确声明@Tenant注解, 或者无法获取有效的tenant信息");
+        }
+        String tenantTable = this.tableName(sourceTable, tenantId);
+        String tenantYearTable = null;
+        if (year != null) {
+            tenantYearTable = this.tableName(sourceTable, tenantId, year);
+        }
+        String table = switchTable(dataSource, databaseName, sourceTable, tenantYearTable, tenantTable);
+        if (properties.getExceptionForDifference()) {
+            String relationPrefix = databaseName + "_" + sourceTable + "_" + tenantId + "-" + year;
+            // 记录首次对应的路由表
+            String first = USE_TABLE_FIRST.get(dataSource, relationPrefix);
+            if (first == null) {
+                USE_TABLE_FIRST.put(dataSource, relationPrefix, table);
+            } else {
+                // 如果路由表与第一次记录的关系表不一样，则抛出异常，以供排查
+                Assert.state(Objects.equals(table, first), "【sharding-" + databaseName + "】: 当前查询路由表 [" + table + "] 与首次使用的表 [" + first + "] 不一致,请排查!!!");
+            }
+        }
+        return table;
+    }
+
+    @SneakyThrows
+    private String switchTable(DataSource dataSource, String databaseName, String sourceTable, String... targetTables) {
+        List<String> cacheTables = this.getCachedTables(dataSource, databaseName);
+        // 按顺序先找年表、再找租户表
+        for (String targetTable : targetTables) {
+            if (targetTable == null) {
+                continue;
+            }
+            if (cacheTables != null && cacheTables.contains(targetTable)) {
+                if (properties.getInfoForFound()) {
+                    log.info("【sharding-{}】: 使用路由表 [{}]", databaseName, targetTable);
+                }
+                return targetTable;
+            }
+        }
+        // 找到匹配到sourceTable的多个分拆后的表数量
+        Function<String, String> targetNotFoundWarnFun = useTable -> {
+            if (properties.getWarnForNotfound()) {
+                long count = cacheTables.stream().filter(s -> s.startsWith(sourceTable)).count();
+                log.debug("【sharding-{}】: 本表拆表数量:[{}] 当前使用源表: [{}] 路由目的表(租户+年表、租户表): [{}] 在数据库中不存在", databaseName, count - 1, useTable, targetTables);
+            }
+            return useTable;
+        };
+
+        // 如果年表和租户表都找不到则按有限匹配到的顺序返回 【源表_runtime】 和 【源表】
+        if (cacheTables != null && cacheTables.contains(sourceTable + "_runtime")) {
+            return targetNotFoundWarnFun.apply(sourceTable + "_runtime");
+        } else {
+            return targetNotFoundWarnFun.apply(sourceTable);
+        }
+
+    }
+
+    /**
+     * 从数据源获取当前所有的表
+     *
+     * @param dataSource
+     * @return
+     */
+    private List<String> getTables(DataSource dataSource, String databaseName) {
+        if (databaseName == null || "".equals(databaseName)) {
+            throw new RuntimeException("未指定有效的数据库名");
+        }
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+        List<String> tables = jdbcTemplate.queryForList("/* 缓存当前" + dataSource + "所有表,用来分表路由 */ SHOW TABLES FROM `" + databaseName + "`;", String.class);
+        Collections.sort(tables);
+        log.info("【sharding-{}】: 检测数据库表:", databaseName);
+        log.info("------------------------------------------------");
+        tables.forEach(s -> log.info("{}", s));
+        log.info("------------------------------------------------");
+        return tables;
+    }
+
+    /**
+     * 不开放给public调用，因为必须经过缓存列表验证一道
+     *
+     * @param sourceTable
+     * @param tenantId
+     * @return
+     */
+    protected abstract String tableName(String sourceTable, String tenantId);
+
+    /**
+     * 不开放给public调用，因为必须经过缓存列表验证一道
+     *
+     * @param sourceTable
+     * @param tenantId
+     * @param year
+     * @return
+     */
+    protected abstract String tableName(String sourceTable, String tenantId, String year);
+
+    /**
+     * 获取已经缓存起来的表
+     *
+     * @param dataSource
+     * @return
+     */
+    public List<String> getCachedTables(DataSource dataSource) {
+        return this.getCachedTables(dataSource, getDatabaseName(dataSource));
+    }
+
+    /**
+     * 获取已经缓存起来的表
+     *
+     * @param dataSource
+     * @return
+     */
+    @SneakyThrows
+    public List<String> getCachedTables(DataSource dataSource, String databaseName) {
+        Assert.notNull(databaseName, "请指定数据库名");
+        if (dataSource.getClass().getName().equals("com.baomidou.dynamic.datasource.DynamicRoutingDataSource")) {
+            Method determineMethod = ReflectionUtils.findMethod(Class.forName("com.baomidou.dynamic.datasource.DynamicRoutingDataSource"), "determineDataSource");
+            dataSource = (DataSource) ReflectionUtils.invokeMethod(determineMethod, dataSource);
+        }
+        // 如果未缓存当前库的所有表，则获取并放入缓存
+        if (!cacheDataSourceTablesMap.contains(dataSource, databaseName)) {
+            cacheDataSourceTablesMap.put(dataSource, databaseName, getTables(dataSource, databaseName));
+            log.info("【sharding-{}】: 缓存的数据源个数: {}", databaseName, cacheDataSourceTablesMap.size());
+        }
+        return cacheDataSourceTablesMap.get(dataSource, databaseName);
+    }
+
+    /**
+     * 通过DataSource获取当前连接的数据库名
+     *
+     * @param dataSource
+     * @return
+     */
+    private String getDatabaseName(DataSource dataSource) {
+        String databaseName = DATASOURCE_DB_NAME.get(dataSource);
+        if (databaseName == null || "".equals(databaseName)) {
+            JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+            databaseName = jdbcTemplate.queryForObject("/* 获取当前" + dataSource + "连接的数据库名 */ SELECT DATABASE()", String.class);
+            Assert.notNull(databaseName, "必须指定连接的数据库");
+            DATASOURCE_DB_NAME.put(dataSource, databaseName);
+        }
+        return databaseName;
+    }
+}

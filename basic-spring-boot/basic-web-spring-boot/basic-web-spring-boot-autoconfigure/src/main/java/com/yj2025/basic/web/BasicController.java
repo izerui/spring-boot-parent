@@ -1,11 +1,49 @@
 package com.yj2025.basic.web;
 
-import com.yj2025.basic.web.support.WebRequestAware;
+import com.yj2025.basic.support.ApplicationBeanAware;
+import com.yj2025.basic.web.support.AuthAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 
-public abstract class BasicController implements WebRequestAware {
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+
+public abstract class BasicController implements AuthAware, ApplicationBeanAware {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass().getSimpleName());
+
+    protected ResponseEntity<byte[]> download(File localFile) throws IOException {
+        byte[] bytes = Files.readAllBytes(localFile.toPath());
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentDispositionFormData("attachment", localFile.getName());
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentLength(bytes.length);
+        return new ResponseEntity<byte[]>(bytes, headers, HttpStatus.CREATED);
+    }
+
+    protected ResponseEntity<byte[]> download(InputStream inputStream, String fileName) throws IOException {
+        byte[] bytes = inputStream.readAllBytes();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentDispositionFormData("attachment", fileName);
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentLength(bytes.length);
+        return new ResponseEntity<byte[]>(bytes, headers, HttpStatus.CREATED);
+    }
+
+    protected ResponseEntity<byte[]> download(ByteArrayOutputStream outputStream, String fileName) throws IOException {
+        byte[] bytes = outputStream.toByteArray();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentDispositionFormData("attachment", fileName);
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentLength(bytes.length);
+        return new ResponseEntity<byte[]>(bytes, headers, HttpStatus.CREATED);
+    }
 
 }

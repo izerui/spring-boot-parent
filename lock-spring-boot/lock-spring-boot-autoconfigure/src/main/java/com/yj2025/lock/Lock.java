@@ -3,14 +3,19 @@ package com.yj2025.lock;
 import com.yj2025.lock.support.ThrowsRunnable;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.locks.InterProcessSemaphoreMutex;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 /**
  * Created by serv on 16/8/16.
  */
 public class Lock implements DisposableBean {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(Lock.class);
 
     private final static Integer LEASE_SECONDS = 30;
 
@@ -21,7 +26,7 @@ public class Lock implements DisposableBean {
         this.client = client;
     }
 
-    public void execute(String lockPath, Integer leaseSeconds, ThrowsRunnable runnable) {
+    public void execute(String lockPath, Integer leaseSeconds, ThrowsRunnable runnable, Function<LockException, RuntimeException> catchThrowNew) {
         InterProcessSemaphoreMutex semaphoreMutex = null;
         try {
             semaphoreMutex = new InterProcessSemaphoreMutex(client, "/lock/" + lockPath);
@@ -32,10 +37,11 @@ public class Lock implements DisposableBean {
             //执行全局唯一逻辑
             runnable.run();
         } catch (Exception e) {
-            if (e instanceof RuntimeException) {
-                throw (RuntimeException) e;
+            LOGGER.error(e.getMessage(), e);
+            if (e instanceof LockException) {
+                throw catchThrowNew.apply((LockException) e);
             } else {
-                throw new LockException(e.getMessage(), e);
+                throw catchThrowNew.apply(new LockException(e.getMessage(), e));
             }
         } finally {
             try {
@@ -43,15 +49,21 @@ public class Lock implements DisposableBean {
                     semaphoreMutex.release();
                 }
             } catch (Exception e) {
-                throw new LockException(e.getMessage() + " lockId: " + lockPath);
+                throw catchThrowNew.apply(new LockException("释放锁失败: " + e.getMessage() + " lockId: " + lockPath));
             }
         }
     }
 
+    public void execute(String lockPath, Integer leaseSeconds, ThrowsRunnable runnable) {
+        execute(lockPath, leaseSeconds, runnable, e -> e);
+    }
+
     public void execute(String lockPath, ThrowsRunnable runnable) {
-        execute(lockPath, LEASE_SECONDS, () -> {
-            runnable.run();
-        });
+        execute(lockPath, LEASE_SECONDS, () -> runnable.run(), e -> e);
+    }
+
+    public void execute(String lockPath, ThrowsRunnable runnable, Function<LockException, RuntimeException> catchThrowNew) {
+        execute(lockPath, LEASE_SECONDS, () -> runnable.run(), catchThrowNew);
     }
 
 

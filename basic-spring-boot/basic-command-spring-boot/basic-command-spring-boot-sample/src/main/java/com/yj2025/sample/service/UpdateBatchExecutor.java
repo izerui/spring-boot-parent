@@ -110,7 +110,7 @@ public class UpdateBatchExecutor {
     }
 
     private void batchGetPrimaryIds(String tableName, ConditionEntity conditionEntity, BiConsumer<Integer, List<Integer>> consumer) {
-        Assert.notNull(conditionEntity);
+        Assert.notNull(conditionEntity, "conditionEntity must not be null");
         String whereQL = conditionEntity.build();
         String sql = "select id from " + tableName + whereQL + " limit ? offset ?";
         Integer page = 1;

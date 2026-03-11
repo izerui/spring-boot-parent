@@ -1,0 +1,19 @@
+package com.yj2025.jdbc.converter;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.data.convert.WritingConverter;
+import org.springframework.lang.NonNull;
+
+import java.sql.Date;
+import java.time.YearMonth;
+
+@WritingConverter
+public class YearMonthToLocalDateConverter implements Converter<YearMonth, Date> {
+
+  @Override
+  public Date convert(@NonNull YearMonth source) {
+      return Date.valueOf(source.atDay(1));
+  }
+}

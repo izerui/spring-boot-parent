@@ -2,7 +2,7 @@ package com.yj2025.jpa.entity;
 
 import lombok.Data;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Date;
 
 //用户
@@ -21,4 +21,5 @@ public class User {
     private String name;
     private String email;
     private Integer age;
+    private String entCode;
 }

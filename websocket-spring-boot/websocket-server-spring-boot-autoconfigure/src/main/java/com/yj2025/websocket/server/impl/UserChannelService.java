@@ -18,6 +18,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.data.redis.core.Cursor;
+import org.springframework.data.redis.core.RedisCallback;
+import org.springframework.data.redis.core.ScanOptions;
+import org.springframework.data.redis.serializer.SerializationUtils;
 import org.springframework.util.Assert;
 
 import java.util.*;
@@ -89,8 +93,8 @@ public class UserChannelService {
         String entCode = webMessage.get("entCode");
         String userCode = webMessage.get("userCode");
         String userName = webMessage.get("userName");
-        Assert.notNull(entCode);
-        Assert.notNull(userCode);
+        Assert.notNull(entCode, "entCode cannot be null");
+        Assert.notNull(userCode, "userCode cannot be null");
 
         String key = getRedisKey(entCode, userCode, String.valueOf(Math.random()));
         channel.attr(AttributeKey.valueOf("key")).set(key);
@@ -134,34 +138,39 @@ public class UserChannelService {
     }
 
     /**
-     * 在线连接的客户端ip地址列表
+     * 在线连接的客户端连接数
      *
      * @return
      */
     public int onlines() {
-        return channelGroup.size();
+        String keyParten = getRedisKey("", "*", "");
+        Set<String> scanUsers = redisTemplate.keys(keyParten);
+        Set<String> users = new HashSet<>();
+        for (String scanUser : scanUsers) {
+            users.add(scanUser.substring(0, scanUser.lastIndexOf(".")-2));
+        }
+        return users.size();
     }
 
     /**
      * 获取账套下登陆的用户编号集合
+     * 返回名称
      *
      * @param entCode
      * @return
      */
     public Set<String> onlineUsers(String entCode) {
-        List<Channel> channels = findChannels(entCode, "*", "");
-        Set<String> users = new LinkedHashSet<>();
-        for (Channel channel : channels) {
-            String userCode = (String) channel.attr(AttributeKey.valueOf("userCode")).get();
-            AtomicReference<String> userName = new AtomicReference<>((String) channel.attr(AttributeKey.valueOf("userName")).get());
-            if (StringUtils.isEmpty(userName.get())) {
-                userNameLoaderObjectProvider.ifAvailable(userNameLoader -> {
-                    userName.set(userNameLoader.getUserName(userCode));
-                });
-            }
-            users.add(userName.get());
+        String keyParten = getRedisKey(entCode, "*", "");
+        Set<String> scanUsers = redisTemplate.keys(keyParten);
+        Set<String> userNames = new HashSet<>();
+        for (String userKey : scanUsers) {
+            String tmpKey = userKey.replaceAll(serverProperties.getUserIdPrefix() + entCode + "-", "");
+            String userCode = tmpKey.substring(0, tmpKey.lastIndexOf(".")-2);
+            userNameLoaderObjectProvider.ifAvailable(userNameLoader -> {
+                userNames.add(userNameLoader.getUserName(userCode));
+            });
         }
-        return users;
+        return userNames;
     }
 
     /**
@@ -171,13 +180,12 @@ public class UserChannelService {
      * @return
      */
     public Set<String> onlineUserMap(String entCode) {
-        List<Channel> channels = findChannels(entCode, "*", "");
-        Set<String> users = new LinkedHashSet<>();
-        for (Channel channel : channels) {
-            String userCode = (String) channel.attr(AttributeKey.valueOf("userCode")).get();
-            if (StringUtils.isNotBlank(userCode)) {
-                users.add(userCode);
-            }
+        String keyParten = getRedisKey(entCode, "*", "");
+        Set<String> scanUsers = redisTemplate.keys(keyParten);
+        Set<String> users = new HashSet<>();
+        for (String userKey : scanUsers) {
+            String tmpKey = userKey.replaceAll(serverProperties.getUserIdPrefix() + entCode + "-", "");
+            users.add(tmpKey.substring(0, tmpKey.lastIndexOf(".")-2));
         }
         return users;
     }
@@ -195,9 +203,9 @@ public class UserChannelService {
                 }
             }
         }
-        if (channels.isEmpty()) {
-            logger.warn("未找到对应的websocket连接, entCode:{} userCode:{}", entCode, userCode);
-        }
+//        if (channels.isEmpty()) {
+//            logger.warn("未找到对应的websocket连接, entCode:{} userCode:{}", entCode, userCode);
+//        }
         return channels;
     }
 
@@ -211,4 +219,16 @@ public class UserChannelService {
         return _keyParten;
     }
 
+//    private Set<String> scan(final String matchKey) {
+//
+//        Set<String> keys = redisTemplate.execute((RedisCallback<Set<String>>) connection -> {
+//            Set<byte[]> tmpKeys = new HashSet<>();
+//            Cursor<byte[]> cursor = connection.scan(ScanOptions.scanOptions().match(matchKey).count(Integer.MAX_VALUE).build());
+//            while (cursor.hasNext()) {
+//                tmpKeys.add(cursor.next());
+//            }
+//            return (Set<String>) SerializationUtils.deserialize(tmpKeys, redisTemplate.getKeySerializer());
+//        });
+//        return keys;
+//    }
 }

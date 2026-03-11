@@ -1,24 +1,23 @@
 package junit;
 
 import com.google.common.base.Stopwatch;
-import com.yj2025.basic.support.Context;
+import com.yj2025.basic.support.DbContext;
 import com.yj2025.jpa.Application;
 import com.yj2025.jpa.entity.Abcd;
 import com.yj2025.jpa.entity.User;
 import com.yj2025.jpa.entity.UserDistinct;
 import com.yj2025.jpa.impl.Conditions;
+import com.yj2025.jpa.impl.ConditionsAdapter;
 import com.yj2025.jpa.repository.AbcdRepository;
 import com.yj2025.jpa.repository.UserRepository;
 import org.assertj.core.util.Lists;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.jdbc.object.BatchSqlUpdate;
 import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
@@ -32,7 +31,6 @@ import java.util.stream.IntStream;
 
 @Transactional
 @Rollback(value = false)
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
 public class TestJunit {
 
@@ -44,13 +42,18 @@ public class TestJunit {
     private DataSource dataSource;
 
     @Test
-    public void testSelectSql(){
+    public void testList() {
+        List<User> list = userRepository.findList("code10");
+        System.out.println(list);
+    }
+
+    @Test
+    public void testSelectSql() {
         Conditions conditions = Conditions.where("name").is("张无忌");
-        List<Object[]> list = (List<Object[]>) userRepository.selectSql("select sum(age),sum(version) from User ",conditions);
-        Object[] array = list.get(0);
-        for (Object o : array) {
-            System.out.println("------"+o);
-        }
+        Map<String, Object> aggregate = userRepository.aggregate(conditions, "sum(id) as sumId", "count(id) as countId");
+        aggregate.forEach((s, o) -> {
+            System.out.println(s + " : " + o);
+        });
     }
 
     @Test
@@ -153,7 +156,7 @@ public class TestJunit {
     @Test
     public void batchInsert2() {
         Stopwatch watch = Stopwatch.createStarted();
-        BatchSqlUpdate batchSqlExecutor = Context.batchUpdate(
+        BatchSqlUpdate batchSqlExecutor = DbContext.batchUpdate(
                 dataSource,
                 "insert into test_user(version, create_time, code, name, email, age) values (?,?,?,?,?,?)",
                 List.of(JDBCType.NUMERIC, JDBCType.TIMESTAMP, JDBCType.VARCHAR, JDBCType.VARCHAR, JDBCType.VARCHAR, JDBCType.NUMERIC),
@@ -196,7 +199,7 @@ public class TestJunit {
             user.setAge(29);
             return user;
         }).collect(Collectors.toList());
-        int[] ints = Context.batchUpdate(dataSource, "insert into test_user(version, create_time, code, name, email, age) values (:version,:createTime,:code,:name,:email,:age)", users);
+        int[] ints = DbContext.batchUpdate(dataSource, "insert into test_user(version, create_time, code, name, email, age) values (:version,:createTime,:code,:name,:email,:age)", users);
         System.out.println(ints);
         System.out.println("耗时: " + watch.elapsed(TimeUnit.MILLISECONDS));
     }
@@ -214,26 +217,37 @@ public class TestJunit {
             user.setAge(29);
             return user;
         }).collect(Collectors.toList());
-        int[] ints = Context.batchInsert(dataSource, "test_user", users);
+        int[] ints = DbContext.batchInsert(dataSource, "test_user", users);
         System.out.println(ints);
         System.out.println("耗时: " + watch.elapsed(TimeUnit.MILLISECONDS));
     }
 
     public static void main(String[] args) {
-        Conditions conditions = Conditions.where("a").is(1)
-                .and("b").is(2)
+        Conditions conditions = Conditions.where("A").is(1)
+                .and("B").is(2)
                 .or(
-                        Conditions.where("c").like(null)
+                        Conditions.where("C").like("%222%")
                 )
                 .and(
-                        Conditions.where("e").is(5).or("f").is(6)
+                        Conditions.where("E").is(5).or("F").is(6)
                 );
-        conditions.and("ddd").is(null).and("fff").like("");
+        conditions.and("G").is("sjsj").and("H").like("%ffff%");
 
+        System.out.println(conditions);
+
+        // 顺手测试下 转jdbc的连接器
+        ConditionsAdapter adapter = new ConditionsAdapter(conditions);
+        org.springframework.data.relational.core.query.Criteria criteria = adapter.toCriteria(null);
+        System.out.println(criteria);
 
         System.out.println(
-                Conditions.where("a").is(null).and("b").gt(2)
+                Conditions.where(false, "abc").notNull()
+                        .and("b").gt(2)
+                        .and(false, () -> Conditions.where(false, "abc is not null")
+                                .and("abc = '123'"))
+                        .and(true, () -> Conditions.where("abs != 0"))
         );
+
     }
 
 }

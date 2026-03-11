@@ -8,7 +8,18 @@ public interface ApplicationBeanAware {
      * @param <T>
      * @return
      */
-    default <T> T $(Class<T> beanClass) {
-        return Context.getBean(beanClass);
+    default <T> T $(Class<T> beanClass, Class... genericTypes) {
+        return Context.getBean(beanClass, genericTypes);
+    }
+
+    /**
+     * 获取bean
+     *
+     * @param beanName
+     * @param <T>
+     * @return
+     */
+    default <T> T $(String beanName) {
+        return Context.getBean(beanName);
     }
 }

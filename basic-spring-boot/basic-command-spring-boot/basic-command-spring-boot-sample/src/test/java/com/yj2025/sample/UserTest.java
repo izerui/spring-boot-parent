@@ -1,8 +1,12 @@
 package com.yj2025.sample;
 
 import com.google.common.base.Stopwatch;
-import com.google.common.util.concurrent.*;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
 import com.yj2025.basic.support.Context;
+import com.yj2025.basic.support.DbContext;
 import com.yj2025.performance.BatchConsumer;
 import com.yj2025.performance.ClearEvent;
 import com.yj2025.performance.Producer;
@@ -11,23 +15,16 @@ import com.yj2025.sample.service.UpdateBatchExecutor;
 import com.yj2025.sample.service.UserService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.BDDMockito;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.jdbc.object.BatchSqlUpdate;
-import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import javax.sql.DataSource;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.JDBCType;
 import java.sql.PreparedStatement;
@@ -43,10 +40,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Slf4j
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = SampleApplication.class)
-@Transactional
-@Rollback(value = false)
 public class UserTest {
 
     @Autowired
@@ -55,10 +49,10 @@ public class UserTest {
     @SpyBean
     private UserService userService;
 
-    @Before
-    public void init() throws IOException {
-        BDDMockito.willReturn("测试用户").given(userService).getWrapHeader().getUserName();
-    }
+//    @BeforeAll
+//    public void init() throws IOException {
+//        BDDMockito.willReturn("测试用户").given(userService).getUserName();
+//    }
 
 
     @Test
@@ -94,7 +88,7 @@ public class UserTest {
     @Test
     public void testQueryPage() {
         Stopwatch stopwatch = Stopwatch.createStarted();
-        Context.pagenationQueryWrap("select id from test_user", 5000, (rs, rowNum) -> {
+        DbContext.pagenationQueryWrap("select id from test_user", 5000, (rs, rowNum) -> {
 //            System.out.println(rs.getLong("id"));
             return null;
         });
@@ -103,8 +97,8 @@ public class UserTest {
 
     @Test
     public void testContextPagenationUpdate() {
-        BatchSqlUpdate batchSqlUpdate = Context.batchUpdate(dataSource, "update test_user set age = 18 where id = ?", List.of(JDBCType.NUMERIC), 5000);
-        Context.pagenationQueryWrap(dataSource, "select id from test_user", 5000,
+        BatchSqlUpdate batchSqlUpdate = DbContext.batchUpdate(dataSource, "update test_user set age = 18 where id = ?", List.of(JDBCType.NUMERIC), 5000);
+        DbContext.pagenationQueryWrap(dataSource, "select id from test_user", 5000,
                 (rs, rowNum) -> rs.getLong("id"),
                 (ids, page) -> {
                     log.debug("第{}页 当前处理数量: {}", page, ids.size());
@@ -119,16 +113,22 @@ public class UserTest {
     @Test
     public void testContextPagenationUpdate2() {
         Stopwatch stopwatch = Stopwatch.createStarted();
-        Context.pagenationQueryWrap(dataSource, "select id from test_user", 5000,
+        DbContext.pagenationQueryWrap(dataSource, "select id from test_user", 5000,
                 (rs, rowNum) -> rs.getLong("id"),
                 (ids, page) -> {
                     log.debug("第{}页 当前处理数量: {}", page, ids.size());
                     List<HashMap> maps = ids.stream().map(aLong -> new HashMap(1) {{
                         put("id", aLong);
                     }}).collect(Collectors.toList());
-                    Context.batchUpdate("update test_user set age = 18 where id = :id", maps);
+                    DbContext.batchUpdate("update test_user set age = 18 where id = :id", maps);
                 });
         System.out.println("耗时：" + stopwatch.elapsed(TimeUnit.MILLISECONDS));
+    }
+
+    @Test
+    public void test0001() {
+        List<UserPO> users = DbContext.paginationQuery(dataSource, "select * from test_user", 0, 400, UserPO.class);
+        System.out.println(users);
     }
 
     @Test
@@ -136,7 +136,7 @@ public class UserTest {
         Stopwatch stopwatch = Stopwatch.createStarted();
         ListeningExecutorService executorService = MoreExecutors.listeningDecorator(new ThreadPoolExecutor(3, 5, 0, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<Runnable>(65536), new ThreadPoolExecutor.CallerRunsPolicy()));
         List<ListenableFuture<?>> futures = new ArrayList<>();
-        Context.pagenationQueryWrap(dataSource, "select id from test_user", 5000,
+        DbContext.pagenationQueryWrap(dataSource, "select id from test_user", 5000,
                 (rs, rowNum) -> rs.getLong("id"),
                 (ids, page) -> {
                     ListenableFuture<?> submit = executorService.submit(() -> {
@@ -144,7 +144,7 @@ public class UserTest {
                         List<HashMap> maps = ids.stream().map(aLong -> new HashMap(1) {{
                             put("id", aLong);
                         }}).collect(Collectors.toList());
-                        Context.batchUpdate("update test_user set age = 18 where id = :id", maps);
+                        DbContext.batchUpdate("update test_user set age = 18 where id = :id", maps);
                     });
                     futures.add(submit);
                 });
@@ -159,7 +159,7 @@ public class UserTest {
         // 分批按主键ID更新
 //        Context.batchUpdateAsync("update test_user set age = 18", "id", 5, 5000);
         // 分批按主键ID更新并且 监控已更新数据
-        Context.batchUpdateAsync("update test_user set age = 18 where age > 16 and code is not null", "id", 5, 5000, (ids, page) -> {
+        DbContext.batchUpdateAsync("update test_user set age = 18 where age > 16 and code is not null", "id", 5, 5000, (ids, page) -> {
 //            log.debug("第{}页 当前处理数量: {}", page, ids.size());
             System.out.println(page);
         });
@@ -284,7 +284,7 @@ public class UserTest {
     }
 
     private void batchGetPrimaryIds(String tableName, ConditionEntity conditionEntity, BiConsumer<Integer, Integer> consumer) {
-        Assert.notNull(conditionEntity);
+        Assert.notNull(conditionEntity, "conditionEntity is null");
         String whereQL = conditionEntity.build();
         String sql = "select id from " + tableName + whereQL + " limit ? offset ?";
         Integer page = 1;

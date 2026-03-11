@@ -8,8 +8,7 @@ import com.yj2025.sample.entity.User;
 import com.yj2025.sample.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
@@ -20,7 +19,6 @@ import java.util.List;
 import java.util.Locale;
 
 @Slf4j
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
 public class UserTest {
 

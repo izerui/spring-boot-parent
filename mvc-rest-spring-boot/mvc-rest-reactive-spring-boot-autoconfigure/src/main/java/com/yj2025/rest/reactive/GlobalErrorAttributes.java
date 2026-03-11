@@ -1,7 +1,6 @@
 package com.yj2025.rest.reactive;
 
 
-import com.netflix.hystrix.exception.HystrixRuntimeException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.reactive.error.DefaultErrorAttributes;
@@ -31,7 +30,7 @@ public class GlobalErrorAttributes extends DefaultErrorAttributes implements Con
             errorResponseMap.put("errMsg", errorAttributes.get("message"));
             errorResponseMap.put("exceptionType", errorAttributes.get("exception"));
         } else {
-            if (throwable instanceof HystrixRuntimeException && throwable.getCause() != null) {
+            if (throwable.getClass().getName().equals("com.netflix.hystrix.exception.HystrixRuntimeException") && throwable.getCause() != null) {
                 throwable = throwable.getCause();
             }
             String errMsg = throwable.getMessage();

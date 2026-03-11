@@ -1,7 +1,7 @@
 package com.yj2025.reactive;
 
-import com.ecworking.rbac.remote.vo.UserVo;
-import com.yj2025.reactive.remote.UserClient;
+import com.ecworking.system.vo.RecAgreementVo;
+import com.yj2025.reactive.remote.ReceiveAgreementClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -10,6 +10,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
+import java.util.List;
+
 @Slf4j
 @SpringBootApplication
 @EnableDiscoveryClient
@@ -17,7 +19,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 public class Application implements CommandLineRunner {
 
     @Autowired
-    private UserClient userClient;
+    private ReceiveAgreementClient agreementClient;
 
 
     public static void main(String[] args) {
@@ -26,7 +28,7 @@ public class Application implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        UserVo fff = userClient.getUserByCode("916329099");
-        log.info(fff.getName());
+        List<RecAgreementVo> enableRecAgreements = agreementClient.findEnableRecAgreements("333367878");
+        log.info("{}", enableRecAgreements);
     }
 }

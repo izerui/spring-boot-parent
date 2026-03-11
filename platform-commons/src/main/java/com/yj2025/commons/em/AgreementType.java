@@ -1,0 +1,24 @@
+package com.yj2025.commons.em;
+
+import java.util.stream.Stream;
+
+/**
+ * 协议类型
+ */
+public enum AgreementType {
+    CASH("现结-款到发货"), MONTH("月结交易"), CASH_ON_DELIVERY("现结-货到付款");
+
+    private final String description;
+
+    AgreementType(String description) {
+        this.description = description;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public static AgreementType of(String description) {
+        return Stream.of(AgreementType.values()).filter(agreementType -> agreementType.getDescription().equals(description)).findFirst().orElseThrow(IllegalArgumentException::new);
+    }
+}

@@ -5,7 +5,7 @@
     <parent>
         <artifactId>yj2025-spring-boot-parent</artifactId>
         <groupId>com.yj2025</groupId>
-        <version>1.7.0-SNAPSHOT</version>
+        <version>3.3.3-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <packaging>pom</packaging>
@@ -17,6 +17,7 @@
         <module>doc-spring-boot-autoconfigure</module>
         <module>doc-spring-boot-starter</module>
         <module>doc-spring-boot-sample</module>
+        <module>doc-annotations</module>
     </modules>
 
 </project>

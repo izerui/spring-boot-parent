@@ -1,5 +1,6 @@
 package com.yj2025.commons.util;
 
+import com.yj2025.commons.jackson.Decimal2StringUtils;
 import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
@@ -37,6 +38,23 @@ public class BigDecimalUtils {
         return num1.add(num2);
     }
 
+    /**
+     * 加法
+     *
+     * @param num1
+     * @param nums
+     * @return
+     */
+    public static final BigDecimal add(BigDecimal num1, BigDecimal... nums) {
+        Assert.notNull(num1, "加法运算的第一个数值不能为空");
+        Assert.notNull(nums, "加法运算的第二个数值不能为空");
+        BigDecimal result = num1;
+        for (BigDecimal num : nums) {
+            result = result.add(num);
+        }
+        return result;
+    }
+
 
     /**
      * 减法
@@ -50,6 +68,24 @@ public class BigDecimalUtils {
         Assert.notNull(num1, "减法运算的第一个数值不能为空");
         Assert.notNull(num2, "减法运算的第二个数值不能为空");
         return num1.subtract(num2);
+    }
+
+    /**
+     * 减法
+     *
+     * @param num1
+     * @param nums
+     * @return
+     */
+    @Deprecated
+    public static final BigDecimal substract(BigDecimal num1, BigDecimal... nums) {
+        Assert.notNull(num1, "减法运算的第一个数值不能为空");
+        Assert.notNull(nums, "减法运算的第二个数值不能为空");
+        BigDecimal result = num1;
+        for (BigDecimal num : nums) {
+            result = result.subtract(num);
+        }
+        return result;
     }
 
 
@@ -92,7 +128,7 @@ public class BigDecimalUtils {
     public static final BigDecimal divide(BigDecimal num1, BigDecimal num2, Integer scale) {
         Assert.notNull(num1, "除法运算的第一个数值不能为空");
         Assert.notNull(num2, "除法运算的第二个数值不能为空");
-        return num1.divide(num2, scale, ROUND_CEILING);
+        return num2.compareTo(ZERO) == 0 ? ZERO : num1.divide(num2, scale, RoundingMode.CEILING);
     }
 
     /**
@@ -167,7 +203,15 @@ public class BigDecimalUtils {
      * @param num2
      * @return
      */
+    @Deprecated(since = "3.1.6", forRemoval = true)
     public static final boolean isLessThan(BigDecimal num1, BigDecimal num2) {
+        if (num1 == null || num2 == null) {
+            return false;
+        }
+        return num1.compareTo(num2) < 0;
+    }
+
+    public static final boolean ltThan(BigDecimal num1, BigDecimal num2) {
         if (num1 == null || num2 == null) {
             return false;
         }
@@ -182,7 +226,15 @@ public class BigDecimalUtils {
      * @param num2
      * @return
      */
+    @Deprecated(since = "3.1.6", forRemoval = true)
     public static final boolean isLessEqThan(BigDecimal num1, BigDecimal num2) {
+        if (num1 == null || num2 == null) {
+            return false;
+        }
+        return num1.compareTo(num2) <= 0;
+    }
+
+    public static final boolean lteThan(BigDecimal num1, BigDecimal num2) {
         if (num1 == null || num2 == null) {
             return false;
         }
@@ -196,7 +248,15 @@ public class BigDecimalUtils {
      * @param num2
      * @return
      */
+    @Deprecated(since = "3.1.6", forRemoval = true)
     public static final boolean isGreaterThan(BigDecimal num1, BigDecimal num2) {
+        if (num1 == null || num2 == null) {
+            return false;
+        }
+        return num1.compareTo(num2) > 0;
+    }
+
+    public static final boolean gtThan(BigDecimal num1, BigDecimal num2) {
         if (num1 == null || num2 == null) {
             return false;
         }
@@ -210,7 +270,15 @@ public class BigDecimalUtils {
      * @param num2
      * @return
      */
+    @Deprecated(since = "3.1.6", forRemoval = true)
     public static final boolean isGreaterEqThan(BigDecimal num1, BigDecimal num2) {
+        if (num1 == null || num2 == null) {
+            return false;
+        }
+        return num1.compareTo(num2) >= 0;
+    }
+
+    public static final boolean gteThan(BigDecimal num1, BigDecimal num2) {
         if (num1 == null || num2 == null) {
             return false;
         }
@@ -238,6 +306,15 @@ public class BigDecimalUtils {
         return divide(num, new BigDecimal("100"), num.scale());
     }
 
+    /**
+     * 除以100,四舍五入 保留小数位，
+     *
+     * @param num
+     * @return
+     */
+    public static final BigDecimal divide100(BigDecimal num, int scale) {
+        return num.divide(new BigDecimal(100), scale, RoundingMode.HALF_UP);
+    }
 
     /**
      * 获取最小值
@@ -315,22 +392,43 @@ public class BigDecimalUtils {
     }
 
     //大于0
+    @Deprecated(since = "3.1.6", forRemoval = true)
     public static boolean moreZero(BigDecimal quantity) {
         return null2Zero(quantity).compareTo(BigDecimal.ZERO) > 0;
     }
 
+    public static boolean gtZero(BigDecimal quantity) {
+        return null2Zero(quantity).compareTo(BigDecimal.ZERO) > 0;
+    }
+
     //大于等于0
+    @Deprecated(since = "3.1.6", forRemoval = true)
     public static boolean moreThanZero(BigDecimal quantity) {
         return null2Zero(quantity).compareTo(BigDecimal.ZERO) >= 0;
     }
 
+    public static boolean gteZero(BigDecimal quantity) {
+        return null2Zero(quantity).compareTo(BigDecimal.ZERO) >= 0;
+    }
+
+
     //小于0
+    @Deprecated(since = "3.1.6", forRemoval = true)
     public static boolean lessZero(BigDecimal quantity) {
         return null2Zero(quantity).compareTo(BigDecimal.ZERO) < 0;
     }
 
+    public static boolean ltZero(BigDecimal quantity) {
+        return null2Zero(quantity).compareTo(BigDecimal.ZERO) < 0;
+    }
+
     //小于等于0
+    @Deprecated(since = "3.1.6", forRemoval = true)
     public static boolean lessThanZero(BigDecimal quantity) {
+        return null2Zero(quantity).compareTo(BigDecimal.ZERO) <= 0;
+    }
+
+    public static boolean lteZero(BigDecimal quantity) {
         return null2Zero(quantity).compareTo(BigDecimal.ZERO) <= 0;
     }
 
@@ -344,4 +442,26 @@ public class BigDecimalUtils {
         }
         return quantity.compareTo(BigDecimal.ZERO) != 0;
     }
+
+    public static String toPlainString(BigDecimal quantity) {
+        return Decimal2StringUtils.toPlainString(quantity);
+    }
+
+    /**
+     * 判断数字方向是否一致。
+     */
+    public static boolean areSameSign(BigDecimal... nums) {
+        if (nums == null || nums.length == 0) {
+            return false;
+        }
+        int sign = BigDecimalUtils.null2Zero(nums[0]).signum();
+        for (int i = 1; i < nums.length; i++) {
+            int currentSign = BigDecimalUtils.null2Zero(nums[i]).signum();
+            if (currentSign != sign) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 }

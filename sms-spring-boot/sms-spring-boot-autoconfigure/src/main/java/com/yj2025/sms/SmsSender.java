@@ -35,4 +35,13 @@ public interface SmsSender {
      * @return
      */
     boolean isValidCaptcha(String bizCode, String captcha, String phone);
+    /**
+     * 验证码有效性 同事销毁
+     *
+     * @param bizCode 业务标识
+     * @param captcha 验证码
+     * @param phone   手机号
+     * @return
+     */
+    boolean checkAndDestroyCaptcha(String bizCode, String captcha, String phone);
 }

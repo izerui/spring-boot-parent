@@ -5,7 +5,7 @@
     <parent>
         <artifactId>nacos-spring-boot</artifactId>
         <groupId>com.yj2025</groupId>
-        <version>1.7.0-SNAPSHOT</version>
+        <version>3.3.3-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -17,7 +17,17 @@
         <dependency>
             <groupId>com.yj2025</groupId>
             <artifactId>nacos-config-spring-boot-autoconfigure</artifactId>
-            <version>${parent.version}</version>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <!-- https://thepracticaldeveloper.com/book-update-2.4.0/#spring-cloud-bootstrap -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-bootstrap</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-properties-migrator</artifactId>
+            <scope>runtime</scope>
         </dependency>
     </dependencies>
 

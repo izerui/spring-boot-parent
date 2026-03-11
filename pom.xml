@@ -23,42 +23,74 @@
         <module>weixin-spring-boot</module>
         <module>sequence-number-spring-boot</module>
         <module>high-performance-spring-boot</module>
-        <module>open-spring-boot</module>
         <module>mongo-transaction-spring-boot</module>
-        <module>proxy-spring-boot</module>
         <module>basic-spring-boot</module>
         <module>data-jdbc-spring-boot</module>
         <module>platform-commons</module>
+        <module>validator-spring-boot</module>
+        <module>cloud-file-spring-boot</module>
+        <module>elasticsearch-logging-spring-boot</module>
+        <module>jackson-spring-boot</module>
+        <module>data-jdbc-jpa-mybatis-spring-boot-sample</module>
+        <module>sharding-table-spring-boot</module>
+        <module>dynamic-datasource-spring-boot</module>
+        <module>tenant-spring-boot</module>
+        <module>kafka-spring-boot</module>
+        <module>batch-processor-spring-boot</module>
+        <module>chatgpt-spring-boot</module>
+        <module>mail-spring-boot</module>
     </modules>
+    <!-- spring boot upgrade -->
+    <!-- 2.3->2.4: https://thepracticaldeveloper.com/book-update-2.4.0/ -->
+    <!-- 2.4->2.5: https://thepracticaldeveloper.com/book-update-2.5.5/ -->
+    <!-- 2.5->2.6: https://thepracticaldeveloper.com/book-update-2.6.2/ -->
+    <!-- 2.6->2.7: https://thepracticaldeveloper.com/book-update-2.7.1/ -->
+    <!-- tobe upgrade to 3.x: https://www.springcloud.io/post/2022-11/springboot3-upgrade-guide/#gsc.tab=0 -->
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.3.12.RELEASE</version>
+        <version>3.3.3</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
     <groupId>com.yj2025</groupId>
     <artifactId>yj2025-spring-boot-parent</artifactId>
 
-    <version>1.7.0-SNAPSHOT</version>
+    <version>3.3.3-SNAPSHOT</version>
 
     <properties>
-        <java.version>11</java.version>
-        <spring-cloud.version>Hoxton.SR12</spring-cloud.version>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
-        <base-starter.version>1.7.0-SNAPSHOT</base-starter.version>
-        <org.mapstruct.version>1.5.2.Final</org.mapstruct.version>
-        <m2e.apt.activation>jdt_apt</m2e.apt.activation>
-        <commons.version>2.8.0</commons.version>
-        <commons.collections.version>3.2.2</commons.collections.version>
-        <commons.text.version>1.9</commons.text.version>
-        <easyexcel.version>3.1.1</easyexcel.version>
+        <java.version>17</java.version>
+        <spring-cloud.version>2023.0.3</spring-cloud.version>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <base-starter.version>3.3.3-SNAPSHOT</base-starter.version>
+        <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
+        <commons.io.version>2.12.0</commons.io.version>
+        <commons.collections4.version>4.4</commons.collections4.version>
+        <commons-collections.version>3.2.2</commons-collections.version>
+        <commons.text.version>1.10.0</commons.text.version>
+        <easyexcel.version>3.3.2</easyexcel.version>
         <pinyin4j.version>2.5.1</pinyin4j.version>
-        <joda.time.version>2.10.2</joda.time.version>
+        <joda.time.version>2.12.5</joda.time.version>
         <poi.ooxml.version>4.1.2</poi.ooxml.version>
         <vavr.version>0.10.4</vavr.version>
         <equator.version>1.0.4</equator.version>
+        <lombok.version>1.18.28</lombok.version>
+        <curator.version>5.5.0</curator.version>
+        <jakarta.validation-api.version>3.0.2</jakarta.validation-api.version>
+        <mysql-connector-j.version>8.0.33</mysql-connector-j.version>
+        <guava.version>32.0.0-jre</guava.version>
+        <cloud-alibaba.version>2022.0.0.0-RC2</cloud-alibaba.version>
+        <commons-beanutils.version>1.9.4</commons-beanutils.version>
+        <dom4j.version>2.1.4</dom4j.version>
+        <knife4j.version>4.5.0</knife4j.version>
+        <work-weixin.version>1.2.0</work-weixin.version>
+        <swagger-annotations.version>2.2.8</swagger-annotations.version>
+        <spring-data-jdbc.version>3.1.2.SPEL-SNAPSHOT</spring-data-jdbc.version>
+        <mybatis-plus.version>3.5.3.2-SNAPSHOT</mybatis-plus.version>
+        <calcite.version>1.30.0</calcite.version>
+        <hypersistence-utils.version>3.5.0</hypersistence-utils.version>
+        <dynamic-datasource.version>4.1.3</dynamic-datasource.version>
     </properties>
 
 
@@ -71,10 +103,137 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <!-- spring-data-jdbc override begin -->
+            <dependency>
+                <groupId>org.springframework.data</groupId>
+                <artifactId>spring-data-jdbc</artifactId>
+                <version>${spring-data-jdbc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.data</groupId>
+                <artifactId>spring-data-jdbc-distribution</artifactId>
+                <version>${spring-data-jdbc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.data</groupId>
+                <artifactId>spring-data-r2dbc</artifactId>
+                <version>${spring-data-jdbc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.data</groupId>
+                <artifactId>spring-data-relational</artifactId>
+                <version>${spring-data-jdbc.version}</version>
+            </dependency>
+            <!-- spring-data-jdbc override end -->
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>dynamic-datasource-spring-boot3-starter</artifactId>
+                <version>${dynamic-datasource.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+                <version>${cloud-alibaba.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+                <version>${cloud-alibaba.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>${jackson-bom.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.swagger.core.v3</groupId>
+                <artifactId>swagger-annotations</artifactId>
+                <version>${swagger-annotations.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-beanutils</groupId>
+                <artifactId>commons-beanutils</artifactId>
+                <version>${commons-beanutils.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.hypersistence</groupId>
+                <artifactId>hypersistence-utils-hibernate-62</artifactId>
+                <version>${hypersistence-utils.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.calcite</groupId>
+                <artifactId>calcite-core</artifactId>
+                <version>${calcite.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-all</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.izerui</groupId>
+                <artifactId>work-weixin-spring-boot-starter</artifactId>
+                <version>${work-weixin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.xiaoymin</groupId>
+                <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
+                <version>${knife4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.dom4j</groupId>
+                <artifactId>dom4j</artifactId>
+                <version>${dom4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson-bom.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>${jackson-bom.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.mysql</groupId>
+                <artifactId>mysql-connector-j</artifactId>
+                <version>${mysql-connector-j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.validation</groupId>
+                <artifactId>jakarta.validation-api</artifactId>
+                <version>${jakarta.validation-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.curator</groupId>
+                <artifactId>curator-recipes</artifactId>
+                <version>${curator.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.curator</groupId>
+                <artifactId>curator-framework</artifactId>
+                <version>${curator.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.mapstruct</groupId>
                 <artifactId>mapstruct</artifactId>
                 <version>${org.mapstruct.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-validator</groupId>
+                <artifactId>commons-validator</artifactId>
+                <version>1.7</version>
             </dependency>
             <dependency>
                 <groupId>org.mapstruct</groupId>
@@ -84,12 +243,17 @@
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
-                <version>${commons.version}</version>
+                <version>${commons.io.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-collections4</artifactId>
+                <version>${commons.collections4.version}</version>
             </dependency>
             <dependency>
                 <groupId>commons-collections</groupId>
                 <artifactId>commons-collections</artifactId>
-                <version>${commons.collections.version}</version>
+                <version>${commons-collections.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
@@ -130,6 +294,11 @@
                 <groupId>com.github.dadiyang</groupId>
                 <artifactId>equator</artifactId>
                 <version>${equator.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
             </dependency>
 
             <!-- starter 基础依赖 -->
@@ -227,6 +396,11 @@
             <!-- doc -->
             <dependency>
                 <groupId>com.yj2025</groupId>
+                <artifactId>doc-annotations</artifactId>
+                <version>${base-starter.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yj2025</groupId>
                 <artifactId>doc-spring-boot-starter</artifactId>
                 <version>${base-starter.version}</version>
             </dependency>
@@ -291,34 +465,10 @@
                 <artifactId>sequence-number-spring-boot-starter</artifactId>
                 <version>${base-starter.version}</version>
             </dependency>
-            <!-- oauth2 -->
-            <dependency>
-                <groupId>com.yj2025</groupId>
-                <artifactId>oauth2-server-spring-boot-starter</artifactId>
-                <version>${base-starter.version}</version>
-            </dependency>
-            <!-- gateway -->
-            <dependency>
-                <groupId>com.yj2025</groupId>
-                <artifactId>gateway-spring-boot-starter</artifactId>
-                <version>${base-starter.version}</version>
-            </dependency>
             <!-- high-performance -->
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>high-performance-spring-boot-core</artifactId>
-                <version>${base-starter.version}</version>
-            </dependency>
-            <!-- open-gateway -->
-            <dependency>
-                <groupId>com.yj2025</groupId>
-                <artifactId>open-gateway-spring-boot-starter</artifactId>
-                <version>${base-starter.version}</version>
-            </dependency>
-            <!-- open-oauth-server -->
-            <dependency>
-                <groupId>com.yj2025</groupId>
-                <artifactId>open-oauth-server-spring-boot-starter</artifactId>
                 <version>${base-starter.version}</version>
             </dependency>
             <!-- mongo -->
@@ -328,6 +478,11 @@
                 <version>${base-starter.version}</version>
             </dependency>
             <!-- basic -->
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>basic-infrastructure-spring-boot-starter</artifactId>
+                <version>${base-starter.version}</version>
+            </dependency>
             <dependency>
                 <groupId>com.yj2025</groupId>
                 <artifactId>basic-dao-spring-boot-starter</artifactId>
@@ -354,7 +509,72 @@
                 <artifactId>platform-commons</artifactId>
                 <version>${base-starter.version}</version>
             </dependency>
-
+            <!-- validator -->
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>validator-spring-boot-starter</artifactId>
+                <version>${base-starter.version}</version>
+            </dependency>
+            <!-- cloud-file -->
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>cloud-file-spring-boot-starter</artifactId>
+                <version>${base-starter.version}</version>
+            </dependency>
+            <!-- jackson -->
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>jackson-spring-boot-starter</artifactId>
+                <version>${base-starter.version}</version>
+            </dependency>
+            <!-- batch -->
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>batch-processor-spring-boot-starter</artifactId>
+                <version>${base-starter.version}</version>
+            </dependency>
+            <!-- table creator -->
+            <!--            <dependency>-->
+            <!--                <groupId>com.yj2025</groupId>-->
+            <!--                <artifactId>table-creator-spring-boot-starter</artifactId>-->
+            <!--                <version>${base-starter.version}</version>-->
+            <!--            </dependency>-->
+            <!-- tenant -->
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>tenant-spring-boot-starter</artifactId>
+                <version>${base-starter.version}</version>
+            </dependency>
+            <!-- dynamic -->
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>dynamic-datasource-spring-boot-starter</artifactId>
+                <version>${base-starter.version}</version>
+            </dependency>
+            <!-- sharding-table -->
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>sharding-table-spring-boot-starter</artifactId>
+                <version>${base-starter.version}</version>
+            </dependency>
+            <!-- data-jdbc -->
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>data-jdbc-spring-boot-starter</artifactId>
+                <version>${base-starter.version}</version>
+            </dependency>
+            <!-- kafka -->
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>kafka-spring-boot-starter</artifactId>
+                <version>${base-starter.version}</version>
+            </dependency>
+            <!-- mail -->
+            <dependency>
+                <groupId>com.yj2025</groupId>
+                <artifactId>mail-spring-boot-starter</artifactId>
+                <version>${base-starter.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -414,21 +634,28 @@
                     <nohelp>true</nohelp>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>${maven-compiler-plugin.version}</version>
-                <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
-                </configuration>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-compiler-plugin</artifactId>-->
+<!--                <version>${maven-compiler-plugin.version}</version>-->
+<!--                <configuration>-->
+<!--                    <release>17</release>-->
+<!--                    <source>${maven.compiler.source}</source>-->
+<!--                    <target>${maven.compiler.target}</target>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven-surefire-plugin.version}</version>
                 <configuration>
                     <skipTests>true</skipTests>
+                    <argLine>
+                        --add-exports=java.base/sun.nio.ch=ALL-UNNAMED
+                        --add-opens=java.base/java.lang.reflect=ALL-UNNAMED
+                        --add-opens=java.base/java.io=ALL-UNNAMED
+                        --add-exports=jdk.unsupported/sun.misc=ALL-UNNAMED
+                    </argLine>
                 </configuration>
             </plugin>
             <plugin>
@@ -438,6 +665,11 @@
                 <configuration>
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>${maven-dependency-plugin.version}</version>
             </plugin>
         </plugins>
     </build>

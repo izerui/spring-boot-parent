@@ -13,7 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringSubstitutor;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -51,6 +51,7 @@ public class MchuanSmsExecutor implements SmsExecutor {
         if (varaibles == null) {
             varaibles = new HashMap<>();
         }
+        //使用全局配置文件中名传无线的短信配置时 会默认加上【我的经管】 签名
         StringSubstitutor sub = new StringSubstitutor(varaibles);
         String content = sub.replace(template);
         SmsExecuteContext context = new SmsExecuteContext();

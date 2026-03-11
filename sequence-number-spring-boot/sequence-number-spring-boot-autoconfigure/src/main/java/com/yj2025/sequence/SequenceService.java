@@ -24,7 +24,7 @@ public class SequenceService {
      * @param consumer 回调函数
      */
     public void consumerNumber(String groupId, PeriodType.Period period, Consumer<Integer> consumer) {
-        lock.execute(groupId + "_" + period.getPeriodFormater(), 60, () -> {
+        lock.execute(groupId + "_" + period.getPeriodFormatter(), 60, () -> {
             Integer number = null;
             try {
                 number = numberStorage.getNumber(groupId, period);
@@ -34,7 +34,7 @@ public class SequenceService {
                 numberStorage.recycleNumber(groupId, period, number);
                 throw ex;
             }
-        });
+        }, e -> new RuntimeException("获取序号失败: " + e.getMessage()));
     }
 
     /**
@@ -58,7 +58,7 @@ public class SequenceService {
      * @return
      */
     public boolean verifyNumber(String groupId, PeriodType.Period period, Integer number) {
-        return numberStorage.verifyVaildNumber(groupId, period, number);
+        return numberStorage.verifyValidNumber(groupId, period, number);
     }
 
 }

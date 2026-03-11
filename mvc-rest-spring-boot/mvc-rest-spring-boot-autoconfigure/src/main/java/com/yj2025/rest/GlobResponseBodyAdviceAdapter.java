@@ -1,6 +1,7 @@
 package com.yj2025.rest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,15 +20,14 @@ import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.http.server.ServletServerHttpResponse;
 import org.springframework.util.Base64Utils;
 import org.springframework.util.SerializationUtils;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -99,25 +99,10 @@ public class GlobResponseBodyAdviceAdapter implements ResponseBodyAdvice<Object>
             } else if (throwable.getClass().getName().equals("org.springframework.web.util.NestedServletException") && throwable.getCause() != null) {
                 throwable = throwable.getCause();
             }
-
-//            if (StringUtils.isNotEmpty(applicationName)
-//                    && applicationName.equalsIgnoreCase("bboss-web")) {
-//                ReflectionUtils.handleReflectionException((Exception) throwable);
-//                return null;
-//            }
-
-//            //自定义code异常
-//            if (throwable instanceof BusinessException) {
-//                //自定义异常status为200
-//                resp.put("status", 200);
-//                resp.put("errCode", ((BusinessException) throwable).getErrCode());
-//            } else if (throwable instanceof ExecutionException) {
-//                //自定义异常status为200
-//                resp.put("status", 200);
-//                resp.put("errCode", null);
-//            } else {
-//                resp.put("errCode", null);
-//            }
+            Throwable rootCause = ExceptionUtils.getRootCause(throwable);
+            if (rootCause != null) {
+                throwable = rootCause;
+            }
 
             String errMsg = throwable.getMessage();
             if (throwable instanceof HttpMessageNotWritableException) {
@@ -155,9 +140,13 @@ public class GlobResponseBodyAdviceAdapter implements ResponseBodyAdvice<Object>
 
             String clientType = request.getHeader(CLIENT_TYPE);
             if (clientType != null && FEIGN_REQUEST_TYPE.equals(clientType)) {
-                //feign 请求返回异常堆栈信息 ，并且将发生异常的所属应用名一并返回
-                resp.put(EXCEPTION_SERIALIZABLE, Base64Utils.encodeToString(SerializationUtils.serialize(throwable)));
-                resp.put(EXCEPTION_APPLICATION_NAME, applicationName);
+                try {
+                    //feign 请求返回异常堆栈信息 ，并且将发生异常的所属应用名一并返回
+                    resp.put(EXCEPTION_APPLICATION_NAME, applicationName);
+                    resp.put(EXCEPTION_SERIALIZABLE, Base64Utils.encodeToString(SerializationUtils.serialize(throwable)));
+                }catch (Exception e) {
+                    ;
+                }
             } else {
                 // 浏览器请求统一返回200状态码
                 response.setStatus(HttpStatus.OK.value());

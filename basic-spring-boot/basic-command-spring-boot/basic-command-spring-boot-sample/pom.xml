@@ -5,25 +5,43 @@
     <parent>
         <artifactId>basic-command-spring-boot</artifactId>
         <groupId>com.yj2025</groupId>
-        <version>1.7.0-SNAPSHOT</version>
+        <version>3.3.3-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>basic-command-spring-boot-sample</artifactId>
 
     <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.yj2025</groupId>
             <artifactId>basic-web-spring-boot-starter</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>audit-spring-boot-starter</artifactId>
+                    <groupId>com.yj2025</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.yj2025</groupId>
             <artifactId>jpa-spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.yj2025</groupId>
+            <artifactId>data-jdbc-spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.yj2025</groupId>
+            <artifactId>mybatis-spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.yj2025</groupId>
+            <artifactId>sharding-table-spring-boot-starter</artifactId>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -40,20 +58,11 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- pretty test value -->
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.github.jsqlparser</groupId>
-            <artifactId>jsqlparser</artifactId>
-            <version>4.4</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/org.apache.calcite/calcite-core -->
-        <dependency>
-            <groupId>org.apache.calcite</groupId>
-            <artifactId>calcite-core</artifactId>
-            <version>1.30.0</version>
+            <groupId>com.github.javafaker</groupId>
+            <artifactId>javafaker</artifactId>
+            <version>1.0.2</version>
         </dependency>
     </dependencies>
 
